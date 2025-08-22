@@ -2,13 +2,18 @@ import { GameEngine } from './game/engine';
 import type { GameState } from './types';
 import './components/GameStats.ts';
 import './components/FeedbackPanel.ts';
-import { AdventurerStatus } from './components/AdventurerStatus.ts';
-import { LootChoicePanel } from './components/LootChoicePanel.ts';
+import type { AdventurerStatus } from './components/AdventurerStatus.ts';
+import type { LootChoicePanel } from './components/LootChoicePanel.ts';
+import type { DebugEncounterPanel } from './components/DebugEncounterPanel.ts';
+import type { DebugLog } from './components/DebugLog.ts';
+import type { Workshop } from './components/Workshop.ts';
+import './components/AdventurerStatus.ts';
+import './components/LootChoicePanel.ts';
 import './components/LoadingIndicator.ts';
-import { DebugEncounterPanel } from './components/DebugEncounterPanel.ts';
-import { DebugLog } from './components/DebugLog.ts';
+import './components/DebugEncounterPanel.ts';
+import './components/DebugLog.ts';
 import './components/GameOverScreen.ts';
-import { Workshop } from './components/Workshop.ts';
+import './components/Workshop.ts';
 
 const appElement = document.getElementById('app');
 
