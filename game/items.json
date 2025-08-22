@@ -1,0 +1,138 @@
+
+[
+    {
+        "id": "loot_1",
+        "name": "Sword of Minor Wounding",
+        "type": "Weapon",
+        "rarity": "Common",
+        "stats": { "power": 2 },
+        "cost": null,
+        "minRun": 0
+    },
+    {
+        "id": "loot_2",
+        "name": "Healing Potion",
+        "type": "Potion",
+        "rarity": "Common",
+        "stats": { "hp": 20 },
+        "cost": null,
+        "minRun": 0
+    },
+    {
+        "id": "loot_3",
+        "name": "Leather Vambraces",
+        "type": "Armor",
+        "rarity": "Common",
+        "stats": { "maxHp": 10 },
+        "cost": null,
+        "minRun": 0
+    },
+    {
+        "id": "loot_4",
+        "name": "Slightly Pointy Stick",
+        "type": "Weapon",
+        "rarity": "Common",
+        "stats": { "power": 1 },
+        "cost": null,
+        "minRun": 0
+    },
+    {
+        "id": "loot_5",
+        "name": "Crude Bandages",
+        "type": "Potion",
+        "rarity": "Common",
+        "stats": { "hp": 15 },
+        "cost": null,
+        "minRun": 0
+    },
+    {
+        "id": "loot_6",
+        "name": "Amulet of Synergy",
+        "type": "Armor",
+        "rarity": "Uncommon",
+        "stats": { "power": 1, "maxHp": 15 },
+        "cost": 150,
+        "minRun": 2
+    },
+    {
+        "id": "loot_7",
+        "name": "Berserker's Axe",
+        "type": "Weapon",
+        "rarity": "Uncommon",
+        "stats": { "power": 6, "maxHp": -10 },
+        "cost": 150,
+        "minRun": 2
+    },
+    {
+        "id": "loot_8",
+        "name": "Elixir of Vitality",
+        "type": "Potion",
+        "rarity": "Uncommon",
+        "stats": { "hp": 50 },
+        "cost": 120,
+        "minRun": 1
+    },
+    {
+        "id": "loot_9",
+        "name": "Steel Broadsword",
+        "type": "Weapon",
+        "rarity": "Uncommon",
+        "stats": { "power": 4 },
+        "cost": 140,
+        "minRun": 1
+    },
+    {
+        "id": "loot_10",
+        "name": "Ring of Protection",
+        "type": "Armor",
+        "rarity": "Uncommon",
+        "stats": { "maxHp": 20 },
+        "cost": 120,
+        "minRun": 1
+    },
+    {
+        "id": "loot_11",
+        "name": "Obsidian Plate",
+        "type": "Armor",
+        "rarity": "Rare",
+        "stats": { "maxHp": 50, "power": -2 },
+        "cost": 300,
+        "minRun": 4
+    },
+    {
+        "id": "loot_12",
+        "name": "Vorpal Blade",
+        "type": "Weapon",
+        "rarity": "Rare",
+        "stats": { "power": 10 },
+        "cost": 350,
+        "minRun": 4
+    },
+    {
+        "id": "loot_13",
+        "name": "Phoenix Down",
+        "type": "Potion",
+        "rarity": "Rare",
+        "stats": { "hp": 150 },
+        "cost": 250,
+        "minRun": 3
+    },
+    {
+        "id": "loot_14",
+        "name": "Girdle of Giant Strength",
+        "type": "Armor",
+        "rarity": "Rare",
+        "stats": { "power": 3, "maxHp": 25 },
+        "cost": 320,
+        "minRun": 5
+    },
+    {
+        "id": "loot_15",
+        "name": "Archangel's Halo",
+        "type": "Armor",
+        "rarity": "Rare",
+        "stats": { "maxHp": 30, "power": 3 },
+        "cost": 320,
+        "minRun": 5
+    }
+]
