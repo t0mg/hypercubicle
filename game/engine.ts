@@ -10,6 +10,7 @@ const CHOICE_SCORE_THRESHOLD = 10;
 const BP_PER_FLOOR = 10;
 const INITIAL_UNLOCKED_DECK = ['loot_1', 'loot_2', 'loot_3', 'loot_4', 'loot_5'];
 const MIN_DECK_SIZE = 32;
+const HAND_SIZE = 8;
 
 // --- HELPER FUNCTIONS ---
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -202,11 +203,15 @@ export class GameEngine {
             inventory: { weapon: null, armor: null, potions: [] },
         };
         const runDeck = generateRunDeck(this.gameState.unlockedDeck, this._allItems);
+        const hand = runDeck.slice(0, HAND_SIZE);
+        const availableDeck = runDeck.slice(HAND_SIZE);
+
         this.gameState = {
             ...this.gameState,
             phase: 'DESIGNER_CHOOSING_LOOT',
             adventurer: newAdventurer,
-            availableDeck: runDeck,
+            availableDeck: availableDeck,
+            hand: hand,
             floor: 1,
             feedback: 'A new adventurer enters the dungeon!',
             log: [`--- Starting Run ${this.gameState.run} ---`],
@@ -216,20 +221,33 @@ export class GameEngine {
     }
 
     public presentOffer = (offeredIds: string[]) => {
-        if (!this.gameState || this.gameState.phase !== 'DESIGNER_CHOOSING_LOOT') return;
+        if (!this.gameState || this.gameState.phase !== 'DESIGNER_CHOOSING_LOOT' || !this.gameState.hand) return;
 
-        const offeredLoot = this.gameState.availableDeck.filter(item => offeredIds.includes(item.instanceId));
+        const offeredLoot = this.gameState.hand.filter(item => offeredIds.includes(item.instanceId));
         this.gameState.phase = 'AWAITING_ADVENTURER_CHOICE';
         this.gameState.offeredLoot = offeredLoot;
         this._emit('state-change', this.gameState);
 
         setTimeout(() => {
-            if (!this.gameState || this.gameState.phase !== 'AWAITING_ADVENTURER_CHOICE') return;
+            if (!this.gameState || this.gameState.phase !== 'AWAITING_ADVENTURER_CHOICE' || !this.gameState.hand) return;
 
             const { choice, reason, logs } = this._getAdventurerChoice(this.gameState.adventurer, this.gameState.offeredLoot);
             let newAdventurer = { ...this.gameState.adventurer };
             let newInterest = newAdventurer.interest;
-            const newAvailableDeck = this.gameState.availableDeck.filter(item => !offeredIds.includes(item.instanceId));
+
+            // --- Hand and Deck Update Logic ---
+            let currentHand = this.gameState.hand;
+            let currentDeck = this.gameState.availableDeck;
+
+            // Remove offered items from hand
+            let newHand = currentHand.filter(item => !offeredIds.includes(item.instanceId));
+
+            // Replenish hand from deck
+            const numToDraw = HAND_SIZE - newHand.length;
+            const drawnCards = currentDeck.slice(0, numToDraw);
+            const newDeck = currentDeck.slice(numToDraw);
+            newHand.push(...drawnCards);
+            // --- End Hand and Deck Update ---
 
             if (choice) {
                 let inventory = { ...newAdventurer.inventory, potions: [...newAdventurer.inventory.potions] };
@@ -252,7 +270,8 @@ export class GameEngine {
                 phase: 'DESIGNER_CHOOSING_DIFFICULTY',
                 adventurer: { ...newAdventurer, interest: newInterest },
                 feedback: reason,
-                availableDeck: newAvailableDeck,
+                availableDeck: newDeck,
+                hand: newHand,
                 log: [...this.gameState.log, ...logs],
             };
             this._emit('state-change', this.gameState);
@@ -302,20 +321,21 @@ export class GameEngine {
                 return;
             }
 
-            let finalDeck = this.gameState.availableDeck;
-            if (finalDeck.length < MIN_CARDS_TO_OFFER) {
-                newLog.push("Deck ran low! Reshuffling and continuing the run with all unlocked items.");
-                finalDeck = generateRunDeck(this.gameState.unlockedDeck, this._allItems);
+            let nextPhase: GamePhase = 'DESIGNER_CHOOSING_LOOT';
+            let feedback = encounterFeedback;
+            if (this.gameState.hand && this.gameState.hand.length === 0) {
+                nextPhase = 'DESIGNER_CHOOSING_DIFFICULTY';
+                newLog.push("Your hand is empty! The adventurer must press on without new items.");
+                feedback = "The adventurer waits for your decision, unaware that you have nothing left to offer.";
             }
 
             this.gameState = {
                 ...this.gameState,
-                phase: 'DESIGNER_CHOOSING_LOOT',
+                phase: nextPhase,
                 adventurer: newAdventurer,
                 floor: newFloor,
                 designer: { balancePoints: newBalancePoints },
-                availableDeck: finalDeck,
-                feedback: encounterFeedback,
+                feedback: feedback,
                 log: newLog,
                 debugEncounterParams: undefined,
             };
@@ -385,13 +405,16 @@ export class GameEngine {
                 inventory: { weapon: null, armor: null, potions: [] },
             };
             const runDeck = generateRunDeck(unlockedDeck, this._allItems);
+            const hand = runDeck.slice(0, HAND_SIZE);
+            const availableDeck = runDeck.slice(HAND_SIZE);
 
             this.gameState = {
                 phase: 'DESIGNER_CHOOSING_LOOT',
                 designer: { balancePoints: 0 },
                 adventurer: newAdventurer,
                 unlockedDeck: unlockedDeck,
-                availableDeck: runDeck,
+                availableDeck: availableDeck,
+                hand: hand,
                 shopItems: [],
                 offeredLoot: [],
                 feedback: 'A new adventurer enters the dungeon!',

@@ -50,7 +50,8 @@ export interface GameState {
     };
     adventurer: Adventurer;
     unlockedDeck: string[]; // All item IDs the player owns
-    availableDeck: LootChoice[]; // Items available for the current run
+    availableDeck: LootChoice[]; // Items available for the current run, becomes the draw pile
+    hand: LootChoice[]; // The player's current hand of cards
     shopItems: LootChoice[];
     offeredLoot: LootChoice[];
     feedback: string;
