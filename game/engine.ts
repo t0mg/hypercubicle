@@ -11,6 +11,7 @@ const BP_PER_FLOOR = 10;
 const INITIAL_UNLOCKED_DECK = ['loot_1', 'loot_2', 'loot_3', 'loot_4', 'loot_5'];
 const MIN_DECK_SIZE = 32;
 const HAND_SIZE = 9;
+const ADVENTURER_ACTION_DELAY_MS = 300;
 
 // --- HELPER FUNCTIONS ---
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -285,7 +286,7 @@ export class GameEngine {
                 log: [...this.gameState.log, ...logs],
             };
             this._emit('state-change', this.gameState);
-        }, 2000);
+        }, ADVENTURER_ACTION_DELAY_MS);
     }
 
     public runDebugEncounter = (debugParams: { baseDamage: number; difficultyFactor: number }) => {
@@ -350,7 +351,7 @@ export class GameEngine {
                 debugEncounterParams: undefined,
             };
             this._emit('state-change', this.gameState);
-        }, 2000);
+        }, ADVENTURER_ACTION_DELAY_MS);
     }
 
     public enterWorkshop = () => {
