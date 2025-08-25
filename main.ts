@@ -101,7 +101,7 @@ const render = (state: GameState | null) => {
 
     const lootChoicePanelEl = document.querySelector('loot-choice-panel') as LootChoicePanel;
     if (lootChoicePanelEl) {
-        lootChoicePanelEl.choices = state.availableDeck;
+        lootChoicePanelEl.choices = state.hand;
         lootChoicePanelEl.disabled = false; // Or determine from state
     }
 

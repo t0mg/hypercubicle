@@ -22,6 +22,7 @@ export class LootCard extends HTMLElement {
     private _item: LootChoice | null = null;
     private _isSelected: boolean = false;
     private _isDisabled: boolean = false;
+    private _isNewlyDrafted: boolean = false;
 
     set item(value: LootChoice) { this._item = value; this.render(); }
     get item(): LootChoice { return this._item!; }
@@ -32,6 +33,15 @@ export class LootCard extends HTMLElement {
     set isDisabled(value: boolean) { this._isDisabled = value; this.render(); }
     get isDisabled(): boolean { return this._isDisabled; }
 
+    set isNewlyDrafted(value: boolean) {
+        if (this._isNewlyDrafted === value) return;
+        this._isNewlyDrafted = value;
+        if (this._isNewlyDrafted) {
+            this.classList.add('animate-newly-drafted');
+        }
+    }
+    get isNewlyDrafted(): boolean { return this._isNewlyDrafted; }
+
     constructor() {
         super();
         this.addEventListener('click', () => {
@@ -41,6 +51,12 @@ export class LootCard extends HTMLElement {
                     composed: true,
                     detail: { instanceId: this._item.instanceId }
                 }));
+            }
+        });
+
+        this.addEventListener('animationend', (e: AnimationEvent) => {
+            if (e.animationName === 'newly-drafted-animation') {
+                this.classList.remove('animate-newly-drafted');
             }
         });
     }
@@ -64,7 +80,8 @@ export class LootCard extends HTMLElement {
             stateClasses = 'border-brand-primary hover:border-brand-secondary cursor-pointer transform hover:scale-105';
         }
 
-        this.className = `${baseClasses} ${stateClasses}`;
+        const animationClass = this.classList.contains('animate-newly-drafted') ? ' animate-newly-drafted' : '';
+        this.className = `${baseClasses} ${stateClasses}${animationClass}`;
 
         this.innerHTML = `
             <div>

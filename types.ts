@@ -33,6 +33,8 @@ export interface LootChoice {
     };
     cost: number | null;
     minRun: number;
+    draftedFloor?: number;
+    justDrafted?: boolean;
 }
 
 export type GamePhase = 

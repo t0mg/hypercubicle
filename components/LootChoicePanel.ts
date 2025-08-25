@@ -6,8 +6,13 @@ export class LootChoicePanel extends HTMLElement {
     private _choices: LootChoice[] = [];
     private _disabled: boolean = false;
     private _selectedIds: string[] = [];
+    private _initialRender: boolean = true;
 
-    set choices(value: LootChoice[]) { this._choices = value; this.render(); }
+    set choices(value: LootChoice[]) { 
+        this._choices = value; 
+        this._initialRender = true;
+        this.render(); 
+    }
     get choices(): LootChoice[] { return this._choices; }
 
     set disabled(value: boolean) { this._disabled = value; this.render(); }
@@ -92,9 +97,11 @@ export class LootChoicePanel extends HTMLElement {
                 lootCard.isSelected = this._selectedIds.includes(item.instanceId);
                 const isSameIdSelected = !lootCard.isSelected && selectedBaseIds.includes(item.id);
                 lootCard.isDisabled = isSameIdSelected || this._disabled;
+                lootCard.isNewlyDrafted = (item.justDrafted && this._initialRender) || false;
                 container.appendChild(lootCard);
             });
         }
+        setTimeout(() => { this._initialRender = false; }, 0);
     }
 }
 

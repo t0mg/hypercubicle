@@ -1,4 +1,4 @@
-import type { GameState, LootChoice, Adventurer, AdventurerTraits, AdventurerInventory } from '../types';
+import type { GamePhase, GameState, LootChoice, Adventurer, AdventurerTraits, AdventurerInventory } from '../types';
 
 // --- CONSTANTS ---
 const INTEREST_THRESHOLD = 15;
@@ -10,7 +10,7 @@ const CHOICE_SCORE_THRESHOLD = 10;
 const BP_PER_FLOOR = 10;
 const INITIAL_UNLOCKED_DECK = ['loot_1', 'loot_2', 'loot_3', 'loot_4', 'loot_5'];
 const MIN_DECK_SIZE = 32;
-const HAND_SIZE = 8;
+const HAND_SIZE = 9;
 
 // --- HELPER FUNCTIONS ---
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -239,12 +239,22 @@ export class GameEngine {
             let currentHand = this.gameState.hand;
             let currentDeck = this.gameState.availableDeck;
 
+            // Clear justDrafted flag from existing cards
+            currentHand.forEach(c => c.justDrafted = false);
+
             // Remove offered items from hand
             let newHand = currentHand.filter(item => !offeredIds.includes(item.instanceId));
 
             // Replenish hand from deck
             const numToDraw = HAND_SIZE - newHand.length;
             const drawnCards = currentDeck.slice(0, numToDraw);
+
+            // Mark new cards
+            drawnCards.forEach(c => {
+                c.draftedFloor = this.gameState!.floor;
+                c.justDrafted = true;
+            });
+
             const newDeck = currentDeck.slice(numToDraw);
             newHand.push(...drawnCards);
             // --- End Hand and Deck Update ---
