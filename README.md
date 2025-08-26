@@ -1,4 +1,4 @@
-# Rogsimum (working title)
+# Rogulus
 
 A reverse roguelike game where you act as a dungeon designer for an AI adventurer. Your goal is not to kill the adventurer, but to create a compelling, challenging, and rewarding experience that keeps them engaged.
 
