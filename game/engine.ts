@@ -2,7 +2,6 @@ import type { GamePhase, GameState, LootChoice, Adventurer, AdventurerTraits, Ad
 
 // --- CONSTANTS ---
 const INTEREST_THRESHOLD = 15;
-const MIN_CARDS_TO_OFFER = 3;
 const MAX_POTIONS = 3;
 const RARITY_SCORE: Record<string, number> = { 'Common': 1, 'Uncommon': 2, 'Rare': 3 };
 const BASE_ADVENTURER_STATS = { hp: 100, maxHp: 100, power: 5 };
@@ -186,16 +185,16 @@ export class GameEngine {
         }
 
         modifiableAdventurer.interest = Math.max(0, Math.min(100, modifiableAdventurer.interest + interestChange));
+        modifiableAdventurer.traits.expertise += 1;
         return { newAdventurer: modifiableAdventurer, feedback: preBattleFeedback + battleFeedback, damageTaken, logs };
     }
 
     // --- PUBLIC ACTIONS ---
-    public startNewRun = () => {
-        if (!this.gameState) return;
+    public startNewGame = () => {
         const newTraits: AdventurerTraits = {
             offense: Math.floor(Math.random() * 81) + 10,
             risk: Math.floor(Math.random() * 81) + 10,
-            expertise: Math.min(100, this.gameState.adventurer.traits.expertise + 5 * (this.gameState.run - 1)),
+            expertise: 0,
         };
         const newAdventurer: Adventurer = {
             ...BASE_ADVENTURER_STATS,
@@ -203,19 +202,56 @@ export class GameEngine {
             traits: newTraits,
             inventory: { weapon: null, armor: null, potions: [] },
         };
+        const unlockedDeck = INITIAL_UNLOCKED_DECK;
+        const runDeck = generateRunDeck(unlockedDeck, this._allItems);
+        const hand = runDeck.slice(0, HAND_SIZE);
+        const availableDeck = runDeck.slice(HAND_SIZE);
+
+        if (this.gameState && this.gameState.log) {
+            console.log("previous game log dump:", this.gameState.log);
+        }
+
+        this.gameState = {
+            phase: 'DESIGNER_CHOOSING_DIFFICULTY',
+            designer: { balancePoints: 0 },
+            adventurer: newAdventurer,
+            unlockedDeck: unlockedDeck,
+            availableDeck: availableDeck,
+            hand: hand,
+            shopItems: [],
+            offeredLoot: [],
+            feedback: 'A new adventurer enters the dungeon!',
+            log: [`--- Starting New Game (Run 1) ---`],
+            run: 1,
+            floor: 1,
+            gameOver: { isOver: false, reason: '' },
+        };
+        this._emit('state-change', this.gameState);
+    }
+
+    public startNewRun = () => {
+        if (!this.gameState) return;
+
         const runDeck = generateRunDeck(this.gameState.unlockedDeck, this._allItems);
         const hand = runDeck.slice(0, HAND_SIZE);
         const availableDeck = runDeck.slice(HAND_SIZE);
 
+        const resetAdventurer: Adventurer = {
+            ...BASE_ADVENTURER_STATS,
+            interest: this.gameState.adventurer.interest,
+            traits: this.gameState.adventurer.traits,
+            inventory: { weapon: null, armor: null, potions: [] },
+        };
+
         this.gameState = {
             ...this.gameState,
-            phase: 'DESIGNER_CHOOSING_LOOT',
-            adventurer: newAdventurer,
+            adventurer: resetAdventurer,
+            phase: 'DESIGNER_CHOOSING_DIFFICULTY',
             availableDeck: availableDeck,
             hand: hand,
             floor: 1,
-            feedback: 'A new adventurer enters the dungeon!',
-            log: [`--- Starting Run ${this.gameState.run} ---`],
+            feedback: 'The adventurer returns for another run!',
+            log: [...this.gameState.log, `--- Starting Run ${this.gameState.run} ---`],
             gameOver: { isOver: false, reason: '' },
         };
         this._emit('state-change', this.gameState);
@@ -276,6 +312,9 @@ export class GameEngine {
                 newInterest = Math.max(0, this.gameState.adventurer.interest - 10);
             }
 
+            const newFloor = this.gameState.floor + 1;
+            const newBalancePoints = this.gameState.designer.balancePoints + BP_PER_FLOOR;
+
             this.gameState = {
                 ...this.gameState,
                 phase: 'DESIGNER_CHOOSING_DIFFICULTY',
@@ -284,6 +323,8 @@ export class GameEngine {
                 availableDeck: newDeck,
                 hand: newHand,
                 log: [...this.gameState.log, ...logs],
+                floor: newFloor,
+                designer: { balancePoints: newBalancePoints },
             };
             this._emit('state-change', this.gameState);
         }, ADVENTURER_ACTION_DELAY_MS);
@@ -301,8 +342,6 @@ export class GameEngine {
 
             const { newAdventurer, feedback: encounterFeedback, logs: encounterLogs } = this._getDebugEncounterOutcome(this.gameState.adventurer, this.gameState.floor, this.gameState.debugEncounterParams);
 
-            const newFloor = this.gameState.floor + 1;
-            const newBalancePoints = this.gameState.designer.balancePoints + BP_PER_FLOOR;
             const newLog = [...this.gameState.log, ...encounterLogs];
 
             if (newAdventurer.hp <= 0) {
@@ -310,46 +349,53 @@ export class GameEngine {
                 this.gameState = {
                     ...this.gameState,
                     adventurer: newAdventurer,
-                    designer: { balancePoints: newBalancePoints },
+                    designer: { balancePoints: this.gameState.designer.balancePoints + BP_PER_FLOOR },
                     phase: 'RUN_OVER',
-                    gameOver: { isOver: true, reason: `The adventurer fell on floor ${this.gameState.floor}.` },
+                    gameOver: { isOver: true, reason: `The adventurer fell on floor ${this.gameState.floor} of run ${this.gameState.run}.` },
                     log: newLog
                 };
                 this._emit('state-change', this.gameState);
                 return;
             }
             if (newAdventurer.interest <= INTEREST_THRESHOLD) {
-                newLog.push("GAME OVER: Adventurer lost interest and left.");
+                newLog.push("GAME OVER: Adventurer lost interest and quit.");
                  this.gameState = {
                     ...this.gameState,
                     adventurer: newAdventurer,
-                    designer: { balancePoints: newBalancePoints },
+                    designer: { balancePoints: this.gameState.designer.balancePoints + BP_PER_FLOOR },
                     phase: 'RUN_OVER',
-                    gameOver: { isOver: true, reason: `The adventurer grew bored on floor ${this.gameState.floor} and left.` },
+                    gameOver: { isOver: true, reason: `The adventurer grew bored on floor ${this.gameState.floor} of run ${this.gameState.run}, and quit.` },
                     log: newLog
                 };
                 this._emit('state-change', this.gameState);
                 return;
             }
 
-            let nextPhase: GamePhase = 'DESIGNER_CHOOSING_LOOT';
             let feedback = encounterFeedback;
             if (this.gameState.hand && this.gameState.hand.length === 0) {
-                nextPhase = 'DESIGNER_CHOOSING_DIFFICULTY';
                 newLog.push("Your hand is empty! The adventurer must press on without new items.");
                 feedback = "The adventurer waits for your decision, unaware that you have nothing left to offer.";
+                 this.gameState = {
+                    ...this.gameState,
+                    phase: 'DESIGNER_CHOOSING_DIFFICULTY',
+                    adventurer: newAdventurer,
+                    floor: this.gameState.floor + 1,
+                    designer: { balancePoints: this.gameState.designer.balancePoints + BP_PER_FLOOR },
+                    feedback: feedback,
+                    log: newLog,
+                    debugEncounterParams: undefined,
+                };
+            } else {
+                this.gameState = {
+                    ...this.gameState,
+                    phase: 'DESIGNER_CHOOSING_LOOT',
+                    adventurer: newAdventurer,
+                    feedback: feedback,
+                    log: newLog,
+                    debugEncounterParams: undefined,
+                };
             }
 
-            this.gameState = {
-                ...this.gameState,
-                phase: nextPhase,
-                adventurer: newAdventurer,
-                floor: newFloor,
-                designer: { balancePoints: newBalancePoints },
-                feedback: feedback,
-                log: newLog,
-                debugEncounterParams: undefined,
-            };
             this._emit('state-change', this.gameState);
         }, ADVENTURER_ACTION_DELAY_MS);
     }
@@ -401,31 +447,7 @@ export class GameEngine {
                 throw new Error(`Failed to load items.json: ${response.statusText}`);
             }
             this._allItems = await response.json();
-
-            // Prepare a minimal initial state to bootstrap the first run
-            this.gameState = {
-                phase: 'LOADING', // Temporary phase
-                designer: { balancePoints: 0 },
-                adventurer: { // Dummy adventurer to satisfy startNewRun
-                    ...BASE_ADVENTURER_STATS,
-                    interest: 0,
-                    traits: { offense: 0, risk: 0, expertise: 0 }, // expertise: 0 for first run
-                    inventory: { weapon: null, armor: null, potions: [] },
-                },
-                unlockedDeck: INITIAL_UNLOCKED_DECK,
-                availableDeck: [],
-                hand: [],
-                shopItems: [],
-                offeredLoot: [],
-                feedback: '',
-                log: [],
-                run: 1, // This is for the first run
-                floor: 0,
-                gameOver: { isOver: false, reason: '' },
-            };
-
-            // Start the first run, this will set up adventurer, deck, hand, etc.
-            this.startNewRun();
+            this.startNewGame();
 
         } catch (e: any) {
             this.error = e.message || "An unknown error occurred while loading game data.";

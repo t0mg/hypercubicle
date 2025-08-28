@@ -141,6 +141,10 @@ appElement.addEventListener('start-run', () => {
     engine.startNewRun();
 });
 
+appElement.addEventListener('start-game', () => {
+    engine.startNewGame();
+});
+
 engine.on('state-change', (newState) => {
     if (engine.isLoading) {
         appElement.innerHTML = `<div>Loading Game Data...</div>`;

@@ -9,7 +9,7 @@ export class GameOverScreen extends HTMLElement {
             if (target.id === 'enter-workshop-button') {
                 this.dispatchEvent(new CustomEvent('enter-workshop', { bubbles: true, composed: true }));
             } else if (target.id === 'new-adventurer-button') {
-                this.dispatchEvent(new CustomEvent('start-run', { bubbles: true, composed: true }));
+                this.dispatchEvent(new CustomEvent('start-game', { bubbles: true, composed: true }));
             }
         });
     }
