@@ -24,7 +24,7 @@ export class GameOverScreen extends HTMLElement {
     revealDecision() {
         this.state = 'revealing';
         setTimeout(() => {
-            this.decision = Math.random() > 0.5 ? 'continue' : 'retire';
+            this.decision = this.getAttribute('decision') as 'continue' | 'retire' || 'retire';
             this.state = 'revealed';
             this.updateDecision(true);
         }, 2000);

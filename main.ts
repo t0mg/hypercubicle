@@ -7,6 +7,7 @@ import type { LootChoicePanel } from './components/LootChoicePanel.ts';
 import type { DebugEncounterPanel } from './components/DebugEncounterPanel.ts';
 import type { DebugLog } from './components/DebugLog.ts';
 import type { Workshop } from './components/Workshop.ts';
+import type { GameOverScreen } from './components/GameOverScreen.ts';
 import './components/AdventurerStatus.ts';
 import './components/LootChoicePanel.ts';
 import './components/LoadingIndicator.ts';
@@ -70,6 +71,7 @@ const render = (state: GameState | null) => {
                 final-bp="${state.designer.balancePoints}"
                 reason="${state.gameOver.reason}"
                 run="${state.run}"
+                decision="${engine.getAdventurerEndRunDecision()}"
             ></game-over-screen>`
         : '';
 

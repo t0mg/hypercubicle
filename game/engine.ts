@@ -439,6 +439,25 @@ export class GameEngine {
         this._emit('state-change', this.gameState);
     }
 
+    public getAdventurerEndRunDecision(): 'continue' | 'retire' {
+        if (!this.gameState) {
+            return 'retire';
+        }
+        const { interest } = this.gameState.adventurer;
+        const interestDifference = interest - INTEREST_THRESHOLD;
+
+        // Ponder factor to add randomness. Range: -10 to 10
+        const ponder = (Math.random() - 0.5) * 20;
+
+        const finalScore = interestDifference + ponder;
+
+        if (finalScore > 0) {
+            return 'continue';
+        } else {
+            return 'retire';
+        }
+    }
+
     // --- INITIALIZATION ---
     private async _loadGameData() {
         try {
