@@ -199,7 +199,7 @@ export class GameEngine {
         };
         const newAdventurer: Adventurer = {
             ...BASE_ADVENTURER_STATS,
-            interest: 100,
+            interest: 33 + Math.floor(Math.random() * 50),
             traits: newTraits,
             inventory: { weapon: null, armor: null, potions: [] },
         };
@@ -402,38 +402,31 @@ export class GameEngine {
             }
             this._allItems = await response.json();
 
-            const run = 1;
-            const unlockedDeck = INITIAL_UNLOCKED_DECK;
-            const newTraits: AdventurerTraits = {
-                offense: Math.floor(Math.random() * 81) + 10,
-                risk: Math.floor(Math.random() * 81) + 10,
-                expertise: 0,
-            };
-            const newAdventurer: Adventurer = {
-                ...BASE_ADVENTURER_STATS,
-                interest: 100,
-                traits: newTraits,
-                inventory: { weapon: null, armor: null, potions: [] },
-            };
-            const runDeck = generateRunDeck(unlockedDeck, this._allItems);
-            const hand = runDeck.slice(0, HAND_SIZE);
-            const availableDeck = runDeck.slice(HAND_SIZE);
-
+            // Prepare a minimal initial state to bootstrap the first run
             this.gameState = {
-                phase: 'DESIGNER_CHOOSING_LOOT',
+                phase: 'LOADING', // Temporary phase
                 designer: { balancePoints: 0 },
-                adventurer: newAdventurer,
-                unlockedDeck: unlockedDeck,
-                availableDeck: availableDeck,
-                hand: hand,
+                adventurer: { // Dummy adventurer to satisfy startNewRun
+                    ...BASE_ADVENTURER_STATS,
+                    interest: 0,
+                    traits: { offense: 0, risk: 0, expertise: 0 }, // expertise: 0 for first run
+                    inventory: { weapon: null, armor: null, potions: [] },
+                },
+                unlockedDeck: INITIAL_UNLOCKED_DECK,
+                availableDeck: [],
+                hand: [],
                 shopItems: [],
                 offeredLoot: [],
-                feedback: 'A new adventurer enters the dungeon!',
-                log: [`--- Starting Run ${run} ---`],
-                run: run,
-                floor: 1,
+                feedback: '',
+                log: [],
+                run: 1, // This is for the first run
+                floor: 0,
                 gameOver: { isOver: false, reason: '' },
             };
+
+            // Start the first run, this will set up adventurer, deck, hand, etc.
+            this.startNewRun();
+
         } catch (e: any) {
             this.error = e.message || "An unknown error occurred while loading game data.";
             this._emit('error', null);

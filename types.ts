@@ -38,6 +38,7 @@ export interface LootChoice {
 }
 
 export type GamePhase = 
+    | 'LOADING'
     | 'DESIGNER_CHOOSING_LOOT' 
     | 'AWAITING_ADVENTURER_CHOICE' 
     | 'DESIGNER_CHOOSING_DIFFICULTY'

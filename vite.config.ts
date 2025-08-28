@@ -2,7 +2,7 @@ import path from 'path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-      base: '/rogulus/',
+      base: '/',
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),
