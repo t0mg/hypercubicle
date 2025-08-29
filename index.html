@@ -4,55 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rogue Steward</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              'brand-bg': '#1a1a2e',
-              'brand-surface': '#16213e',
-              'brand-primary': '#0f3460',
-              'brand-secondary': '#e94560',
-              'brand-text': '#dcdcdc',
-              'brand-text-muted': '#a0a0a0',
-              'brand-interest': '#f59e0b',
-              'rarity-common': '#9ca3af',
-              'rarity-uncommon': '#22c55e',
-              'rarity-rare': '#3b82f6',
-            },
-            fontFamily: {
-              sans: ['"Inter"', 'sans-serif'],
-              serif: ['"Georgia"', 'serif'],
-            },
-                          keyframes: {
-                'fade-in': {
-                    '0%': { opacity: '0', transform: 'scale(0.95)' },
-                    '100%': { opacity: '1', transform: 'scale(1)' },
-                },
-                'fade-in-up': {
-                    '0%': { opacity: '0', transform: 'translateY(20px)' },
-                    '100%': { opacity: '1', transform: 'translateY(0)' },
-                },
-                'newly-drafted-animation': {
-                    '0%': { boxShadow: '0 0 0 0 rgba(255, 215, 0, 0)', transform: 'scale(1.0)' },
-                    '50%': { boxShadow: '0 0 10px 5px rgba(255, 215, 0, 0.5)', transform: 'scale(1.05)' },
-                    '100%': { boxShadow: '0 0 0 0 rgba(255, 215, 0, 0)', transform: 'scale(1.0)' },
-                },
-            },
-            animation: {
-                'fade-in': 'fade-in 0.3s ease-out forwards',
-                'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
-                'newly-drafted': 'newly-drafted-animation 1s ease-in-out',
-            }
-          },
-        },
-      };
-    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/index.css">
 </head>
   <body class="bg-brand-bg text-brand-text font-sans">
     <div id="app"></div>

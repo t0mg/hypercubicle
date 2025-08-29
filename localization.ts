@@ -2,7 +2,7 @@ let translations: any = {};
 
 async function loadTranslations(lang: string) {
     try {
-        const response = await fetch(`/locales/${lang}.json`);
+        const response = await fetch(`${import.meta.env.BASE_URL}locales/${lang}.json`);
         if (!response.ok) {
             throw new Error(`Could not load ${lang}.json`);
         }
