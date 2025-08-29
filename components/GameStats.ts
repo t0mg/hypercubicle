@@ -3,7 +3,7 @@ import { t } from '../localization';
 export class GameStats extends HTMLElement {
     private _balancePoints: number = 0;
     private _run: number = 0;
-    private _floor: number = 0;
+    private _room: number = 0;
     private _deckSize: number = 0;
 
     constructor() {
@@ -11,7 +11,7 @@ export class GameStats extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['balance-points', 'run', 'floor', 'deck-size'];
+        return ['balance-points', 'run', 'room', 'deck-size'];
     }
 
     attributeChangedCallback(name: string, oldValue: string, newValue: string) {
@@ -22,8 +22,8 @@ export class GameStats extends HTMLElement {
             case 'run':
                 this._run = Number(newValue);
                 break;
-            case 'floor':
-                this._floor = Number(newValue);
+            case 'room':
+                this._room = Number(newValue);
                 break;
             case 'deck-size':
                 this._deckSize = Number(newValue);
@@ -48,8 +48,8 @@ export class GameStats extends HTMLElement {
                     <p class="text-2xl font-bold text-white">${this._run}</p>
                 </div>
                 <div>
-                    <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.floor')}</span>
-                    <p class="text-2xl font-bold text-white">${this._floor}</p>
+                    <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.room')}</span>
+                    <p class="text-2xl font-bold text-white">${this._room}</p>
                 </div>
                 <div>
                     <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.deck')}</span>

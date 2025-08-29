@@ -145,8 +145,8 @@ export class GameEngine {
     return { choice, reason, logs };
   }
 
-  private _getDebugEncounterOutcome(adventurer: Adventurer, floor: number, debugParams: { baseDamage: number, difficultyFactor: number }): { newAdventurer: Adventurer; feedback: string; damageTaken: number; logs: string[]; } {
-    const logs: string[] = [`--- DEBUG Encounter: Floor ${floor} ---`];
+  private _getDebugEncounterOutcome(adventurer: Adventurer, room: number, debugParams: { baseDamage: number, difficultyFactor: number }): { newAdventurer: Adventurer; feedback: string; damageTaken: number; logs: string[]; } {
+    const logs: string[] = [`--- DEBUG Encounter: Room ${room} ---`];
     let modifiableAdventurer = JSON.parse(JSON.stringify(adventurer));
     let preBattleFeedback = "";
 
@@ -224,7 +224,7 @@ export class GameEngine {
       feedback: t('game_engine.new_adventurer'),
       log: [`--- Starting New Game (Run 1) ---`],
       run: 1,
-      floor: 1,
+      room: 1,
       gameOver: { isOver: false, reason: '' },
     };
     this._emit('state-change', this.gameState);
@@ -250,7 +250,7 @@ export class GameEngine {
       phase: 'DESIGNER_CHOOSING_DIFFICULTY',
       availableDeck: availableDeck,
       hand: hand,
-      floor: 1,
+      room: 1,
       feedback: t('game_engine.adventurer_returns'),
       log: [...this.gameState.log, `--- Starting Run ${this.gameState.run} ---`],
       gameOver: { isOver: false, reason: '' },
@@ -289,7 +289,7 @@ export class GameEngine {
 
       // Mark new cards
       drawnCards.forEach(c => {
-        c.draftedFloor = this.gameState!.floor;
+        c.draftedRoom = this.gameState!.room;
         c.justDrafted = true;
       });
 
@@ -313,7 +313,7 @@ export class GameEngine {
         newInterest = Math.max(0, this.gameState.adventurer.interest - 10);
       }
 
-      const newFloor = this.gameState.floor + 1;
+      const newRoom = this.gameState.room + 1;
       const newBalancePoints = this.gameState.designer.balancePoints + BP_PER_FLOOR;
 
       this.gameState = {
@@ -324,7 +324,7 @@ export class GameEngine {
         availableDeck: newDeck,
         hand: newHand,
         log: [...this.gameState.log, ...logs],
-        floor: newFloor,
+        room: newRoom,
         designer: { balancePoints: newBalancePoints },
       };
       this._emit('state-change', this.gameState);
@@ -341,7 +341,7 @@ export class GameEngine {
     setTimeout(() => {
       if (!this.gameState || this.gameState.phase !== 'AWAITING_ENCOUNTER_FEEDBACK' || !this.gameState.debugEncounterParams) return;
 
-      const { newAdventurer, feedback: encounterFeedback, logs: encounterLogs } = this._getDebugEncounterOutcome(this.gameState.adventurer, this.gameState.floor, this.gameState.debugEncounterParams);
+      const { newAdventurer, feedback: encounterFeedback, logs: encounterLogs } = this._getDebugEncounterOutcome(this.gameState.adventurer, this.gameState.room, this.gameState.debugEncounterParams);
 
       const newLog = [...this.gameState.log, ...encounterLogs];
 
@@ -352,7 +352,7 @@ export class GameEngine {
           adventurer: newAdventurer,
           designer: { balancePoints: this.gameState.designer.balancePoints + BP_PER_FLOOR },
           phase: 'RUN_OVER',
-          gameOver: { isOver: true, reason: t('game_engine.adventurer_fell', { floor: this.gameState.floor, run: this.gameState.run }) },
+          gameOver: { isOver: true, reason: t('game_engine.adventurer_fell', { room: this.gameState.room, run: this.gameState.run }) },
           log: newLog
         };
         this._emit('state-change', this.gameState);
@@ -365,7 +365,7 @@ export class GameEngine {
           adventurer: newAdventurer,
           designer: { balancePoints: this.gameState.designer.balancePoints + BP_PER_FLOOR },
           phase: 'RUN_OVER',
-          gameOver: { isOver: true, reason: t('game_engine.adventurer_bored', { floor: this.gameState.floor, run: this.gameState.run }) },
+          gameOver: { isOver: true, reason: t('game_engine.adventurer_bored', { room: this.gameState.room, run: this.gameState.run }) },
           log: newLog
         };
         this._emit('state-change', this.gameState);
@@ -380,7 +380,7 @@ export class GameEngine {
           ...this.gameState,
           phase: 'DESIGNER_CHOOSING_DIFFICULTY',
           adventurer: newAdventurer,
-          floor: this.gameState.floor + 1,
+          room: this.gameState.room + 1,
           designer: { balancePoints: this.gameState.designer.balancePoints + BP_PER_FLOOR },
           feedback: feedback,
           log: newLog,
@@ -413,7 +413,7 @@ export class GameEngine {
       ...this.gameState,
       phase: 'SHOP',
       run: nextRun,
-      floor: 0,
+      room: 0,
       shopItems: shuffleArray(shopItems).slice(0, 4),
       gameOver: { isOver: false, reason: '' },
       feedback: t('game_engine.welcome_to_workshop')
