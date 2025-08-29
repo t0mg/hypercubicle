@@ -20,63 +20,81 @@ import { initLocalization, t } from './localization';
 const appElement = document.getElementById('app');
 
 if (!appElement) {
-    throw new Error("Could not find app element to mount to");
+  throw new Error("Could not find app element to mount to");
 }
 
 const engine = new GameEngine();
+engine.on('state-change', (newState) => {
+  if (engine.isLoading) {
+    appElement.innerHTML = `<div>${t('global.loading_game_data')}</div>`;
+    return;
+  }
+  if (engine.error) {
+    appElement.innerHTML = `
+                <div class="min-h-screen flex items-center justify-center p-4">
+                    <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-secondary">
+                         <h2 class="text-2xl font-bold text-brand-secondary mb-4">${t('global.an_error_occurred')}</h2>
+                         <p class="text-brand-text">${engine.error}</p>
+                    </div>
+                </div>
+            `;
+    return;
+  }
+  render(newState);
+});
 
 const getLoadingText = (state: GameState) => {
-    if (!state) return t('global.initializing');
-    switch(state.phase) {
-        case 'AWAITING_ADVENTURER_CHOICE':
-            return t('main.adventurer_considering_offer');
-        case 'AWAITING_ENCOUNTER_FEEDBACK':
-            return t('main.adventurer_facing_encounter');
-        default:
-            return t('global.loading');
-    }
+  if (!state) return t('global.initializing');
+  switch (state.phase) {
+    case 'AWAITING_ADVENTURER_CHOICE':
+      return t('main.adventurer_considering_offer');
+    case 'AWAITING_ENCOUNTER_FEEDBACK':
+      return t('main.adventurer_facing_encounter');
+    default:
+      return t('global.loading');
+  }
 };
 
 const renderGamePhasePanel = (state: GameState) => {
-    switch (state.phase) {
-        case 'DESIGNER_CHOOSING_LOOT':
-            return `<div class="lg:col-span-3"><loot-choice-panel></loot-choice-panel></div>`;
-        case 'DESIGNER_CHOOSING_DIFFICULTY':
-            return `<div class="lg:col-span-3"><debug-encounter-panel></debug-encounter-panel></div>`;
-        case 'AWAITING_ADVENTURER_CHOICE':
-        case 'AWAITING_ENCOUNTER_FEEDBACK':
-            return `<div class="lg:col-span-3"><loading-indicator text="${getLoadingText(state)}"></loading-indicator></div>`;
-        default:
-            return `<div class="lg:col-span-3"><div>${t('main.unhandled_game_phase', { phase: state.phase })}</div></div>`;
-    }
+  switch (state.phase) {
+    case 'DESIGNER_CHOOSING_LOOT':
+      return `<div class="lg:col-span-3"><loot-choice-panel></loot-choice-panel></div>`;
+    case 'DESIGNER_CHOOSING_DIFFICULTY':
+      return `<div class="lg:col-span-3"><debug-encounter-panel></debug-encounter-panel></div>`;
+    case 'AWAITING_ADVENTURER_CHOICE':
+    case 'AWAITING_ENCOUNTER_FEEDBACK':
+      return `<div class="lg:col-span-3"><loading-indicator text="${getLoadingText(state)}"></loading-indicator></div>`;
+    default:
+      return `<div class="lg:col-span-3"><div>${t('main.unhandled_game_phase', { phase: state.phase })}</div></div>`;
+  }
 }
 
 const render = (state: GameState | null) => {
-    if (!state) {
-        appElement.innerHTML = `<div>${t('global.loading')}</div>`;
-        return;
-    }
+  if (!state) {
+    appElement.innerHTML = `<div>${t('global.loading')}</div>`;
+    return;
+  }
 
-    if (state.phase === 'SHOP') {
-        appElement.innerHTML = `<workshop-screen></workshop-screen>`;
-        const workshopEl = document.querySelector('workshop-screen') as Workshop;
-        if (workshopEl) {
-            workshopEl.items = state.shopItems;
-            workshopEl.balancePoints = state.designer.balancePoints;
-        }
-        return;
+  if (state.phase === 'SHOP') {
+    appElement.innerHTML = `<workshop-screen></workshop-screen>`;
+    const workshopEl = document.querySelector('workshop-screen') as Workshop;
+    if (workshopEl) {
+      workshopEl.items = state.shopItems;
+      workshopEl.balancePoints = state.designer.balancePoints;
     }
+    return;
+  }
 
-    const gameOverHtml = state.gameOver.isOver
-        ? `<game-over-screen
+  const gameOverHtml = state.gameOver.isOver
+    ? `<game-over-screen
                 final-bp="${state.designer.balancePoints}"
                 reason="${state.gameOver.reason}"
                 run="${state.run}"
                 decision="${engine.getAdventurerEndRunDecision()}"
             ></game-over-screen>`
-        : '';
+    : '';
 
-    appElement.innerHTML = `
+  appElement.innerHTML = `
         <div class="min-h-screen p-4 md:p-6 lg:p-8 flex flex-col items-center">
             ${gameOverHtml}
             <div class="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -97,81 +115,65 @@ const render = (state: GameState | null) => {
         </div>
     `;
 
-    const adventurerStatusEl = document.querySelector('adventurer-status') as AdventurerStatus;
-    if (adventurerStatusEl) {
-        adventurerStatusEl.adventurer = state.adventurer;
-    }
+  const adventurerStatusEl = document.querySelector('adventurer-status') as AdventurerStatus;
+  if (adventurerStatusEl) {
+    adventurerStatusEl.adventurer = state.adventurer;
+  }
 
-    const lootChoicePanelEl = document.querySelector('loot-choice-panel') as LootChoicePanel;
-    if (lootChoicePanelEl) {
-        lootChoicePanelEl.choices = state.hand;
-        lootChoicePanelEl.disabled = false; // Or determine from state
-    }
+  const lootChoicePanelEl = document.querySelector('loot-choice-panel') as LootChoicePanel;
+  if (lootChoicePanelEl) {
+    lootChoicePanelEl.choices = state.hand;
+    lootChoicePanelEl.disabled = false; // Or determine from state
+  }
 
-    const debugEncounterPanelEl = document.querySelector('debug-encounter-panel') as DebugEncounterPanel;
-    if (debugEncounterPanelEl) {
-        const defaultBaseDamage = Math.max(1, 15 - Math.floor(state.adventurer.power / 4) + Math.floor(state.floor * 1.5));
-        debugEncounterPanelEl.defaultBaseDamage = defaultBaseDamage;
-    }
+  const debugEncounterPanelEl = document.querySelector('debug-encounter-panel') as DebugEncounterPanel;
+  if (debugEncounterPanelEl) {
+    const defaultBaseDamage = Math.max(1, 15 - Math.floor(state.adventurer.power / 4) + Math.floor(state.floor * 1.5));
+    debugEncounterPanelEl.defaultBaseDamage = defaultBaseDamage;
+  }
 
-    const debugLogEl = document.querySelector('debug-log') as DebugLog;
-    if (debugLogEl) {
-        debugLogEl.logs = state.log;
-        debugLogEl.traits = state.adventurer.traits;
-    }
+  const debugLogEl = document.querySelector('debug-log') as DebugLog;
+  if (debugLogEl) {
+    debugLogEl.logs = state.log;
+    debugLogEl.traits = state.adventurer.traits;
+  }
 };
 
 appElement.addEventListener('present-offer', (e: Event) => {
-    const { ids } = (e as CustomEvent).detail;
-    engine.presentOffer(ids);
+  const { ids } = (e as CustomEvent).detail;
+  engine.presentOffer(ids);
 });
 
 appElement.addEventListener('run-encounter', (e: Event) => {
-    const { params } = (e as CustomEvent).detail;
-    engine.runDebugEncounter(params);
+  const { params } = (e as CustomEvent).detail;
+  engine.runDebugEncounter(params);
 });
 
 appElement.addEventListener('enter-workshop', () => {
-    engine.enterWorkshop();
+  engine.enterWorkshop();
 });
 
 appElement.addEventListener('purchase-item', (e: Event) => {
-    const { itemId } = (e as CustomEvent).detail;
-    engine.purchaseItem(itemId);
+  const { itemId } = (e as CustomEvent).detail;
+  engine.purchaseItem(itemId);
 });
 
 appElement.addEventListener('start-run', () => {
-    engine.startNewRun();
+  engine.startNewRun();
 });
 
 appElement.addEventListener('start-game', () => {
-    engine.startNewGame();
+  engine.startNewGame();
 });
 
 async function main() {
-    // Initial render for loading state
-    appElement.innerHTML = `<div>${t('global.initializing')}</div>`;
+  await initLocalization();
+  await engine.init();
 
-    await initLocalization();
+  // Initial render for loading state
+  appElement.innerHTML = `<div>${t('global.initializing')}</div>`;
 
-    engine.on('state-change', (newState) => {
-        if (engine.isLoading) {
-            appElement.innerHTML = `<div>${t('global.loading_game_data')}</div>`;
-            return;
-        }
-        if (engine.error) {
-            appElement.innerHTML = `
-                <div class="min-h-screen flex items-center justify-center p-4">
-                    <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-secondary">
-                         <h2 class="text-2xl font-bold text-brand-secondary mb-4">${t('global.an_error_occurred')}</h2>
-                         <p class="text-brand-text">${engine.error}</p>
-                    </div>
-                </div>
-            `;
-            return;
-        }
-        render(newState);
-    });
+  engine.startNewGame();
 }
 
 main();
