@@ -15,6 +15,7 @@ import './components/DebugEncounterPanel.ts';
 import './components/DebugLog.ts';
 import './components/GameOverScreen.ts';
 import './components/Workshop.ts';
+import { initLocalization, t } from './localization';
 
 const appElement = document.getElementById('app');
 
@@ -25,14 +26,14 @@ if (!appElement) {
 const engine = new GameEngine();
 
 const getLoadingText = (state: GameState) => {
-    if (!state) return "Initializing...";
+    if (!state) return t('global.initializing');
     switch(state.phase) {
         case 'AWAITING_ADVENTURER_CHOICE':
-            return "Adventurer is considering your offer...";
+            return t('main.adventurer_considering_offer');
         case 'AWAITING_ENCOUNTER_FEEDBACK':
-            return "Adventurer is facing the encounter...";
+            return t('main.adventurer_facing_encounter');
         default:
-            return "Loading...";
+            return t('global.loading');
     }
 };
 
@@ -46,13 +47,13 @@ const renderGamePhasePanel = (state: GameState) => {
         case 'AWAITING_ENCOUNTER_FEEDBACK':
             return `<div class="lg:col-span-3"><loading-indicator text="${getLoadingText(state)}"></loading-indicator></div>`;
         default:
-            return `<div class="lg:col-span-3"><div>Unhandled game phase: ${state.phase}</div></div>`;
+            return `<div class="lg:col-span-3"><div>${t('main.unhandled_game_phase', { phase: state.phase })}</div></div>`;
     }
 }
 
 const render = (state: GameState | null) => {
     if (!state) {
-        appElement.innerHTML = `<div>Loading...</div>`;
+        appElement.innerHTML = `<div>${t('global.loading')}</div>`;
         return;
     }
 
@@ -147,24 +148,30 @@ appElement.addEventListener('start-game', () => {
     engine.startNewGame();
 });
 
-engine.on('state-change', (newState) => {
-    if (engine.isLoading) {
-        appElement.innerHTML = `<div>Loading Game Data...</div>`;
-        return;
-    }
-    if (engine.error) {
-        appElement.innerHTML = `
-            <div class="min-h-screen flex items-center justify-center p-4">
-                <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-secondary">
-                     <h2 class="text-2xl font-bold text-brand-secondary mb-4">An Error Occurred</h2>
-                     <p class="text-brand-text">${engine.error}</p>
-                </div>
-            </div>
-        `;
-        return;
-    }
-    render(newState);
-});
+async function main() {
+    // Initial render for loading state
+    appElement.innerHTML = `<div>${t('global.initializing')}</div>`;
 
-// Initial render for loading state
-appElement.innerHTML = `<div>Initializing...</div>`;
+    await initLocalization();
+
+    engine.on('state-change', (newState) => {
+        if (engine.isLoading) {
+            appElement.innerHTML = `<div>${t('global.loading_game_data')}</div>`;
+            return;
+        }
+        if (engine.error) {
+            appElement.innerHTML = `
+                <div class="min-h-screen flex items-center justify-center p-4">
+                    <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-secondary">
+                         <h2 class="text-2xl font-bold text-brand-secondary mb-4">${t('global.an_error_occurred')}</h2>
+                         <p class="text-brand-text">${engine.error}</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        render(newState);
+    });
+}
+
+main();

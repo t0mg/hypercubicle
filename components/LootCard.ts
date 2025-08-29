@@ -1,4 +1,6 @@
 import type { LootChoice } from '../types';
+import { t } from '../localization';
+import { t } from '../localization';
 
 const rarityColorMap: { [key: string]: string } = {
     Common: 'text-rarity-common',
@@ -92,9 +94,9 @@ export class LootCard extends HTMLElement {
                 <p class="text-xs uppercase tracking-wider mb-3 ${rarityColor}">${this._item.rarity}</p>
                 <div class="border-t border-gray-700 my-2"></div>
                 <div class="space-y-1 text-brand-text">
-                    ${this._item.stats.hp ? StatChange('Health', this._item.stats.hp) : ''}
-                    ${this._item.stats.maxHp ? StatChange('Max HP', this._item.stats.maxHp) : ''}
-                    ${this._item.stats.power ? StatChange('Power', this._item.stats.power) : ''}
+                    ${this._item.stats.hp ? StatChange(t('global.health'), this._item.stats.hp) : ''}
+                    ${this._item.stats.maxHp ? StatChange(t('global.max_hp'), this._item.stats.maxHp) : ''}
+                    ${this._item.stats.power ? StatChange(t('global.power'), this._item.stats.power) : ''}
                 </div>
             </div>
         `;

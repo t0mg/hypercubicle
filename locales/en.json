@@ -1,0 +1,85 @@
+{
+  "global": {
+    "health": "Health",
+    "max_hp": "Max HP",
+    "power": "Power",
+    "bp": "BP",
+    "run": "Run",
+    "floor": "Floor",
+    "none": "None",
+    "buy": "Buy",
+    "loading": "Loading...",
+    "initializing": "Initializing...",
+    "loading_game_data": "Loading Game Data...",
+    "an_error_occurred": "An Error Occurred",
+    "error_loading_items": "Failed to load items.json: {statusText}",
+    "unknown_error": "An unknown error occurred while loading game data."
+  },
+  "main": {
+    "adventurer_considering_offer": "Adventurer is considering your offer...",
+    "adventurer_facing_encounter": "Adventurer is facing the encounter...",
+    "unhandled_game_phase": "Unhandled game phase: {phase}"
+  },
+  "adventurer_status": {
+    "title": "Adventurer's Status",
+    "interest": "Interest",
+    "inventory": "Inventory",
+    "weapon": "Weapon",
+    "armor": "Armor",
+    "potions": "Potions",
+    "pwr": "Pwr",
+    "hp": "HP",
+    "potions_held": "{count} held"
+  },
+  "debug_encounter_panel": {
+    "title": "Debug Encounter",
+    "description": "Override encounter parameters for testing.",
+    "base_damage": "Base Damage",
+    "difficulty_factor": "Difficulty Factor",
+    "run_encounter": "Run Encounter"
+  },
+  "debug_log": {
+    "title": "Game Log & Debug Info",
+    "offense": "OFFENSE",
+    "risk": "RISK",
+    "expertise": "EXPERTISE"
+  },
+  "game_over_screen": {
+    "run_complete": "Run Complete!",
+    "default_reason": "The run has ended.",
+    "final_bp": "Final BP: ",
+    "adventurer_considers_fate": "The adventurer considers their fate",
+    "continue_quote": "\"I will go on.\"",
+    "continue_decision": "The adventurer decides to press on, ready for another run!",
+    "enter_workshop": "Enter Workshop",
+    "retire_quote": "\"I have seen enough.\"",
+    "retire_decision": "The adventurer has lost motivation, and decides to retire.",
+    "recruit_new_adventurer": "Recruit New Adventurer"
+  },
+  "loot_choice_panel": {
+    "title": "Offer Rewards (Choose 2 to 3)",
+    "present_offer": "Present Offer"
+  },
+  "workshop": {
+    "title": "The Workshop",
+    "description": "Spend your Balance Points to add new items to your permanent collection.",
+    "balance_points": "Balance Points: ",
+    "no_new_items": "No new items available for purchase this time.",
+    "begin_next_run": "Begin Next Run"
+  },
+  "game_engine": {
+    "adventurer_declines_offer": "They examine your offers but decide to take nothing.",
+    "adventurer_accepts_offer": "They pick the {itemName}.",
+    "adventurer_drinks_potion": "Sensing danger, they drink a {potionName}.",
+    "easy_fight": "An easy fight. Too easy...",
+    "worthy_challenge": "A worthy, but simple challenge.",
+    "great_battle": "A great battle! They feel alive!",
+    "too_close_for_comfort": "That was far too close for comfort.",
+    "new_adventurer": "A new adventurer enters the dungeon!",
+    "adventurer_returns": "The adventurer returns for another run!",
+    "adventurer_fell": "The adventurer fell on floor {floor} of run {run}.",
+    "adventurer_bored": "The adventurer grew bored on floor {floor} of run {run}, and quit.",
+    "empty_hand": "The adventurer waits for your decision, unaware that you have nothing left to offer.",
+    "welcome_to_workshop": "Welcome back. Spend your Balance Points wisely."
+  }
+}

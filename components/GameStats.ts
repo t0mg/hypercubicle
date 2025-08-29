@@ -1,3 +1,5 @@
+import { t } from '../localization';
+
 export class GameStats extends HTMLElement {
     private _balancePoints: number = 0;
     private _run: number = 0;
@@ -34,15 +36,15 @@ export class GameStats extends HTMLElement {
         this.innerHTML = `
             <div class="bg-brand-primary p-4 rounded-lg shadow-lg flex justify-around text-center">
                 <div>
-                    <span class="text-sm text-brand-text-muted uppercase tracking-wider">BP</span>
+                    <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.bp')}</span>
                     <p class="text-2xl font-bold text-white">${this._balancePoints}</p>
                 </div>
                 <div>
-                    <span class="text-sm text-brand-text-muted uppercase tracking-wider">Run</span>
+                    <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.run')}</span>
                     <p class="text-2xl font-bold text-white">${this._run}</p>
                 </div>
                 <div>
-                    <span class="text-sm text-brand-text-muted uppercase tracking-wider">Floor</span>
+                    <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.floor')}</span>
                     <p class="text-2xl font-bold text-white">${this._floor}</p>
                 </div>
             </div>

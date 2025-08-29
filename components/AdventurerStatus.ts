@@ -1,4 +1,5 @@
 import type { Adventurer } from '../types';
+import { t } from '../localization';
 
 const HealthIcon = () => `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-red-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" /></svg>`;
 const PowerIcon = () => `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-blue-400" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M240-400q0 68.92 36.77 126.58 36.77 57.65 98.85 86.5-7.93-11.93-11.77-24.77Q360-224.54 360-238q0-23.54 9.31-44.62 9.31-21.07 26.15-37.92L480-403.85l85.31 83.31q16.84 16.85 25.77 37.92Q600-261.54 600-238q0 13.46-3.85 26.31-3.84 12.84-11.77 24.77 62.08-28.85 98.85-86.5Q720-331.08 720-400q0-50-18.5-94.5T648-574q-20 13-42 19.5t-45 6.5q-62.77 0-108.27-41-45.5-41-51.73-102.54-39 32.23-69 67.73-30 35.5-50.5 72.77-20.5 37.27-31 75.27-10.5 38-10.5 75.77Zm240 52-57 56q-11 11-17 25t-6 29q0 32 23.5 55t56.5 23q33 0 56.5-23t23.5-55q0-16-6-29.5T537-292l-57-56Zm-40-420.46V-708q0 50.92 35.04 85.46Q510.08-588 561-588q18.77 0 36.58-6.35 17.8-6.34 33.65-18.27l17.23-13.53q52.46 38.92 82 98.92T760-400q0 117.08-81.46 198.54T480-120q-117.08 0-198.54-81.46T200-400q0-102.85 64.58-201.15Q329.15-699.46 440-768.46Z"/></svg>`;
@@ -37,12 +38,12 @@ export class AdventurerStatus extends HTMLElement {
 
         this.innerHTML = `
             <div class="bg-brand-surface p-6 rounded-lg shadow-xl border border-gray-700">
-                <h2 class="text-2xl font-bold font-serif mb-4 text-center text-white">Adventurer's Status</h2>
+                <h2 class="text-2xl font-bold font-serif mb-4 text-center text-white">${t('adventurer_status.title')}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-4">
                         <div>
                             <div class="flex justify-between items-center mb-1">
-                                <div class="flex items-center">${HealthIcon()} <span class="font-semibold text-lg">Health</span></div>
+                                <div class="flex items-center">${HealthIcon()} <span class="font-semibold text-lg">${t('global.health')}</span></div>
                                 <span class="font-mono text-lg">${this._adventurer.hp} / ${this._adventurer.maxHp}</span>
                             </div>
                             <div class="w-full bg-gray-700 rounded-full h-4">
@@ -51,7 +52,7 @@ export class AdventurerStatus extends HTMLElement {
                         </div>
                         <div>
                             <div class="flex justify-between items-center mb-1">
-                                <div class="flex items-center">${InterestIcon()} <span class="font-semibold text-lg">Interest</span></div>
+                                <div class="flex items-center">${InterestIcon()} <span class="font-semibold text-lg">${t('adventurer_status.interest')}</span></div>
                                 <span class="font-mono text-lg">${this._adventurer.interest}%</span>
                             </div>
                             <div class="w-full bg-gray-700 rounded-full h-4">
@@ -61,24 +62,24 @@ export class AdventurerStatus extends HTMLElement {
                     </div>
                     <div class="flex items-center justify-center bg-brand-primary p-3 rounded-md">
                         ${PowerIcon()}
-                        <span class="font-semibold text-lg mr-4">Power</span>
+                        <span class="font-semibold text-lg mr-4">${t('global.power')}</span>
                         <span class="font-mono text-2xl font-bold text-white">${this._adventurer.power}</span>
                     </div>
                 </div>
                 <div class="border-t border-gray-700 my-4"></div>
-                <h3 class="text-lg font-bold font-serif mb-3 text-center text-white">Inventory</h3>
+                <h3 class="text-lg font-bold font-serif mb-3 text-center text-white">${t('adventurer_status.inventory')}</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                     <div class="bg-brand-primary/50 p-3 rounded-lg">
-                        <div class="flex items-center justify-center text-brand-text-muted mb-1">${WeaponIcon()} <span class="ml-2 font-semibold">Weapon</span></div>
-                        ${this._adventurer.inventory.weapon ? `<div><p class="text-white font-semibold">${this._adventurer.inventory.weapon.name}</p><p class="text-sm text-brand-text-muted">Pwr: ${this._adventurer.inventory.weapon.stats.power || 0}${this._adventurer.inventory.weapon.stats.maxHp ? `, HP: ${this._adventurer.inventory.weapon.stats.maxHp}` : ''}</p></div>` : `<p class="text-brand-text-muted italic">None</p>`}
+                        <div class="flex items-center justify-center text-brand-text-muted mb-1">${WeaponIcon()} <span class="ml-2 font-semibold">${t('adventurer_status.weapon')}</span></div>
+                        ${this._adventurer.inventory.weapon ? `<div><p class="text-white font-semibold">${this._adventurer.inventory.weapon.name}</p><p class="text-sm text-brand-text-muted">${t('adventurer_status.pwr')}: ${this._adventurer.inventory.weapon.stats.power || 0}${this._adventurer.inventory.weapon.stats.maxHp ? `, ${t('adventurer_status.hp')}: ${this._adventurer.inventory.weapon.stats.maxHp}` : ''}</p></div>` : `<p class="text-brand-text-muted italic">${t('global.none')}</p>`}
                     </div>
                     <div class="bg-brand-primary/50 p-3 rounded-lg">
-                        <div class="flex items-center justify-center text-brand-text-muted mb-1">${ArmorIcon()} <span class="ml-2 font-semibold">Armor</span></div>
-                        ${this._adventurer.inventory.armor ? `<div><p class="text-white font-semibold">${this._adventurer.inventory.armor.name}</p><p class="text-sm text-brand-text-muted">HP: ${this._adventurer.inventory.armor.stats.maxHp || 0}${this._adventurer.inventory.armor.stats.power ? `, Pwr: ${this._adventurer.inventory.armor.stats.power}` : ''}</p></div>` : `<p class="text-brand-text-muted italic">None</p>`}
+                        <div class="flex items-center justify-center text-brand-text-muted mb-1">${ArmorIcon()} <span class="ml-2 font-semibold">${t('adventurer_status.armor')}</span></div>
+                        ${this._adventurer.inventory.armor ? `<div><p class="text-white font-semibold">${this._adventurer.inventory.armor.name}</p><p class="text-sm text-brand-text-muted">${t('adventurer_status.hp')}: ${this._adventurer.inventory.armor.stats.maxHp || 0}${this._adventurer.inventory.armor.stats.power ? `, ${t('adventurer_status.pwr')}: ${this._adventurer.inventory.armor.stats.power}` : ''}</p></div>` : `<p class="text-brand-text-muted italic">${t('global.none')}</p>`}
                     </div>
                     <div class="bg-brand-primary/50 p-3 rounded-lg">
-                        <div class="flex items-center justify-center text-brand-text-muted mb-1">${PotionIcon()} <span class="ml-2 font-semibold">Potions</span></div>
-                        ${this._adventurer.inventory.potions.length > 0 ? `<p class="text-white font-semibold">${this._adventurer.inventory.potions.length} held</p>` : `<p class="text-brand-text-muted italic">None</p>`}
+                        <div class="flex items-center justify-center text-brand-text-muted mb-1">${PotionIcon()} <span class="ml-2 font-semibold">${t('adventurer_status.potions')}</span></div>
+                        ${this._adventurer.inventory.potions.length > 0 ? `<p class="text-white font-semibold">${t('adventurer_status.potions_held', { count: this._adventurer.inventory.potions.length })}</p>` : `<p class="text-brand-text-muted italic">${t('global.none')}</p>`}
                     </div>
                 </div>
             </div>

@@ -1,4 +1,5 @@
 import type { AdventurerTraits } from '../types';
+import { t } from '../localization';
 
 export class DebugLog extends HTMLElement {
     private _logs: string[] = [];
@@ -34,19 +35,19 @@ export class DebugLog extends HTMLElement {
 
         this.innerHTML = `
             <div class="w-full bg-black/50 p-4 rounded-lg shadow-inner border border-gray-700">
-                <h4 class="text-sm font-bold text-brand-text-muted uppercase tracking-wider mb-2">Game Log & Debug Info</h4>
+                <h4 class="text-sm font-bold text-brand-text-muted uppercase tracking-wider mb-2">${t('debug_log.title')}</h4>
 
                 <div class="flex justify-around text-center mb-3 p-2 bg-brand-primary/50 rounded-md">
                     <div class="text-xs">
-                        <span class="font-bold text-brand-text-muted block">OFFENSE</span>
+                        <span class="font-bold text-brand-text-muted block">${t('debug_log.offense')}</span>
                         <span class="font-mono text-white text-base">${this._traits.offense}</span>
                     </div>
                     <div class="text-xs">
-                        <span class="font-bold text-brand-text-muted block">RISK</span>
+                        <span class="font-bold text-brand-text-muted block">${t('debug_log.risk')}</span>
                         <span class="font-mono text-white text-base">${this._traits.risk}</span>
                     </div>
                     <div class="text-xs">
-                        <span class="font-bold text-brand-text-muted block">EXPERTISE</span>
+                        <span class="font-bold text-brand-text-muted block">${t('debug_log.expertise')}</span>
                         <span class="font-mono text-white text-base">${this._traits.expertise}</span>
                     </div>
                 </div>
