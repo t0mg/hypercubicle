@@ -1,3 +1,4 @@
+import './index.css';
 import { GameEngine } from './game/engine';
 import type { GameState } from './types';
 import './components/GameStats.ts';
