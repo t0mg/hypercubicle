@@ -1,6 +1,7 @@
 import type { LootChoice } from '../types';
 import './LootCard.ts';
 import { LootCard } from './LootCard.ts';
+import { t } from '../localization';
 
 export class LootChoicePanel extends HTMLElement {
     private _choices: LootChoice[] = [];
@@ -73,7 +74,7 @@ export class LootChoicePanel extends HTMLElement {
 
         this.innerHTML = `
             <div class="w-full">
-                <h3 class="text-xl font-bold text-center mb-4 text-white">Offer Rewards (Choose 2 to 3)</h3>
+                <h3 class="text-xl font-bold text-center mb-4 text-white">${t('loot_choice_panel.title')}</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="loot-card-container">
                     <!-- Loot cards will be inserted here -->
                 </div>
@@ -83,7 +84,7 @@ export class LootChoicePanel extends HTMLElement {
                         ${!canSubmit || this._disabled ? 'disabled' : ''}
                         class="bg-brand-secondary text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:scale-100"
                     >
-                        Present Offer (${this._selectedIds.length}/3)
+                        ${t('loot_choice_panel.present_offer')} (${this._selectedIds.length}/3)
                     </button>
                 </div>
             </div>

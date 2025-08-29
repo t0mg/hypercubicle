@@ -1,4 +1,5 @@
 import type { GamePhase, GameState, LootChoice, Adventurer, AdventurerTraits, AdventurerInventory } from '../types';
+import { t } from '../localization';
 
 // --- CONSTANTS ---
 const INTEREST_THRESHOLD = 15;
@@ -137,10 +138,10 @@ export class GameEngine {
         scoredLoot.sort((a, b) => b.score - a.score);
 
         if (scoredLoot.length === 0 || scoredLoot[0].score < CHOICE_SCORE_THRESHOLD) {
-            return { choice: null, reason: "They examine your offers but decide to take nothing.", logs };
+            return { choice: null, reason: t('game_engine.adventurer_declines_offer'), logs };
         }
         const choice = scoredLoot[0].item;
-        let reason = `They pick the ${choice.name}.`;
+        let reason = t('game_engine.adventurer_accepts_offer', { itemName: choice.name });
         return { choice, reason, logs };
     }
 
@@ -156,7 +157,7 @@ export class GameEngine {
             const potionToUse = modifiableAdventurer.inventory.potions.shift();
             const healedAmount = potionToUse.stats.hp || 0;
             modifiableAdventurer.hp = Math.min(modifiableAdventurer.maxHp, modifiableAdventurer.hp + healedAmount);
-            preBattleFeedback = `Sensing danger, they drink a ${potionToUse.name}. `;
+            preBattleFeedback = t('game_engine.adventurer_drinks_potion', { potionName: potionToUse.name });
         }
 
         let damageTaken = Math.round(debugParams.baseDamage * debugParams.difficultyFactor);
@@ -172,16 +173,16 @@ export class GameEngine {
 
         if (pseudoDifficulty === 'Easy') {
             interestChange = -5 - Math.floor((100 - modifiableAdventurer.traits.risk) / 20);
-            battleFeedback = "An easy fight. Too easy...";
+            battleFeedback = t('game_engine.easy_fight');
         } else if (damageRatio < 0.1) {
             interestChange = -2;
-            battleFeedback = "A worthy, but simple challenge.";
+            battleFeedback = t('game_engine.worthy_challenge');
         } else if (damageRatio < 0.35) {
             interestChange = 5 + Math.floor(modifiableAdventurer.traits.offense / 20) + (pseudoDifficulty === 'Hard' ? 5 : 0);
-            battleFeedback = "A great battle! They feel alive!";
+            battleFeedback = t('game_engine.great_battle');
         } else {
             interestChange = -10 - Math.floor((100 - modifiableAdventurer.traits.risk) / 10);
-            battleFeedback = "That was far too close for comfort.";
+            battleFeedback = t('game_engine.too_close_for_comfort');
         }
 
         modifiableAdventurer.interest = Math.max(0, Math.min(100, modifiableAdventurer.interest + interestChange));
@@ -220,7 +221,7 @@ export class GameEngine {
             hand: hand,
             shopItems: [],
             offeredLoot: [],
-            feedback: 'A new adventurer enters the dungeon!',
+            feedback: t('game_engine.new_adventurer'),
             log: [`--- Starting New Game (Run 1) ---`],
             run: 1,
             floor: 1,
@@ -250,7 +251,7 @@ export class GameEngine {
             availableDeck: availableDeck,
             hand: hand,
             floor: 1,
-            feedback: 'The adventurer returns for another run!',
+            feedback: t('game_engine.adventurer_returns'),
             log: [...this.gameState.log, `--- Starting Run ${this.gameState.run} ---`],
             gameOver: { isOver: false, reason: '' },
         };
@@ -351,7 +352,7 @@ export class GameEngine {
                     adventurer: newAdventurer,
                     designer: { balancePoints: this.gameState.designer.balancePoints + BP_PER_FLOOR },
                     phase: 'RUN_OVER',
-                    gameOver: { isOver: true, reason: `The adventurer fell on floor ${this.gameState.floor} of run ${this.gameState.run}.` },
+                    gameOver: { isOver: true, reason: t('game_engine.adventurer_fell', { floor: this.gameState.floor, run: this.gameState.run }) },
                     log: newLog
                 };
                 this._emit('state-change', this.gameState);
@@ -364,7 +365,7 @@ export class GameEngine {
                     adventurer: newAdventurer,
                     designer: { balancePoints: this.gameState.designer.balancePoints + BP_PER_FLOOR },
                     phase: 'RUN_OVER',
-                    gameOver: { isOver: true, reason: `The adventurer grew bored on floor ${this.gameState.floor} of run ${this.gameState.run}, and quit.` },
+                    gameOver: { isOver: true, reason: t('game_engine.adventurer_bored', { floor: this.gameState.floor, run: this.gameState.run }) },
                     log: newLog
                 };
                 this._emit('state-change', this.gameState);
@@ -374,7 +375,7 @@ export class GameEngine {
             let feedback = encounterFeedback;
             if (this.gameState.hand && this.gameState.hand.length === 0) {
                 newLog.push("Your hand is empty! The adventurer must press on without new items.");
-                feedback = "The adventurer waits for your decision, unaware that you have nothing left to offer.";
+                feedback = t('game_engine.empty_hand');
                  this.gameState = {
                     ...this.gameState,
                     phase: 'DESIGNER_CHOOSING_DIFFICULTY',
@@ -415,7 +416,7 @@ export class GameEngine {
             floor: 0,
             shopItems: shuffleArray(shopItems).slice(0, 4),
             gameOver: { isOver: false, reason: '' },
-            feedback: "Welcome back. Spend your Balance Points wisely."
+            feedback: t('game_engine.welcome_to_workshop')
         };
         this._emit('state-change', this.gameState);
     }
@@ -463,13 +464,13 @@ export class GameEngine {
         try {
             const response = await fetch('/game/items.json');
             if (!response.ok) {
-                throw new Error(`Failed to load items.json: ${response.statusText}`);
+                throw new Error(t('global.error_loading_items', { statusText: response.statusText }));
             }
             this._allItems = await response.json();
             this.startNewGame();
 
         } catch (e: any) {
-            this.error = e.message || "An unknown error occurred while loading game data.";
+            this.error = e.message || t('global.unknown_error');
             this._emit('error', null);
         } finally {
             this.isLoading = false;

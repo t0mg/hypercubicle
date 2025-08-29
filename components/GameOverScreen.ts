@@ -1,3 +1,5 @@
+import { t } from '../localization';
+
 export class GameOverScreen extends HTMLElement {
     private state: 'initial' | 'revealing' | 'revealed' = 'initial';
     private decision: 'continue' | 'retire' | null = null;
@@ -32,7 +34,7 @@ export class GameOverScreen extends HTMLElement {
 
     render() {
         const finalBP = this.getAttribute('final-bp') || 0;
-        const reason = this.getAttribute('reason') || 'The run has ended.';
+        const reason = this.getAttribute('reason') || t('game_over_screen.default_reason');
 
         this.innerHTML = `
             <style>
@@ -51,11 +53,11 @@ export class GameOverScreen extends HTMLElement {
             </style>
             <div class="absolute inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-md">
                 <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-secondary animate-fade-in w-full max-w-lg">
-                    <h2 class="text-4xl font-bold font-serif text-brand-secondary mb-2">Run Complete!</h2>
+                    <h2 class="text-4xl font-bold font-serif text-brand-secondary mb-2">${t('game_over_screen.run_complete')}</h2>
                     <p class="text-brand-text-muted mb-4">${reason}</p>
-                    <p class="text-lg text-white mb-6">Final BP: <span class="font-bold text-2xl text-amber-400">${finalBP}</span></p>
+                    <p class="text-lg text-white mb-6">${t('game_over_screen.final_bp')}<span class="font-bold text-2xl text-amber-400">${finalBP}</span></p>
                     <div id="decision-container" class="h-24">
-                        <p class="text-brand-text-muted text-lg animate-fade-in-up">The adventurer considers their fate<span class="animate-dots"></span></p>
+                        <p class="text-brand-text-muted text-lg animate-fade-in-up">${t('game_over_screen.adventurer_considers_fate')}<span class="animate-dots"></span></p>
                     </div>
                     <div id="button-container" class="flex justify-center gap-4 mt-4">
                         <!-- Buttons will be revealed here -->
@@ -79,8 +81,8 @@ export class GameOverScreen extends HTMLElement {
 
         if (this.decision === 'continue') {
             decisionText = `
-                <h3 class="text-2xl font-bold text-green-400 mb-2 ${animationClass}">"I will go on."</h3>
-                <p class="text-brand-text mb-4 ${animationClass}" style="animation-delay: 0.5s;">The adventurer decides to press on, ready for another run!</p>
+                <h3 class="text-2xl font-bold text-green-400 mb-2 ${animationClass}">${t('game_over_screen.continue_quote')}</h3>
+                <p class="text-brand-text mb-4 ${animationClass}" style="animation-delay: 0.5s;">${t('game_over_screen.continue_decision')}</p>
             `;
             buttonHTML += `
                 <button
@@ -88,13 +90,13 @@ export class GameOverScreen extends HTMLElement {
                     class="bg-green-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-400 transition-colors transform hover:scale-105 ${animationClass}"
                     style="animation-delay: 1.2s;"
                 >
-                    Enter Workshop
+                    ${t('game_over_screen.enter_workshop')}
                 </button>
             `;
         } else { // retire
             decisionText = `
-                <h3 class="text-2xl font-bold text-red-400 mb-2 ${animationClass}">"I have seen enough."</h3>
-                <p class="text-brand-text mb-4 ${animationClass}" style="animation-delay: 0.5s;">The adventurer has lost motivation, and decides to retire.</p>
+                <h3 class="text-2xl font-bold text-red-400 mb-2 ${animationClass}">${t('game_over_screen.retire_quote')}</h3>
+                <p class="text-brand-text mb-4 ${animationClass}" style="animation-delay: 0.5s;">${t('game_over_screen.retire_decision')}</p>
             `;
             buttonHTML += `
                 <button
@@ -102,7 +104,7 @@ export class GameOverScreen extends HTMLElement {
                     class="bg-brand-secondary text-white font-bold py-3 px-6 rounded-lg hover:bg-red-500 transition-colors transform hover:scale-105 ${animationClass}"
                     style="animation-delay: 1s;"
                 >
-                    Recruit New Adventurer
+                    ${t('game_over_screen.recruit_new_adventurer')}
                 </button>
             `;
         }
