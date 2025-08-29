@@ -462,7 +462,7 @@ export class GameEngine {
   // --- INITIALIZATION ---
   private async _loadGameData() {
     try {
-      const response = await fetch('/game/items.json');
+      const response = await fetch(`${import.meta.env.BASE_URL}game/items.json`);
       if (!response.ok) {
         throw new Error(t('global.error_loading_items', { statusText: response.statusText }));
       }
