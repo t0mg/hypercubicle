@@ -1,15 +1,15 @@
-# Rogulus
+# Rogue Steward
 
 A reverse roguelike game where you act as a dungeon designer for an AI adventurer. Your goal is not to kill the adventurer, but to create a compelling, challenging, and rewarding experience that keeps them engaged.
 
 ## How to Play
 
-Each turn, you will be presented with a selection of potential loot. You must choose up to three items to offer the adventurer. The AI adventurer, with its own hidden personality and goals, will then choose one of your offerings before proceeding to the next floor of the dungeon.
+Each turn, you will be presented with a selection of potential loot. You must choose up to three items to offer the adventurer. The AI adventurer, with its own hidden personality and goals, will then choose one of your offerings before proceeding to the next room of the dungeon.
 
 - If the dungeon is too easy, the adventurer will grow bored.
 - If it's too difficult or the rewards don't match their playstyle, they will become frustrated.
 
-Your score is based on how many floors the adventurer clears before they either fall in battle or lose interest and quit. After each run, you can enter the Workshop to spend Balance Points (BP) on unlocking new, more powerful items for future runs.
+Your score is based on how many rooms the adventurer clears before they either fall in battle or lose interest and quit. After each run, you can enter the Workshop to spend Balance Points (BP) on unlocking new, more powerful items for future runs.
 
 ## Project Structure
 
@@ -32,7 +32,7 @@ This directory contains all the reusable Web Components that make up the UI. Eac
 -   `DebugLog.ts`: A panel that shows a running log of game events and the adventurer's decision-making process, along with their personality traits.
 -   `FeedbackPanel.ts`: A simple component to display messages and feedback from the adventurer.
 -   `GameOverScreen.ts`: A modal screen that appears when a run ends.
--   `GameStats.ts`: Displays high-level game information like current BP, run number, and floor number.
+-   `GameStats.ts`: Displays high-level game information like current BP, run number, and room number.
 -   `LoadingIndicator.ts`: A spinner used during asynchronous operations, like when the AI is "thinking".
 -   `LootCard.ts`: Renders a single piece of loot, showing its stats and rarity.
 -   `LootChoicePanel.ts`: The main interface for the player to select which loot items to offer to the adventurer.

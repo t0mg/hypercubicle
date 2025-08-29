@@ -33,7 +33,7 @@ export interface LootChoice {
     };
     cost: number | null;
     minRun: number;
-    draftedFloor?: number;
+    draftedRoom?: number;
     justDrafted?: boolean;
 }
 
@@ -60,7 +60,7 @@ export interface GameState {
     feedback: string;
     log: string[];
     run: number;
-    floor: number;
+    room: number;
     debugEncounterParams?: { baseDamage: number; difficultyFactor: number };
     gameOver: {
         isOver: boolean;

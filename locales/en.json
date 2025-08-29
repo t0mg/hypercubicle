@@ -5,7 +5,7 @@
     "power": "Power",
     "bp": "BP",
     "run": "Run",
-    "floor": "Floor",
+    "room": "Room",
     "deck": "Deck",
     "none": "None",
     "buy": "Buy",
@@ -78,8 +78,8 @@
     "too_close_for_comfort": "That was far too close for comfort.",
     "new_adventurer": "A new adventurer enters the dungeon!",
     "adventurer_returns": "The adventurer returns for another run!",
-    "adventurer_fell": "The adventurer fell on floor {floor} of run {run}.",
-    "adventurer_bored": "The adventurer grew bored on floor {floor} of run {run}, and quit.",
+    "adventurer_fell": "The adventurer fell on room {room} of run {run}.",
+    "adventurer_bored": "The adventurer grew bored on room {room} of run {run}, and quit.",
     "empty_hand": "The adventurer waits for your decision, unaware that you have nothing left to offer.",
     "welcome_to_workshop": "Welcome back. Spend your Balance Points wisely."
   }

@@ -103,7 +103,7 @@ const render = (state: GameState | null) => {
                     <game-stats
                         balance-points="${state.designer.balancePoints}"
                         run="${state.run}"
-                        floor="${state.floor}"
+                        room="${state.room}"
                         deck-size="${state.availableDeck.length}"
                     ></game-stats>
                     <feedback-panel message="${state.feedback}"></feedback-panel>
@@ -129,7 +129,7 @@ const render = (state: GameState | null) => {
 
   const debugEncounterPanelEl = document.querySelector('debug-encounter-panel') as DebugEncounterPanel;
   if (debugEncounterPanelEl) {
-    const defaultBaseDamage = Math.max(1, 15 - Math.floor(state.adventurer.power / 4) + Math.floor(state.floor * 1.5));
+    const defaultBaseDamage = Math.max(1, 15 - Math.floor(state.adventurer.power / 4) + Math.floor(state.room * 1.5));
     debugEncounterPanelEl.defaultBaseDamage = defaultBaseDamage;
   }
 
