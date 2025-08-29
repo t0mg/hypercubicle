@@ -3,6 +3,8 @@ import './LootCard.ts';
 import { LootCard } from './LootCard.ts';
 import { t } from '../localization';
 
+const MAX_SELECTION = 4;
+
 export class LootChoicePanel extends HTMLElement {
     private _choices: LootChoice[] = [];
     private _disabled: boolean = false;
@@ -58,7 +60,7 @@ export class LootChoicePanel extends HTMLElement {
             if (selectedBaseIds.includes(itemToSelect.id)) {
                 return; // Already have a version of this item
             }
-            if (this._selectedIds.length < 3) {
+            if (this._selectedIds.length < MAX_SELECTION) {
                 this._selectedIds.push(instanceId);
             }
         }
@@ -70,7 +72,7 @@ export class LootChoicePanel extends HTMLElement {
 
         const instanceIdToBaseIdMap = new Map(this._choices.map(c => [c.instanceId, c.id]));
         const selectedBaseIds = this._selectedIds.map(id => instanceIdToBaseIdMap.get(id));
-        const canSubmit = this._selectedIds.length >= 2 && this._selectedIds.length <= 3;
+        const canSubmit = this._selectedIds.length >= 2 && this._selectedIds.length <= MAX_SELECTION;
 
         this.innerHTML = `
             <div class="w-full">
@@ -84,7 +86,7 @@ export class LootChoicePanel extends HTMLElement {
                         ${!canSubmit || this._disabled ? 'disabled' : ''}
                         class="bg-brand-secondary text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:scale-100"
                     >
-                        ${t('loot_choice_panel.present_offer')} (${this._selectedIds.length}/3)
+                        ${t('loot_choice_panel.present_offer')} (${this._selectedIds.length}/${MAX_SELECTION})
                     </button>
                 </div>
             </div>

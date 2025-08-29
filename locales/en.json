@@ -32,8 +32,8 @@
     "potions_held": "{count} held"
   },
   "debug_encounter_panel": {
-    "title": "Debug Encounter",
-    "description": "Override encounter parameters for testing.",
+    "title": "Encounter (Debug mode)",
+    "description": "Encounter params with full override (for testing/balancing).",
     "base_damage": "Base Damage",
     "difficulty_factor": "Difficulty Factor",
     "run_encounter": "Run Encounter"
@@ -57,7 +57,7 @@
     "recruit_new_adventurer": "Recruit New Adventurer"
   },
   "loot_choice_panel": {
-    "title": "Offer Rewards (Choose 2 to 3)",
+    "title": "Offer Rewards",
     "present_offer": "Present Offer"
   },
   "workshop": {
