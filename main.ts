@@ -104,6 +104,7 @@ const render = (state: GameState | null) => {
                         balance-points="${state.designer.balancePoints}"
                         run="${state.run}"
                         floor="${state.floor}"
+                        deck-size="${state.availableDeck.length}"
                     ></game-stats>
                     <feedback-panel message="${state.feedback}"></feedback-panel>
                 </div>

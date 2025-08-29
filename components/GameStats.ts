@@ -4,13 +4,14 @@ export class GameStats extends HTMLElement {
     private _balancePoints: number = 0;
     private _run: number = 0;
     private _floor: number = 0;
+    private _deckSize: number = 0;
 
     constructor() {
         super();
     }
 
     static get observedAttributes() {
-        return ['balance-points', 'run', 'floor'];
+        return ['balance-points', 'run', 'floor', 'deck-size'];
     }
 
     attributeChangedCallback(name: string, oldValue: string, newValue: string) {
@@ -23,6 +24,9 @@ export class GameStats extends HTMLElement {
                 break;
             case 'floor':
                 this._floor = Number(newValue);
+                break;
+            case 'deck-size':
+                this._deckSize = Number(newValue);
                 break;
         }
         this.render();
@@ -46,6 +50,10 @@ export class GameStats extends HTMLElement {
                 <div>
                     <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.floor')}</span>
                     <p class="text-2xl font-bold text-white">${this._floor}</p>
+                </div>
+                <div>
+                    <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.deck')}</span>
+                    <p class="text-2xl font-bold text-white">${this._deckSize}</p>
                 </div>
             </div>
         `;
