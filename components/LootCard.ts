@@ -1,6 +1,5 @@
 import type { LootChoice } from '../types';
 import { t } from '../localization';
-import { t } from '../localization';
 
 const rarityColorMap: { [key: string]: string } = {
     Common: 'text-rarity-common',
