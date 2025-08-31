@@ -5,15 +5,15 @@ import './components/GameStats.ts';
 import './components/FeedbackPanel.ts';
 import type { AdventurerStatus } from './components/AdventurerStatus.ts';
 import type { LootChoicePanel } from './components/LootChoicePanel.ts';
-import type { DebugEncounterPanel } from './components/DebugEncounterPanel.ts';
-import type { DebugLog } from './components/DebugLog.ts';
+import type { BattlePanel } from './components/BattlePanel.ts';
+import type { LogPanel } from './components/LogPanel.ts';
 import type { Workshop } from './components/Workshop.ts';
 import type { GameOverScreen } from './components/GameOverScreen.ts';
 import './components/AdventurerStatus.ts';
 import './components/LootChoicePanel.ts';
 import './components/LoadingIndicator.ts';
-import './components/DebugEncounterPanel.ts';
-import './components/DebugLog.ts';
+import './components/BattlePanel.ts';
+import './components/LogPanel.ts';
 import './components/GameOverScreen.ts';
 import './components/Workshop.ts';
 import { initLocalization, t } from './localization';
@@ -61,7 +61,7 @@ const renderGamePhasePanel = (state: GameState) => {
     case 'DESIGNER_CHOOSING_LOOT':
       return `<div class="lg:col-span-3"><loot-choice-panel></loot-choice-panel></div>`;
     case 'DESIGNER_CHOOSING_DIFFICULTY':
-      return `<div class="lg:col-span-3"><debug-encounter-panel></debug-encounter-panel></div>`;
+      return `<div class="lg:col-span-3"><battle-panel></battle-panel></div>`;
     case 'AWAITING_ADVENTURER_CHOICE':
     case 'AWAITING_ENCOUNTER_FEEDBACK':
       return `<div class="lg:col-span-3"><loading-indicator text="${getLoadingText(state)}"></loading-indicator></div>`;
@@ -100,7 +100,7 @@ const render = (state: GameState | null) => {
             ${gameOverHtml}
             <div class="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-1 space-y-6">
-                    <debug-log></debug-log>
+                    <log-panel></log-panel>
                     <game-stats
                         balance-points="${state.designer.balancePoints}"
                         run="${state.run}"
@@ -129,10 +129,10 @@ const render = (state: GameState | null) => {
   }
 
 
-  const debugLogEl = document.querySelector('debug-log') as DebugLog;
-  if (debugLogEl) {
-    debugLogEl.logs = state.log;
-    debugLogEl.traits = state.adventurer.traits;
+  const logPanelEl = document.querySelector('log-panel') as LogPanel;
+  if (logPanelEl) {
+    logPanelEl.logger = state.logger;
+    logPanelEl.traits = state.adventurer.traits;
   }
 };
 

@@ -1,7 +1,7 @@
 import { t } from '../localization';
 import type { Encounter } from '../types';
 
-export class DebugEncounterPanel extends HTMLElement {
+export class BattlePanel extends HTMLElement {
     constructor() {
         super();
         this.addEventListener('submit', (e: Event) => {
@@ -31,8 +31,8 @@ export class DebugEncounterPanel extends HTMLElement {
     render() {
         this.innerHTML = `
             <div class="w-full bg-brand-surface p-6 rounded-lg shadow-xl border border-gray-700 animate-fade-in">
-                <h3 class="text-xl font-bold text-center mb-2 text-white">${t('debug_encounter_panel.title')}</h3>
-                <p class="text-center text-brand-text-muted mb-6">${t('debug_encounter_panel.description')}</p>
+                <h3 class="text-xl font-bold text-center mb-2 text-white">${t('battle_panel.title')}</h3>
+                <p class="text-center text-brand-text-muted mb-6">${t('battle_panel.description')}</p>
                 <form class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                     <div class="md:col-span-1">
                         <label for="enemy-count" class="block text-sm font-medium text-brand-text-muted mb-1">Enemy Count</label>
@@ -48,7 +48,7 @@ export class DebugEncounterPanel extends HTMLElement {
                     </div>
                     <div class="md:col-span-1">
                         <button type="submit" class="w-full bg-brand-secondary text-white font-bold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105">
-                            ${t('debug_encounter_panel.run_encounter')}
+                            ${t('battle_panel.run_encounter')}
                         </button>
                     </div>
                 </form>
@@ -57,4 +57,4 @@ export class DebugEncounterPanel extends HTMLElement {
     }
 }
 
-customElements.define('debug-encounter-panel', DebugEncounterPanel);
+customElements.define('battle-panel', BattlePanel);

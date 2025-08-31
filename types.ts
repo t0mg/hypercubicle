@@ -11,14 +11,10 @@ export interface AdventurerInventory {
     potions: LootChoice[];
 }
 
-export interface Adventurer {
-    hp: number;
-    maxHp: number;
-    power: number;
-    interest: number; // 0-100
-    traits: AdventurerTraits;
-    inventory: AdventurerInventory;
-}
+import { Adventurer } from './game/adventurer';
+import { Logger } from './game/logger';
+
+export type { Adventurer };
 
 export interface LootChoice {
     id: string;
@@ -64,7 +60,7 @@ export interface GameState {
     shopItems: LootChoice[];
     offeredLoot: LootChoice[];
     feedback: string;
-    log: string[];
+    logger: Logger;
     run: number;
     room: number;
     encounter?: Encounter;
