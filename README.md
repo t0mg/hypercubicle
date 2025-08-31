@@ -1,5 +1,7 @@
 # Rogue Steward
 
+[![Deploy to GitHub Pages](https://github.com/t0mg/rogue-steward/actions/workflows/deploy.yml/badge.svg)](https://github.com/t0mg/rogue-steward/actions/workflows/deploy.yml)
+
 A reverse roguelike game where you act as a dungeon designer for an AI adventurer. Your goal is not to kill the adventurer, but to create a compelling, challenging, and rewarding experience that keeps them engaged.
 
 ## How to Play
@@ -37,6 +39,16 @@ This directory contains all the reusable Web Components that make up the UI. Eac
 -   `LootCard.ts`: Renders a single piece of loot, showing its stats and rarity.
 -   `LootChoicePanel.ts`: The main interface for the player to select which loot items to offer to the adventurer.
 -   `Workshop.ts`: The screen shown between runs where the player can spend BP to unlock new items.
+
+## Testing
+
+This project uses [Vitest](https://vitest.dev/) for unit and integration testing.
+
+To run the tests, use the following command:
+
+```bash
+npm test
+```
 
 ## Running the Project
 
