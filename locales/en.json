@@ -32,14 +32,12 @@
     "hp": "HP",
     "potions_held": "{count} held"
   },
-  "debug_encounter_panel": {
-    "title": "Encounter (Debug mode)",
-    "description": "Encounter params with full override (for testing/balancing).",
-    "base_damage": "Base Damage",
-    "difficulty_factor": "Difficulty Factor",
+  "battle_panel": {
+    "title": "Encounter",
+    "description": "Define the parameters of the next encounter.",
     "run_encounter": "Run Encounter"
   },
-  "debug_log": {
+  "log_panel": {
     "title": "Game Log & Debug Info",
     "offense": "OFFENSE",
     "risk": "RISK",
