@@ -71,17 +71,18 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
         return;
     }
 
-    const gameOverHtml = state.gameOver.isOver
-        ? `<game-over-screen
+        const runEndedHtml = state.runEnded.isOver
+        ? `<run-ended-screen
                 final-bp="${state.designer.balancePoints}"
-                reason="${localize(state.gameOver.reason)}"
+                reason="${localize(state.runEnded.reason)}"
                 run="${state.run}"
-            ></game-over-screen>`
+                ${engine.isWorkshopUnlocked() ? 'workshop-unlocked' : ''}
+            ></run-ended-screen>`
         : '';
 
     appElement.innerHTML = `
         <div class="min-h-screen p-4 md:p-6 lg:p-8 flex flex-col items-center">
-            ${gameOverHtml}
+            ${runEndedHtml}
             <div class="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-1 space-y-6">
                     <log-panel></log-panel>
@@ -101,10 +102,10 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
         </div>
     `;
 
-    if (state.gameOver.isOver) {
-        const gameOverEl = document.querySelector('game-over-screen') as import('./components/GameOverScreen').GameOverScreen;
-        if (gameOverEl) {
-            gameOverEl.setDecision(engine.getAdventurerEndRunDecision());
+    if (state.runEnded.isOver) {
+        const runEndedEl = document.querySelector('run-ended-screen') as import('./components/RunEndedScreen').RunEndedScreen;
+        if (runEndedEl) {
+            runEndedEl.setDecision(engine.getAdventurerEndRunDecision());
         }
     }
 

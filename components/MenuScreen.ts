@@ -7,7 +7,7 @@ export class MenuScreen extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this.addEventListener('click', (e: Event) => {
-            const target = e.target as HTMLElement;
+            const target = e.composedPath()[0] as HTMLElement;
             if (target.id === 'start-game-button') {
                 this._dispatch('start-game');
             } else if (target.id === 'continue-game-button') {

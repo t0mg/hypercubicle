@@ -8,7 +8,7 @@ import { MetaManager } from './game/meta';
 import './components/AdventurerStatus.ts';
 import './components/BattlePanel.ts';
 import './components/FeedbackPanel.ts';
-import './components/GameOverScreen.ts';
+import './components/RunEndedScreen.ts';
 import './components/GameStats.ts';
 import './components/LoadingIndicator.ts';
 import './components/LogPanel.ts';
@@ -72,6 +72,10 @@ appElement.addEventListener('start-game', () => {
 
 appElement.addEventListener('start-run', () => {
     engine.startNewRun();
+});
+
+appElement.addEventListener('new-game', () => {
+    engine.startNewGame();
 });
 
 appElement.addEventListener('continue-game', () => {

@@ -1,5 +1,4 @@
 import { t } from '../text';
-import { LocalizedMessage } from '../types';
 
 export enum UnlockableFeature {
   WORKSHOP = 'workshop',
@@ -12,39 +11,39 @@ export enum UnlockableFeature {
 export interface Unlock {
   feature: UnlockableFeature;
   runThreshold: number;
-  title: () => LocalizedMessage;
-  description: () => LocalizedMessage;
+  title: () => string;
+  description: () => string;
 }
 
 export const UNLOCKS: Unlock[] = [
   {
     feature: UnlockableFeature.WORKSHOP,
     runThreshold: 2,
-    title: () => ({ key: 'unlocks.workshop.title' }),
-    description: () => ({ key: 'unlocks.workshop.description' }),
+    title: () => t('unlocks.workshop.title'),
+    description: () => t('unlocks.workshop.description'),
   },
   {
     feature: UnlockableFeature.HAND_SIZE_INCREASE,
     runThreshold: 3,
-    title: () => ({ key: 'unlocks.hand_size_increase.title' }),
-    description: () => ({ key: 'unlocks.hand_size_increase.description' }),
+    title: () => t('unlocks.hand_size_increase.title'),
+    description: () => t('unlocks.hand_size_increase.description'),
   },
   {
     feature: UnlockableFeature.BOSS_FIGHTS,
     runThreshold: 5,
-    title: () => ({ key: 'unlocks.boss_fights.title' }),
-    description: () => ({ key: 'unlocks.boss_fights.description' }),
+    title: () => t('unlocks.boss_fights.title'),
+    description: () => t('unlocks.boss_fights.description'),
   },
   {
     feature: UnlockableFeature.CUSTOM_ENCOUNTERS,
     runThreshold: 8,
-    title: () => ({ key: 'unlocks.custom_encounters.title' }),
-    description: () => ({ key: 'unlocks.custom_encounters.description' }),
+    title: () => t('unlocks.custom_encounters.title'),
+    description: () => t('unlocks.custom_encounters.description'),
   },
   {
     feature: UnlockableFeature.PARTY_CONSTRAINTS,
     runThreshold: 12,
-    title: () => ({ key: 'unlocks.party_constraints.title' }),
-    description: () => ({ key: 'unlocks.party_constraints.description' }),
+    title: () => t('unlocks.party_constraints.title'),
+    description: () => t('unlocks.party_constraints.description'),
   },
 ];

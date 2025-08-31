@@ -1,9 +1,8 @@
-import { localize, t } from '../text';
-import type { LocalizedMessage } from '../types';
+import { t } from '../text';
 
 export class UnlockScreen extends HTMLElement {
-    private _title: LocalizedMessage = { key: '' };
-    private _description: LocalizedMessage = { key: '' };
+    private _title: string = '';
+    private _description: string = '';
 
     constructor() {
         super();
@@ -16,12 +15,12 @@ export class UnlockScreen extends HTMLElement {
         });
     }
 
-    set title(value: LocalizedMessage) {
+    set title(value: string) {
         this._title = value;
         this.render();
     }
 
-    set description(value: LocalizedMessage) {
+    set description(value: string) {
         this._description = value;
         this.render();
     }
@@ -87,8 +86,8 @@ export class UnlockScreen extends HTMLElement {
             <div class="unlock-container">
                 <div class="panel">
                     <h2 class="congratulations">${t('unlocks.congratulations')}</h2>
-                    <h3 class="feature-title">${localize(this._title)}</h3>
-                    <p class="feature-description">${localize(this._description)}</p>
+                    <h3 class="feature-title">${this._title}</h3>
+                    <p class="feature-description">${this._description}</p>
                     <button id="continue-button" class="button">
                         ${t('unlocks.continue')}
                     </button>

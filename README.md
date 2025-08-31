@@ -33,7 +33,7 @@ This directory contains all the reusable Web Components that make up the UI. Eac
 -   `DebugEncounterPanel.ts`: A development tool that allows for manually setting encounter parameters like base damage and difficulty factor to test game balance.
 -   `DebugLog.ts`: A panel that shows a running log of game events and the adventurer's decision-making process, along with their personality traits.
 -   `FeedbackPanel.ts`: A simple component to display messages and feedback from the adventurer.
--   `GameOverScreen.ts`: A modal screen that appears when a run ends.
+-   `RunEndedScreen.ts`: A modal screen that appears when a run ends.
 -   `GameStats.ts`: Displays high-level game information like current BP, run number, and room number.
 -   `LoadingIndicator.ts`: A spinner used during asynchronous operations, like when the AI is "thinking".
 -   `LootCard.ts`: Renders a single piece of loot, showing its stats and rarity.

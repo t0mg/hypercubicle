@@ -43,7 +43,7 @@
     "risk": "RISK",
     "expertise": "EXPERTISE"
   },
-  "game_over_screen": {
+  "run_ended_screen": {
     "run_complete": "Run Complete!",
     "default_reason": "The run has ended.",
     "final_bp": "Final BP: ",
@@ -52,8 +52,9 @@
     "continue_decision": "The adventurer decides to press on, ready for another run!",
     "enter_workshop": "Enter Workshop",
     "retire_quote": "\"I have seen enough.\"",
-    "retire_decision": "The adventurer has lost motivation, and decides to retire.",
-    "recruit_new_adventurer": "Recruit New Adventurer"
+    "retire_decision": "The adventurer has lost motivation, and decides to retire after {run} runs.",
+    "recruit_new_adventurer": "Recruit New Adventurer",
+    "start_new_run": "Start New Run"
   },
   "loot_choice_panel": {
     "title": "Offer Rewards",
@@ -112,11 +113,5 @@
       "title": "Party Constraints Unlocked!",
       "description": "You can now apply constraints to the adventurer's party, adding a new layer of challenge."
     }
-  },
-  "game_over": {
-      "continue_message": "The adventurer wishes to continue.",
-      "retire_message": "The adventurer has had enough.",
-      "to_the_workshop": "To the Workshop",
-      "to_main_menu": "To Main Menu"
   }
 }

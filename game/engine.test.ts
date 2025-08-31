@@ -21,6 +21,7 @@ global.fetch = vi.fn(() =>
 ) as any;
 
 import { MetaManager } from './meta';
+import { t } from '../text';
 
 describe('GameEngine', () => {
     let engine: GameEngine;
@@ -83,9 +84,7 @@ describe('GameEngine', () => {
         await vi.advanceTimersToNextTimerAsync();
 
         expect(engine.gameState?.phase).toBe('DESIGNER_CHOOSING_DIFFICULTY');
-        expect(engine.gameState?.feedback).toEqual(expect.objectContaining({
-            key: 'game_engine.adventurer_accepts_offer'
-        }));
+        expect(engine.gameState?.feedback).toEqual(t('game_engine.adventurer_accepts_offer', { itemName: weaponToOffer.name }));
         // With high offense, adventurer should choose the weapon
         expect(engine.gameState?.adventurer.inventory.weapon?.id).toBe(weaponToOffer.id);
         expect(engine.gameState?.hand.length).toBe(9);
@@ -118,11 +117,9 @@ describe('GameEngine', () => {
         engine.runEncounter(encounter);
         await vi.advanceTimersToNextTimerAsync();
 
-        expect(engine.gameState?.gameOver.isOver).toBe(true);
+        expect(engine.gameState?.runEnded.isOver).toBe(true);
         expect(engine.gameState?.phase).toBe('RUN_OVER');
-        expect(engine.gameState?.gameOver.reason).toEqual(expect.objectContaining({
-            key: 'game_engine.adventurer_fell'
-        }));
+        expect(engine.gameState?.runEnded.reason).toEqual(t('game_engine.adventurer_fell', { room: engine.gameState?.room, run: engine.gameState?.run }));
         vi.useRealTimers();
     });
 
