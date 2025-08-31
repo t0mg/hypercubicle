@@ -1,7 +1,7 @@
 import type { LootChoice } from '../types';
 import './LootCard.ts';
 import { LootCard } from './LootCard.ts';
-import { t } from '../localization';
+import { t } from '../text';
 
 const MAX_SELECTION = 4;
 

@@ -1,4 +1,4 @@
-import { t } from '../localization';
+import { t } from '../text';
 import type { Encounter } from '../types';
 
 export class BattlePanel extends HTMLElement {

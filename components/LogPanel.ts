@@ -1,5 +1,5 @@
 import type { AdventurerTraits } from '../types';
-import { t } from '../localization';
+import { t } from '../text';
 import { LogEntry, Logger } from '../game/logger';
 
 export class LogPanel extends HTMLElement {

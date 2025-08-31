@@ -1,4 +1,4 @@
-import { t } from '../localization';
+import { t } from '../text';
 
 export class GameOverScreen extends HTMLElement {
     private state: 'initial' | 'revealing' | 'revealed' = 'initial';
