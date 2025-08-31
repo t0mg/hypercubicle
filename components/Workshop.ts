@@ -1,5 +1,5 @@
 import type { LootChoice } from '../types';
-import { t } from '../localization';
+import { t } from '../text';
 
 const StatChange = (label: string, value: number) => {
     const isPositive = value > 0;

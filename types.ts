@@ -16,6 +16,11 @@ import { Logger } from './game/logger';
 
 export type { Adventurer };
 
+export interface LocalizedMessage {
+    key: string;
+    context?: Record<string, string | number>;
+}
+
 export interface LootChoice {
     id: string;
     instanceId: string;
@@ -59,13 +64,13 @@ export interface GameState {
     hand: LootChoice[]; // The player's current hand of cards
     shopItems: LootChoice[];
     offeredLoot: LootChoice[];
-    feedback: string;
+    feedback: LocalizedMessage | LocalizedMessage[] | string;
     logger: Logger;
     run: number;
     room: number;
     encounter?: Encounter;
     gameOver: {
         isOver: boolean;
-        reason: string;
+        reason: LocalizedMessage | string;
     };
 }

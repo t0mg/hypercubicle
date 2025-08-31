@@ -1,4 +1,4 @@
-import { t } from '../localization';
+import { t } from '../text';
 
 export class GameStats extends HTMLElement {
     private _balancePoints: number = 0;
