@@ -3,6 +3,18 @@ import { GameEngine } from './game/engine';
 import { initLocalization, t } from './text';
 import { render } from './ui';
 
+// Import all web components to register them
+import './components/AdventurerStatus.ts';
+import './components/BattlePanel.ts';
+import './components/FeedbackPanel.ts';
+import './components/GameOverScreen.ts';
+import './components/GameStats.ts';
+import './components/LoadingIndicator.ts';
+import './components/LogPanel.ts';
+import './components/LootCard.ts';
+import './components/LootChoicePanel.ts';
+import './components/Workshop.ts';
+
 const appElement = document.getElementById('app');
 
 if (!appElement) {
