@@ -5,5 +5,5 @@ export const CHOICE_SCORE_THRESHOLD = 10;
 export const BP_PER_FLOOR = 10;
 export const INITIAL_UNLOCKED_DECK = ['loot_1', 'loot_2', 'loot_3', 'loot_4', 'loot_5'];
 export const MIN_DECK_SIZE = 32;
-export const HAND_SIZE = 9;
+export let HAND_SIZE = 9;
 export const ADVENTURER_ACTION_DELAY_MS = 300;

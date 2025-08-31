@@ -20,11 +20,15 @@ global.fetch = vi.fn(() =>
   })
 ) as any;
 
+import { MetaManager } from './meta';
+
 describe('GameEngine', () => {
     let engine: GameEngine;
+    let metaManager: MetaManager;
 
     beforeAll(async () => {
-        engine = new GameEngine();
+        metaManager = new MetaManager();
+        engine = new GameEngine(metaManager);
         await engine.init();
     });
 
@@ -56,7 +60,7 @@ describe('GameEngine', () => {
         engine.startNewRun();
 
         expect(engine.gameState?.phase).toBe('DESIGNER_CHOOSING_DIFFICULTY');
-        expect(engine.gameState?.run).toBe(2); // Should not be incremented here
+        expect(engine.gameState?.run).toBe(3); // Should be incremented
         expect(engine.gameState?.room).toBe(1);
         expect(engine.gameState?.designer.balancePoints).toBe(100); // Should not be reset
         expect(engine.gameState?.adventurer).not.toBe(previousAdventurer);
@@ -125,6 +129,7 @@ describe('GameEngine', () => {
     describe('Workshop', () => {
         beforeEach(() => {
             vi.spyOn(constants, 'INITIAL_UNLOCKED_DECK', 'get').mockReturnValue(['loot_1', 'loot_2', 'loot_3']);
+            metaManager.checkForUnlocks(10); // Unlock workshop
             engine.startNewGame(); // Rerun with the mock
         });
 
@@ -146,6 +151,44 @@ describe('GameEngine', () => {
             expect(engine.gameState?.designer.balancePoints).toBe(100 - (itemToBuy.cost || 0));
             expect(engine.gameState?.unlockedDeck).toContain(itemToBuy.id);
             expect(engine.gameState?.shopItems).not.toContain(itemToBuy);
+        });
+    });
+
+    describe('Meta Progression', () => {
+        beforeEach(() => {
+            metaManager.reset();
+        });
+
+        it('should start the game in the MENU phase', () => {
+            engine.showMenu();
+            expect(engine.gameState?.phase).toBe('MENU');
+        });
+
+        it('should handle the continue-game event', () => {
+            metaManager.updateRun(3);
+            engine.startNewGame(); // Set up a game state first
+            engine.continueGame();
+            expect(engine.gameState?.run).toBe(3);
+            expect(engine.gameState?.phase).toBe('DESIGNER_CHOOSING_DIFFICULTY');
+        });
+
+        it('should handle the run-decision event and transition to the workshop', () => {
+            metaManager.checkForUnlocks(10); // Unlock everything
+            engine.gameState!.run = 1;
+            engine.handleEndOfRun('continue');
+            expect(engine.gameState?.phase).toBe('SHOP');
+        });
+
+        it('should handle the run-decision event and transition to the unlock screen', () => {
+            engine.gameState!.run = 1;
+            engine.handleEndOfRun('continue');
+            expect(engine.gameState?.phase).toBe('UNLOCK_SCREEN');
+        });
+
+        it('should handle the run-decision event and transition to the menu', () => {
+            engine.gameState!.run = 1;
+            engine.handleEndOfRun('retire');
+            expect(engine.gameState?.phase).toBe('MENU');
         });
     });
 });

@@ -8,12 +8,22 @@ export class GameOverScreen extends HTMLElement {
         super();
         this.addEventListener('click', (e: Event) => {
             const target = e.target as HTMLElement;
-            if (target.id === 'enter-workshop-button') {
-                this.dispatchEvent(new CustomEvent('enter-workshop', { bubbles: true, composed: true }));
-            } else if (target.id === 'new-adventurer-button') {
-                this.dispatchEvent(new CustomEvent('start-game', { bubbles: true, composed: true }));
+            if (target.id === 'decision-button' && this.decision) {
+                this.dispatchEvent(new CustomEvent('run-decision', {
+                    detail: { decision: this.decision },
+                    bubbles: true,
+                    composed: true
+                }));
             }
         });
+    }
+
+    public setDecision(decision: 'continue' | 'retire') {
+        this.decision = decision;
+        if (this.state === 'initial') {
+            this.render();
+            this.revealDecision();
+        }
     }
 
     connectedCallback() {
@@ -26,7 +36,6 @@ export class GameOverScreen extends HTMLElement {
     revealDecision() {
         this.state = 'revealing';
         setTimeout(() => {
-            this.decision = this.getAttribute('decision') as 'continue' | 'retire' || 'retire';
             this.state = 'revealed';
             this.updateDecision(true);
         }, 2000);

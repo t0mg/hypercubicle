@@ -1,6 +1,7 @@
 import type { GamePhase, GameState, LootChoice, Adventurer, AdventurerTraits, Encounter, LocalizedMessage } from '../types';
 import { Adventurer } from './adventurer';
 import { Logger } from './logger';
+import { MetaManager } from './meta';
 import {
   ADVENTURER_ACTION_DELAY_MS,
   BP_PER_FLOOR,
@@ -13,6 +14,7 @@ import {
   RARITY_SCORE
 } from './constants';
 import { generateRunDeck, shuffleArray } from './utils';
+import { UnlockableFeature, UNLOCKS } from './unlocks';
 
 type GameEngineListener = (state: GameState | null) => void;
 
@@ -22,11 +24,16 @@ export class GameEngine {
   public error: string | null = null;
 
   private _allItems: LootChoice[] = [];
-  private _listeners: { [key: string]: GameEngineListener[] } = {};
+  private _listeners: { [key:string]: GameEngineListener[] } = {};
+  private _metaManager: MetaManager;
+
+  constructor(metaManager: MetaManager) {
+    this._metaManager = metaManager;
+  }
 
   public init = async () => {
     await this._loadGameData();
-  }
+  };
 
   // --- EVENT EMITTER ---
   public on(eventName: 'state-change' | 'error', listener: GameEngineListener): void {
@@ -190,8 +197,9 @@ export class GameEngine {
     const newAdventurer = new Adventurer(newTraits);
     const unlockedDeck = INITIAL_UNLOCKED_DECK;
     const runDeck = generateRunDeck(unlockedDeck, this._allItems);
-    const hand = runDeck.slice(0, HAND_SIZE);
-    const availableDeck = runDeck.slice(HAND_SIZE);
+    const handSize = this._getHandSize();
+    const hand = runDeck.slice(0, handSize);
+    const availableDeck = runDeck.slice(handSize);
 
     const logger = new Logger();
     logger.info(`--- Starting New Game (Run 1) ---`);
@@ -203,6 +211,7 @@ export class GameEngine {
       unlockedDeck: unlockedDeck,
       availableDeck: availableDeck,
       hand: hand,
+      handSize: handSize,
       shopItems: [],
       offeredLoot: [],
       feedback: { key: 'game_engine.new_adventurer' },
@@ -210,28 +219,41 @@ export class GameEngine {
       run: 1,
       room: 1,
       gameOver: { isOver: false, reason: '' },
+      newlyUnlocked: [],
     };
     this._emit('state-change', this.gameState);
   }
 
-  public startNewRun = () => {
-    if (!this.gameState) return;
+  public continueGame = () => {
+    if (!this.gameState || !this._metaManager.metaState.highestRun) return;
+    // This would eventually load a saved game state. For now, it just starts a new run
+    // at the highest achieved run number.
+    this.startNewRun(this._metaManager.metaState.highestRun);
+  }
 
+  public startNewRun = (runNumber?: number) => {
+    if (!this.gameState) return;
+    const nextRun = runNumber || this.gameState.run + 1;
+    this._metaManager.updateRun(nextRun);
+
+    const handSize = this._getHandSize();
     const runDeck = generateRunDeck(this.gameState.unlockedDeck, this._allItems);
-    const hand = runDeck.slice(0, HAND_SIZE);
-    const availableDeck = runDeck.slice(HAND_SIZE);
+    const hand = runDeck.slice(0, handSize);
+    const availableDeck = runDeck.slice(handSize);
 
     const resetAdventurer = new Adventurer(this.gameState.adventurer.traits);
     resetAdventurer.interest = this.gameState.adventurer.interest;
 
-    this.gameState.logger.info(`--- Starting Run ${this.gameState.run} ---`);
+    this.gameState.logger.info(`--- Starting Run ${nextRun} ---`);
     this.gameState = {
       ...this.gameState,
       adventurer: resetAdventurer,
       phase: 'DESIGNER_CHOOSING_DIFFICULTY',
       availableDeck: availableDeck,
       hand: hand,
+      handSize: handSize,
       room: 1,
+      run: nextRun,
       feedback: { key: 'game_engine.adventurer_returns' },
       gameOver: { isOver: false, reason: '' },
     };
@@ -263,7 +285,7 @@ export class GameEngine {
       let newHand = currentHand.filter(item => !offeredIds.includes(item.instanceId));
 
       // Replenish hand from deck
-      const numToDraw = HAND_SIZE - newHand.length;
+      const numToDraw = this.gameState.handSize - newHand.length;
       const drawnCards = currentDeck.slice(0, numToDraw);
 
       // Mark new cards
@@ -384,6 +406,12 @@ export class GameEngine {
 
   public enterWorkshop = () => {
     if (!this.gameState) return;
+
+    if (!this._metaManager.acls.has(UnlockableFeature.WORKSHOP)) {
+        this.startNewRun();
+        return;
+    }
+
     const nextRun = this.gameState.run + 1;
     const shopItems = this._allItems
       .filter(item => item.cost !== null)
@@ -440,6 +468,72 @@ export class GameEngine {
     }
   }
 
+  public handleEndOfRun(decision: 'continue' | 'retire') {
+    if (!this.gameState) return;
+
+    if (decision === 'retire') {
+      this.showMenu();
+      return;
+    }
+
+    const newlyUnlocked = this._metaManager.checkForUnlocks(this.gameState.run + 1);
+    if (newlyUnlocked.length > 0) {
+        const unlockInfo = UNLOCKS.find(u => u.feature === newlyUnlocked[0]);
+        this.gameState = {
+            ...this.gameState,
+            phase: 'UNLOCK_SCREEN',
+            newlyUnlocked: newlyUnlocked,
+            feedback: { key: 'unlocks.congratulations' },
+        };
+        this._emit('state-change', this.gameState);
+    } else {
+        this.enterWorkshop();
+    }
+  }
+
+  public showMenu = () => {
+    this.gameState = {
+      // We need a baseline gamestate object even for the menu
+      ...(this.gameState || this._getInitialGameState()),
+      phase: 'MENU',
+      hasSave: this._metaManager.metaState.highestRun > 0,
+    };
+    this._emit('state-change', this.gameState);
+  }
+
+  private _getInitialGameState(): GameState {
+    const newTraits: AdventurerTraits = {
+      offense: Math.floor(Math.random() * 81) + 10,
+      risk: Math.floor(Math.random() * 81) + 10,
+      expertise: 0,
+    };
+    const newAdventurer = new Adventurer(newTraits);
+    return {
+      phase: 'MENU',
+      designer: { balancePoints: 0 },
+      adventurer: newAdventurer,
+      unlockedDeck: INITIAL_UNLOCKED_DECK,
+      availableDeck: [],
+      hand: [],
+      handSize: this._getHandSize(),
+      shopItems: [],
+      offeredLoot: [],
+      feedback: '',
+      logger: new Logger(),
+      run: 0,
+      room: 0,
+      gameOver: { isOver: false, reason: '' },
+      newlyUnlocked: [],
+    };
+  }
+
+  private _getHandSize(): number {
+    if (this._metaManager.acls.has(UnlockableFeature.HAND_SIZE_INCREASE)) {
+      return 12;
+    }
+    return HAND_SIZE;
+  }
+
   // --- INITIALIZATION ---
   private async _loadGameData() {
     try {
@@ -448,7 +542,6 @@ export class GameEngine {
         throw new Error(`global.error_loading_items: ${response.statusText}`);
       }
       this._allItems = await response.json();
-      this.startNewGame();
     } catch (e: any) {
       this.error = e.message || 'global.unknown_error';
       this._emit('error', null);

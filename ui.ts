@@ -33,9 +33,31 @@ const renderGamePhasePanel = (state: GameState) => {
     }
 }
 
+import { UnlockableFeature, UNLOCKS } from './game/unlocks';
+import { MenuScreen } from './components/MenuScreen';
+import { UnlockScreen } from './components/UnlockScreen';
+
 export const render = (appElement: HTMLElement, state: GameState | null, engine: GameEngine) => {
     if (!state) {
         appElement.innerHTML = `<div>${t('global.loading')}</div>`;
+        return;
+    }
+
+    if (state.phase === 'MENU') {
+        appElement.innerHTML = `<menu-screen ${state.hasSave ? 'has-save' : ''}></menu-screen>`;
+        return;
+    }
+
+    if (state.phase === 'UNLOCK_SCREEN') {
+        appElement.innerHTML = `<unlock-screen></unlock-screen>`;
+        const unlockEl = document.querySelector('unlock-screen') as UnlockScreen;
+        if (unlockEl && state.newlyUnlocked.length > 0) {
+            const unlockInfo = UNLOCKS.find(u => u.feature === state.newlyUnlocked[0]);
+            if (unlockInfo) {
+                unlockEl.title = unlockInfo.title();
+                unlockEl.description = unlockInfo.description();
+            }
+        }
         return;
     }
 
@@ -54,7 +76,6 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
                 final-bp="${state.designer.balancePoints}"
                 reason="${localize(state.gameOver.reason)}"
                 run="${state.run}"
-                decision="${engine.getAdventurerEndRunDecision()}"
             ></game-over-screen>`
         : '';
 
@@ -79,6 +100,13 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
             </div>
         </div>
     `;
+
+    if (state.gameOver.isOver) {
+        const gameOverEl = document.querySelector('game-over-screen') as import('./components/GameOverScreen').GameOverScreen;
+        if (gameOverEl) {
+            gameOverEl.setDecision(engine.getAdventurerEndRunDecision());
+        }
+    }
 
     const adventurerStatusEl = document.querySelector('adventurer-status') as AdventurerStatus;
     if (adventurerStatusEl) {

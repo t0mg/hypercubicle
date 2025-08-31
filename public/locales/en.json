@@ -80,5 +80,43 @@
     "adventurer_bored": "The adventurer grew bored on room {room} of run {run}, and quit.",
     "empty_hand": "The adventurer waits for your decision, unaware that you have nothing left to offer.",
     "welcome_to_workshop": "Welcome back. Spend your Balance Points wisely."
+  },
+  "game_title": "Rogue Steward",
+  "game_subtitle": "A game of indirect control.",
+  "menu": {
+    "new_game": "New Game",
+    "continue_game": "Continue",
+    "reset_save": "Reset Save",
+    "confirm_reset": "Are you sure you want to reset all your progress?"
+  },
+  "unlocks": {
+    "congratulations": "Congratulations!",
+    "continue": "Continue",
+    "workshop": {
+      "title": "Workshop Unlocked!",
+      "description": "Between runs, you can now visit the Workshop to spend Balance Points on permanently unlocking new items."
+    },
+    "hand_size_increase": {
+      "title": "Hand Size Increased!",
+      "description": "You can now hold more cards in your hand, giving you more options."
+    },
+    "boss_fights": {
+      "title": "Boss Fights Unlocked!",
+      "description": "Powerful bosses will now appear at the end of certain floors. Defeat them for great rewards."
+    },
+    "custom_encounters": {
+      "title": "Custom Encounters Unlocked!",
+      "description": "You can now manually edit the settings for encounters, rather than relying on fully automated ones."
+    },
+    "party_constraints": {
+      "title": "Party Constraints Unlocked!",
+      "description": "You can now apply constraints to the adventurer's party, adding a new layer of challenge."
+    }
+  },
+  "game_over": {
+      "continue_message": "The adventurer wishes to continue.",
+      "retire_message": "The adventurer has had enough.",
+      "to_the_workshop": "To the Workshop",
+      "to_main_menu": "To Main Menu"
   }
 }

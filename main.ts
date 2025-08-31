@@ -2,6 +2,7 @@ import './index.css';
 import { GameEngine } from './game/engine';
 import { initLocalization, t } from './text';
 import { render } from './ui';
+import { MetaManager } from './game/meta';
 
 // Import all web components to register them
 import './components/AdventurerStatus.ts';
@@ -14,6 +15,8 @@ import './components/LogPanel.ts';
 import './components/LootCard.ts';
 import './components/LootChoicePanel.ts';
 import './components/Workshop.ts';
+import './components/MenuScreen.ts';
+import './components/UnlockScreen.ts';
 
 const appElement = document.getElementById('app');
 
@@ -21,7 +24,9 @@ if (!appElement) {
   throw new Error("Could not find app element to mount to");
 }
 
-const engine = new GameEngine();
+const metaManager = new MetaManager();
+const engine = new GameEngine(metaManager);
+
 engine.on('state-change', (newState) => {
   if (engine.isLoading) {
     appElement.innerHTML = `<div>${t('global.loading_game_data')}</div>`;
@@ -51,8 +56,9 @@ appElement.addEventListener('run-encounter', (e: Event) => {
   engine.runEncounter(encounter);
 });
 
-appElement.addEventListener('enter-workshop', () => {
-  engine.enterWorkshop();
+appElement.addEventListener('run-decision', (e: Event) => {
+  const { decision } = (e as CustomEvent).detail;
+  engine.handleEndOfRun(decision);
 });
 
 appElement.addEventListener('purchase-item', (e: Event) => {
@@ -60,12 +66,27 @@ appElement.addEventListener('purchase-item', (e: Event) => {
   engine.purchaseItem(itemId);
 });
 
-appElement.addEventListener('start-run', () => {
-  engine.startNewRun();
-});
-
 appElement.addEventListener('start-game', () => {
   engine.startNewGame();
+});
+
+appElement.addEventListener('start-run', () => {
+    engine.startNewRun();
+});
+
+appElement.addEventListener('continue-game', () => {
+  engine.continueGame();
+});
+
+appElement.addEventListener('reset-game', () => {
+  if (confirm(t('menu.confirm_reset'))) {
+    metaManager.reset();
+    engine.showMenu();
+  }
+});
+
+appElement.addEventListener('continue-from-unlock', () => {
+  engine.enterWorkshop();
 });
 
 async function main() {
@@ -75,7 +96,7 @@ async function main() {
   // Initial render for loading state
   appElement.innerHTML = `<div>${t('global.initializing')}</div>`;
 
-  engine.startNewGame();
+  engine.showMenu();
 }
 
 main();
