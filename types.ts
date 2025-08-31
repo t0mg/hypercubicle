@@ -46,6 +46,12 @@ export type GamePhase =
     | 'RUN_OVER'
     | 'SHOP';
 
+export interface Encounter {
+    enemyCount: number;
+    enemyPower: number;
+    enemyHp: number;
+}
+
 export interface GameState {
     phase: GamePhase;
     designer: {
@@ -61,7 +67,7 @@ export interface GameState {
     log: string[];
     run: number;
     room: number;
-    debugEncounterParams?: { baseDamage: number; difficultyFactor: number };
+    encounter?: Encounter;
     gameOver: {
         isOver: boolean;
         reason: string;
