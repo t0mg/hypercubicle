@@ -4,7 +4,7 @@ import type { LootChoicePanel } from './components/LootChoicePanel';
 import type { BattlePanel } from './components/BattlePanel';
 import type { LogPanel } from './components/LogPanel';
 import type { Workshop } from './components/Workshop';
-import { localize, t } from './text';
+import { t } from './text';
 import { GameEngine } from './game/engine';
 
 const getLoadingText = (state: GameState) => {
@@ -74,7 +74,7 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
         const runEndedHtml = state.runEnded.isOver
         ? `<run-ended-screen
                 final-bp="${state.designer.balancePoints}"
-                reason="${localize(state.runEnded.reason)}"
+                reason="${state.runEnded.reason}"
                 run="${state.run}"
                 ${engine.isWorkshopUnlocked() ? 'workshop-unlocked' : ''}
             ></run-ended-screen>`
@@ -92,7 +92,7 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
                         room="${state.room}"
                         deck-size="${state.availableDeck.length}"
                     ></game-stats>
-                    <feedback-panel message="${Array.isArray(state.feedback) ? state.feedback.map(m => localize(m)).join(' ') : localize(state.feedback)}"></feedback-panel>
+                    <feedback-panel message="${Array.isArray(state.feedback) ? state.feedback.join(' ') : state.feedback}"></feedback-panel>
                 </div>
                 <div class="lg:col-span-2 space-y-6">
                     <adventurer-status></adventurer-status>
