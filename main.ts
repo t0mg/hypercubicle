@@ -128,11 +128,6 @@ const render = (state: GameState | null) => {
     lootChoicePanelEl.disabled = false; // Or determine from state
   }
 
-  const debugEncounterPanelEl = document.querySelector('debug-encounter-panel') as DebugEncounterPanel;
-  if (debugEncounterPanelEl) {
-    const defaultBaseDamage = Math.max(1, 15 - Math.floor(state.adventurer.power / 4) + Math.floor(state.room * 1.5));
-    debugEncounterPanelEl.defaultBaseDamage = defaultBaseDamage;
-  }
 
   const debugLogEl = document.querySelector('debug-log') as DebugLog;
   if (debugLogEl) {
@@ -147,8 +142,8 @@ appElement.addEventListener('present-offer', (e: Event) => {
 });
 
 appElement.addEventListener('run-encounter', (e: Event) => {
-  const { params } = (e as CustomEvent).detail;
-  engine.runDebugEncounter(params);
+  const { encounter } = (e as CustomEvent).detail;
+  engine.runEncounter(encounter);
 });
 
 appElement.addEventListener('enter-workshop', () => {
