@@ -53,7 +53,7 @@ export class AdventurerStatus extends HTMLElement {
                         <div>
                             <div class="flex justify-between items-center mb-1">
                                 <div class="flex items-center">${InterestIcon()} <span class="font-semibold text-lg">${t('adventurer_status.interest')}</span></div>
-                                <span class="font-mono text-lg">${this._adventurer.interest}%</span>
+                                <span class="font-mono text-lg">${Math.round(this._adventurer.interest)}%</span>
                             </div>
                             <div class="w-full bg-gray-700 rounded-full h-4">
                                 <div class="bg-brand-interest h-4 rounded-full transition-all duration-500 ease-out" style="width: ${this._adventurer.interest}%"></div>
