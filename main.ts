@@ -1,22 +1,19 @@
 import './index.css';
 import { GameEngine } from './game/engine';
-import type { GameState } from './types';
-import './components/GameStats.ts';
-import './components/FeedbackPanel.ts';
-import type { AdventurerStatus } from './components/AdventurerStatus.ts';
-import type { LootChoicePanel } from './components/LootChoicePanel.ts';
-import type { BattlePanel } from './components/BattlePanel.ts';
-import type { LogPanel } from './components/LogPanel.ts';
-import type { Workshop } from './components/Workshop.ts';
-import type { GameOverScreen } from './components/GameOverScreen.ts';
+import { initLocalization, t } from './text';
+import { render } from './ui';
+
+// Import all web components to register them
 import './components/AdventurerStatus.ts';
-import './components/LootChoicePanel.ts';
-import './components/LoadingIndicator.ts';
 import './components/BattlePanel.ts';
-import './components/LogPanel.ts';
+import './components/FeedbackPanel.ts';
 import './components/GameOverScreen.ts';
+import './components/GameStats.ts';
+import './components/LoadingIndicator.ts';
+import './components/LogPanel.ts';
+import './components/LootCard.ts';
+import './components/LootChoicePanel.ts';
 import './components/Workshop.ts';
-import { initLocalization, t } from './localization';
 
 const appElement = document.getElementById('app');
 
@@ -41,100 +38,8 @@ engine.on('state-change', (newState) => {
             `;
     return;
   }
-  render(newState);
+  render(appElement, newState, engine);
 });
-
-const getLoadingText = (state: GameState) => {
-  if (!state) return t('global.initializing');
-  switch (state.phase) {
-    case 'AWAITING_ADVENTURER_CHOICE':
-      return t('main.adventurer_considering_offer');
-    case 'AWAITING_ENCOUNTER_FEEDBACK':
-      return t('main.adventurer_facing_encounter');
-    default:
-      return t('global.loading');
-  }
-};
-
-const renderGamePhasePanel = (state: GameState) => {
-  switch (state.phase) {
-    case 'DESIGNER_CHOOSING_LOOT':
-      return `<div class="lg:col-span-3"><loot-choice-panel></loot-choice-panel></div>`;
-    case 'DESIGNER_CHOOSING_DIFFICULTY':
-      return `<div class="lg:col-span-3"><battle-panel></battle-panel></div>`;
-    case 'AWAITING_ADVENTURER_CHOICE':
-    case 'AWAITING_ENCOUNTER_FEEDBACK':
-      return `<div class="lg:col-span-3"><loading-indicator text="${getLoadingText(state)}"></loading-indicator></div>`;
-    default:
-      return `<div class="lg:col-span-3"><div>${t('main.unhandled_game_phase', { phase: state.phase })}</div></div>`;
-  }
-}
-
-const render = (state: GameState | null) => {
-  if (!state) {
-    appElement.innerHTML = `<div>${t('global.loading')}</div>`;
-    return;
-  }
-
-  if (state.phase === 'SHOP') {
-    appElement.innerHTML = `<workshop-screen></workshop-screen>`;
-    const workshopEl = document.querySelector('workshop-screen') as Workshop;
-    if (workshopEl) {
-      workshopEl.items = state.shopItems;
-      workshopEl.balancePoints = state.designer.balancePoints;
-    }
-    return;
-  }
-
-  const gameOverHtml = state.gameOver.isOver
-    ? `<game-over-screen
-                final-bp="${state.designer.balancePoints}"
-                reason="${state.gameOver.reason}"
-                run="${state.run}"
-                decision="${engine.getAdventurerEndRunDecision()}"
-            ></game-over-screen>`
-    : '';
-
-  appElement.innerHTML = `
-        <div class="min-h-screen p-4 md:p-6 lg:p-8 flex flex-col items-center">
-            ${gameOverHtml}
-            <div class="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-1 space-y-6">
-                    <log-panel></log-panel>
-                    <game-stats
-                        balance-points="${state.designer.balancePoints}"
-                        run="${state.run}"
-                        room="${state.room}"
-                        deck-size="${state.availableDeck.length}"
-                    ></game-stats>
-                    <feedback-panel message="${state.feedback}"></feedback-panel>
-                </div>
-                <div class="lg:col-span-2 space-y-6">
-                    <adventurer-status></adventurer-status>
-                </div>
-                ${renderGamePhasePanel(state)}
-            </div>
-        </div>
-    `;
-
-  const adventurerStatusEl = document.querySelector('adventurer-status') as AdventurerStatus;
-  if (adventurerStatusEl) {
-    adventurerStatusEl.adventurer = state.adventurer;
-  }
-
-  const lootChoicePanelEl = document.querySelector('loot-choice-panel') as LootChoicePanel;
-  if (lootChoicePanelEl) {
-    lootChoicePanelEl.choices = state.hand;
-    lootChoicePanelEl.disabled = false; // Or determine from state
-  }
-
-
-  const logPanelEl = document.querySelector('log-panel') as LogPanel;
-  if (logPanelEl) {
-    logPanelEl.logger = state.logger;
-    logPanelEl.traits = state.adventurer.traits;
-  }
-};
 
 appElement.addEventListener('present-offer', (e: Event) => {
   const { ids } = (e as CustomEvent).detail;
