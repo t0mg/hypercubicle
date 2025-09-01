@@ -98,6 +98,7 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
     const adventurerStatusEl = document.querySelector('adventurer-status') as AdventurerStatus;
     if (adventurerStatusEl) {
         adventurerStatusEl.adventurer = state.adventurer;
+        adventurerStatusEl.metaState = engine.metaManager.metaState;
     }
 
     const lootChoicePanelEl = document.querySelector('loot-choice-panel') as LootChoicePanel;

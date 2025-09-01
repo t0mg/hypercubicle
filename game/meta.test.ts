@@ -35,6 +35,7 @@ describe('MetaManager', () => {
     expect(metaManager.metaState).toEqual({
       highestRun: 0,
       unlockedFeatures: [],
+      adventurers: 0,
     });
   });
 
@@ -42,6 +43,7 @@ describe('MetaManager', () => {
     const state: MetaState = {
       highestRun: 5,
       unlockedFeatures: [UnlockableFeature.WORKSHOP],
+      adventurers: 1,
     };
     localStorageMock.setItem('rogue-steward-meta', JSON.stringify(state));
 
@@ -57,6 +59,7 @@ describe('MetaManager', () => {
     expect(metaManager.metaState).toEqual({
       highestRun: 0,
       unlockedFeatures: [],
+      adventurers: 0,
     });
   });
 

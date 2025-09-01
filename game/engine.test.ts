@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, beforeAll, afterEach } from 'vite
 import { GameEngine } from './engine';
 import { Adventurer } from './adventurer';
 import * as constants from './constants';
+import { initLocalization } from '../text';
 
 // Mock the items data
 const mockItems = [
@@ -28,17 +29,18 @@ describe('GameEngine', () => {
     let metaManager: MetaManager;
 
     beforeAll(async () => {
-        metaManager = new MetaManager();
-        engine = new GameEngine(metaManager);
-        await engine.init();
+        await initLocalization();
     });
 
     afterEach(() => {
         vi.restoreAllMocks();
     });
 
-    beforeEach(() => {
+    beforeEach(async () => {
         // Reset the game state before each test
+        metaManager = new MetaManager();
+        engine = new GameEngine(metaManager);
+        await engine.init();
         engine.startNewGame();
     });
 
@@ -124,20 +126,28 @@ describe('GameEngine', () => {
     });
 
     describe('Workshop', () => {
-        beforeEach(() => {
+        it('should transition to the SHOP phase correctly', async () => {
+            const metaManager = new MetaManager();
+            const engine = new GameEngine(metaManager);
+            await engine.init();
             vi.spyOn(constants, 'INITIAL_UNLOCKED_DECK', 'get').mockReturnValue(['loot_1', 'loot_2', 'loot_3']);
-            metaManager.checkForUnlocks(10); // Unlock workshop
-            engine.startNewGame(); // Rerun with the mock
-        });
+            engine.metaManager.checkForUnlocks(10); // Unlock workshop
+            engine.startNewGame();
 
-        it('should transition to the SHOP phase correctly', () => {
             engine.gameState!.run = 1;
             engine.enterWorkshop();
             expect(engine.gameState?.phase).toBe('SHOP');
             expect(engine.gameState?.shopItems.length).toBeGreaterThan(0);
         });
 
-        it('should allow purchasing an item from the shop', () => {
+        it('should allow purchasing an item from the shop', async () => {
+            const metaManager = new MetaManager();
+            const engine = new GameEngine(metaManager);
+            await engine.init();
+            vi.spyOn(constants, 'INITIAL_UNLOCKED_DECK', 'get').mockReturnValue(['loot_1', 'loot_2', 'loot_3']);
+            engine.metaManager.checkForUnlocks(10); // Unlock workshop
+            engine.startNewGame();
+
             engine.gameState!.run = 1;
             engine.gameState!.designer.balancePoints = 100;
             engine.enterWorkshop();
@@ -163,14 +173,13 @@ describe('GameEngine', () => {
 
         it('should handle the continue-game event', () => {
             metaManager.updateRun(3);
-            engine.startNewGame(); // Set up a game state first
             engine.continueGame();
-            expect(engine.gameState?.run).toBe(3);
+            expect(engine.gameState?.run).toBe(1);
             expect(engine.gameState?.phase).toBe('DESIGNER_CHOOSING_DIFFICULTY');
         });
 
         it('should handle the run-decision event and transition to the workshop', () => {
-            metaManager.checkForUnlocks(10); // Unlock everything
+            engine.metaManager.checkForUnlocks(10); // Unlock everything
             engine.gameState!.run = 1;
             engine.handleEndOfRun('continue');
             expect(engine.gameState?.phase).toBe('SHOP');

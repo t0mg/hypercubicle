@@ -26,10 +26,10 @@ export class GameEngine {
 
   private _allItems: LootChoice[] = [];
   private _listeners: { [key:string]: GameEngineListener[] } = {};
-  private _metaManager: MetaManager;
+  public metaManager: MetaManager;
 
   constructor(metaManager: MetaManager) {
-    this._metaManager = metaManager;
+    this.metaManager = metaManager;
   }
 
   public init = async () => {
@@ -190,6 +190,7 @@ export class GameEngine {
 
   // --- PUBLIC ACTIONS ---
   public startNewGame = () => {
+    this.metaManager.incrementAdventurers();
     const newTraits: AdventurerTraits = {
       offense: Math.floor(Math.random() * 81) + 10,
       risk: Math.floor(Math.random() * 81) + 10,
@@ -226,16 +227,13 @@ export class GameEngine {
   }
 
   public continueGame = () => {
-    if (!this.gameState || !this._metaManager.metaState.highestRun) return;
-    // This would eventually load a saved game state. For now, it just starts a new run
-    // at the highest achieved run number.
-    this.startNewRun(this._metaManager.metaState.highestRun);
+    this.startNewGame();
   }
 
   public startNewRun = (runNumber?: number) => {
     if (!this.gameState) return;
     const nextRun = runNumber || this.gameState.run + 1;
-    this._metaManager.updateRun(nextRun);
+    this.metaManager.updateRun(nextRun);
 
     const handSize = this._getHandSize();
     const runDeck = generateRunDeck(this.gameState.unlockedDeck, this._allItems);
@@ -355,7 +353,7 @@ export class GameEngine {
       const { newAdventurer, feedback } = this._simulateEncounter(this.gameState.adventurer, this.gameState.room, this.gameState.encounter);
 
       const endRun = (reason: string) => {
-        const newlyUnlocked = this._metaManager.checkForUnlocks(this.gameState!.run);
+        const newlyUnlocked = this.metaManager.checkForUnlocks(this.gameState!.run);
         this.gameState!.logger.error(`GAME OVER: ${reason}`);
         this.gameState = {
             ...this.gameState!,
@@ -406,7 +404,7 @@ export class GameEngine {
   public enterWorkshop = () => {
     if (!this.gameState) return;
 
-    if (!this._metaManager.acls.has(UnlockableFeature.WORKSHOP)) {
+    if (!this.metaManager.acls.has(UnlockableFeature.WORKSHOP)) {
         this.startNewRun();
         return;
     }
@@ -515,14 +513,14 @@ export class GameEngine {
   }
 
   private _getHandSize(): number {
-    if (this._metaManager.acls.has(UnlockableFeature.HAND_SIZE_INCREASE)) {
+    if (this.metaManager.acls.has(UnlockableFeature.HAND_SIZE_INCREASE)) {
       return 12;
     }
     return HAND_SIZE;
   }
 
   public isWorkshopUnlocked(): boolean {
-    return this._metaManager.acls.has(UnlockableFeature.WORKSHOP);
+    return this.metaManager.acls.has(UnlockableFeature.WORKSHOP);
   }
 
   // --- INITIALIZATION ---
