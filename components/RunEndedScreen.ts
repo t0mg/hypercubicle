@@ -3,7 +3,7 @@ import { UnlockableFeature, UNLOCKS } from '../game/unlocks';
 
 export class RunEndedScreen extends HTMLElement {
     private state: 'initial' | 'unlock-revealed' | 'decision-revealing' | 'decision-revealed' = 'initial';
-    private decision: 'continue' | 'retire' | null = null;
+    public decision: 'continue' | 'retire' | null = null;
     public newlyUnlocked: UnlockableFeature[] = [];
 
     static get observedAttributes() {
@@ -34,25 +34,22 @@ export class RunEndedScreen extends HTMLElement {
 
     public setDecision(decision: 'continue' | 'retire') {
         this.decision = decision;
-        if (this.state === 'unlock-revealed') {
-            this.revealDecision();
-        }
+        // This is now the entry point for the component's flow
+        this.startFlow();
     }
 
     connectedCallback() {
         this.render();
+        // Do not start the flow here, wait for setDecision
+    }
+
+    startFlow() {
         if (this.newlyUnlocked.length > 0) {
             this.renderUnlock();
         } else {
             this.state = 'unlock-revealed'; // Skip unlock phase
-            if (this.decision) {
-                this.revealDecision();
-            }
+            this.revealDecision();
         }
-    }
-
-    attributeChangedCallback() {
-        this.updateDecision(false);
     }
 
     renderUnlock() {
@@ -82,15 +79,19 @@ export class RunEndedScreen extends HTMLElement {
             unlockContainer.innerHTML = '';
         }
         this.state = 'unlock-revealed';
-        if (this.decision) {
-            this.revealDecision();
-        }
+        this.revealDecision();
     }
 
     revealDecision() {
         if (this.state !== 'unlock-revealed') return;
 
         this.state = 'decision-revealing';
+        const decisionContainer = this.querySelector('#decision-container');
+        if (decisionContainer) {
+            // Clear the "adventurer considers" message
+            decisionContainer.innerHTML = '';
+        }
+
         setTimeout(() => {
             this.state = 'decision-revealed';
             this.updateDecision(true);
