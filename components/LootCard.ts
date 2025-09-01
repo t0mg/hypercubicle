@@ -87,12 +87,12 @@ export class LootCard extends HTMLElement {
         this.innerHTML = `
             <div>
                 <div class="flex justify-between items-baseline">
-                    <p class="font-bold text-lg ${rarityColor}">${this._item.name}</p>
-                    <p class="text-xs text-brand-text-muted font-mono">${this._item.type}</p>
+                    <p class=" text-2xl ${rarityColor}">${this._item.name}</p>
+                    <p class="font-label text-sm text-brand-text-muted">${this._item.type}</p>
                 </div>
                 <p class="text-xs uppercase tracking-wider mb-3 ${rarityColor}">${this._item.rarity}</p>
                 <div class="border-t border-gray-700 my-2"></div>
-                <div class="space-y-1 text-brand-text">
+                <div class="space-y-1 text-brand-text text-large">
                     ${this._item.stats.hp ? StatChange(t('global.health'), this._item.stats.hp) : ''}
                     ${this._item.stats.maxHp ? StatChange(t('global.max_hp'), this._item.stats.maxHp) : ''}
                     ${this._item.stats.power ? StatChange(t('global.power'), this._item.stats.power) : ''}

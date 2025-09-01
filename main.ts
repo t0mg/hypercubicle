@@ -35,7 +35,7 @@ engine.on('state-change', (newState) => {
     appElement.innerHTML = `
                 <div class="min-h-screen flex items-center justify-center p-4">
                     <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-secondary">
-                         <h2 class="text-2xl font-bold text-brand-secondary mb-4">${t('global.an_error_occurred')}</h2>
+                         <h2 class="text-2xl text-brand-secondary mb-4">${t('global.an_error_occurred')}</h2>
                          <p class="text-brand-text">${engine.error}</p>
                     </div>
                 </div>

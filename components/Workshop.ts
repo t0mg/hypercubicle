@@ -25,7 +25,7 @@ const ShopItemCard = (item: LootChoice, canAfford: boolean) => {
         <div class="bg-brand-surface border border-brand-primary rounded-lg p-4 flex flex-col justify-between shadow-lg animate-fade-in">
             <div>
                 <div class="flex justify-between items-baseline">
-                    <p class="font-bold text-lg ${rarityColor}">${item.name}</p>
+                    <p class="text-lg ${rarityColor}">${item.name}</p>
                     <p class="text-xs text-brand-text-muted font-mono">${item.type}</p>
                 </div>
                 <p class="text-xs uppercase tracking-wider mb-3 ${rarityColor}">${item.rarity}</p>
@@ -40,7 +40,7 @@ const ShopItemCard = (item: LootChoice, canAfford: boolean) => {
                 <button
                     data-item-id="${item.id}"
                     ${!canAfford ? 'disabled' : ''}
-                    class="w-full bg-brand-secondary text-white font-bold py-2 px-4 rounded-lg transition-all transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:scale-100"
+                    class="w-full bg-brand-secondary text-white py-2 px-4 rounded-lg transition-all transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:scale-100"
                 >
                     ${t('global.buy')} (${item.cost} ${t('global.bp')})
                 </button>
@@ -89,9 +89,9 @@ export class Workshop extends HTMLElement {
         this.innerHTML = `
             <div class="w-full max-w-4xl mx-auto p-4 md:p-6">
                 <div class="text-center mb-6">
-                    <h1 class="text-4xl font-bold font-serif text-white">${t('workshop.title')}</h1>
+                    <h1 class="text-4xl font-label text-white">${t('workshop.title')}</h1>
                     <p class="text-brand-text-muted">${t('workshop.description')}</p>
-                    <p class="mt-4 text-2xl font-bold">
+                    <p class="mt-4 text-2xl">
                         ${t('workshop.balance_points')}<span class="text-amber-400">${this._balancePoints}</span>
                     </p>
                 </div>
@@ -104,7 +104,7 @@ export class Workshop extends HTMLElement {
                 <div class="text-center">
                     <button
                         id="start-run-button"
-                        class="bg-green-600 text-white font-bold py-4 px-10 rounded-lg text-xl hover:bg-green-500 transition-colors transform hover:scale-105"
+                        class="bg-green-600 text-white py-4 px-10 rounded-lg text-xl hover:bg-green-500 transition-colors transform hover:scale-105"
                     >
                         ${t('workshop.begin_next_run')}
                     </button>

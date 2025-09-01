@@ -41,19 +41,19 @@ export class GameStats extends HTMLElement {
             <div class="bg-brand-primary p-4 rounded-lg shadow-lg flex justify-around text-center">
                 <div>
                     <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.bp')}</span>
-                    <p class="text-2xl font-bold text-white">${this._balancePoints}</p>
+                    <p class="text-2xl  text-white">${this._balancePoints}</p>
                 </div>
                 <div>
                     <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.run')}</span>
-                    <p class="text-2xl font-bold text-white">${this._run}</p>
+                    <p class="text-2xl  text-white">${this._run}</p>
                 </div>
                 <div>
                     <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.room')}</span>
-                    <p class="text-2xl font-bold text-white">${this._room}</p>
+                    <p class="text-2xl  text-white">${this._room}</p>
                 </div>
                 <div>
                     <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.deck')}</span>
-                    <p class="text-2xl font-bold text-white">${this._deckSize}</p>
+                    <p class="text-2xl  text-white">${this._deckSize}</p>
                 </div>
             </div>
         `;

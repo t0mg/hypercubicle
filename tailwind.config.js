@@ -19,8 +19,9 @@ export default {
         'rarity-rare': '#3b82f6',
       },
       fontFamily: {
-        sans: ['"Inter"', 'sans-serif'],
-        serif: ['"Georgia"', 'serif'],
+        sans: ['"VT323"', 'monospace'],
+        label: ['"Silkscreen"', 'sans-serif'],
+        title: ['"Jacquard 12"', 'system-ui'],
       },
       keyframes: {
         'fade-in': {

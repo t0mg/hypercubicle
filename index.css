@@ -1,2 +1,6 @@
 @import "tailwindcss";
 @config "./tailwind.config.js";
+
+body {
+  font-size: 175%;
+}

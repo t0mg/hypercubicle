@@ -46,16 +46,16 @@ export class MenuScreen extends HTMLElement {
 
         this.innerHTML = `
             <div class="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4 text-center">
-                <h1 class="text-6xl font-bold text-red-500 font-serif mb-2">${t('game_title')}</h1>
+                <h1 class="text-8xl text-red-500 font-title mb-2">${t('game_title')}</h1>
                 <p class="text-2xl text-gray-300 mb-8">${t('game_subtitle')}</p>
                 ${metaInfo}
                 <div class="mt-8 space-y-4">
                     ${hasSave ? `
-                        <button id="continue-game-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg text-xl min-w-[250px] transition-colors">
+                        <button id="continue-game-button" class="bg-red-500 hover:bg-red-600 text-white  py-3 px-6 rounded-lg text-xl min-w-[250px] transition-colors">
                             ${t('menu.continue_game')}
                         </button>
                     ` : ''}
-                    <button id="new-game-button" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg text-xl min-w-[250px] transition-colors">
+                    <button id="new-game-button" class="bg-gray-700 hover:bg-gray-600 text-white  py-3 px-6 rounded-lg text-xl min-w-[250px] transition-colors">
                         ${t('menu.new_game')}
                     </button>
                 </div>

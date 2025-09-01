@@ -51,19 +51,19 @@ export class LogPanel extends HTMLElement {
 
         this.innerHTML = `
             <div class="w-full bg-black/50 p-4 rounded-lg shadow-inner border border-gray-700">
-                <h4 class="text-sm font-bold text-brand-text-muted uppercase tracking-wider mb-2">${t('log_panel.title')}</h4>
+                <h4 class="text-sm text-brand-text-muted uppercase tracking-wider mb-2">${t('log_panel.title')}</h4>
 
                 <div class="flex justify-around text-center mb-3 p-2 bg-brand-primary/50 rounded-md">
                     <div class="text-xs">
-                        <span class="font-bold text-brand-text-muted block">${t('log_panel.offense')}</span>
+                        <span class="text-brand-text-muted block">${t('log_panel.offense')}</span>
                         <span class="font-mono text-white text-base">${this._traits.offense}</span>
                     </div>
                     <div class="text-xs">
-                        <span class="font-bold text-brand-text-muted block">${t('log_panel.risk')}</span>
+                        <span class="text-brand-text-muted block">${t('log_panel.risk')}</span>
                         <span class="font-mono text-white text-base">${this._traits.risk}</span>
                     </div>
                     <div class="text-xs">
-                        <span class="font-bold text-brand-text-muted block">${t('log_panel.expertise')}</span>
+                        <span class="text-brand-text-muted block">${t('log_panel.expertise')}</span>
                         <span class="font-mono text-white text-base">${this._traits.expertise}</span>
                     </div>
                 </div>

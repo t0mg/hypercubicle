@@ -62,10 +62,10 @@ export class RunEndedScreen extends HTMLElement {
         unlockContainer.innerHTML = `
             <div class="absolute inset-0 bg-black/70 flex items-center justify-center z-50 animate-fade-in">
                 <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-primary animate-fade-in-up w-full max-w-md">
-                    <h2 class="text-3xl font-bold font-serif text-brand-primary mb-3">${t('unlocks.congratulations')}</h2>
-                    <h3 class="text-2xl font-bold text-amber-400 mb-2">${unlockInfo.title()}</h3>
+                    <h2 class="text-3xl font-label text-brand-primary mb-3">${t('unlocks.congratulations')}</h2>
+                    <h3 class="text-xl text-white">${unlock.name}</h3>
                     <p class="text-brand-text mb-6">${unlockInfo.description()}</p>
-                    <button id="unlock-dismiss-button" class="bg-brand-primary text-white font-bold py-2 px-6 rounded-lg hover:bg-brand-primary/80 transition-colors">
+                    <button id="unlock-dismiss-button" class="bg-brand-primary text-white py-2 px-6 rounded-lg hover:bg-brand-primary/80 transition-colors">
                         ${t('global.continue')}
                     </button>
                 </div>
@@ -122,9 +122,9 @@ export class RunEndedScreen extends HTMLElement {
             <div id="unlock-container"></div>
             <div class="absolute inset-0 bg-black/80 flex items-center justify-center z-40 backdrop-blur-md">
                 <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-secondary animate-fade-in w-full max-w-lg">
-                    <h2 class="text-4xl font-bold font-serif text-brand-secondary mb-2">${t('run_ended_screen.run_complete')}</h2>
+                    <h2 class="text-4xl font-label text-brand-secondary mb-2">${t('run_ended_screen.run_complete')}</h2>
                     <p class="text-brand-text-muted mb-4">${reason}</p>
-                    <p class="text-lg text-white mb-6">${t('run_ended_screen.final_bp')}<span class="font-bold text-2xl text-amber-400">${finalBP}</span></p>
+                    <p class="text-lg text-white mb-6">${t('run_ended_screen.final_bp')}<span class="text-2xl text-amber-400">${finalBP}</span></p>
                     <div id="decision-container" class="h-24">
                         <p class="text-brand-text-muted text-lg animate-fade-in-up">${t('run_ended_screen.adventurer_considers_fate')}<span class="animate-dots"></span></p>
                     </div>
@@ -151,13 +151,13 @@ export class RunEndedScreen extends HTMLElement {
 
         if (this.decision === 'continue') {
             decisionText = `
-                <h3 class="text-2xl font-bold text-green-400 mb-2 ${animationClass}">${t('run_ended_screen.continue_quote')}</h3>
+                <h3 class="text-2xl text-green-400 mb-2 ${animationClass}">${t('run_ended_screen.continue_quote')}</h3>
                 <p class="text-brand-text mb-4 ${animationClass}" style="animation-delay: 0.5s;">${t('run_ended_screen.continue_decision')}</p>
             `;
             buttonHTML += `
                 <button
                     id="continue-run-button"
-                    class="bg-green-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-400 transition-colors transform hover:scale-105 ${animationClass}"
+                    class="bg-green-500 text-white py-3 px-6 rounded-lg hover:bg-green-400 transition-colors transform hover:scale-105 ${animationClass}"
                     style="animation-delay: 1.2s;"
                 >
                     ${workshopUnlocked ? t('run_ended_screen.enter_workshop') : t('run_ended_screen.start_new_run')}
@@ -165,13 +165,13 @@ export class RunEndedScreen extends HTMLElement {
             `;
         } else { // retire
             decisionText = `
-                <h3 class="text-2xl font-bold text-red-400 mb-2 ${animationClass}">${t('run_ended_screen.retire_quote')}</h3>
+                <h3 class="text-2xl text-red-400 mb-2 ${animationClass}">${t('run_ended_screen.retire_quote')}</h3>
                 <p class="text-brand-text mb-4 ${animationClass}" style="animation-delay: 0.5s;">${t('run_ended_screen.retire_decision', { run: this.getAttribute('run')})}</p>
             `;
             buttonHTML += `
                 <button
                     id="retire-run-button"
-                    class="bg-brand-secondary text-white font-bold py-3 px-6 rounded-lg hover:bg-red-500 transition-colors transform hover:scale-105 ${animationClass}"
+                    class="bg-brand-secondary text-white py-3 px-6 rounded-lg hover:bg-red-500 transition-colors transform hover:scale-105 ${animationClass}"
                     style="animation-delay: 1s;"
                 >
                     ${t('run_ended_screen.recruit_new_adventurer')}
