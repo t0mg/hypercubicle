@@ -14,7 +14,8 @@
     "loading_game_data": "Loading Game Data...",
     "an_error_occurred": "An Error Occurred",
     "error_loading_items": "Failed to load items.json: {statusText}",
-    "unknown_error": "An unknown error occurred while loading game data."
+    "unknown_error": "An unknown error occurred while loading game data.",
+    "continue": "Continue"
   },
   "main": {
     "adventurer_considering_offer": "Adventurer is considering your offer...",
