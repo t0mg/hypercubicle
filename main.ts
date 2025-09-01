@@ -16,7 +16,6 @@ import './components/LootCard.ts';
 import './components/LootChoicePanel.ts';
 import './components/Workshop.ts';
 import './components/MenuScreen.ts';
-import './components/UnlockScreen.ts';
 
 const appElement = document.getElementById('app');
 
@@ -87,10 +86,6 @@ appElement.addEventListener('reset-game', () => {
     metaManager.reset();
     engine.showMenu();
   }
-});
-
-appElement.addEventListener('continue-from-unlock', () => {
-  engine.enterWorkshop();
 });
 
 async function main() {

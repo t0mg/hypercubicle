@@ -1,8 +1,10 @@
 import { t } from '../text';
+import { UnlockableFeature, UNLOCKS } from '../game/unlocks';
 
 export class RunEndedScreen extends HTMLElement {
-    private state: 'initial' | 'revealing' | 'revealed' = 'initial';
+    private state: 'initial' | 'unlock-revealed' | 'decision-revealing' | 'decision-revealed' = 'initial';
     private decision: 'continue' | 'retire' | null = null;
+    public newlyUnlocked: UnlockableFeature[] = [];
 
     static get observedAttributes() {
         return ['workshop-unlocked'];
@@ -12,15 +14,19 @@ export class RunEndedScreen extends HTMLElement {
         super();
         this.addEventListener('click', (e: Event) => {
             const target = e.composedPath()[0] as HTMLElement;
-            if (target.id === 'enter-workshop-button') {
-                this.dispatchEvent(new CustomEvent('continue-from-unlock', {
+            if (target.id === 'unlock-dismiss-button') {
+                this.dismissUnlock();
+            } else if (target.id === 'continue-run-button') {
+                this.dispatchEvent(new CustomEvent('run-decision', {
                     bubbles: true,
-                    composed: true
+                    composed: true,
+                    detail: { decision: 'continue' }
                 }));
-            } else if (target.id === 'new-adventurer-button') {
-                this.dispatchEvent(new CustomEvent('new-game', {
+            } else if (target.id === 'retire-run-button') {
+                this.dispatchEvent(new CustomEvent('run-decision', {
                     bubbles: true,
-                    composed: true
+                    composed: true,
+                    detail: { decision: 'retire' }
                 }));
             }
         });
@@ -28,16 +34,20 @@ export class RunEndedScreen extends HTMLElement {
 
     public setDecision(decision: 'continue' | 'retire') {
         this.decision = decision;
-        if (this.state === 'initial') {
-            this.render();
+        if (this.state === 'unlock-revealed') {
             this.revealDecision();
         }
     }
 
     connectedCallback() {
-        if (this.state === 'initial') {
-            this.render();
-            this.revealDecision();
+        this.render();
+        if (this.newlyUnlocked.length > 0) {
+            this.renderUnlock();
+        } else {
+            this.state = 'unlock-revealed'; // Skip unlock phase
+            if (this.decision) {
+                this.revealDecision();
+            }
         }
     }
 
@@ -45,10 +55,44 @@ export class RunEndedScreen extends HTMLElement {
         this.updateDecision(false);
     }
 
+    renderUnlock() {
+        const unlockContainer = this.querySelector('#unlock-container');
+        if (!unlockContainer) return;
+
+        const unlockInfo = UNLOCKS.find(u => u.feature === this.newlyUnlocked[0]);
+        if (!unlockInfo) return;
+
+        unlockContainer.innerHTML = `
+            <div class="absolute inset-0 bg-black/70 flex items-center justify-center z-50 animate-fade-in">
+                <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-primary animate-fade-in-up w-full max-w-md">
+                    <h2 class="text-3xl font-bold font-serif text-brand-primary mb-3">${t('unlocks.congratulations')}</h2>
+                    <h3 class="text-2xl font-bold text-amber-400 mb-2">${unlockInfo.title()}</h3>
+                    <p class="text-brand-text mb-6">${unlockInfo.description()}</p>
+                    <button id="unlock-dismiss-button" class="bg-brand-primary text-white font-bold py-2 px-6 rounded-lg hover:bg-brand-primary/80 transition-colors">
+                        ${t('global.continue')}
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    dismissUnlock() {
+        const unlockContainer = this.querySelector('#unlock-container');
+        if (unlockContainer) {
+            unlockContainer.innerHTML = '';
+        }
+        this.state = 'unlock-revealed';
+        if (this.decision) {
+            this.revealDecision();
+        }
+    }
+
     revealDecision() {
-        this.state = 'revealing';
+        if (this.state !== 'unlock-revealed') return;
+
+        this.state = 'decision-revealing';
         setTimeout(() => {
-            this.state = 'revealed';
+            this.state = 'decision-revealed';
             this.updateDecision(true);
         }, 2000);
     }
@@ -59,6 +103,8 @@ export class RunEndedScreen extends HTMLElement {
 
         this.innerHTML = `
             <style>
+                @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+                .animate-fade-in { animation: fade-in 0.5s ease-out forwards; }
                 @keyframes fade-in-up {
                     from { opacity: 0; transform: translateY(20px); }
                     to { opacity: 1; transform: translateY(0); }
@@ -72,7 +118,8 @@ export class RunEndedScreen extends HTMLElement {
                 }
                 .animate-dots::after { content: '...'; animation: dots 1.5s infinite; }
             </style>
-            <div class="absolute inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-md">
+            <div id="unlock-container"></div>
+            <div class="absolute inset-0 bg-black/80 flex items-center justify-center z-40 backdrop-blur-md">
                 <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-secondary animate-fade-in w-full max-w-lg">
                     <h2 class="text-4xl font-bold font-serif text-brand-secondary mb-2">${t('run_ended_screen.run_complete')}</h2>
                     <p class="text-brand-text-muted mb-4">${reason}</p>
@@ -92,7 +139,7 @@ export class RunEndedScreen extends HTMLElement {
         const decisionContainer = this.querySelector('#decision-container');
         const buttonContainer = this.querySelector('#button-container');
 
-        if (!decisionContainer || !buttonContainer || this.state !== 'revealed') {
+        if (!decisionContainer || !buttonContainer || this.state !== 'decision-revealed') {
             return;
         }
 
@@ -108,7 +155,7 @@ export class RunEndedScreen extends HTMLElement {
             `;
             buttonHTML += `
                 <button
-                    id="enter-workshop-button"
+                    id="continue-run-button"
                     class="bg-green-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-400 transition-colors transform hover:scale-105 ${animationClass}"
                     style="animation-delay: 1.2s;"
                 >
@@ -122,7 +169,7 @@ export class RunEndedScreen extends HTMLElement {
             `;
             buttonHTML += `
                 <button
-                    id="new-adventurer-button"
+                    id="retire-run-button"
                     class="bg-brand-secondary text-white font-bold py-3 px-6 rounded-lg hover:bg-red-500 transition-colors transform hover:scale-105 ${animationClass}"
                     style="animation-delay: 1s;"
                 >

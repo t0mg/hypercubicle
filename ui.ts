@@ -33,9 +33,7 @@ const renderGamePhasePanel = (state: GameState) => {
     }
 }
 
-import { UnlockableFeature, UNLOCKS } from './game/unlocks';
 import { MenuScreen } from './components/MenuScreen';
-import { UnlockScreen } from './components/UnlockScreen';
 
 export const render = (appElement: HTMLElement, state: GameState | null, engine: GameEngine) => {
     if (!state) {
@@ -45,19 +43,6 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
 
     if (state.phase === 'MENU') {
         appElement.innerHTML = `<menu-screen ${state.hasSave ? 'has-save' : ''}></menu-screen>`;
-        return;
-    }
-
-    if (state.phase === 'UNLOCK_SCREEN') {
-        appElement.innerHTML = `<unlock-screen></unlock-screen>`;
-        const unlockEl = document.querySelector('unlock-screen') as UnlockScreen;
-        if (unlockEl && state.newlyUnlocked.length > 0) {
-            const unlockInfo = UNLOCKS.find(u => u.feature === state.newlyUnlocked[0]);
-            if (unlockInfo) {
-                unlockEl.title = unlockInfo.title();
-                unlockEl.description = unlockInfo.description();
-            }
-        }
         return;
     }
 
@@ -105,6 +90,7 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
     if (state.runEnded.isOver) {
         const runEndedEl = document.querySelector('run-ended-screen') as import('./components/RunEndedScreen').RunEndedScreen;
         if (runEndedEl) {
+            runEndedEl.newlyUnlocked = state.newlyUnlocked;
             runEndedEl.setDecision(engine.getAdventurerEndRunDecision());
         }
     }

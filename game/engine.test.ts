@@ -176,11 +176,6 @@ describe('GameEngine', () => {
             expect(engine.gameState?.phase).toBe('SHOP');
         });
 
-        it('should handle the run-decision event and transition to the unlock screen', () => {
-            engine.gameState!.run = 1;
-            engine.handleEndOfRun('continue');
-            expect(engine.gameState?.phase).toBe('UNLOCK_SCREEN');
-        });
 
         it('should handle the run-decision event and transition to the menu', () => {
             engine.gameState!.run = 1;

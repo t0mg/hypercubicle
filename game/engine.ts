@@ -354,28 +354,26 @@ export class GameEngine {
       }
       const { newAdventurer, feedback } = this._simulateEncounter(this.gameState.adventurer, this.gameState.room, this.gameState.encounter);
 
-      if (newAdventurer.hp <= 0) {
-        this.gameState.logger.error("GAME OVER: Adventurer has fallen in battle.");
+      const endRun = (reason: string) => {
+        const newlyUnlocked = this._metaManager.checkForUnlocks(this.gameState!.run);
+        this.gameState!.logger.error(`GAME OVER: ${reason}`);
         this.gameState = {
-          ...this.gameState,
-          adventurer: newAdventurer,
-          designer: { balancePoints: this.gameState.designer.balancePoints + BP_PER_FLOOR },
-          phase: 'RUN_OVER',
-          runEnded: { isOver: true, reason: t('game_engine.adventurer_fell', { room: this.gameState.room, run: this.gameState.run }) },
+            ...this.gameState!,
+            adventurer: newAdventurer,
+            designer: { balancePoints: this.gameState!.designer.balancePoints + BP_PER_FLOOR },
+            phase: 'RUN_OVER',
+            runEnded: { isOver: true, reason: reason },
+            newlyUnlocked: newlyUnlocked,
         };
         this._emit('state-change', this.gameState);
+      }
+
+      if (newAdventurer.hp <= 0) {
+        endRun(t('game_engine.adventurer_fell', { room: this.gameState.room, run: this.gameState.run }));
         return;
       }
       if (newAdventurer.interest <= INTEREST_THRESHOLD) {
-        this.gameState.logger.error("GAME OVER: Adventurer lost interest and quit.");
-        this.gameState = {
-          ...this.gameState,
-          adventurer: newAdventurer,
-          designer: { balancePoints: this.gameState.designer.balancePoints + BP_PER_FLOOR },
-          phase: 'RUN_OVER',
-          runEnded: { isOver: true, reason: t('game_engine.adventurer_bored', { room: this.gameState.room, run: this.gameState.run }) },
-        };
-        this._emit('state-change', this.gameState);
+        endRun(t('game_engine.adventurer_bored', { room: this.gameState.room, run: this.gameState.run }));
         return;
       }
 
@@ -477,19 +475,8 @@ export class GameEngine {
       return;
     }
 
-    const newlyUnlocked = this._metaManager.checkForUnlocks(this.gameState.run + 1);
-    if (newlyUnlocked.length > 0) {
-        const unlockInfo = UNLOCKS.find(u => u.feature === newlyUnlocked[0]);
-        this.gameState = {
-            ...this.gameState,
-            phase: 'UNLOCK_SCREEN',
-            newlyUnlocked: newlyUnlocked,
-            feedback: t('unlocks.congratulations'),
-        };
-        this._emit('state-change', this.gameState);
-    } else {
-        this.enterWorkshop();
-    }
+    // Player chose to continue, so we enter the workshop (or start a new run if not unlocked)
+    this.enterWorkshop();
   }
 
   public showMenu = () => {
