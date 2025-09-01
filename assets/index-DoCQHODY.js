@@ -25,13 +25,13 @@
         </div>
     `,e.runEnded.isOver){const l=document.querySelector("run-ended-screen");l&&(l.newlyUnlocked=e.newlyUnlocked,l.setDecision(t.getAdventurerEndRunDecision()))}const a=document.querySelector("adventurer-status");a&&(a.adventurer=e.adventurer);const i=document.querySelector("loot-choice-panel");i&&(i.choices=e.hand,i.disabled=!1);const o=document.querySelector("log-panel");o&&(o.logger=e.logger,o.traits=e.adventurer.traits)},j="rogue-steward-meta";class K{constructor(){this._metaState=this._load()}get metaState(){return this._metaState}get acls(){return new Set(this._metaState.unlockedFeatures)}checkForUnlocks(e){const t=[];for(const s of Q)e>=s.runThreshold&&!this._metaState.unlockedFeatures.includes(s.feature)&&(this._metaState.unlockedFeatures.push(s.feature),t.push(s.feature));return t.length>0&&this.save(),t}updateRun(e){e>this._metaState.highestRun&&(this._metaState.highestRun=e,this.save())}_load(){try{const e=localStorage.getItem(j);if(e){const t=JSON.parse(e);if(typeof t.highestRun=="number"&&Array.isArray(t.unlockedFeatures))return t}}catch(e){console.error("Failed to load meta state:",e)}return this._defaultState()}save(){try{localStorage.setItem(j,JSON.stringify(this._metaState))}catch(e){console.error("Failed to save meta state:",e)}}reset(){this._metaState=this._defaultState(),this.save()}_defaultState(){return{highestRun:0,unlockedFeatures:[]}}}const le=()=>'<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-red-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" /></svg>',de=()=>'<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-blue-400" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M240-400q0 68.92 36.77 126.58 36.77 57.65 98.85 86.5-7.93-11.93-11.77-24.77Q360-224.54 360-238q0-23.54 9.31-44.62 9.31-21.07 26.15-37.92L480-403.85l85.31 83.31q16.84 16.85 25.77 37.92Q600-261.54 600-238q0 13.46-3.85 26.31-3.84 12.84-11.77 24.77 62.08-28.85 98.85-86.5Q720-331.08 720-400q0-50-18.5-94.5T648-574q-20 13-42 19.5t-45 6.5q-62.77 0-108.27-41-45.5-41-51.73-102.54-39 32.23-69 67.73-30 35.5-50.5 72.77-20.5 37.27-31 75.27-10.5 38-10.5 75.77Zm240 52-57 56q-11 11-17 25t-6 29q0 32 23.5 55t56.5 23q33 0 56.5-23t23.5-55q0-16-6-29.5T537-292l-57-56Zm-40-420.46V-708q0 50.92 35.04 85.46Q510.08-588 561-588q18.77 0 36.58-6.35 17.8-6.34 33.65-18.27l17.23-13.53q52.46 38.92 82 98.92T760-400q0 117.08-81.46 198.54T480-120q-117.08 0-198.54-81.46T200-400q0-102.85 64.58-201.15Q329.15-699.46 440-768.46Z"/></svg>',ce=()=>'<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-amber-400" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M249.23-80H144.62Q117-80 98.5-98.5 80-117 80-144.62v-104.61h40v104.61q0 10.77 6.92 17.7 6.93 6.92 17.7 6.92h104.61v40Zm461.54 0v-40h104.61q10.77 0 17.7-6.92 6.92-6.93 6.92-17.7v-104.61h40v104.61q0 27.62-18.5 46.12Q843-80 815.38-80H710.77ZM480-250.77q-106.92 0-192.12-60.61Q202.69-372 159.23-480q43.46-108 128.65-168.62 85.2-60.61 192.12-60.61t192.12 60.61Q757.31-588 800.77-480q-43.46 108-128.65 168.62-85.2 60.61-192.12 60.61Zm0-40q91.08 0 163.31-49.54T756.85-480q-41.31-90.15-113.54-139.69-72.23-49.54-163.31-49.54t-163.31 49.54Q244.46-570.15 203.15-480q41.31 90.15 113.54 139.69 72.23 49.54 163.31 49.54Zm0-74.61q48 0 81.31-33.31T594.62-480q0-48-33.31-81.31T480-594.62q-48 0-81.31 33.31T365.38-480q0 48 33.31 81.31T480-365.38Zm0-40q-31.15 0-52.88-21.74-21.74-21.73-21.74-52.88 0-31.15 21.74-52.88 21.73-21.74 52.88-21.74 31.15 0 52.88 21.74 21.74 21.73 21.74 52.88 0 31.15-21.74 52.88-21.73 21.74-52.88 21.74ZM80-710.77v-104.61Q80-843 98.5-861.5 117-880 144.62-880h104.61v40H144.62q-10.77 0-17.7 6.92-6.92 6.93-6.92 17.7v104.61H80Zm760 0v-104.61q0-10.77-6.92-17.7-6.93-6.92-17.7-6.92H710.77v-40h104.61q27.62 0 46.12 18.5Q880-843 880-815.38v104.61h-40ZM480-480Z"/></svg>',he=()=>'<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M753.54-132.15 631.15-254.31l-88 88-11.07-11.07q-18.39-18.39-18.39-45.47 0-27.07 18.39-45.46l163.61-163.61q18.39-18.39 45.46-18.39 27.08 0 45.47 18.39l11.07 11.07-88 88 122.16 122.39q9.69 9.69 9.69 22.61 0 12.93-9.69 22.62l-33.08 33.08q-9.69 9.69-22.62 9.69-12.92 0-22.61-9.69ZM840-740.92 398.31-298.46l29.61 29.38q18.39 18.39 18.39 45.46 0 27.08-18.39 45.47l-11.07 11.07-88-88-122.39 122.16q-9.69 9.69-22.61 9.69-12.93 0-22.62-9.69L128.15-166q-9.69-9.69-9.69-22.62 0-12.92 9.69-22.61l122.16-122.39-88-88 11.07-11.07q18.39-18.39 45.47-18.39 27.07 0 45.46 18.39l30.15 30.38L736.92-844H840v103.08ZM334-583l23.23-23.77 23-24-23 24L334-583Zm-28.31 28.54L120-740.92V-844h103.08L408-658.31l-27.77 27.54L207-804h-47v47l174 174-28.31 28.54ZM370-327l430-430v-47h-47L323-374l47 47Zm0 0-23.23-23.77L323-374l23.77 23.23L370-327Z"/></svg>',ue=()=>'<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-121.54q-120.54-35.77-200.27-146.04Q200-377.85 200-516v-216.31l280-104.61 280 104.61V-516q0 138.15-79.73 248.42Q600.54-157.31 480-121.54Zm0-42.46q104-33 172-132t68-220v-189l-240-89.23L240-705v189q0 121 68 220t172 132Zm0-315.23Z"/></svg>',me=()=>'<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M200-160q-25.54 0-36.31-22.81-10.77-22.81 5.08-42.57L400-506.15V-760h-55.38q-8.5 0-14.25-5.76t-5.75-14.27q0-8.51 5.75-14.24t14.25-5.73h270.76q8.5 0 14.25 5.76t5.75 14.27q0 8.51-5.75 14.24T615.38-760H560v253.85l231.23 280.77q15.85 19.76 5.08 42.57T760-160H200Zm80-80h400L544-400H416L280-240Zm-80 40h560L520-492v-268h-80v268L200-200Zm280-280Z"/></svg>';class pe extends HTMLElement{constructor(){super(),this._adventurer=null}set adventurer(e){this._adventurer=e,this.render()}get adventurer(){return this._adventurer}connectedCallback(){this.render()}render(){if(!this._adventurer){this.innerHTML="";return}const e=this._adventurer.hp/this._adventurer.maxHp*100;this.innerHTML=`
             <div class="bg-brand-surface p-6 rounded-lg shadow-xl border border-gray-700">
-                <h2 class="text-2xl font-bold font-serif mb-4 text-center text-white">${n("adventurer_status.title")}</h2>
+                <h2 class="text-2xl  font-label mb-4 text-center text-white">${n("adventurer_status.title")}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-4">
                         <div>
                             <div class="flex justify-between items-center mb-1">
-                                <div class="flex items-center">${le()} <span class="font-semibold text-lg">${n("global.health")}</span></div>
-                                <span class="font-mono text-lg">${this._adventurer.hp} / ${this._adventurer.maxHp}</span>
+                                <div class="flex items-center">${le()} <span class=" text-lg">${n("global.health")}</span></div>
+                                <span class="font-label text-lg">${this._adventurer.hp} / ${this._adventurer.maxHp}</span>
                             </div>
                             <div class="w-full bg-gray-700 rounded-full h-4">
                                 <div class="bg-green-500 h-4 rounded-full transition-all duration-500 ease-out" style="width: ${e}%"></div>
@@ -39,8 +39,8 @@
                         </div>
                         <div>
                             <div class="flex justify-between items-center mb-1">
-                                <div class="flex items-center">${ce()} <span class="font-semibold text-lg">${n("adventurer_status.interest")}</span></div>
-                                <span class="font-mono text-lg">${Math.round(this._adventurer.interest)}%</span>
+                                <div class="flex items-center">${ce()} <span class=" text-lg">${n("adventurer_status.interest")}</span></div>
+                                <span class="font-label text-lg">${Math.round(this._adventurer.interest)}%</span>
                             </div>
                             <div class="w-full bg-gray-700 rounded-full h-4">
                                 <div class="bg-brand-interest h-4 rounded-full transition-all duration-500 ease-out" style="width: ${this._adventurer.interest}%"></div>
@@ -49,30 +49,30 @@
                     </div>
                     <div class="flex items-center justify-center bg-brand-primary p-3 rounded-md">
                         ${de()}
-                        <span class="font-semibold text-lg mr-4">${n("global.power")}</span>
-                        <span class="font-mono text-2xl font-bold text-white">${this._adventurer.power}</span>
+                        <span class=" text-lg mr-4">${n("global.power")}</span>
+                        <span class="font-label text-2xl  text-white">${this._adventurer.power}</span>
                     </div>
                 </div>
                 <div class="border-t border-gray-700 my-4"></div>
-                <h3 class="text-lg font-bold font-serif mb-3 text-center text-white">${n("adventurer_status.inventory")}</h3>
+                <h3 class="text-lg  font-label mb-3 text-center text-white">${n("adventurer_status.inventory")}</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                     <div class="bg-brand-primary/50 p-3 rounded-lg">
-                        <div class="flex items-center justify-center text-brand-text-muted mb-1">${he()} <span class="ml-2 font-semibold">${n("adventurer_status.weapon")}</span></div>
-                        ${this._adventurer.inventory.weapon?`<div><p class="text-white font-semibold">${this._adventurer.inventory.weapon.name}</p><p class="text-sm text-brand-text-muted">${n("adventurer_status.pwr")}: ${this._adventurer.inventory.weapon.stats.power||0}${this._adventurer.inventory.weapon.stats.maxHp?`, ${n("adventurer_status.hp")}: ${this._adventurer.inventory.weapon.stats.maxHp}`:""}</p></div>`:`<p class="text-brand-text-muted italic">${n("global.none")}</p>`}
+                        <div class="flex items-center justify-center text-brand-text-muted mb-1">${he()} <span class="ml-2 ">${n("adventurer_status.weapon")}</span></div>
+                        ${this._adventurer.inventory.weapon?`<div><p class="text-white ">${this._adventurer.inventory.weapon.name}</p><p class="text-sm text-brand-text-muted">${n("adventurer_status.pwr")}: ${this._adventurer.inventory.weapon.stats.power||0}${this._adventurer.inventory.weapon.stats.maxHp?`, ${n("adventurer_status.hp")}: ${this._adventurer.inventory.weapon.stats.maxHp}`:""}</p></div>`:`<p class="text-brand-text-muted italic">${n("global.none")}</p>`}
                     </div>
                     <div class="bg-brand-primary/50 p-3 rounded-lg">
-                        <div class="flex items-center justify-center text-brand-text-muted mb-1">${ue()} <span class="ml-2 font-semibold">${n("adventurer_status.armor")}</span></div>
-                        ${this._adventurer.inventory.armor?`<div><p class="text-white font-semibold">${this._adventurer.inventory.armor.name}</p><p class="text-sm text-brand-text-muted">${n("adventurer_status.hp")}: ${this._adventurer.inventory.armor.stats.maxHp||0}${this._adventurer.inventory.armor.stats.power?`, ${n("adventurer_status.pwr")}: ${this._adventurer.inventory.armor.stats.power}`:""}</p></div>`:`<p class="text-brand-text-muted italic">${n("global.none")}</p>`}
+                        <div class="flex items-center justify-center text-brand-text-muted mb-1">${ue()} <span class="ml-2 ">${n("adventurer_status.armor")}</span></div>
+                        ${this._adventurer.inventory.armor?`<div><p class="text-white ">${this._adventurer.inventory.armor.name}</p><p class="text-sm text-brand-text-muted">${n("adventurer_status.hp")}: ${this._adventurer.inventory.armor.stats.maxHp||0}${this._adventurer.inventory.armor.stats.power?`, ${n("adventurer_status.pwr")}: ${this._adventurer.inventory.armor.stats.power}`:""}</p></div>`:`<p class="text-brand-text-muted italic">${n("global.none")}</p>`}
                     </div>
                     <div class="bg-brand-primary/50 p-3 rounded-lg">
-                        <div class="flex items-center justify-center text-brand-text-muted mb-1">${me()} <span class="ml-2 font-semibold">${n("adventurer_status.potions")}</span></div>
-                        ${this._adventurer.inventory.potions.length>0?`<p class="text-white font-semibold">${n("adventurer_status.potions_held",{count:this._adventurer.inventory.potions.length})}</p>`:`<p class="text-brand-text-muted italic">${n("global.none")}</p>`}
+                        <div class="flex items-center justify-center text-brand-text-muted mb-1">${me()} <span class="ml-2 ">${n("adventurer_status.potions")}</span></div>
+                        ${this._adventurer.inventory.potions.length>0?`<p class="text-white ">${n("adventurer_status.potions_held",{count:this._adventurer.inventory.potions.length})}</p>`:`<p class="text-brand-text-muted italic">${n("global.none")}</p>`}
                     </div>
                 </div>
             </div>
         `}}customElements.define("adventurer-status",pe);class ge extends HTMLElement{constructor(){super(),this.addEventListener("submit",e=>{e.preventDefault();const t=this.querySelector("#enemy-count"),s=this.querySelector("#enemy-power"),a=this.querySelector("#enemy-hp"),i={enemyCount:parseInt(t.value,10)||1,enemyPower:parseInt(s.value,10)||10,enemyHp:parseInt(a.value,10)||20};this.dispatchEvent(new CustomEvent("run-encounter",{bubbles:!0,composed:!0,detail:{encounter:i}}))})}connectedCallback(){this.render()}render(){this.innerHTML=`
             <div class="w-full bg-brand-surface p-6 rounded-lg shadow-xl border border-gray-700 animate-fade-in">
-                <h3 class="text-xl font-bold text-center mb-2 text-white">${n("battle_panel.title")}</h3>
+                <h3 class="text-xl  text-center mb-2 text-white">${n("battle_panel.title")}</h3>
                 <p class="text-center text-brand-text-muted mb-6">${n("battle_panel.description")}</p>
                 <form class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                     <div class="md:col-span-1">
@@ -88,7 +88,7 @@
                         <input id="enemy-hp" type="number" step="1" value="20" class="w-full bg-brand-primary p-2 rounded-md border border-gray-600 focus:ring-brand-secondary focus:border-brand-secondary text-white" />
                     </div>
                     <div class="md:col-span-1">
-                        <button type="submit" class="w-full bg-brand-secondary text-white font-bold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105">
+                        <button type="submit" class="w-full bg-brand-secondary text-white  py-2.5 px-4 rounded-lg transition-all transform hover:scale-105">
                             ${n("battle_panel.run_encounter")}
                         </button>
                     </div>
@@ -101,10 +101,10 @@
         `}}customElements.define("feedback-panel",fe);class be extends HTMLElement{constructor(){super(),this.state="initial",this.decision=null,this.newlyUnlocked=[],this.addEventListener("click",e=>{const t=e.composedPath()[0];t.id==="unlock-dismiss-button"?this.dismissUnlock():t.id==="continue-run-button"?this.dispatchEvent(new CustomEvent("run-decision",{bubbles:!0,composed:!0,detail:{decision:"continue"}})):t.id==="retire-run-button"&&this.dispatchEvent(new CustomEvent("run-decision",{bubbles:!0,composed:!0,detail:{decision:"retire"}}))})}static get observedAttributes(){return["workshop-unlocked"]}setDecision(e){this.decision=e,this.startFlow()}connectedCallback(){this.render()}startFlow(){this.newlyUnlocked.length>0?this.renderUnlock():(this.state="unlock-revealed",this.revealDecision())}renderUnlock(){const e=this.querySelector("#unlock-container");if(!e)return;const t=Q.find(s=>s.feature===this.newlyUnlocked[0]);t&&(e.innerHTML=`
             <div class="absolute inset-0 bg-black/70 flex items-center justify-center z-50 animate-fade-in">
                 <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-primary animate-fade-in-up w-full max-w-md">
-                    <h2 class="text-3xl font-bold font-serif text-brand-primary mb-3">${n("unlocks.congratulations")}</h2>
-                    <h3 class="text-2xl font-bold text-amber-400 mb-2">${t.title()}</h3>
+                    <h2 class="text-3xl font-label text-brand-primary mb-3">${n("unlocks.congratulations")}</h2>
+                    <h3 class="text-xl text-white">${unlock.name}</h3>
                     <p class="text-brand-text mb-6">${t.description()}</p>
-                    <button id="unlock-dismiss-button" class="bg-brand-primary text-white font-bold py-2 px-6 rounded-lg hover:bg-brand-primary/80 transition-colors">
+                    <button id="unlock-dismiss-button" class="bg-brand-primary text-white py-2 px-6 rounded-lg hover:bg-brand-primary/80 transition-colors">
                         ${n("global.continue")}
                     </button>
                 </div>
@@ -129,9 +129,9 @@
             <div id="unlock-container"></div>
             <div class="absolute inset-0 bg-black/80 flex items-center justify-center z-40 backdrop-blur-md">
                 <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-secondary animate-fade-in w-full max-w-lg">
-                    <h2 class="text-4xl font-bold font-serif text-brand-secondary mb-2">${n("run_ended_screen.run_complete")}</h2>
+                    <h2 class="text-4xl font-label text-brand-secondary mb-2">${n("run_ended_screen.run_complete")}</h2>
                     <p class="text-brand-text-muted mb-4">${t}</p>
-                    <p class="text-lg text-white mb-6">${n("run_ended_screen.final_bp")}<span class="font-bold text-2xl text-amber-400">${e}</span></p>
+                    <p class="text-lg text-white mb-6">${n("run_ended_screen.final_bp")}<span class="text-2xl text-amber-400">${e}</span></p>
                     <div id="decision-container" class="h-24">
                         <p class="text-brand-text-muted text-lg animate-fade-in-up">${n("run_ended_screen.adventurer_considers_fate")}<span class="animate-dots"></span></p>
                     </div>
@@ -141,23 +141,23 @@
                 </div>
             </div>
         `}updateDecision(e){const t=this.querySelector("#decision-container"),s=this.querySelector("#button-container");if(!t||!s||this.state!=="decision-revealed")return;let a="",i="";const o=e?"animate-fade-in-up":"",l=this.hasAttribute("workshop-unlocked");this.decision==="continue"?(a=`
-                <h3 class="text-2xl font-bold text-green-400 mb-2 ${o}">${n("run_ended_screen.continue_quote")}</h3>
+                <h3 class="text-2xl text-green-400 mb-2 ${o}">${n("run_ended_screen.continue_quote")}</h3>
                 <p class="text-brand-text mb-4 ${o}" style="animation-delay: 0.5s;">${n("run_ended_screen.continue_decision")}</p>
             `,i+=`
                 <button
                     id="continue-run-button"
-                    class="bg-green-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-400 transition-colors transform hover:scale-105 ${o}"
+                    class="bg-green-500 text-white py-3 px-6 rounded-lg hover:bg-green-400 transition-colors transform hover:scale-105 ${o}"
                     style="animation-delay: 1.2s;"
                 >
                     ${n(l?"run_ended_screen.enter_workshop":"run_ended_screen.start_new_run")}
                 </button>
             `):(a=`
-                <h3 class="text-2xl font-bold text-red-400 mb-2 ${o}">${n("run_ended_screen.retire_quote")}</h3>
+                <h3 class="text-2xl text-red-400 mb-2 ${o}">${n("run_ended_screen.retire_quote")}</h3>
                 <p class="text-brand-text mb-4 ${o}" style="animation-delay: 0.5s;">${n("run_ended_screen.retire_decision",{run:this.getAttribute("run")})}</p>
             `,i+=`
                 <button
                     id="retire-run-button"
-                    class="bg-brand-secondary text-white font-bold py-3 px-6 rounded-lg hover:bg-red-500 transition-colors transform hover:scale-105 ${o}"
+                    class="bg-brand-secondary text-white py-3 px-6 rounded-lg hover:bg-red-500 transition-colors transform hover:scale-105 ${o}"
                     style="animation-delay: 1s;"
                 >
                     ${n("run_ended_screen.recruit_new_adventurer")}
@@ -166,41 +166,41 @@
             <div class="bg-brand-primary p-4 rounded-lg shadow-lg flex justify-around text-center">
                 <div>
                     <span class="text-sm text-brand-text-muted uppercase tracking-wider">${n("global.bp")}</span>
-                    <p class="text-2xl font-bold text-white">${this._balancePoints}</p>
+                    <p class="text-2xl  text-white">${this._balancePoints}</p>
                 </div>
                 <div>
                     <span class="text-sm text-brand-text-muted uppercase tracking-wider">${n("global.run")}</span>
-                    <p class="text-2xl font-bold text-white">${this._run}</p>
+                    <p class="text-2xl  text-white">${this._run}</p>
                 </div>
                 <div>
                     <span class="text-sm text-brand-text-muted uppercase tracking-wider">${n("global.room")}</span>
-                    <p class="text-2xl font-bold text-white">${this._room}</p>
+                    <p class="text-2xl  text-white">${this._room}</p>
                 </div>
                 <div>
                     <span class="text-sm text-brand-text-muted uppercase tracking-wider">${n("global.deck")}</span>
-                    <p class="text-2xl font-bold text-white">${this._deckSize}</p>
+                    <p class="text-2xl  text-white">${this._deckSize}</p>
                 </div>
             </div>
         `}}customElements.define("game-stats",ve);class _e extends HTMLElement{constructor(){super(),this._text="Loading..."}static get observedAttributes(){return["text"]}attributeChangedCallback(e,t,s){e==="text"&&(this._text=s,this.render())}connectedCallback(){this.render()}render(){this.innerHTML=`
             <div class="text-center p-6 bg-brand-primary/50 rounded-lg">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-secondary mx-auto mb-4"></div>
-                <p class="text-lg text-white font-semibold">${this._text}</p>
+                <p class="text-lg text-white ">${this._text}</p>
             </div>
         `}}customElements.define("loading-indicator",_e);class xe extends HTMLElement{constructor(){super(),this._logger=null,this._traits=null}set logger(e){this._logger=e,this.render()}set traits(e){this._traits=e,this.render()}connectedCallback(){this.render()}_getLogColor(e){switch(e){case"DEBUG":return"text-gray-500";case"INFO":return"text-gray-400";case"WARN":return"text-yellow-400";case"ERROR":return"text-red-500";default:return"text-gray-400"}}render(){if(!this._traits||!this._logger){this.innerHTML="";return}const e=this._logger.entries.map((s,a)=>`<p class="whitespace-pre-wrap ${this._getLogColor(s.level)}">[${a.toString().padStart(3,"0")}] ${s.message}</p>`).join("");this.innerHTML=`
             <div class="w-full bg-black/50 p-4 rounded-lg shadow-inner border border-gray-700">
-                <h4 class="text-sm font-bold text-brand-text-muted uppercase tracking-wider mb-2">${n("log_panel.title")}</h4>
+                <h4 class="text-sm text-brand-text-muted uppercase tracking-wider mb-2">${n("log_panel.title")}</h4>
 
                 <div class="flex justify-around text-center mb-3 p-2 bg-brand-primary/50 rounded-md">
                     <div class="text-xs">
-                        <span class="font-bold text-brand-text-muted block">${n("log_panel.offense")}</span>
+                        <span class="text-brand-text-muted block">${n("log_panel.offense")}</span>
                         <span class="font-mono text-white text-base">${this._traits.offense}</span>
                     </div>
                     <div class="text-xs">
-                        <span class="font-bold text-brand-text-muted block">${n("log_panel.risk")}</span>
+                        <span class="text-brand-text-muted block">${n("log_panel.risk")}</span>
                         <span class="font-mono text-white text-base">${this._traits.risk}</span>
                     </div>
                     <div class="text-xs">
-                        <span class="font-bold text-brand-text-muted block">${n("log_panel.expertise")}</span>
+                        <span class="text-brand-text-muted block">${n("log_panel.expertise")}</span>
                         <span class="font-mono text-white text-base">${this._traits.expertise}</span>
                     </div>
                 </div>
@@ -217,12 +217,12 @@
     `};class ye extends HTMLElement{constructor(){super(),this._item=null,this._isSelected=!1,this._isDisabled=!1,this._isNewlyDrafted=!1,this.addEventListener("click",()=>{!this._isDisabled&&this._item&&this.dispatchEvent(new CustomEvent("loot-card-select",{bubbles:!0,composed:!0,detail:{instanceId:this._item.instanceId}}))}),this.addEventListener("animationend",e=>{e.animationName==="newly-drafted-animation"&&this.classList.remove("animate-newly-drafted")})}set item(e){this._item=e,this.render()}get item(){return this._item}set isSelected(e){this._isSelected=e,this.render()}get isSelected(){return this._isSelected}set isDisabled(e){this._isDisabled=e,this.render()}get isDisabled(){return this._isDisabled}set isNewlyDrafted(e){this._isNewlyDrafted!==e&&(this._isNewlyDrafted=e,this._isNewlyDrafted&&this.classList.add("animate-newly-drafted"))}get isNewlyDrafted(){return this._isNewlyDrafted}connectedCallback(){this.render()}render(){if(!this._item)return;const e=we[this._item.rarity]||"text-gray-400",t="bg-brand-surface border rounded-lg p-4 flex flex-col justify-between transition-all duration-200 shadow-lg";let s="";this._isDisabled?s="border-gray-600 opacity-50 cursor-not-allowed":this._isSelected?s="border-brand-secondary scale-105 ring-2 ring-brand-secondary cursor-pointer transform":s="border-brand-primary hover:border-brand-secondary cursor-pointer transform hover:scale-105";const a=this.classList.contains("animate-newly-drafted")?" animate-newly-drafted":"";this.className=`${t} ${s}${a}`,this.innerHTML=`
             <div>
                 <div class="flex justify-between items-baseline">
-                    <p class="font-bold text-lg ${e}">${this._item.name}</p>
-                    <p class="text-xs text-brand-text-muted font-mono">${this._item.type}</p>
+                    <p class=" text-2xl ${e}">${this._item.name}</p>
+                    <p class="font-label text-sm text-brand-text-muted">${this._item.type}</p>
                 </div>
                 <p class="text-xs uppercase tracking-wider mb-3 ${e}">${this._item.rarity}</p>
                 <div class="border-t border-gray-700 my-2"></div>
-                <div class="space-y-1 text-brand-text">
+                <div class="space-y-1 text-brand-text text-large">
                     ${this._item.stats.hp?O(n("global.health"),this._item.stats.hp):""}
                     ${this._item.stats.maxHp?O(n("global.max_hp"),this._item.stats.maxHp):""}
                     ${this._item.stats.power?O(n("global.power"),this._item.stats.power):""}
@@ -230,7 +230,7 @@
             </div>
         `}}customElements.define("loot-card",ye);const A=4;class Se extends HTMLElement{constructor(){super(),this._choices=[],this._disabled=!1,this._selectedIds=[],this._initialRender=!0,this.addEventListener("loot-card-select",e=>{const{instanceId:t}=e.detail;this.handleSelect(t)}),this.addEventListener("click",e=>{e.target.id==="present-offer-button"&&this.dispatchEvent(new CustomEvent("present-offer",{bubbles:!0,composed:!0,detail:{ids:this._selectedIds}}))})}set choices(e){this._choices=e,this._initialRender=!0,this.render()}get choices(){return this._choices}set disabled(e){this._disabled=e,this.render()}get disabled(){return this._disabled}connectedCallback(){this.render()}handleSelect(e){if(this._disabled)return;const t=new Map(this._choices.map(i=>[i.instanceId,i.id])),s=this._choices.find(i=>i.instanceId===e);if(!s)return;if(this._selectedIds.includes(e))this._selectedIds=this._selectedIds.filter(i=>i!==e);else{if(this._selectedIds.map(o=>t.get(o)).includes(s.id))return;this._selectedIds.length<A&&this._selectedIds.push(e)}this.render()}render(){if(!this._choices)return;const e=new Map(this._choices.map(i=>[i.instanceId,i.id])),t=this._selectedIds.map(i=>e.get(i)),s=this._selectedIds.length>=2&&this._selectedIds.length<=A;this.innerHTML=`
             <div class="w-full">
-                <h3 class="text-xl font-bold text-center mb-4 text-white">${n("loot_choice_panel.title")}</h3>
+                <h3 class="text-xl  text-center mb-4 text-white">${n("loot_choice_panel.title")}</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="loot-card-container">
                     <!-- Loot cards will be inserted here -->
                 </div>
@@ -238,7 +238,7 @@
                     <button
                         id="present-offer-button"
                         ${!s||this._disabled?"disabled":""}
-                        class="bg-brand-secondary text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:scale-100"
+                        class="bg-brand-secondary text-white  py-3 px-8 rounded-lg transition-all transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:scale-100"
                     >
                         ${n("loot_choice_panel.present_offer")} (${this._selectedIds.length}/${A})
                     </button>
@@ -253,7 +253,7 @@
         <div class="bg-brand-surface border border-brand-primary rounded-lg p-4 flex flex-col justify-between shadow-lg animate-fade-in">
             <div>
                 <div class="flex justify-between items-baseline">
-                    <p class="font-bold text-lg ${s}">${r.name}</p>
+                    <p class="text-lg ${s}">${r.name}</p>
                     <p class="text-xs text-brand-text-muted font-mono">${r.type}</p>
                 </div>
                 <p class="text-xs uppercase tracking-wider mb-3 ${s}">${r.rarity}</p>
@@ -268,7 +268,7 @@
                 <button
                     data-item-id="${r.id}"
                     ${e?"":"disabled"}
-                    class="w-full bg-brand-secondary text-white font-bold py-2 px-4 rounded-lg transition-all transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:scale-100"
+                    class="w-full bg-brand-secondary text-white py-2 px-4 rounded-lg transition-all transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:scale-100"
                 >
                     ${n("global.buy")} (${r.cost} ${n("global.bp")})
                 </button>
@@ -277,9 +277,9 @@
     `};class Ee extends HTMLElement{constructor(){super(),this._items=[],this._balancePoints=0,this.addEventListener("click",e=>{const t=e.target,s=t.dataset.itemId;s&&this.dispatchEvent(new CustomEvent("purchase-item",{bubbles:!0,composed:!0,detail:{itemId:s}})),t.id==="start-run-button"&&this.dispatchEvent(new CustomEvent("start-run",{bubbles:!0,composed:!0}))})}set items(e){this._items=e,this.render()}set balancePoints(e){this._balancePoints=e,this.render()}connectedCallback(){this.render()}render(){const e=this._items.map(t=>ke(t,this._balancePoints>=(t.cost||0))).join("");this.innerHTML=`
             <div class="w-full max-w-4xl mx-auto p-4 md:p-6">
                 <div class="text-center mb-6">
-                    <h1 class="text-4xl font-bold font-serif text-white">${n("workshop.title")}</h1>
+                    <h1 class="text-4xl font-label text-white">${n("workshop.title")}</h1>
                     <p class="text-brand-text-muted">${n("workshop.description")}</p>
-                    <p class="mt-4 text-2xl font-bold">
+                    <p class="mt-4 text-2xl">
                         ${n("workshop.balance_points")}<span class="text-amber-400">${this._balancePoints}</span>
                     </p>
                 </div>
@@ -292,7 +292,7 @@
                 <div class="text-center">
                     <button
                         id="start-run-button"
-                        class="bg-green-600 text-white font-bold py-4 px-10 rounded-lg text-xl hover:bg-green-500 transition-colors transform hover:scale-105"
+                        class="bg-green-600 text-white py-4 px-10 rounded-lg text-xl hover:bg-green-500 transition-colors transform hover:scale-105"
                     >
                         ${n("workshop.begin_next_run")}
                     </button>
@@ -304,16 +304,16 @@
                 </p>
             `),this.innerHTML=`
             <div class="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4 text-center">
-                <h1 class="text-6xl font-bold text-red-500 font-serif mb-2">${n("game_title")}</h1>
+                <h1 class="text-8xl text-red-500 font-title mb-2">${n("game_title")}</h1>
                 <p class="text-2xl text-gray-300 mb-8">${n("game_subtitle")}</p>
                 ${s}
                 <div class="mt-8 space-y-4">
                     ${t?`
-                        <button id="continue-game-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg text-xl min-w-[250px] transition-colors">
+                        <button id="continue-game-button" class="bg-red-500 hover:bg-red-600 text-white  py-3 px-6 rounded-lg text-xl min-w-[250px] transition-colors">
                             ${n("menu.continue_game")}
                         </button>
                     `:""}
-                    <button id="new-game-button" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg text-xl min-w-[250px] transition-colors">
+                    <button id="new-game-button" class="bg-gray-700 hover:bg-gray-600 text-white  py-3 px-6 rounded-lg text-xl min-w-[250px] transition-colors">
                         ${n("menu.new_game")}
                     </button>
                 </div>
@@ -321,7 +321,7 @@
         `}}customElements.define("menu-screen",$e);const g=document.getElementById("app");if(!g)throw new Error("Could not find app element to mount to");const V=new K,p=new ae(V);p.on("state-change",r=>{if(p.isLoading){g.innerHTML=`<div>${n("global.loading_game_data")}</div>`;return}if(p.error){g.innerHTML=`
                 <div class="min-h-screen flex items-center justify-center p-4">
                     <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-secondary">
-                         <h2 class="text-2xl font-bold text-brand-secondary mb-4">${n("global.an_error_occurred")}</h2>
+                         <h2 class="text-2xl text-brand-secondary mb-4">${n("global.an_error_occurred")}</h2>
                          <p class="text-brand-text">${p.error}</p>
                     </div>
                 </div>
