@@ -3,6 +3,7 @@ import { UnlockableFeature, UNLOCKS } from './unlocks';
 export interface MetaState {
   highestRun: number;
   unlockedFeatures: UnlockableFeature[];
+  adventurers: number;
 }
 
 const META_STORAGE_KEY = 'rogue-steward-meta';
@@ -36,6 +37,11 @@ export class MetaManager {
     return newlyUnlocked;
   }
 
+  public incrementAdventurers(): void {
+    this._metaState.adventurers = (this._metaState.adventurers || 0) + 1;
+    this.save();
+  }
+
   public updateRun(run: number): void {
     if (run > this._metaState.highestRun) {
       this._metaState.highestRun = run;
@@ -50,6 +56,10 @@ export class MetaManager {
         const parsed = JSON.parse(saved);
         // Basic validation
         if (typeof parsed.highestRun === 'number' && Array.isArray(parsed.unlockedFeatures)) {
+          // For backwards compatibility
+          if (typeof parsed.adventurers !== 'number') {
+              parsed.adventurers = 1;
+          }
           return parsed;
         }
       }
@@ -76,6 +86,7 @@ export class MetaManager {
     return {
       highestRun: 0,
       unlockedFeatures: [],
+      adventurers: 0,
     };
   }
 }

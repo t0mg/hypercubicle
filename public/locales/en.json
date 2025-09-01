@@ -23,7 +23,7 @@
     "unhandled_game_phase": "Unhandled game phase: {phase}"
   },
   "adventurer_status": {
-    "title": "Adventurer's Status",
+    "title": "Adventurer #{count}'s Status",
     "interest": "Interest",
     "inventory": "Inventory",
     "weapon": "Weapon",
@@ -90,6 +90,7 @@
     "continue_game": "Continue",
     "reset_save": "Reset Save",
     "new_game_confirm": "Starting a new game will erase your current progress. Are you sure?",
+    "adventurer_count": "Adventurer #{count}",
     "max_runs": "Max Runs: {count}",
     "unlocked_features": "Unlocked Features: {count}"
   },
