@@ -4,7 +4,7 @@ import type { LootChoicePanel } from './components/LootChoicePanel';
 import type { BattlePanel } from './components/BattlePanel';
 import type { LogPanel } from './components/LogPanel';
 import type { Workshop } from './components/Workshop';
-import { localize, t } from './text';
+import { t } from './text';
 import { GameEngine } from './game/engine';
 
 const getLoadingText = (state: GameState) => {
@@ -33,9 +33,16 @@ const renderGamePhasePanel = (state: GameState) => {
     }
 }
 
+import { MenuScreen } from './components/MenuScreen';
+
 export const render = (appElement: HTMLElement, state: GameState | null, engine: GameEngine) => {
     if (!state) {
         appElement.innerHTML = `<div>${t('global.loading')}</div>`;
+        return;
+    }
+
+    if (state.phase === 'MENU') {
+        appElement.innerHTML = `<menu-screen ${state.hasSave ? 'has-save' : ''}></menu-screen>`;
         return;
     }
 
@@ -49,18 +56,18 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
         return;
     }
 
-    const gameOverHtml = state.gameOver.isOver
-        ? `<game-over-screen
+        const runEndedHtml = state.runEnded.isOver
+        ? `<run-ended-screen
                 final-bp="${state.designer.balancePoints}"
-                reason="${localize(state.gameOver.reason)}"
+                reason="${state.runEnded.reason}"
                 run="${state.run}"
-                decision="${engine.getAdventurerEndRunDecision()}"
-            ></game-over-screen>`
+                ${engine.isWorkshopUnlocked() ? 'workshop-unlocked' : ''}
+            ></run-ended-screen>`
         : '';
 
     appElement.innerHTML = `
         <div class="min-h-screen p-4 md:p-6 lg:p-8 flex flex-col items-center">
-            ${gameOverHtml}
+            ${runEndedHtml}
             <div class="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-1 space-y-6">
                     <log-panel></log-panel>
@@ -70,7 +77,7 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
                         room="${state.room}"
                         deck-size="${state.availableDeck.length}"
                     ></game-stats>
-                    <feedback-panel message="${Array.isArray(state.feedback) ? state.feedback.map(m => localize(m)).join(' ') : localize(state.feedback)}"></feedback-panel>
+                    <feedback-panel message="${Array.isArray(state.feedback) ? state.feedback.join(' ') : state.feedback}"></feedback-panel>
                 </div>
                 <div class="lg:col-span-2 space-y-6">
                     <adventurer-status></adventurer-status>
@@ -79,6 +86,14 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
             </div>
         </div>
     `;
+
+    if (state.runEnded.isOver) {
+        const runEndedEl = document.querySelector('run-ended-screen') as import('./components/RunEndedScreen').RunEndedScreen;
+        if (runEndedEl) {
+            runEndedEl.newlyUnlocked = state.newlyUnlocked;
+            runEndedEl.setDecision(engine.getAdventurerEndRunDecision());
+        }
+    }
 
     const adventurerStatusEl = document.querySelector('adventurer-status') as AdventurerStatus;
     if (adventurerStatusEl) {

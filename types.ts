@@ -16,10 +16,7 @@ import { Logger } from './game/logger';
 
 export type { Adventurer };
 
-export interface LocalizedMessage {
-    key: string;
-    context?: Record<string, string | number>;
-}
+
 
 export interface LootChoice {
     id: string;
@@ -38,14 +35,16 @@ export interface LootChoice {
     justDrafted?: boolean;
 }
 
-export type GamePhase = 
-    | 'LOADING'
-    | 'DESIGNER_CHOOSING_LOOT' 
-    | 'AWAITING_ADVENTURER_CHOICE' 
-    | 'DESIGNER_CHOOSING_DIFFICULTY'
-    | 'AWAITING_ENCOUNTER_FEEDBACK'
-    | 'RUN_OVER'
-    | 'SHOP';
+export type GamePhase =
+  | 'MENU'
+  | 'LOADING'
+  | 'DESIGNER_CHOOSING_LOOT'
+  | 'AWAITING_ADVENTURER_CHOICE'
+  | 'DESIGNER_CHOOSING_DIFFICULTY'
+  | 'AWAITING_ENCOUNTER_FEEDBACK'
+  | 'RUN_OVER'
+  | 'SHOP'
+  | 'UNLOCK_SCREEN';
 
 export interface Encounter {
     enemyCount: number;
@@ -62,15 +61,18 @@ export interface GameState {
     unlockedDeck: string[]; // All item IDs the player owns
     availableDeck: LootChoice[]; // Items available for the current run, becomes the draw pile
     hand: LootChoice[]; // The player's current hand of cards
+    handSize: number;
     shopItems: LootChoice[];
     offeredLoot: LootChoice[];
-    feedback: LocalizedMessage | LocalizedMessage[] | string;
+    feedback: string | string[];
     logger: Logger;
     run: number;
     room: number;
     encounter?: Encounter;
-    gameOver: {
+    runEnded: {
         isOver: boolean;
-        reason: LocalizedMessage | string;
+        reason: string;
     };
+    newlyUnlocked: UnlockableFeature[];
+    hasSave?: boolean;
 }

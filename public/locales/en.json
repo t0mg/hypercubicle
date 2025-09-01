@@ -43,7 +43,7 @@
     "risk": "RISK",
     "expertise": "EXPERTISE"
   },
-  "game_over_screen": {
+  "run_ended_screen": {
     "run_complete": "Run Complete!",
     "default_reason": "The run has ended.",
     "final_bp": "Final BP: ",
@@ -52,8 +52,9 @@
     "continue_decision": "The adventurer decides to press on, ready for another run!",
     "enter_workshop": "Enter Workshop",
     "retire_quote": "\"I have seen enough.\"",
-    "retire_decision": "The adventurer has lost motivation, and decides to retire.",
-    "recruit_new_adventurer": "Recruit New Adventurer"
+    "retire_decision": "The adventurer has lost motivation, and decides to retire after {run} runs.",
+    "recruit_new_adventurer": "Recruit New Adventurer",
+    "start_new_run": "Start New Run"
   },
   "loot_choice_panel": {
     "title": "Offer Rewards",
@@ -80,5 +81,37 @@
     "adventurer_bored": "The adventurer grew bored on room {room} of run {run}, and quit.",
     "empty_hand": "The adventurer waits for your decision, unaware that you have nothing left to offer.",
     "welcome_to_workshop": "Welcome back. Spend your Balance Points wisely."
+  },
+  "game_title": "Rogue Steward",
+  "game_subtitle": "A game of indirect control.",
+  "menu": {
+    "new_game": "New Game",
+    "continue_game": "Continue",
+    "reset_save": "Reset Save",
+    "confirm_reset": "Are you sure you want to reset all your progress?"
+  },
+  "unlocks": {
+    "congratulations": "Congratulations!",
+    "continue": "Continue",
+    "workshop": {
+      "title": "Workshop Unlocked!",
+      "description": "Between runs, you can now visit the Workshop to spend Balance Points on permanently unlocking new items."
+    },
+    "hand_size_increase": {
+      "title": "Hand Size Increased!",
+      "description": "You can now hold more cards in your hand, giving you more options."
+    },
+    "boss_fights": {
+      "title": "Boss Fights Unlocked!",
+      "description": "Powerful bosses will now appear at the end of certain floors. Defeat them for great rewards."
+    },
+    "custom_encounters": {
+      "title": "Custom Encounters Unlocked!",
+      "description": "You can now manually edit the settings for encounters, rather than relying on fully automated ones."
+    },
+    "party_constraints": {
+      "title": "Party Constraints Unlocked!",
+      "description": "You can now apply constraints to the adventurer's party, adding a new layer of challenge."
+    }
   }
 }

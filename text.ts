@@ -1,4 +1,4 @@
-import type { LocalizedMessage } from './types';
+
 
 let translations: any = {};
 
@@ -38,15 +38,7 @@ export function t(key: string, replacements: Record<string, string | number> = {
   return text;
 }
 
-export function localize(message: LocalizedMessage | string): string {
-  if (typeof message === 'string') {
-    return message;
-  }
-  if (!message || !message.key) {
-    return '';
-  }
-  return t(message.key, message.context);
-}
+
 
 export async function initLocalization(): Promise<void> {
   const lang = getLanguage();
