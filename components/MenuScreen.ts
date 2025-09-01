@@ -1,32 +1,26 @@
 import { t } from '../text';
+import { MetaManager } from '../game/meta';
 
 export class MenuScreen extends HTMLElement {
-    private _hasSave = false;
+    private metaManager: MetaManager;
 
     constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
+        this.metaManager = new MetaManager();
         this.addEventListener('click', (e: Event) => {
-            const target = e.composedPath()[0] as HTMLElement;
-            if (target.id === 'start-game-button') {
-                this._dispatch('start-game');
+            const target = e.target as HTMLElement;
+            if (target.id === 'new-game-button') {
+                if (this.metaManager.metaState.highestRun > 0) {
+                    if (confirm(t('menu.new_game_confirm'))) {
+                        this._dispatch('reset-game');
+                    }
+                } else {
+                    this._dispatch('start-game');
+                }
             } else if (target.id === 'continue-game-button') {
                 this._dispatch('continue-game');
-            } else if (target.id === 'reset-game-button') {
-                this._dispatch('reset-game');
             }
         });
-    }
-
-    static get observedAttributes() {
-        return ['has-save'];
-    }
-
-    attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-        if (name === 'has-save') {
-            this._hasSave = newValue !== null;
-            this.render();
-        }
     }
 
     connectedCallback() {
@@ -38,81 +32,33 @@ export class MenuScreen extends HTMLElement {
     }
 
     render() {
-        if (!this.shadowRoot) return;
+        const metaState = this.metaManager.metaState;
+        const hasSave = metaState.highestRun > 0;
 
-        this.shadowRoot.innerHTML = `
-            <style>
-                .menu-container {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    min-height: 100vh;
-                    background-color: var(--color-brand-bg);
-                    color: var(--color-brand-text);
-                    padding: 2rem;
-                    text-align: center;
-                }
-                .title {
-                    font-family: 'Playfair Display', serif;
-                    font-size: 4rem;
-                    color: var(--color-brand-primary);
-                    margin-bottom: 1rem;
-                }
-                .subtitle {
-                    font-size: 1.5rem;
-                    margin-bottom: 3rem;
-                }
-                .button {
-                    background-color: var(--color-brand-primary);
-                    color: var(--color-brand-bg);
-                    border: none;
-                    padding: 1rem 2rem;
-                    font-size: 1.2rem;
-                    font-weight: bold;
-                    border-radius: 0.5rem;
-                    cursor: pointer;
-                    transition: background-color 0.3s;
-                    margin: 0.5rem;
-                    min-width: 200px;
-                }
-                .button:hover {
-                    background-color: #c0392b;
-                }
-                .button.secondary {
-                    background-color: var(--color-brand-surface);
-                    color: var(--color-brand-primary);
-                    border: 2px solid var(--color-brand-primary);
-                }
-                .button.secondary:hover {
-                    background-color: var(--color-brand-primary);
-                    color: var(--color-brand-bg);
-                }
-                .button:disabled {
-                    background-color: #95a5a6;
-                    cursor: not-allowed;
-                }
-            </style>
-            <div class="menu-container">
-                <h1 class="title">${t('game_title')}</h1>
-                <p class="subtitle">${t('game_subtitle')}</p>
-                <button id="start-game-button" class="button">
-                    ${t('menu.new_game')}
-                </button>
-                <button
-                    id="continue-game-button"
-                    class="button"
-                    ${!this._hasSave ? 'disabled' : ''}
-                >
-                    ${t('menu.continue_game')}
-                </button>
-                <button
-                    id="reset-game-button"
-                    class="button secondary"
-                    ${!this._hasSave ? 'disabled' : ''}
-                >
-                    ${t('menu.reset_save')}
-                </button>
+        let metaInfo = '';
+        if (hasSave) {
+            metaInfo = `
+                <p class="text-lg text-gray-400 mt-4">
+                    ${t('menu.max_runs', { count: metaState.highestRun })} | ${t('menu.unlocked_features', { count: metaState.unlockedFeatures.length })}
+                </p>
+            `;
+        }
+
+        this.innerHTML = `
+            <div class="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4 text-center">
+                <h1 class="text-6xl font-bold text-red-500 font-serif mb-2">${t('game_title')}</h1>
+                <p class="text-2xl text-gray-300 mb-8">${t('game_subtitle')}</p>
+                ${metaInfo}
+                <div class="mt-8 space-y-4">
+                    ${hasSave ? `
+                        <button id="continue-game-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg text-xl min-w-[250px] transition-colors">
+                            ${t('menu.continue_game')}
+                        </button>
+                    ` : ''}
+                    <button id="new-game-button" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg text-xl min-w-[250px] transition-colors">
+                        ${t('menu.new_game')}
+                    </button>
+                </div>
             </div>
         `;
     }

@@ -42,7 +42,7 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
     }
 
     if (state.phase === 'MENU') {
-        appElement.innerHTML = `<menu-screen ${state.hasSave ? 'has-save' : ''}></menu-screen>`;
+        appElement.innerHTML = `<menu-screen></menu-screen>`;
         return;
     }
 

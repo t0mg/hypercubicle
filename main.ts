@@ -73,19 +73,13 @@ appElement.addEventListener('start-run', () => {
     engine.startNewRun();
 });
 
-appElement.addEventListener('new-game', () => {
-    engine.startNewGame();
-});
-
 appElement.addEventListener('continue-game', () => {
   engine.continueGame();
 });
 
 appElement.addEventListener('reset-game', () => {
-  if (confirm(t('menu.confirm_reset'))) {
-    metaManager.reset();
-    engine.showMenu();
-  }
+  metaManager.reset();
+  engine.startNewGame();
 });
 
 async function main() {

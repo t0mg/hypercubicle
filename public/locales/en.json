@@ -89,7 +89,9 @@
     "new_game": "New Game",
     "continue_game": "Continue",
     "reset_save": "Reset Save",
-    "confirm_reset": "Are you sure you want to reset all your progress?"
+    "new_game_confirm": "Starting a new game will erase your current progress. Are you sure?",
+    "max_runs": "Max Runs: {count}",
+    "unlocked_features": "Unlocked Features: {count}"
   },
   "unlocks": {
     "congratulations": "Congratulations!",

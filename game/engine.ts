@@ -484,7 +484,6 @@ export class GameEngine {
       // We need a baseline gamestate object even for the menu
       ...(this.gameState || this._getInitialGameState()),
       phase: 'MENU',
-      hasSave: this._metaManager.metaState.highestRun > 0,
     };
     this._emit('state-change', this.gameState);
   }

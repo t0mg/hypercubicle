@@ -74,5 +74,5 @@ export interface GameState {
         reason: string;
     };
     newlyUnlocked: UnlockableFeature[];
-    hasSave?: boolean;
+    
 }
