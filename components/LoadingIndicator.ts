@@ -22,7 +22,7 @@ export class LoadingIndicator extends HTMLElement {
 
     render() {
         this.innerHTML = `
-            <div class="text-center p-6 bg-brand-primary/50 rounded-lg">
+            <div class="text-center p-6 bg-brand-primary/50 pixel-corners">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-secondary mx-auto mb-4"></div>
                 <p class="text-lg text-white ">${this._text}</p>
             </div>

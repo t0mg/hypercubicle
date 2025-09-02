@@ -50,10 +50,10 @@ export class LogPanel extends HTMLElement {
         ).join('');
 
         this.innerHTML = `
-            <div class="w-full bg-black/50 p-4 rounded-lg shadow-inner border border-gray-700">
+            <div class="w-full bg-black/50 p-4 pixel-corners shadow-inner border border-gray-700">
                 <h4 class="text-sm text-brand-text-muted uppercase tracking-wider mb-2">${t('log_panel.title')}</h4>
 
-                <div class="flex justify-around text-center mb-3 p-2 bg-brand-primary/50 rounded-md">
+                <div class="flex justify-around text-center mb-3 p-2 bg-brand-primary/50 pixel-corners">
                     <div class="text-xs">
                         <span class="text-brand-text-muted block">${t('log_panel.offense')}</span>
                         <span class="font-mono text-white text-base">${this._traits.offense}</span>

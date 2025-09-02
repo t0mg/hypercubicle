@@ -157,7 +157,7 @@ export class RunEndedScreen extends HTMLElement {
             buttonHTML += `
                 <button
                     id="continue-run-button"
-                    class="bg-green-500 text-white py-3 px-6 rounded-lg hover:bg-green-400 transition-colors transform hover:scale-105 ${animationClass}"
+                    class="bg-green-500 text-white py-3 px-6 pixel-corners hover:bg-green-400 transition-colors transform hover:scale-105 ${animationClass}"
                     style="animation-delay: 1.2s;"
                 >
                     ${workshopUnlocked ? t('run_ended_screen.enter_workshop') : t('run_ended_screen.start_new_run')}
@@ -171,7 +171,7 @@ export class RunEndedScreen extends HTMLElement {
             buttonHTML += `
                 <button
                     id="retire-run-button"
-                    class="bg-brand-secondary text-white py-3 px-6 rounded-lg hover:bg-red-500 transition-colors transform hover:scale-105 ${animationClass}"
+                    class="bg-brand-secondary text-white py-3 px-6 pixel-corners hover:bg-red-500 transition-colors transform hover:scale-105 ${animationClass}"
                     style="animation-delay: 1s;"
                 >
                     ${t('run_ended_screen.recruit_new_adventurer')}

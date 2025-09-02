@@ -70,7 +70,7 @@ export class LootCard extends HTMLElement {
         if (!this._item) return;
 
         const rarityColor = rarityColorMap[this._item.rarity] || 'text-gray-400';
-        const baseClasses = 'bg-brand-surface border rounded-lg p-4 flex flex-col justify-between transition-all duration-200 shadow-lg';
+        const baseClasses = 'bg-brand-surface border pixel-corners p-4 flex flex-col justify-between transition-all duration-200 shadow-lg';
 
         let stateClasses = '';
         if (this._isDisabled) {

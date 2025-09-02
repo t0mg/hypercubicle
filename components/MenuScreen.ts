@@ -52,13 +52,15 @@ export class MenuScreen extends HTMLElement {
                 ${metaInfo}
                 <div class="mt-8 space-y-4">
                     ${hasSave ? `
-                        <button id="continue-game-button" class="bg-red-500 hover:bg-red-600 text-white  py-3 px-6 rounded-lg text-xl min-w-[250px] transition-colors">
+                        ${hasSave ? `
+                        <button id="continue-game-button" class="bg-red-500 hover:bg-red-600 text-white  py-3 px-6 pixel-corners text-xl min-w-[250px] transition-colors">
                             ${t('menu.continue_game')}
                         </button>
                     ` : ''}
-                    <button id="new-game-button" class="bg-gray-700 hover:bg-gray-600 text-white  py-3 px-6 rounded-lg text-xl min-w-[250px] transition-colors">
+                    <button id="new-game-button" class="bg-gray-700 hover:bg-gray-600 text-white  py-3 px-6 pixel-corners text-xl min-w-[250px] transition-colors">
                         ${t('menu.new_game')}
                     </button>
+                    ` : ''}
                 </div>
             </div>
         `;

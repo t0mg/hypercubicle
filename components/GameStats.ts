@@ -38,7 +38,7 @@ export class GameStats extends HTMLElement {
 
     render() {
         this.innerHTML = `
-            <div class="bg-brand-primary p-4 rounded-lg shadow-lg flex justify-around text-center">
+            <div class="bg-brand-primary p-4 pixel-corners shadow-lg flex justify-around text-center">
                 <div>
                     <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.bp')}</span>
                     <p class="text-2xl  text-white">${this._balancePoints}</p>

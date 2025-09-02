@@ -84,7 +84,7 @@ export class LootChoicePanel extends HTMLElement {
                     <button
                         id="present-offer-button"
                         ${!canSubmit || this._disabled ? 'disabled' : ''}
-                        class="bg-brand-secondary text-white  py-3 px-8 rounded-lg transition-all transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:scale-100"
+                        class="bg-brand-secondary text-white  py-3 px-8 pixel-corners transition-all transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:scale-100"
                     >
                         ${t('loot_choice_panel.present_offer')} (${this._selectedIds.length}/${MAX_SELECTION})
                     </button>

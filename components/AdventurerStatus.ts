@@ -44,7 +44,7 @@ export class AdventurerStatus extends HTMLElement {
         const healthPercentage = (this._adventurer.hp / this._adventurer.maxHp) * 100;
 
         this.innerHTML = `
-            <div class="bg-brand-surface p-6 rounded-lg shadow-xl border border-gray-700">
+            <div class="bg-brand-surface p-6 pixel-corners shadow-xl">
                 <h2 class="text-2xl  font-label mb-4 text-center text-white">${t('adventurer_status.title', { count: adventurerNumber })}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-4">
@@ -53,8 +53,8 @@ export class AdventurerStatus extends HTMLElement {
                                 <div class="flex items-center">${HealthIcon()} <span class=" text-lg">${t('global.health')}</span></div>
                                 <span class="font-label text-lg">${this._adventurer.hp} / ${this._adventurer.maxHp}</span>
                             </div>
-                            <div class="w-full bg-gray-700 rounded-full h-4">
-                                <div class="bg-green-500 h-4 rounded-full transition-all duration-500 ease-out" style="width: ${healthPercentage}%"></div>
+                            <div class="w-full bg-gray-700 pixel-corners h-4">
+                                <div class="bg-green-500 h-4 pixel-corners transition-all duration-500 ease-out" style="width: ${healthPercentage}%"></div>
                             </div>
                         </div>
                         <div>
@@ -62,12 +62,12 @@ export class AdventurerStatus extends HTMLElement {
                                 <div class="flex items-center">${InterestIcon()} <span class=" text-lg">${t('adventurer_status.interest')}</span></div>
                                 <span class="font-label text-lg">${Math.round(this._adventurer.interest)}%</span>
                             </div>
-                            <div class="w-full bg-gray-700 rounded-full h-4">
-                                <div class="bg-brand-interest h-4 rounded-full transition-all duration-500 ease-out" style="width: ${this._adventurer.interest}%"></div>
+                            <div class="w-full bg-gray-700 pixel-corners h-4">
+                                <div class="bg-brand-interest h-4 pixel-corners transition-all duration-500 ease-out" style="width: ${this._adventurer.interest}%"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center justify-center bg-brand-primary p-3 rounded-md">
+                    <div class="flex items-center justify-center bg-brand-primary p-3 pixel-corners">
                         ${PowerIcon()}
                         <span class=" text-lg mr-4">${t('global.power')}</span>
                         <span class="font-label text-2xl  text-white">${this._adventurer.power}</span>
@@ -76,15 +76,15 @@ export class AdventurerStatus extends HTMLElement {
                 <div class="border-t border-gray-700 my-4"></div>
                 <h3 class="text-lg  font-label mb-3 text-center text-white">${t('adventurer_status.inventory')}</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                    <div class="bg-brand-primary/50 p-3 rounded-lg">
+                    <div class="bg-brand-primary/50 p-3 pixel-corners">
                         <div class="flex items-center justify-center text-brand-text-muted mb-1">${WeaponIcon()} <span class="ml-2 ">${t('adventurer_status.weapon')}</span></div>
                         ${this._adventurer.inventory.weapon ? `<div><p class="text-white ">${this._adventurer.inventory.weapon.name}</p><p class="text-sm text-brand-text-muted">${t('adventurer_status.pwr')}: ${this._adventurer.inventory.weapon.stats.power || 0}${this._adventurer.inventory.weapon.stats.maxHp ? `, ${t('adventurer_status.hp')}: ${this._adventurer.inventory.weapon.stats.maxHp}` : ''}</p></div>` : `<p class="text-brand-text-muted italic">${t('global.none')}</p>`}
                     </div>
-                    <div class="bg-brand-primary/50 p-3 rounded-lg">
+                    <div class="bg-brand-primary/50 p-3 pixel-corners">
                         <div class="flex items-center justify-center text-brand-text-muted mb-1">${ArmorIcon()} <span class="ml-2 ">${t('adventurer_status.armor')}</span></div>
                         ${this._adventurer.inventory.armor ? `<div><p class="text-white ">${this._adventurer.inventory.armor.name}</p><p class="text-sm text-brand-text-muted">${t('adventurer_status.hp')}: ${this._adventurer.inventory.armor.stats.maxHp || 0}${this._adventurer.inventory.armor.stats.power ? `, ${t('adventurer_status.pwr')}: ${this._adventurer.inventory.armor.stats.power}` : ''}</p></div>` : `<p class="text-brand-text-muted italic">${t('global.none')}</p>`}
                     </div>
-                    <div class="bg-brand-primary/50 p-3 rounded-lg">
+                    <div class="bg-brand-primary/50 p-3 pixel-corners">
                         <div class="flex items-center justify-center text-brand-text-muted mb-1">${PotionIcon()} <span class="ml-2 ">${t('adventurer_status.potions')}</span></div>
                         ${this._adventurer.inventory.potions.length > 0 ? `<p class="text-white ">${t('adventurer_status.potions_held', { count: this._adventurer.inventory.potions.length })}</p>` : `<p class="text-brand-text-muted italic">${t('global.none')}</p>`}
                     </div>

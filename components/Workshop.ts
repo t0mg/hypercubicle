@@ -40,7 +40,7 @@ const ShopItemCard = (item: LootChoice, canAfford: boolean) => {
                 <button
                     data-item-id="${item.id}"
                     ${!canAfford ? 'disabled' : ''}
-                    class="w-full bg-brand-secondary text-white py-2 px-4 rounded-lg transition-all transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:scale-100"
+                    class="w-full bg-brand-secondary text-white py-2 px-4 pixel-corners transition-all transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:scale-100"
                 >
                     ${t('global.buy')} (${item.cost} ${t('global.bp')})
                 </button>
@@ -104,7 +104,7 @@ export class Workshop extends HTMLElement {
                 <div class="text-center">
                     <button
                         id="start-run-button"
-                        class="bg-green-600 text-white py-4 px-10 rounded-lg text-xl hover:bg-green-500 transition-colors transform hover:scale-105"
+                        class="bg-green-600 text-white py-4 px-10 pixel-corners text-xl hover:bg-green-500 transition-colors transform hover:scale-105"
                     >
                         ${t('workshop.begin_next_run')}
                     </button>
