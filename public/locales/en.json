@@ -45,16 +45,15 @@
     "expertise": "EXPERTISE"
   },
   "run_ended_screen": {
-    "run_complete": "Run Complete!",
+    "run_complete": "The Adventurer has perished",
     "default_reason": "The run has ended.",
-    "final_bp": "Final BP: ",
     "adventurer_considers_fate": "The adventurer considers their fate",
     "continue_quote": "\"I will go on.\"",
-    "continue_decision": "The adventurer decides to press on, ready for another run!",
+    "continue_decision": "Congratulations, they want more!",
     "enter_workshop": "Enter Workshop",
     "retire_quote": "\"I have seen enough.\"",
-    "retire_decision": "The adventurer has lost motivation, and decides to retire after {run} runs.",
-    "recruit_new_adventurer": "Recruit New Adventurer",
+    "retire_decision": "They lost motivation, and retire after {run} runs.",
+    "recruit_new_adventurer": "Recruit Next Adventurer",
     "start_new_run": "Start New Run"
   },
   "loot_choice_panel": {
@@ -63,7 +62,7 @@
   },
   "workshop": {
     "title": "The Workshop",
-    "description": "Spend your Balance Points to add new items to your permanent collection.",
+    "description": "Spend Balance Points to add more items to your deck.",
     "balance_points": "Balance Points: ",
     "no_new_items": "No new items available for purchase this time.",
     "begin_next_run": "Begin Next Run"
@@ -95,26 +94,26 @@
     "unlocked_features": "Unlocked Features: {count}"
   },
   "unlocks": {
-    "congratulations": "Congratulations!",
+    "title": "You Unlocked a New Feature",
     "continue": "Continue",
     "workshop": {
-      "title": "Workshop Unlocked!",
-      "description": "Between runs, you can now visit the Workshop to spend Balance Points on permanently unlocking new items."
+      "title": "The Workshop",
+      "description": "Between runs, you can now visit the Workshop and spend Balance Points to add new items to your deck (until the adventurer retires)."
     },
     "hand_size_increase": {
-      "title": "Hand Size Increased!",
+      "title": "Hand Size Increased",
       "description": "You can now hold more cards in your hand, giving you more options."
     },
     "boss_fights": {
-      "title": "Boss Fights Unlocked!",
+      "title": "Boss Fights",
       "description": "Powerful bosses will now appear at the end of certain floors. Defeat them for great rewards."
     },
     "custom_encounters": {
-      "title": "Custom Encounters Unlocked!",
+      "title": "Custom Encounters",
       "description": "You can now manually edit the settings for encounters, rather than relying on fully automated ones."
     },
     "party_constraints": {
-      "title": "Party Constraints Unlocked!",
+      "title": "Party Constraints",
       "description": "You can now apply constraints to the adventurer's party, adding a new layer of challenge."
     }
   }

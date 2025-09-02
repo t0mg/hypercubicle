@@ -61,9 +61,9 @@ export class RunEndedScreen extends HTMLElement {
 
         unlockContainer.innerHTML = `
             <div class="absolute inset-0 bg-black/70 flex items-center justify-center z-50 animate-fade-in">
-                <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-primary animate-fade-in-up w-full max-w-md">
-                    <h2 class="text-3xl font-label text-brand-primary mb-3">${t('unlocks.congratulations')}</h2>
-                    <h3 class="text-xl text-white">${unlockInfo.title}</h3>
+                <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-primary animate-fade-in-up w-full max-w-3/4">
+                    <h2 class="text-4xl font-title text-brand-secondary mb-3">${t('unlocks.title')}</h2>
+                    <h3 class="font-label text-white">${unlockInfo.title()}</h3>
                     <p class="text-brand-text mb-6">${unlockInfo.description()}</p>
                     <button id="unlock-dismiss-button" class="bg-brand-primary text-white py-2 px-6 rounded-lg hover:bg-brand-primary/80 transition-colors">
                         ${t('global.continue')}
@@ -86,11 +86,11 @@ export class RunEndedScreen extends HTMLElement {
         if (this.state !== 'unlock-revealed') return;
 
         this.state = 'decision-revealing';
-        const decisionContainer = this.querySelector('#decision-container');
-        if (decisionContainer) {
-            // Clear the "adventurer considers" message
-            decisionContainer.innerHTML = '';
-        }
+        // const decisionContainer = this.querySelector('#decision-container');
+        // if (decisionContainer) {
+        //     // Clear the "adventurer considers" message
+        //     decisionContainer.innerHTML = '';
+        // }
 
         setTimeout(() => {
             this.state = 'decision-revealed';
@@ -121,10 +121,9 @@ export class RunEndedScreen extends HTMLElement {
             </style>
             <div id="unlock-container"></div>
             <div class="absolute inset-0 bg-black/80 flex items-center justify-center z-40 backdrop-blur-md">
-                <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-secondary animate-fade-in w-full max-w-lg">
-                    <h2 class="text-4xl font-label text-brand-secondary mb-2">${t('run_ended_screen.run_complete')}</h2>
+                <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-secondary animate-fade-in w-full max-w-3/4">
+                    <h2 class="text-4xl font-title text-brand-secondary mb-2">${t('run_ended_screen.run_complete')}</h2>
                     <p class="text-brand-text-muted mb-4">${reason}</p>
-                    <p class="text-lg text-white mb-6">${t('run_ended_screen.final_bp')}<span class="text-2xl text-amber-400">${finalBP}</span></p>
                     <div id="decision-container" class="h-24">
                         <p class="text-brand-text-muted text-lg animate-fade-in-up">${t('run_ended_screen.adventurer_considers_fate')}<span class="animate-dots"></span></p>
                     </div>
@@ -151,8 +150,8 @@ export class RunEndedScreen extends HTMLElement {
 
         if (this.decision === 'continue') {
             decisionText = `
-                <h3 class="text-2xl text-green-400 mb-2 ${animationClass}">${t('run_ended_screen.continue_quote')}</h3>
-                <p class="text-brand-text mb-4 ${animationClass}" style="animation-delay: 0.5s;">${t('run_ended_screen.continue_decision')}</p>
+                <h3 class="text-2xl text-green-400 ${animationClass}">${t('run_ended_screen.continue_quote')}</h3>
+                <p class="text-brand-text ${animationClass}" style="animation-delay: 0.5s;">${t('run_ended_screen.continue_decision')}</p>
             `;
             buttonHTML += `
                 <button
@@ -165,8 +164,8 @@ export class RunEndedScreen extends HTMLElement {
             `;
         } else { // retire
             decisionText = `
-                <h3 class="text-2xl text-red-400 mb-2 ${animationClass}">${t('run_ended_screen.retire_quote')}</h3>
-                <p class="text-brand-text mb-4 ${animationClass}" style="animation-delay: 0.5s;">${t('run_ended_screen.retire_decision', { run: this.getAttribute('run')})}</p>
+                <h3 class="text-2xl text-red-400 ${animationClass}">${t('run_ended_screen.retire_quote')}</h3>
+                <p class="text-brand-text ${animationClass}" style="animation-delay: 0.5s;">${t('run_ended_screen.retire_decision', { run: this.getAttribute('run')})}</p>
             `;
             buttonHTML += `
                 <button

@@ -1,13 +1,20 @@
 import { t } from '../text';
+import { MetaState } from '../game/meta';
+import { UnlockableFeature } from '../game/unlocks';
 
 export class GameStats extends HTMLElement {
     private _balancePoints: number = 0;
     private _run: number = 0;
     private _room: number = 0;
     private _deckSize: number = 0;
+    private _metaState: MetaState | null = null;
 
     constructor() {
         super();
+    }
+
+    set metaState(value: MetaState) {
+        this._metaState = value;
     }
 
     static get observedAttributes() {
@@ -37,12 +44,16 @@ export class GameStats extends HTMLElement {
     }
 
     render() {
+        const showBalancePoints = this._metaState?.unlockedFeatures.includes(UnlockableFeature.WORKSHOP);
+
         this.innerHTML = `
             <div class="bg-brand-primary p-4 pixel-corners shadow-lg flex justify-around text-center">
+                ${showBalancePoints ? `
                 <div>
                     <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.bp')}</span>
                     <p class="text-2xl  text-white">${this._balancePoints}</p>
                 </div>
+                ` : ''}
                 <div>
                     <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.run')}</span>
                     <p class="text-2xl  text-white">${this._run}</p>

@@ -114,3 +114,4 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
         logPanelEl.traits = state.adventurer.traits;
     }
 };
+
