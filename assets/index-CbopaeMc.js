@@ -102,7 +102,7 @@
             <div class="absolute inset-0 bg-black/70 flex items-center justify-center z-50 animate-fade-in">
                 <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-primary animate-fade-in-up w-full max-w-md">
                     <h2 class="text-3xl font-label text-brand-primary mb-3">${n("unlocks.congratulations")}</h2>
-                    <h3 class="text-xl text-white">${unlock.name}</h3>
+                    <h3 class="text-xl text-white">${t.name}</h3>
                     <p class="text-brand-text mb-6">${t.description()}</p>
                     <button id="unlock-dismiss-button" class="bg-brand-primary text-white py-2 px-6 rounded-lg hover:bg-brand-primary/80 transition-colors">
                         ${n("global.continue")}
