@@ -69,7 +69,7 @@ export class AdventurerStatus extends HTMLElement {
                     </div>
                     <div class="flex items-center justify-center bg-brand-primary p-3 pixel-corners">
                         ${PowerIcon()}
-                        <span class=" text-lg mr-4">${t('global.power')}</span>
+                        <span class="mr-4">${t('global.power')}</span>
                         <span class="font-label text-2xl  text-white">${this._adventurer.power}</span>
                     </div>
                 </div>

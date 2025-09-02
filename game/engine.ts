@@ -4,7 +4,7 @@ import { Logger } from './logger';
 import { MetaManager } from './meta';
 import {
   ADVENTURER_ACTION_DELAY_MS,
-  BP_PER_FLOOR,
+  BP_PER_ROOM,
   CHOICE_SCORE_THRESHOLD,
   HAND_SIZE,
   INITIAL_UNLOCKED_DECK,
@@ -308,7 +308,7 @@ export class GameEngine {
       }
 
       const newRoom = this.gameState.room + 1;
-      const newBalancePoints = this.gameState.designer.balancePoints + BP_PER_FLOOR;
+      const newBalancePoints = this.gameState.designer.balancePoints + BP_PER_ROOM;
 
       this.gameState = {
         ...this.gameState,
@@ -358,7 +358,7 @@ export class GameEngine {
         this.gameState = {
             ...this.gameState!,
             adventurer: newAdventurer,
-            designer: { balancePoints: this.gameState!.designer.balancePoints + BP_PER_FLOOR },
+            designer: { balancePoints: this.gameState!.designer.balancePoints + BP_PER_ROOM },
             phase: 'RUN_OVER',
             runEnded: { isOver: true, reason: reason },
             newlyUnlocked: newlyUnlocked,
@@ -383,7 +383,7 @@ export class GameEngine {
           phase: 'DESIGNER_CHOOSING_DIFFICULTY',
           adventurer: newAdventurer,
           room: this.gameState.room + 1,
-          designer: { balancePoints: this.gameState.designer.balancePoints + BP_PER_FLOOR },
+          designer: { balancePoints: this.gameState.designer.balancePoints + BP_PER_ROOM },
           feedback: feedback,
           encounter: undefined,
         };
