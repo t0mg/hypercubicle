@@ -23,7 +23,7 @@
     "unhandled_game_phase": "Unhandled game phase: {phase}"
   },
   "adventurer_status": {
-    "title": "Adventurer #{count}'s Status",
+    "title": "Adventurer #{count}",
     "interest": "Interest",
     "inventory": "Inventory",
     "weapon": "Weapon",
@@ -84,14 +84,14 @@
     "welcome_to_workshop": "Welcome back. Spend your Balance Points wisely."
   },
   "game_title": "Rogue Steward",
-  "game_subtitle": "A game of indirect control.",
+  "game_subtitle": "Keep your adventurer running.",
   "menu": {
     "new_game": "New Game",
     "continue_game": "Continue",
     "reset_save": "Reset Save",
     "new_game_confirm": "Starting a new game will erase your current progress. Are you sure?",
-    "adventurer_count": "Adventurer #{count}",
-    "max_runs": "Max Runs: {count}",
+    "adventurer_count": "Adventurers burned: {count}",
+    "max_runs": "Best adventurer: {count} runs",
     "unlocked_features": "Unlocked Features: {count}"
   },
   "unlocks": {
