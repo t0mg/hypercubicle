@@ -69,9 +69,9 @@
     "begin_next_run": "Begin Next Run"
   },
   "game_engine": {
-    "adventurer_declines_offer": "They examine your offers but decide to take nothing.",
+    "adventurer_declines_offer": "Disappointed by your offers, they decide to take nothing.",
     "adventurer_accepts_offer": "They pick the {itemName}.",
-    "adventurer_drinks_potion": "Sensing danger, they drink a {potionName}.",
+    "adventurer_drinks_potion": "Sensing danger, they use a {potionName}.",
     "easy_fight": "An easy fight. Too easy...",
     "worthy_challenge": "A worthy, but simple challenge.",
     "great_battle": "A great battle! They feel alive!",

@@ -89,16 +89,25 @@ export class GameEngine {
           if (inventory.potions.length >= MAX_POTIONS) score *= 0.1;
           break;
       }
-      return score + Math.random();
+      return score;
     };
 
     const scoredLoot = offeredLoot.map(item => ({ item, score: scoreItem(item) })).filter(i => i.score > 0);
     scoredLoot.sort((a, b) => b.score - a.score);
 
     if (scoredLoot.length === 0 || scoredLoot[0].score < CHOICE_SCORE_THRESHOLD) {
+      adventurer.modifyInterest(-15, 10);
       return { choice: null, reason: t('game_engine.adventurer_declines_offer') };
     }
     const choice = scoredLoot[0].item;
+    this.gameState?.logger.debug(`Adventurer chooses: ${choice.name} (Score: ${scoredLoot[0].score.toFixed(1)})`);
+    if (scoredLoot[0].score > 60) {
+      adventurer.modifyInterest(15, 5);
+    } else if (scoredLoot[0].score > 30) {
+      adventurer.modifyInterest(10, 8);
+    } else {
+      adventurer.modifyInterest(5, 5);
+    }
     const reason: string = t('game_engine.adventurer_accepts_offer', { itemName: choice.name });
     return { choice, reason };
   }
@@ -165,7 +174,7 @@ export class GameEngine {
     let battleFeedback: string;
     const hpLost = initialHp - adventurer.hp;
     const hpLostRatio = hpLost / adventurer.maxHp;
-
+    this.gameState?.logger.debug(`hpLost: ${hpLost}, hpLostRatio: ${hpLostRatio.toFixed(2)}`);
     if (hpLostRatio > 0.7) {
         battleFeedback = t('game_engine.too_close_for_comfort');
         adventurer.modifyInterest(-15, 5);
@@ -174,7 +183,7 @@ export class GameEngine {
         adventurer.modifyInterest(10, 5);
     } else if (enemiesDefeated > 3 && adventurer.traits.offense > 60) {
         battleFeedback = t('game_engine.easy_fight');
-        adventurer.modifyInterest(5, 5);
+        adventurer.modifyInterest(0, 5);
     } else {
         battleFeedback = t('game_engine.worthy_challenge');
         adventurer.modifyInterest(-2, 3);
@@ -196,14 +205,14 @@ export class GameEngine {
       risk: Math.floor(Math.random() * 81) + 10,
       expertise: 0,
     };
-    const newAdventurer = new Adventurer(newTraits);
+    const logger = new Logger();
+    const newAdventurer = new Adventurer(newTraits, logger);
     const unlockedDeck = INITIAL_UNLOCKED_DECK;
     const runDeck = generateRunDeck(unlockedDeck, this._allItems);
     const handSize = this._getHandSize();
     const hand = runDeck.slice(0, handSize);
     const availableDeck = runDeck.slice(handSize);
 
-    const logger = new Logger();
     logger.info(`--- Starting New Game (Run 1) ---`);
 
     this.gameState = {
@@ -240,7 +249,7 @@ export class GameEngine {
     const hand = runDeck.slice(0, handSize);
     const availableDeck = runDeck.slice(handSize);
 
-    const resetAdventurer = new Adventurer(this.gameState.adventurer.traits);
+    const resetAdventurer = new Adventurer(this.gameState.adventurer.traits, this.gameState.logger);
     resetAdventurer.interest = this.gameState.adventurer.interest;
 
     this.gameState.logger.info(`--- Starting Run ${nextRun} ---`);
@@ -492,7 +501,8 @@ export class GameEngine {
       risk: Math.floor(Math.random() * 81) + 10,
       expertise: 0,
     };
-    const newAdventurer = new Adventurer(newTraits);
+    const logger = new Logger();
+    const newAdventurer = new Adventurer(newTraits, logger);
     return {
       phase: 'MENU',
       designer: { balancePoints: 0 },
@@ -504,7 +514,7 @@ export class GameEngine {
       shopItems: [],
       offeredLoot: [],
       feedback: '',
-      logger: new Logger(),
+      logger: logger,
       run: 0,
       room: 0,
       runEnded: { isOver: false, reason: '' },

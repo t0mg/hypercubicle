@@ -1,4 +1,5 @@
 import { AdventurerTraits, AdventurerInventory, LootChoice } from '../types';
+import { Logger } from './logger';
 
 const BASE_ADVENTURER_STATS = { hp: 100, maxHp: 100, power: 5 };
 
@@ -9,14 +10,16 @@ export class Adventurer {
     public interest: number;
     public traits: AdventurerTraits;
     public inventory: AdventurerInventory;
+    public logger: Logger;
 
-    constructor(traits: AdventurerTraits) {
+    constructor(traits: AdventurerTraits, logger: Logger) {
         this.hp = BASE_ADVENTURER_STATS.hp;
         this.maxHp = BASE_ADVENTURER_STATS.maxHp;
         this.power = BASE_ADVENTURER_STATS.power;
         this.interest = 33 + Math.floor(Math.random() * 50);
         this.traits = traits;
         this.inventory = { weapon: null, armor: null, potions: [] };
+        this.logger = logger;
     }
 
     public modifyInterest(base: number, randomDeviation: number): void {
@@ -24,7 +27,9 @@ export class Adventurer {
         const randomValue = (Math.random() * 2 - 1) * randomDeviation;
         const totalModification = (base + randomValue) * expertiseDampening;
 
+        const oldInterest = this.interest;
         this.interest = Math.max(0, Math.min(100, this.interest + totalModification));
+        this.logger.debug(`Interest changed from ${oldInterest.toFixed(1)} to ${this.interest.toFixed(1)} (Base: ${base}, Rand: ${randomValue.toFixed(1)}, Total: ${totalModification.toFixed(1)})`);
     }
 
     public equip(item: LootChoice): void {
