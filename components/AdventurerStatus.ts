@@ -20,6 +20,7 @@ export class AdventurerStatus extends HTMLElement {
 
     set metaState(value: MetaState) {
         this._metaState = value;
+        this.render();
     }
 
     get adventurer(): Adventurer {

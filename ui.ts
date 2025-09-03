@@ -72,7 +72,7 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
                 <div class="lg:col-span-1 space-y-6">
                     <log-panel></log-panel>
                     <game-stats
-                        balance-points="${state.designer.balancePoints}"
+                        ${engine.isWorkshopUnlocked() ? `balance-points="${state.designer.balancePoints}"` : ''}
                         run="${state.run}"
                         room="${state.room}"
                         deck-size="${state.availableDeck.length}"
@@ -97,8 +97,8 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
 
     const adventurerStatusEl = document.querySelector('adventurer-status') as AdventurerStatus;
     if (adventurerStatusEl) {
-        adventurerStatusEl.adventurer = state.adventurer;
         adventurerStatusEl.metaState = engine.metaManager.metaState;
+        adventurerStatusEl.adventurer = state.adventurer;
     }
 
     const lootChoicePanelEl = document.querySelector('loot-choice-panel') as LootChoicePanel;
