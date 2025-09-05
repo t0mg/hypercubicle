@@ -12,8 +12,8 @@ import './components/RunEndedScreen.ts';
 import './components/GameStats.ts';
 import './components/LoadingIndicator.ts';
 import './components/LogPanel.ts';
-import './components/LootCard.ts';
-import './components/LootChoicePanel.ts';
+import './components/Card.ts';
+import './components/ChoicePanel.ts';
 import './components/Workshop.ts';
 import './components/MenuScreen.ts';
 
@@ -51,8 +51,8 @@ appElement.addEventListener('present-offer', (e: Event) => {
 });
 
 appElement.addEventListener('run-encounter', (e: Event) => {
-  const { encounter } = (e as CustomEvent).detail;
-  engine.runEncounter(encounter);
+  const { rooms } = (e as CustomEvent).detail;
+  engine.runEncounter(rooms);
 });
 
 appElement.addEventListener('run-decision', (e: Event) => {

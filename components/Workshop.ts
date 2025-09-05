@@ -1,10 +1,9 @@
-import type { LootChoice } from '../types';
+import type { LootChoice, RoomChoice } from '../types';
 import { t } from '../text';
 
-const StatChange = (label: string, value: number) => {
-    const isPositive = value > 0;
-    const color = isPositive ? 'text-green-400' : 'text-red-400';
-    const sign = isPositive ? '+' : '';
+const StatChange = (label: string, value: number, positive: boolean = true) => {
+    const color = positive ? 'text-green-400' : 'text-red-400';
+    const sign = positive ? '+' : '';
     return `
         <div class="flex justify-between text-sm ${color}">
             <span>${label}</span>
@@ -13,13 +12,61 @@ const StatChange = (label: string, value: number) => {
     `;
 };
 
-const ShopItemCard = (item: LootChoice, canAfford: boolean) => {
+const StatRange = (label: string, min: number, max: number) => {
+    return `
+        <div class="flex justify-between text-sm text-gray-400">
+            <span>${label}</span>
+            <span class="font-mono">${min}-${max}</span>
+        </div>
+    `;
+}
+
+const ShopItemCard = (item: LootChoice | RoomChoice, canAfford: boolean) => {
     const rarityColorMap: { [key: string]: string } = {
         Common: 'text-rarity-common',
         Uncommon: 'text-rarity-uncommon',
         Rare: 'text-rarity-rare',
     };
     const rarityColor = rarityColorMap[item.rarity] || 'text-gray-400';
+
+    let statsHtml = '';
+    if ('stats' in item) {
+        if (item.type === 'Weapon' || item.type === 'Armor' || item.type === 'Potion') {
+            const loot = item as LootChoice;
+            statsHtml = `
+                ${loot.stats.hp ? StatChange(t('global.health'), loot.stats.hp) : ''}
+                ${loot.stats.maxHp ? StatChange(t('global.max_hp'), loot.stats.maxHp) : ''}
+                ${loot.stats.power ? StatChange(t('global.power'), loot.stats.power, (loot.stats.power || 0) > 0) : ''}
+            `;
+        } else {
+            const room = item as RoomChoice;
+            switch (room.type) {
+                case 'enemy':
+                    statsHtml = `
+                        ${room.stats.attack ? StatChange(t('global.attack'), room.stats.attack, false) : ''}
+                        ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp, false) : ''}
+                        ${room.stats.minUnits && room.stats.maxUnits ? StatRange(t('global.units'), room.stats.minUnits, room.stats.maxUnits) : ''}
+                    `;
+                    break;
+                case 'boss':
+                    statsHtml = `
+                        ${room.stats.attack ? StatChange(t('global.attack'), room.stats.attack, false) : ''}
+                        ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp, false) : ''}
+                    `;
+                    break;
+                case 'healing':
+                    statsHtml = `
+                        ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp) : ''}
+                    `;
+                    break;
+                case 'trap':
+                    statsHtml = `
+                        ${room.stats.attack ? StatChange(t('global.attack'), room.stats.attack, false) : ''}
+                    `;
+                    break;
+            }
+        }
+    }
 
     return `
         <div class="bg-brand-surface border border-brand-primary rounded-lg p-4 flex flex-col justify-between shadow-lg animate-fade-in">
@@ -31,9 +78,7 @@ const ShopItemCard = (item: LootChoice, canAfford: boolean) => {
                 <p class="text-xs uppercase tracking-wider mb-3 ${rarityColor}">${item.rarity}</p>
                 <div class="border-t border-gray-700 my-2"></div>
                 <div class="space-y-1 text-brand-text mb-4">
-                    ${item.stats.hp ? StatChange(t('global.health'), item.stats.hp) : ''}
-                    ${item.stats.maxHp ? StatChange(t('global.max_hp'), item.stats.maxHp) : ''}
-                    ${item.stats.power ? StatChange(t('global.power'), item.stats.power) : ''}
+                    ${statsHtml}
                 </div>
             </div>
             <div class="text-center">
@@ -50,10 +95,10 @@ const ShopItemCard = (item: LootChoice, canAfford: boolean) => {
 };
 
 export class Workshop extends HTMLElement {
-    private _items: LootChoice[] = [];
+    private _items: (LootChoice | RoomChoice)[] = [];
     private _balancePoints: number = 0;
 
-    set items(value: LootChoice[]) { this._items = value; this.render(); }
+    set items(value: (LootChoice | RoomChoice)[]) { this._items = value; this.render(); }
     set balancePoints(value: number) { this._balancePoints = value; this.render(); }
 
     constructor() {
@@ -98,7 +143,7 @@ export class Workshop extends HTMLElement {
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                     ${itemCardsHtml}
-                    ${this._items.length === 0 ? `<p class="text-center text-brand-text-muted col-span-full">${t('workshop.no_new_items')}</p>` : ''}
+                    ${this._items.length === 0 ? `<p class="text-center text-brand--muted col-span-full">${t('workshop.no_new_items')}</p>` : ''}
                 </div>
 
                 <div class="text-center">

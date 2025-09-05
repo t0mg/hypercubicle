@@ -13,10 +13,9 @@ export interface AdventurerInventory {
 
 import { Adventurer } from './game/adventurer';
 import { Logger } from './game/logger';
+import { UnlockableFeature } from './game/unlocks';
 
 export type { Adventurer };
-
-
 
 export interface LootChoice {
     id: string;
@@ -34,12 +33,30 @@ export interface LootChoice {
     justDrafted?: boolean;
 }
 
+export interface RoomChoice {
+    id: string,
+    instanceId: string;
+    name: string,
+    type: 'enemy' | 'boss' | 'healing' | 'trap',
+    rarity: string,
+    cost: number | null,
+    stats: {
+        attack?: number,
+        hp?: number,
+        maxUnits?: number,
+        minUnits?: number,
+    },
+    units?: number,
+    justDrafted?: boolean;
+    draftedRoom?: number;
+}
+
 export type GamePhase =
   | 'MENU'
   | 'LOADING'
   | 'DESIGNER_CHOOSING_LOOT'
   | 'AWAITING_ADVENTURER_CHOICE'
-  | 'DESIGNER_CHOOSING_DIFFICULTY'
+  | 'DESIGNER_CHOOSING_ROOM'
   | 'AWAITING_ENCOUNTER_FEEDBACK'
   | 'RUN_OVER'
   | 'SHOP'
@@ -60,9 +77,13 @@ export interface GameState {
     unlockedDeck: string[]; // All item IDs the player owns
     availableDeck: LootChoice[]; // Items available for the current run, becomes the draw pile
     hand: LootChoice[]; // The player's current hand of cards
+    unlockedRoomDeck: string[];
+    availableRoomDeck: RoomChoice[];
+    roomHand: RoomChoice[];
     handSize: number;
-    shopItems: LootChoice[];
+    shopItems: (LootChoice | RoomChoice)[];
     offeredLoot: LootChoice[];
+    offeredRooms: RoomChoice[];
     feedback: string | string[];
     logger: Logger;
     run: number;
@@ -73,5 +94,4 @@ export interface GameState {
         reason: string;
     };
     newlyUnlocked: UnlockableFeature[];
-    
 }

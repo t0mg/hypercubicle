@@ -1,4 +1,4 @@
-import type { LootChoice } from '../types';
+import type { LootChoice, RoomChoice } from '../types';
 import { t } from '../text';
 
 const rarityColorMap: { [key: string]: string } = {
@@ -7,10 +7,9 @@ const rarityColorMap: { [key: string]: string } = {
     Rare: 'text-rarity-rare',
 };
 
-const StatChange = (label: string, value: number) => {
-    const isPositive = value > 0;
-    const color = isPositive ? 'text-green-400' : 'text-red-400';
-    const sign = isPositive ? '+' : '';
+const StatChange = (label: string, value: number, positive: boolean = true) => {
+    const color = positive ? 'text-green-400' : 'text-red-400';
+    const sign = positive ? '+' : '';
     return `
         <div class="flex justify-between text-sm ${color}">
             <span>${label}</span>
@@ -19,14 +18,23 @@ const StatChange = (label: string, value: number) => {
     `;
 };
 
-export class LootCard extends HTMLElement {
-    private _item: LootChoice | null = null;
+const StatRange = (label: string, min: number, max: number) => {
+    return `
+        <div class="flex justify-between text-sm text-gray-400">
+            <span>${label}</span>
+            <span class="font-mono">${min}-${max}</span>
+        </div>
+    `;
+}
+
+export class Card extends HTMLElement {
+    private _item: LootChoice | RoomChoice | null = null;
     private _isSelected: boolean = false;
     private _isDisabled: boolean = false;
     private _isNewlyDrafted: boolean = false;
 
-    set item(value: LootChoice) { this._item = value; this.render(); }
-    get item(): LootChoice { return this._item!; }
+    set item(value: LootChoice | RoomChoice) { this._item = value; this.render(); }
+    get item(): LootChoice | RoomChoice { return this._item!; }
 
     set isSelected(value: boolean) { this._isSelected = value; this.render(); }
     get isSelected(): boolean { return this._isSelected; }
@@ -47,7 +55,7 @@ export class LootCard extends HTMLElement {
         super();
         this.addEventListener('click', () => {
             if (!this._isDisabled && this._item) {
-                this.dispatchEvent(new CustomEvent('loot-card-select', {
+                this.dispatchEvent(new CustomEvent('card-select', {
                     bubbles: true,
                     composed: true,
                     detail: { instanceId: this._item.instanceId }
@@ -84,6 +92,44 @@ export class LootCard extends HTMLElement {
         const animationClass = this.classList.contains('animate-newly-drafted') ? ' animate-newly-drafted' : '';
         this.className = `${baseClasses} ${stateClasses}${animationClass}`;
 
+        let statsHtml = '';
+        if ('stats' in this._item) {
+            if ('power' in this._item.stats || 'maxHp' in this._item.stats) {
+                statsHtml = `
+                    ${this._item.stats.hp ? StatChange(t('global.health'), this._item.stats.hp) : ''}
+                    ${this._item.stats.maxHp ? StatChange(t('global.max_hp'), this._item.stats.maxHp) : ''}
+                    ${this._item.stats.power ? StatChange(t('global.power'), this._item.stats.power) : ''}
+                `;
+            } else {
+                const room = this._item as RoomChoice;
+                switch (room.type) {
+                    case 'enemy':
+                        statsHtml = `
+                            ${room.stats.attack ? StatChange(t('global.attack'), room.stats.attack, false) : ''}
+                            ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp, false) : ''}
+                            ${room.stats.minUnits && room.stats.maxUnits ? StatRange(t('global.units'), room.stats.minUnits, room.stats.maxUnits) : ''}
+                        `;
+                        break;
+                    case 'boss':
+                        statsHtml = `
+                            ${room.stats.attack ? StatChange(t('global.attack'), room.stats.attack, false) : ''}
+                            ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp, false) : ''}
+                        `;
+                        break;
+                    case 'healing':
+                        statsHtml = `
+                            ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp) : ''}
+                        `;
+                        break;
+                    case 'trap':
+                        statsHtml = `
+                            ${room.stats.attack ? StatChange(t('global.attack'), room.stats.attack, false) : ''}
+                        `;
+                        break;
+                }
+            }
+        }
+
         this.innerHTML = `
             <div>
                 <div class="flex justify-between items-baseline">
@@ -93,13 +139,11 @@ export class LootCard extends HTMLElement {
                 <p class="text-xs uppercase tracking-wider mb-3 ${rarityColor}">${this._item.rarity}</p>
                 <div class="border-t border-gray-700 my-2"></div>
                 <div class="space-y-1 text-brand-text text-large">
-                    ${this._item.stats.hp ? StatChange(t('global.health'), this._item.stats.hp) : ''}
-                    ${this._item.stats.maxHp ? StatChange(t('global.max_hp'), this._item.stats.maxHp) : ''}
-                    ${this._item.stats.power ? StatChange(t('global.power'), this._item.stats.power) : ''}
+                    ${statsHtml}
                 </div>
             </div>
         `;
     }
 }
 
-customElements.define('loot-card', LootCard);
+customElements.define('choice-card', Card);
