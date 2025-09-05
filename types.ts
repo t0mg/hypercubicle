@@ -30,7 +30,6 @@ export interface LootChoice {
         maxHp?: number; // For equipment
     };
     cost: number | null;
-    minRun: number;
     draftedRoom?: number;
     justDrafted?: boolean;
 }

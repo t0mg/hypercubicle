@@ -1,38 +1,33 @@
-import type { LootChoice } from '../types';
-import { MIN_DECK_SIZE } from './constants';
+import { LootChoice } from "../types";
 
-export const shuffleArray = <T,>(array: T[]): T[] => {
-    return [...array].sort(() => Math.random() - 0.5);
+export const generateId = (baseId: string) => `${baseId}_${Math.random().toString(36).substr(2, 9)}`;
+
+export const shuffleArray = <T>(array: T[]): T[] => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
 };
 
-export const generateRunDeck = (unlockedItemIds: string[], allItems: LootChoice[]): LootChoice[] => {
-    let instanceCounter = 0;
-    const allItemsMap = new Map(allItems.map(i => [i.id, i]));
-    const unlockedItems = unlockedItemIds.map(id => allItemsMap.get(id)).filter(Boolean) as LootChoice[];
+export const generateRunDeck = (unlockedIds: string[], allItems: LootChoice[]): LootChoice[] => {
+    const unlockedItems = allItems.filter(item => unlockedIds.includes(item.id));
+    const deck: LootChoice[] = [];
 
-    const createItemInstance = (item: LootChoice): LootChoice => {
-        instanceCounter++;
-        return { ...item, instanceId: `${item.id}-${instanceCounter}` };
-    };
+    // Add all items with null cost
+    unlockedItems.filter(item => item.cost === null).forEach(item => {
+      deck.push({ ...item, instanceId: generateId(item.id) });
+    });
 
-    const startingItems = unlockedItems.filter(item => item.cost === null);
-    const otherUnlockedItems = unlockedItems.filter(item => item.cost !== null);
-
-    let deck: LootChoice[] = [];
-
-    if (startingItems.length > 0) {
-        for (const item of startingItems) {
-            deck.push(createItemInstance(item), createItemInstance(item), createItemInstance(item), createItemInstance(item));
-        }
-    }
-
-    deck.push(...otherUnlockedItems.map(createItemInstance));
-
-    let i = 0;
-    while (deck.length < MIN_DECK_SIZE && startingItems.length > 0) {
-        deck.push(createItemInstance(startingItems[i % startingItems.length]));
-        i++;
+    // Fill the rest of the deck with items that have a cost
+    const potentialFillers = unlockedItems.filter(item => item.cost !== null);
+    while(deck.length < 4 && potentialFillers.length > 0) {
+        const randomIndex = Math.floor(Math.random() * potentialFillers.length);
+        const item = potentialFillers[randomIndex];
+        deck.push({ ...item, instanceId: generateId(item.id) });
+        potentialFillers.splice(randomIndex, 1);
     }
 
     return shuffleArray(deck);
-};
+  };
