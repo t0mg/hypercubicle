@@ -421,8 +421,7 @@ export class GameEngine {
     const nextRun = this.gameState.run + 1;
     const shopItems = this._allItems
       .filter(item => item.cost !== null)
-      .filter(item => !this.gameState!.unlockedDeck.includes(item.id))
-      .filter(item => nextRun >= item.minRun);
+      .filter(item => !this.gameState!.unlockedDeck.includes(item.id));
 
     this.gameState = {
       ...this.gameState,

@@ -1,4 +1,3 @@
-
 [
     {
         "id": "loot_1",
@@ -6,8 +5,7 @@
         "type": "Weapon",
         "rarity": "Common",
         "stats": { "power": 2 },
-        "cost": null,
-        "minRun": 0
+        "cost": null
     },
     {
         "id": "loot_2",
@@ -15,8 +13,7 @@
         "type": "Potion",
         "rarity": "Common",
         "stats": { "hp": 20 },
-        "cost": null,
-        "minRun": 0
+        "cost": null
     },
     {
         "id": "loot_3",
@@ -24,8 +21,7 @@
         "type": "Armor",
         "rarity": "Common",
         "stats": { "maxHp": 10 },
-        "cost": null,
-        "minRun": 0
+        "cost": null
     },
     {
         "id": "loot_4",
@@ -33,8 +29,7 @@
         "type": "Weapon",
         "rarity": "Common",
         "stats": { "power": 1 },
-        "cost": null,
-        "minRun": 0
+        "cost": null
     },
     {
         "id": "loot_5",
@@ -42,8 +37,7 @@
         "type": "Potion",
         "rarity": "Common",
         "stats": { "hp": 15 },
-        "cost": null,
-        "minRun": 0
+        "cost": null
     },
     {
         "id": "loot_6",
@@ -51,8 +45,7 @@
         "type": "Armor",
         "rarity": "Uncommon",
         "stats": { "power": 1, "maxHp": 15 },
-        "cost": 150,
-        "minRun": 2
+        "cost": 150
     },
     {
         "id": "loot_7",
@@ -60,8 +53,7 @@
         "type": "Weapon",
         "rarity": "Uncommon",
         "stats": { "power": 6, "maxHp": -10 },
-        "cost": 150,
-        "minRun": 2
+        "cost": 150
     },
     {
         "id": "loot_8",
@@ -69,8 +61,7 @@
         "type": "Potion",
         "rarity": "Uncommon",
         "stats": { "hp": 50 },
-        "cost": 120,
-        "minRun": 1
+        "cost": 120
     },
     {
         "id": "loot_9",
@@ -78,8 +69,7 @@
         "type": "Weapon",
         "rarity": "Uncommon",
         "stats": { "power": 4 },
-        "cost": 140,
-        "minRun": 1
+        "cost": 140
     },
     {
         "id": "loot_10",
@@ -87,8 +77,7 @@
         "type": "Armor",
         "rarity": "Uncommon",
         "stats": { "maxHp": 20 },
-        "cost": 120,
-        "minRun": 1
+        "cost": 120
     },
     {
         "id": "loot_11",
@@ -96,8 +85,7 @@
         "type": "Armor",
         "rarity": "Rare",
         "stats": { "maxHp": 50, "power": -2 },
-        "cost": 300,
-        "minRun": 4
+        "cost": 300
     },
     {
         "id": "loot_12",
@@ -105,8 +93,7 @@
         "type": "Weapon",
         "rarity": "Rare",
         "stats": { "power": 10 },
-        "cost": 350,
-        "minRun": 4
+        "cost": 350
     },
     {
         "id": "loot_13",
@@ -114,8 +101,7 @@
         "type": "Potion",
         "rarity": "Rare",
         "stats": { "hp": 150 },
-        "cost": 250,
-        "minRun": 3
+        "cost": 250
     },
     {
         "id": "loot_14",
@@ -123,8 +109,7 @@
         "type": "Armor",
         "rarity": "Rare",
         "stats": { "power": 3, "maxHp": 25 },
-        "cost": 320,
-        "minRun": 5
+        "cost": 320
     },
     {
         "id": "loot_15",
@@ -132,7 +117,6 @@
         "type": "Armor",
         "rarity": "Rare",
         "stats": { "maxHp": 30, "power": 3 },
-        "cost": 320,
-        "minRun": 5
+        "cost": 320
     }
 ]
