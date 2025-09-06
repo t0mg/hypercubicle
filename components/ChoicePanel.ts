@@ -103,8 +103,8 @@ export class ChoicePanel extends HTMLElement {
         if (!this._choices) return;
 
         const isRoomSelection = this._deckType === 'room';
-        const title = isRoomSelection ? t('loot_choice_panel.title_room') : t('loot_choice_panel.title');
-        const buttonText = isRoomSelection ? t('loot_choice_panel.begin_encounter') : t('loot_choice_panel.present_offer');
+        const title = isRoomSelection ? t('choice_panel.title_room') : t('choice_panel.title');
+        const buttonText = isRoomSelection ? t('choice_panel.begin_encounter') : t('choice_panel.present_offer');
 
         let canSubmit = false;
         let buttonLabel = buttonText;

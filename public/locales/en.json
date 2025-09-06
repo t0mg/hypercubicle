@@ -56,9 +56,11 @@
     "recruit_new_adventurer": "Recruit Next Adventurer",
     "start_new_run": "Start New Run"
   },
-  "loot_choice_panel": {
+  "choice_panel": {
     "title": "Offer Rewards",
-    "present_offer": "Present Offer"
+    "present_offer": "Present Offer",
+    "title_room": "Choose Encounters",
+    "begin_encounter": "Begin Encounter"
   },
   "workshop": {
     "title": "The Workshop",
