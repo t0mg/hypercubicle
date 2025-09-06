@@ -1,0 +1,69 @@
+[
+    {
+        "id": "room_1",
+        "name": "Goblin Den",
+        "type": "enemy",
+        "rarity": "Common",
+        "cost": 50,
+        "stats": {
+            "attack": 5,
+            "hp": 10,
+            "minUnits": 1,
+            "maxUnits": 3
+        }
+    },
+    {
+        "id": "room_2",
+        "name": "Spike Trap",
+        "type": "trap",
+        "rarity": "Common",
+        "cost": 30,
+        "stats": {
+            "attack": 15
+        }
+    },
+    {
+        "id": "room_3",
+        "name": "Fountain of Health",
+        "type": "healing",
+        "rarity": "Uncommon",
+        "cost": 80,
+        "stats": {
+            "hp": 25
+        }
+    },
+    {
+        "id": "room_4",
+        "name": "Orc Stronghold",
+        "type": "enemy",
+        "rarity": "Uncommon",
+        "cost": 120,
+        "stats": {
+            "attack": 10,
+            "hp": 25,
+            "minUnits": 2,
+            "maxUnits": 4
+        }
+    },
+    {
+        "id": "room_5",
+        "name": "Dragon's Lair",
+        "type": "boss",
+        "rarity": "Rare",
+        "cost": 300,
+        "stats": {
+            "attack": 25,
+            "hp": 100
+        }
+    },
+    {
+        "id": "room_6",
+        "name": "Death Pit",
+        "type": "trap",
+        "rarity": "Rare",
+        "cost": 200,
+        "stats": {
+            "attack": 999
+        }
+    }
+]
