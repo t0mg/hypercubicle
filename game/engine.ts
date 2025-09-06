@@ -11,7 +11,7 @@ import {
   INTEREST_THRESHOLD,
   MAX_POTIONS,
 } from './constants';
-import { generateRunDeck, generateRoomDeck, shuffleArray } from './utils';
+import { generateLootDeck, generateRoomDeck, shuffleArray } from './utils';
 import { UnlockableFeature } from './unlocks';
 import { t } from '../text';
 
@@ -208,7 +208,7 @@ export class GameEngine {
     const newAdventurer = new Adventurer(newTraits, logger);
 
     const unlockedDeck = INITIAL_UNLOCKED_DECK;
-    const runDeck = generateRunDeck(unlockedDeck, this._allItems);
+    const runDeck = generateLootDeck(unlockedDeck, this._allItems);
     const handSize = this._getHandSize();
     const hand = runDeck.slice(0, handSize);
     const availableDeck = runDeck.slice(handSize);
@@ -254,7 +254,7 @@ export class GameEngine {
     this.metaManager.updateRun(nextRun);
 
     const handSize = this._getHandSize();
-    const runDeck = generateRunDeck(this.gameState.unlockedDeck, this._allItems);
+    const runDeck = generateLootDeck(this.gameState.unlockedDeck, this._allItems);
     const hand = runDeck.slice(0, handSize);
     const availableDeck = runDeck.slice(handSize);
 

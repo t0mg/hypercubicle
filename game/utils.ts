@@ -16,13 +16,17 @@ export const shuffleArray = <T>(array: T[]): T[] => {
     return newArray;
 };
 
-export const generateRunDeck = (unlockedIds: string[], allItems: LootChoice[]): LootChoice[] => {
+const generateDeck = <T extends { id: string; cost: number | null }>(
+    unlockedIds: string[],
+    allItems: T[],
+    itemFactory: (item: T) => T
+): T[] => {
     const unlockedItems = allItems.filter(item => unlockedIds.includes(item.id));
-    const deck: LootChoice[] = [];
+    const deck: T[] = [];
 
     // Add all items with null cost
     unlockedItems.filter(item => item.cost === null).forEach(item => {
-      deck.push({ ...item, instanceId: generateId(item.id) });
+        deck.push(itemFactory(item));
     });
 
     // Fill the rest of the deck with items that have a cost
@@ -30,34 +34,22 @@ export const generateRunDeck = (unlockedIds: string[], allItems: LootChoice[]): 
     while(deck.length < MIN_DECK_SIZE && potentialFillers.length > 0) {
         const randomIndex = Math.floor(Math.random() * potentialFillers.length);
         const item = potentialFillers[randomIndex];
-        deck.push({ ...item, instanceId: generateId(item.id) });
+        deck.push(itemFactory(item));
     }
 
     return shuffleArray(deck);
-  };
+};
+
+export const generateLootDeck = (unlockedIds: string[], allItems: LootChoice[]): LootChoice[] => {
+    return generateDeck(unlockedIds, allItems, (item) => ({ ...item, instanceId: generateId(item.id) }));
+};
 
 export const generateRoomDeck = (unlockedIds: string[], allItems: RoomChoice[]): RoomChoice[] => {
-    const unlockedItems = allItems.filter(item => unlockedIds.includes(item.id));
-    const deck: RoomChoice[] = [];
-
-    unlockedItems.filter(item => item.cost === null).forEach(item => {
-        const room = { ...item, instanceId: generateId(item.id) };
+    return generateDeck(unlockedIds, allItems, (item) => {
+        const room = { ...item, instanceId: generateId(item.id) } as RoomChoice;
         if (room.type === 'enemy' && room.stats.minUnits && room.stats.maxUnits) {
             room.units = getRandomInt(room.stats.minUnits, room.stats.maxUnits);
         }
-        deck.push(room);
+        return room;
     });
-
-    const potentialFillers = unlockedItems.filter(item => item.cost !== null);
-    while(deck.length < MIN_DECK_SIZE && potentialFillers.length > 0) {
-        const randomIndex = Math.floor(Math.random() * potentialFillers.length);
-        const item = potentialFillers[randomIndex];
-        const room = { ...item, instanceId: generateId(item.id) };
-        if (room.type === 'enemy' && room.stats.minUnits && room.stats.maxUnits) {
-            room.units = getRandomInt(room.stats.minUnits, room.stats.maxUnits);
-        }
-        deck.push(room);
-    }
-
-    return shuffleArray(deck);
 }
