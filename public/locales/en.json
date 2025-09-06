@@ -3,6 +3,7 @@
     "health": "Health",
     "max_hp": "Max HP",
     "power": "Power",
+    "attack": "Attack",
     "bp": "BP",
     "run": "Run",
     "room": "Room",
@@ -57,10 +58,11 @@
     "start_new_run": "Start New Run"
   },
   "choice_panel": {
-    "title": "Offer Rewards",
+    "title": "Present Rewards for the Adventurer to Choose From",
     "present_offer": "Present Offer",
-    "title_room": "Choose Encounters",
-    "begin_encounter": "Begin Encounter"
+    "title_room": "Choose Three Rooms or One Boss",
+    "begin_encounter": "Begin Encounter",
+    "multiple_enemies_title": "{name} ({count} mobs)"
   },
   "workshop": {
     "title": "The Workshop",
@@ -82,7 +84,9 @@
     "adventurer_fell": "The adventurer fell on room {room} of run {run}.",
     "adventurer_bored": "The adventurer grew bored on room {room} of run {run}, and quit.",
     "empty_hand": "The adventurer waits for your decision, unaware that you have nothing left to offer.",
-    "welcome_to_workshop": "Welcome back. Spend your Balance Points wisely."
+    "welcome_to_workshop": "Welcome back. Spend your Balance Points wisely.",
+    "healing_room": "The adventurer found the {name} and recovered {healing} health.",
+    "trap_room": "The adventurer fell for the {name} and lost {damage} health."
   },
   "game_title": "Rogue Steward",
   "game_subtitle": "Keep your adventurer running.",

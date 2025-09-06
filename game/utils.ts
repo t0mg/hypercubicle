@@ -1,55 +1,76 @@
 import { LootChoice, RoomChoice } from "../types";
-import { MIN_DECK_SIZE } from "./constants";
 
 export const generateId = (baseId: string) => `${baseId}_${Math.random().toString(36).substr(2, 9)}`;
 
 export const getRandomInt = (min: number, max: number) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 export const shuffleArray = <T>(array: T[]): T[] => {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    return newArray;
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
 };
 
-const generateDeck = <T extends { id: string; cost: number | null }>(
-    unlockedIds: string[],
-    allItems: T[],
-    itemFactory: (item: T) => T
+const generateDeck = <T extends { id: string; cost: number | null, rarity: string }>(
+  unlockedIds: string[],
+  allItems: T[],
+  deckSize: number,
+  itemFactory: (item: T) => T
 ): T[] => {
-    const unlockedItems = allItems.filter(item => unlockedIds.includes(item.id));
-    const deck: T[] = [];
+  const unlockedItems = allItems.filter(item => unlockedIds.includes(item.id));
+  const deck: T[] = [];
 
-    // Add all items with null cost
-    unlockedItems.filter(item => item.cost === null).forEach(item => {
-        deck.push(itemFactory(item));
-    });
+  // Compute how many common, uncommon and rare items we want in the deck based on deck size
+  const rarityDistribution: Record<string, number> = { 'Common': 0.6, 'Uncommon': 0.3, 'Rare': 0.1 };
+  const rarityCounts: Record<string, number> = { 'Common': 0, 'Uncommon': 0, 'Rare': 0 };
 
-    // Fill the rest of the deck with items that have a cost
-    const potentialFillers = unlockedItems.filter(item => item.cost !== null);
-    while(deck.length < MIN_DECK_SIZE && potentialFillers.length > 0) {
-        const randomIndex = Math.floor(Math.random() * potentialFillers.length);
-        const item = potentialFillers[randomIndex];
-        deck.push(itemFactory(item));
+  const distributionTarget: Record<string, number> = { 'Common': 0, 'Uncommon': 0, 'Rare': 0 };
+  Object.keys(rarityDistribution).forEach(rarity => {
+    distributionTarget[rarity] = Math.floor(deckSize * rarityDistribution[rarity]);
+  });
+  // Adjust for rounding errors
+  let totalAssigned = Object.values(distributionTarget).reduce((a, b) => a + b, 0);
+  while (totalAssigned < deckSize) {
+    distributionTarget['Common'] += 1; // Add to common by default
+    totalAssigned += 1;
+  }
+
+  // Add all purchased items once
+  unlockedItems.filter(item => item.cost !== null).forEach(item => {
+    deck.push(itemFactory(item));
+    rarityCounts[item.rarity] += 1;
+  });
+
+  // Fill the rest of the deck to match rarity counts
+  Object.keys(rarityDistribution).forEach((rarity, _) => {
+    const candidates = unlockedItems.filter(item => item.rarity === rarity);
+    while (rarityCounts[rarity] < distributionTarget[rarity]) {
+      if (candidates.length === 0) break; // No more candidates of this rarity
+      const randomIndex = Math.floor(Math.random() * candidates.length);
+      const item = candidates[randomIndex];
+      deck.push(itemFactory(item));
+      rarityCounts[rarity] += 1;
     }
+  });
 
-    return shuffleArray(deck);
+  return shuffleArray(deck);
 };
 
-export const generateLootDeck = (unlockedIds: string[], allItems: LootChoice[]): LootChoice[] => {
-    return generateDeck(unlockedIds, allItems, (item) => ({ ...item, instanceId: generateId(item.id) }));
+export const generateLootDeck = (unlockedIds: string[], allItems: LootChoice[], deckSize: number): LootChoice[] => {
+  return generateDeck(unlockedIds, allItems, deckSize, (item) => ({ ...item, instanceId: generateId(item.id) }));
 };
 
-export const generateRoomDeck = (unlockedIds: string[], allItems: RoomChoice[]): RoomChoice[] => {
-    return generateDeck(unlockedIds, allItems, (item) => {
-        const room = { ...item, instanceId: generateId(item.id) } as RoomChoice;
-        if (room.type === 'enemy' && room.stats.minUnits && room.stats.maxUnits) {
-            room.units = getRandomInt(room.stats.minUnits, room.stats.maxUnits);
-        }
-        return room;
-    });
+export const generateRoomDeck = (unlockedIds: string[], allItems: RoomChoice[], deckSize: number): RoomChoice[] => {
+  const deck = generateDeck(unlockedIds, allItems, deckSize, (item) => {
+    const room = { ...item, instanceId: generateId(item.id) } as RoomChoice;
+    if (room.type === 'enemy' && room.stats.minUnits && room.stats.maxUnits) {
+      room.units = getRandomInt(room.stats.minUnits, room.stats.maxUnits);
+    }
+    return room;
+  });
+  return deck;
 }

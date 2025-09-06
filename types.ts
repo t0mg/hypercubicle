@@ -36,17 +36,17 @@ export interface LootChoice {
 export interface RoomChoice {
     id: string,
     instanceId: string;
-    name: string,
-    type: 'enemy' | 'boss' | 'healing' | 'trap',
-    rarity: string,
-    cost: number | null,
+    name: string;
+    type: 'enemy' | 'boss' | 'healing' | 'trap';
+    rarity: string;
+    cost: number | null;
     stats: {
-        attack?: number,
-        hp?: number,
-        maxUnits?: number,
-        minUnits?: number,
-    },
-    units?: number,
+        attack?: number;
+        hp?: number;
+        maxUnits?: number;
+        minUnits?: number;
+    };
+    units?: number;
     justDrafted?: boolean;
     draftedRoom?: number;
 }

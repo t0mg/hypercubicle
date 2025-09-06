@@ -9,11 +9,13 @@ import {
   HAND_SIZE,
   INITIAL_UNLOCKED_DECK,
   INTEREST_THRESHOLD,
+  MIN_DECK_SIZE,
   MAX_POTIONS,
 } from './constants';
 import { generateLootDeck, generateRoomDeck, shuffleArray } from './utils';
 import { UnlockableFeature } from './unlocks';
 import { t } from '../text';
+import { M } from 'vitest/dist/chunks/reporters.d.BFLkQcL6.js';
 
 type GameEngineListener = (state: GameState | null) => void;
 
@@ -208,13 +210,13 @@ export class GameEngine {
     const newAdventurer = new Adventurer(newTraits, logger);
 
     const unlockedDeck = INITIAL_UNLOCKED_DECK;
-    const runDeck = generateLootDeck(unlockedDeck, this._allItems);
+    const runDeck = generateLootDeck(unlockedDeck, this._allItems, MIN_DECK_SIZE);
     const handSize = this._getHandSize();
     const hand = runDeck.slice(0, handSize);
     const availableDeck = runDeck.slice(handSize);
 
     const unlockedRoomDeck = ['room_1', 'room_2', 'room_3', 'room_4', 'room_5', 'room_6'];
-    const roomRunDeck = generateRoomDeck(unlockedRoomDeck, this._allRooms);
+    const roomRunDeck = generateRoomDeck(unlockedRoomDeck, this._allRooms, MIN_DECK_SIZE);
     const roomHand = roomRunDeck.slice(0, handSize);
     const availableRoomDeck = roomRunDeck.slice(handSize);
 
@@ -254,11 +256,11 @@ export class GameEngine {
     this.metaManager.updateRun(nextRun);
 
     const handSize = this._getHandSize();
-    const runDeck = generateLootDeck(this.gameState.unlockedDeck, this._allItems);
+    const runDeck = generateLootDeck(this.gameState.unlockedDeck, this._allItems, MIN_DECK_SIZE);
     const hand = runDeck.slice(0, handSize);
     const availableDeck = runDeck.slice(handSize);
 
-    const roomRunDeck = generateRoomDeck(this.gameState.unlockedRoomDeck, this._allRooms);
+    const roomRunDeck = generateRoomDeck(this.gameState.unlockedRoomDeck, this._allRooms, MIN_DECK_SIZE);
     const roomHand = roomRunDeck.slice(0, handSize);
     const availableRoomDeck = roomRunDeck.slice(handSize);
 
@@ -382,15 +384,15 @@ export class GameEngine {
         case 'healing':
           const healing = chosenRoom.stats.hp || 0;
           adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healing);
-          feedback.push(t('game_engine.healing_room', { healing: healing }));
-          this.gameState.logger.info(`Adventurer found a healing fountain and recovered ${healing} HP.`);
+          feedback.push(t('game_engine.healing_room', { name: chosenRoom.name, healing: healing }));
+          this.gameState.logger.info(t('game_engine.healing_room', { name: chosenRoom.name, healing: healing }));
           break;
 
         case 'trap':
           const damage = chosenRoom.stats.attack || 0;
           adventurer.hp -= damage;
-          feedback.push(t('game_engine.trap_room', { damage: damage }));
-          this.gameState.logger.info(`Adventurer fell into a trap and lost ${damage} HP.`);
+          feedback.push(t('game_engine.trap_room', { name: chosenRoom.name, damage: damage }));
+          this.gameState.logger.info(t('game_engine.trap_room', { name: chosenRoom.name, damage: damage }));
           break;
       }
 
