@@ -66,8 +66,8 @@ describe('GameEngine', () => {
         expect(engine.gameState?.room).toBe(1);
         expect(engine.gameState?.designer.balancePoints).toBe(0);
         expect(engine.gameState?.adventurer).toBeInstanceOf(Adventurer);
-        expect(engine.gameState?.unlockedDeck).toHaveLength(5);
-        expect(engine.gameState?.availableDeck.length).toBe(constants.MIN_DECK_SIZE - constants.HAND_SIZE);
+        expect(engine.gameState?.unlockedDeck).toHaveLength(3);
+        expect(engine.gameState?.availableDeck.length).toBe(constants.DECK_SIZE - constants.HAND_SIZE);
         expect(engine.gameState?.hand).toHaveLength(constants.HAND_SIZE);
         expect(engine.gameState?.roomHand).toHaveLength(constants.HAND_SIZE);
     });
@@ -145,7 +145,6 @@ describe('GameEngine', () => {
             const metaManager = new MetaManager();
             const engine = new GameEngine(metaManager);
             await engine.init();
-            vi.spyOn(constants, 'INITIAL_UNLOCKED_DECK', 'get').mockReturnValue(['loot_1', 'loot_2', 'loot_3']);
             engine.metaManager.checkForUnlocks(10); // Unlock workshop
             engine.startNewGame();
 
@@ -159,7 +158,6 @@ describe('GameEngine', () => {
             const metaManager = new MetaManager();
             const engine = new GameEngine(metaManager);
             await engine.init();
-            vi.spyOn(constants, 'INITIAL_UNLOCKED_DECK', 'get').mockReturnValue(['loot_1', 'loot_2', 'loot_3']);
             engine.metaManager.checkForUnlocks(10); // Unlock workshop
             engine.startNewGame();
 
