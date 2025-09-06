@@ -62,7 +62,8 @@
     "present_offer": "Present Offer",
     "title_room": "Choose Three Rooms or One Boss",
     "begin_encounter": "Begin Encounter",
-    "multiple_enemies_title": "{name} ({count} mobs)"
+    "multiple_enemies_title": "{name} ({count} mobs)",
+    "continue_without_loot": "Continue without offering loot"
   },
   "workshop": {
     "title": "The Workshop",

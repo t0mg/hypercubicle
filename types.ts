@@ -94,4 +94,5 @@ export interface GameState {
         reason: string;
     };
     newlyUnlocked: UnlockableFeature[];
+    isLootOfferImpossible?: boolean;
 }

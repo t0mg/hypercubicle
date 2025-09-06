@@ -296,8 +296,18 @@ export class GameEngine {
     setTimeout(() => {
       if (!this.gameState || this.gameState.phase !== 'AWAITING_ADVENTURER_CHOICE' || !this.gameState.hand) return;
 
-      const { choice, reason: feedback } = this._getAdventurerChoice(this.gameState.adventurer, this.gameState.offeredLoot);
+      let choice: LootChoice | null = null;
+      let feedback: string;
       const adventurer = this.gameState.adventurer;
+
+      if (this.gameState.offeredLoot.length === 0) {
+          adventurer.modifyInterest(-15, 5);
+          feedback = t('game_engine.adventurer_declines_empty_offer');
+      } else {
+          const result = this._getAdventurerChoice(adventurer, this.gameState.offeredLoot);
+          choice = result.choice;
+          feedback = result.reason;
+      }
 
       // --- Hand and Deck Update Logic ---
       let currentHand = this.gameState.hand;
@@ -329,7 +339,7 @@ export class GameEngine {
         } else {
             adventurer.equip(choice);
         }
-      } else {
+      } else if (offeredIds.length > 0) {
         adventurer.interest = Math.max(0, adventurer.interest - 10);
       }
 
@@ -457,6 +467,9 @@ export class GameEngine {
           availableRoomDeck: newRoomDeck,
         };
       } else {
+        const uniqueLootIds = [...new Set(this.gameState.hand.map(item => item.id))];
+        const isLootOfferImpossible = uniqueLootIds.length < 2 && this.gameState.hand.length > 0;
+
         this.gameState = {
           ...this.gameState,
           phase: 'DESIGNER_CHOOSING_LOOT',
@@ -465,6 +478,7 @@ export class GameEngine {
           encounter: undefined,
           roomHand: newRoomHand,
           availableRoomDeck: newRoomDeck,
+          isLootOfferImpossible: isLootOfferImpossible
         };
       }
 

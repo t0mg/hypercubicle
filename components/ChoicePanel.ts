@@ -28,6 +28,9 @@ export class ChoicePanel extends HTMLElement {
     set disabled(value: boolean) { this._disabled = value; this.render(); }
     get disabled(): boolean { return this._disabled; }
 
+    set offerImpossible(value: boolean) { this._offerImpossible = value; this.render(); }
+    get offerImpossible(): boolean { return this._offerImpossible; }
+
     constructor() {
         super();
         this.addEventListener('card-select', (e: Event) => {
@@ -104,12 +107,17 @@ export class ChoicePanel extends HTMLElement {
 
         const isRoomSelection = this._deckType === 'room';
         const title = isRoomSelection ? t('choice_panel.title_room') : t('choice_panel.title');
-        const buttonText = isRoomSelection ? t('choice_panel.begin_encounter') : t('choice_panel.present_offer');
+        let buttonText = isRoomSelection ? t('choice_panel.begin_encounter') : t('choice_panel.present_offer');
+        if (this._offerImpossible) {
+            buttonText = t('choice_panel.continue_without_loot');
+        }
 
         let canSubmit = false;
         let buttonLabel = buttonText;
 
-        if (isRoomSelection) {
+        if (this._offerImpossible) {
+            canSubmit = true;
+        } else if (isRoomSelection) {
             const selectedItems = this._choices.filter(c => this._selectedIds.includes(c.instanceId));
             const hasBoss = selectedItems.some(c => c.type === 'boss');
             if (hasBoss) {
@@ -150,7 +158,9 @@ export class ChoicePanel extends HTMLElement {
                 card.isSelected = this._selectedIds.includes(item.instanceId);
 
                 let isDisabled = this._disabled;
-                if (isRoomSelection) {
+                if (this._offerImpossible) {
+                    isDisabled = true;
+                } else if (isRoomSelection) {
                     const selectedItems = this._choices.filter(c => this._selectedIds.includes(c.instanceId));
                     const hasBoss = selectedItems.some(c => c.type === 'boss');
                     if(card.isSelected) {

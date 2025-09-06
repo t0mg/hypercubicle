@@ -106,6 +106,7 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
         lootPanel.choices = state.hand;
         lootPanel.deckType = 'item';
         lootPanel.disabled = false;
+        lootPanel.offerImpossible = state.isLootOfferImpossible || false;
     }
 
     const roomPanel = document.querySelector('#room-panel') as ChoicePanel;
