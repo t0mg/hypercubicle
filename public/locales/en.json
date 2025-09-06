@@ -46,7 +46,7 @@
     "expertise": "EXPERTISE"
   },
   "run_ended_screen": {
-    "run_complete": "The Adventurer has perished",
+    "run_complete": "The Adventurer's run is over.",
     "default_reason": "The run has ended.",
     "adventurer_considers_fate": "The adventurer considers their fate",
     "continue_quote": "\"I will go on.\"",
@@ -63,7 +63,8 @@
     "title_room": "Choose Three Rooms or One Boss",
     "begin_encounter": "Begin Encounter",
     "multiple_enemies_title": "{name} ({count} mobs)",
-    "continue_without_loot": "Continue without offering loot"
+    "continue_without_loot": "Continue without offering loot",
+    "roll_credits": "Roll credits"
   },
   "workshop": {
     "title": "The Workshop",
@@ -87,7 +88,8 @@
     "empty_hand": "The adventurer waits for your decision, unaware that you have nothing left to offer.",
     "welcome_to_workshop": "Welcome back. Spend your Balance Points wisely.",
     "healing_room": "The adventurer found the {name} and recovered {healing} health.",
-    "trap_room": "The adventurer fell for the {name} and lost {damage} health."
+    "trap_room": "The adventurer fell for the {name} and lost {damage} health.",
+    "no_more_rooms": "The adventurer reached the end of the dungeon."
   },
   "game_title": "Rogue Steward",
   "game_subtitle": "Keep your adventurer running.",

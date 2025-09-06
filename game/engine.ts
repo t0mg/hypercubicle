@@ -7,9 +7,8 @@ import {
   BP_PER_ROOM,
   CHOICE_SCORE_THRESHOLD,
   HAND_SIZE,
-  INITIAL_UNLOCKED_DECK,
   INTEREST_THRESHOLD,
-  MIN_DECK_SIZE,
+  DECK_SIZE,
   MAX_POTIONS,
 } from './constants';
 import { generateLootDeck, generateRoomDeck, shuffleArray } from './utils';
@@ -209,14 +208,14 @@ export class GameEngine {
     const logger = new Logger();
     const newAdventurer = new Adventurer(newTraits, logger);
 
-    const unlockedDeck = INITIAL_UNLOCKED_DECK;
-    const runDeck = generateLootDeck(unlockedDeck, this._allItems, MIN_DECK_SIZE);
+    const unlockedDeck = this._allItems.filter(item => item.cost === null).map(item => item.id);
+    const runDeck = generateLootDeck(unlockedDeck, this._allItems, DECK_SIZE);
     const handSize = this._getHandSize();
     const hand = runDeck.slice(0, handSize);
     const availableDeck = runDeck.slice(handSize);
 
-    const unlockedRoomDeck = ['room_1', 'room_2', 'room_3', 'room_4', 'room_5', 'room_6'];
-    const roomRunDeck = generateRoomDeck(unlockedRoomDeck, this._allRooms, MIN_DECK_SIZE);
+    const unlockedRoomDeck = this._allRooms.filter(item => item.cost === null).map(item => item.id);
+    const roomRunDeck = generateRoomDeck(unlockedRoomDeck, this._allRooms, DECK_SIZE);
     const roomHand = roomRunDeck.slice(0, handSize);
     const availableRoomDeck = roomRunDeck.slice(handSize);
 
@@ -256,11 +255,11 @@ export class GameEngine {
     this.metaManager.updateRun(nextRun);
 
     const handSize = this._getHandSize();
-    const runDeck = generateLootDeck(this.gameState.unlockedDeck, this._allItems, MIN_DECK_SIZE);
+    const runDeck = generateLootDeck(this.gameState.unlockedDeck, this._allItems, DECK_SIZE);
     const hand = runDeck.slice(0, handSize);
     const availableDeck = runDeck.slice(handSize);
 
-    const roomRunDeck = generateRoomDeck(this.gameState.unlockedRoomDeck, this._allRooms, MIN_DECK_SIZE);
+    const roomRunDeck = generateRoomDeck(this.gameState.unlockedRoomDeck, this._allRooms, DECK_SIZE);
     const roomHand = roomRunDeck.slice(0, handSize);
     const availableRoomDeck = roomRunDeck.slice(handSize);
 
@@ -429,26 +428,14 @@ export class GameEngine {
       newRoomHand.push(...drawnCards);
       // --- End Room Hand and Deck Update ---
 
-      const endRun = (reason: string) => {
-        const newlyUnlocked = this.metaManager.checkForUnlocks(this.gameState!.run);
-        this.gameState!.logger.error(`GAME OVER: ${reason}`);
-        this.gameState = {
-            ...this.gameState!,
-            adventurer: adventurer,
-            designer: { balancePoints: this.gameState!.designer.balancePoints + BP_PER_ROOM },
-            phase: 'RUN_OVER',
-            runEnded: { isOver: true, reason: reason },
-            newlyUnlocked: newlyUnlocked,
-        };
-        this._emit('state-change', this.gameState);
-      }
+      this.gameState.adventurer = adventurer;
 
       if (adventurer.hp <= 0) {
-        endRun(t('game_engine.adventurer_fell', { room: this.gameState.room, run: this.gameState.run }));
+        this._endRun(t('game_engine.adventurer_fell', { room: this.gameState.room, run: this.gameState.run }));
         return;
       }
       if (adventurer.interest <= INTEREST_THRESHOLD) {
-        endRun(t('game_engine.adventurer_bored', { room: this.gameState.room, run: this.gameState.run }));
+        this._endRun(t('game_engine.adventurer_bored', { room: this.gameState.room, run: this.gameState.run }));
         return;
       }
 
@@ -458,7 +445,6 @@ export class GameEngine {
         this.gameState = {
           ...this.gameState,
           phase: 'DESIGNER_CHOOSING_ROOM',
-          adventurer: adventurer,
           room: this.gameState.room + 1,
           designer: { balancePoints: this.gameState.designer.balancePoints + BP_PER_ROOM },
           feedback: feedback,
@@ -467,23 +453,37 @@ export class GameEngine {
           availableRoomDeck: newRoomDeck,
         };
       } else {
-        const uniqueLootIds = [...new Set(this.gameState.hand.map(item => item.id))];
-        const isLootOfferImpossible = uniqueLootIds.length < 2 && this.gameState.hand.length > 0;
-
         this.gameState = {
           ...this.gameState,
           phase: 'DESIGNER_CHOOSING_LOOT',
-          adventurer: adventurer,
           feedback: feedback,
           encounter: undefined,
           roomHand: newRoomHand,
           availableRoomDeck: newRoomDeck,
-          isLootOfferImpossible: isLootOfferImpossible
         };
       }
 
       this._emit('state-change', this.gameState);
     }, ADVENTURER_ACTION_DELAY_MS);
+  }
+
+  public forceEndRun = () => {
+    if (!this.gameState) return;
+    this.gameState.adventurer.interest -= 30;
+    this._endRun(t('game_engine.no_more_rooms'));
+  }
+
+  private _endRun(reason: string) {
+    if (!this.gameState) return;
+    const newlyUnlocked = this.metaManager.checkForUnlocks(this.gameState.run);
+    this.gameState.logger.error(`GAME OVER: ${reason}`);
+    this.gameState = {
+      ...this.gameState,
+      phase: 'RUN_OVER',
+      runEnded: { isOver: true, reason: reason },
+      newlyUnlocked: newlyUnlocked,
+    };
+    this._emit('state-change', this.gameState);
   }
 
   public enterWorkshop = () => {
@@ -601,7 +601,7 @@ export class GameEngine {
       phase: 'MENU',
       designer: { balancePoints: 0 },
       adventurer: newAdventurer,
-      unlockedDeck: INITIAL_UNLOCKED_DECK,
+      unlockedDeck: [],
       availableDeck: [],
       hand: [],
       unlockedRoomDeck: [],

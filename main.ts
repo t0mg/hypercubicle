@@ -73,6 +73,10 @@ appElement.addEventListener('start-run', () => {
     engine.startNewRun();
 });
 
+appElement.addEventListener('roll-credits', () => {
+    engine.forceEndRun();
+});
+
 appElement.addEventListener('continue-game', () => {
   engine.continueGame();
 });

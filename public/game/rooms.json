@@ -4,7 +4,7 @@
         "name": "Goblin Den",
         "type": "enemy",
         "rarity": "Common",
-        "cost": 50,
+        "cost": null,
         "stats": {
             "attack": 5,
             "hp": 10,
@@ -17,7 +17,7 @@
         "name": "Spike Trap",
         "type": "trap",
         "rarity": "Uncommon",
-        "cost": 30,
+        "cost": null,
         "stats": {
             "attack": 15
         }
@@ -27,7 +27,7 @@
         "name": "Fountain of Health",
         "type": "healing",
         "rarity": "Uncommon",
-        "cost": 80,
+        "cost": null,
         "stats": {
             "hp": 25
         }
@@ -37,7 +37,7 @@
         "name": "Orc Stronghold",
         "type": "enemy",
         "rarity": "Uncommon",
-        "cost": 120,
+        "cost": null,
         "stats": {
             "attack": 10,
             "hp": 25,

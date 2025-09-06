@@ -6,6 +6,7 @@ import type { LogPanel } from './components/LogPanel';
 import type { Workshop } from './components/Workshop';
 import { t } from './text';
 import { GameEngine } from './game/engine';
+import { isLootSelectionImpossible, isRoomSelectionImpossible } from './game/utils';
 
 const getLoadingText = (state: GameState) => {
     if (!state) return t('global.initializing');
@@ -106,7 +107,7 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
         lootPanel.choices = state.hand;
         lootPanel.deckType = 'item';
         lootPanel.disabled = false;
-        lootPanel.offerImpossible = state.isLootOfferImpossible || false;
+        lootPanel.offerImpossible = isLootSelectionImpossible(state); 
     }
 
     const roomPanel = document.querySelector('#room-panel') as ChoicePanel;
@@ -114,8 +115,8 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
         roomPanel.choices = state.roomHand;
         roomPanel.deckType = 'room';
         roomPanel.disabled = false;
+        roomPanel.roomSelectionImpossible = isRoomSelectionImpossible(state);
     }
-
 
     const logPanelEl = document.querySelector('log-panel') as LogPanel;
     if (logPanelEl) {

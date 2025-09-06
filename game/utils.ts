@@ -1,4 +1,4 @@
-import { LootChoice, RoomChoice } from "../types";
+import { LootChoice, RoomChoice, GameState } from "../types";
 
 export const generateId = (baseId: string) => `${baseId}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -73,4 +73,13 @@ export const generateRoomDeck = (unlockedIds: string[], allItems: RoomChoice[], 
     return room;
   });
   return deck;
+}
+
+export const isRoomSelectionImpossible = (state: GameState): boolean => {
+  return state.roomHand.length < 3 && !state.roomHand.some((room: RoomChoice) => room.type === 'boss');
+}
+
+export const isLootSelectionImpossible = (state: GameState): boolean => {
+  const uniqueLootIds = [...new Set(state.hand.map(item => item.id))];
+  return uniqueLootIds.length < 2 && state.hand.length > 0;
 }
