@@ -4,6 +4,7 @@ import { Adventurer } from './adventurer';
 import * as constants from './constants';
 import { initLocalization, t } from '../text';
 import { MetaManager } from './meta';
+import { RoomChoice } from '../types';
 
 // Mock the items data
 const mockItems = [
@@ -14,11 +15,11 @@ const mockItems = [
   { id: 'loot_5', name: 'Helmet', type: 'Armor', rarity: 'Uncommon', stats: { maxHp: 15 }, cost: 50 },
 ];
 
-const mockRooms = [
-    { id: 'room_1', name: 'Test Room', type: 'enemy', rarity: 'Common', cost: null, stats: { attack: 5, hp: 10, minUnits: 1, maxUnits: 1 } },
-    { id: 'room_2', name: 'Test Boss Room', type: 'boss', rarity: 'Rare', cost: 100, stats: { attack: 20, hp: 50 } },
-    { id: 'room_3', name: 'Healing Fountain', type: 'healing', rarity: 'Uncommon', cost: null, stats: { hp: 20 } },
-    { id: 'room_4', name: 'Trap Room', type: 'trap', rarity: 'Common', cost: null, stats: { attack: 15 } },
+const mockRooms: RoomChoice[] = [
+    { id: 'room_1', instanceId: 'r1', name: 'Test Room', type: 'enemy', rarity: 'Common', cost: null, stats: { attack: 5, hp: 10, minUnits: 1, maxUnits: 1 } },
+    { id: 'room_2', instanceId: 'r2', name: 'Test Boss Room', type: 'boss', rarity: 'Rare', cost: 100, stats: { attack: 10, hp: 50 } },
+    { id: 'room_3', instanceId: 'r3', name: 'Healing Fountain', type: 'healing', rarity: 'Uncommon', cost: null, stats: { hp: 20 } },
+    { id: 'room_4', instanceId: 'r4', name: 'Trap Room', type: 'trap', rarity: 'Common', cost: null, stats: { attack: 15 } },
 ];
 
 // Mock fetch
@@ -66,9 +67,9 @@ describe('GameEngine', () => {
         expect(engine.gameState?.designer.balancePoints).toBe(0);
         expect(engine.gameState?.adventurer).toBeInstanceOf(Adventurer);
         expect(engine.gameState?.unlockedDeck).toHaveLength(5);
-        expect(engine.gameState?.availableDeck.length).toBe(0);
-        expect(engine.gameState?.hand).toHaveLength(4);
-        expect(engine.gameState?.roomHand).toHaveLength(3);
+        expect(engine.gameState?.availableDeck.length).toBe(constants.MIN_DECK_SIZE - constants.HAND_SIZE);
+        expect(engine.gameState?.hand).toHaveLength(constants.HAND_SIZE);
+        expect(engine.gameState?.roomHand).toHaveLength(constants.HAND_SIZE);
     });
 
     it('should start a new run correctly', () => {
@@ -99,7 +100,7 @@ describe('GameEngine', () => {
         await vi.runAllTimersAsync();
 
         expect(engine.gameState?.phase).toBe('DESIGNER_CHOOSING_ROOM');
-        expect(engine.gameState?.hand.length).toBe(2);
+        expect(engine.gameState?.hand.length).toBe(constants.HAND_SIZE);
         expect(engine.gameState?.hand).not.toEqual(initialHand);
 
         vi.useRealTimers();
@@ -111,13 +112,16 @@ describe('GameEngine', () => {
         engine.gameState!.adventurer.traits = { offense: 10, risk: 10, expertise: 10 }; // Defensive
         engine.gameState!.phase = 'DESIGNER_CHOOSING_ROOM';
         const initialHp = engine.gameState!.adventurer.hp;
-        const room = mockRooms.find(r => r.type === 'enemy');
+        const initialRoomHand = [...engine.gameState!.roomHand];
+        const offeredRooms = initialRoomHand.slice(0, 3);
 
-        engine.runEncounter([room!]);
+        engine.runEncounter(offeredRooms);
         await vi.runAllTimersAsync();
 
         expect(engine.gameState?.phase).toBe('DESIGNER_CHOOSING_LOOT');
         expect(engine.gameState?.adventurer.hp).toBeLessThan(initialHp);
+        expect(engine.gameState?.roomHand.length).toBe(constants.HAND_SIZE);
+        expect(engine.gameState?.roomHand).not.toEqual(initialRoomHand);
         vi.useRealTimers();
     });
 

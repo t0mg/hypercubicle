@@ -1,4 +1,5 @@
 import { LootChoice, RoomChoice } from "../types";
+import { MIN_DECK_SIZE } from "./constants";
 
 export const generateId = (baseId: string) => `${baseId}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -26,11 +27,10 @@ export const generateRunDeck = (unlockedIds: string[], allItems: LootChoice[]): 
 
     // Fill the rest of the deck with items that have a cost
     const potentialFillers = unlockedItems.filter(item => item.cost !== null);
-    while(deck.length < 4 && potentialFillers.length > 0) {
+    while(deck.length < MIN_DECK_SIZE && potentialFillers.length > 0) {
         const randomIndex = Math.floor(Math.random() * potentialFillers.length);
         const item = potentialFillers[randomIndex];
         deck.push({ ...item, instanceId: generateId(item.id) });
-        potentialFillers.splice(randomIndex, 1);
     }
 
     return shuffleArray(deck);
@@ -49,7 +49,7 @@ export const generateRoomDeck = (unlockedIds: string[], allItems: RoomChoice[]):
     });
 
     const potentialFillers = unlockedItems.filter(item => item.cost !== null);
-    while(deck.length < 4 && potentialFillers.length > 0) {
+    while(deck.length < MIN_DECK_SIZE && potentialFillers.length > 0) {
         const randomIndex = Math.floor(Math.random() * potentialFillers.length);
         const item = potentialFillers[randomIndex];
         const room = { ...item, instanceId: generateId(item.id) };
@@ -57,7 +57,6 @@ export const generateRoomDeck = (unlockedIds: string[], allItems: RoomChoice[]):
             room.units = getRandomInt(room.stats.minUnits, room.stats.maxUnits);
         }
         deck.push(room);
-        potentialFillers.splice(randomIndex, 1);
     }
 
     return shuffleArray(deck);

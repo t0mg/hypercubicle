@@ -10,11 +10,9 @@ import {
   INITIAL_UNLOCKED_DECK,
   INTEREST_THRESHOLD,
   MAX_POTIONS,
-  MIN_DECK_SIZE,
-  RARITY_SCORE
 } from './constants';
 import { generateRunDeck, generateRoomDeck, shuffleArray } from './utils';
-import { UnlockableFeature, UNLOCKS } from './unlocks';
+import { UnlockableFeature } from './unlocks';
 import { t } from '../text';
 
 type GameEngineListener = (state: GameState | null) => void;
@@ -62,7 +60,7 @@ export class GameEngine {
     this.gameState?.logger.debug(`Current Gear: Weapon Power(${currentWeaponPower}), Armor HP(${currentArmorHp})`);
 
     const scoreItem = (item: LootChoice): number => {
-      let score = (RARITY_SCORE[item.rarity] || 1) * 5;
+      let score = (item.rarity === 'Uncommon' ? 2 : item.rarity === 'Rare' ? 3 : 1) * 5;
       switch (item.type) {
         case 'Weapon':
           const powerDelta = (item.stats.power || 0) - currentWeaponPower;
@@ -215,7 +213,7 @@ export class GameEngine {
     const hand = runDeck.slice(0, handSize);
     const availableDeck = runDeck.slice(handSize);
 
-    const unlockedRoomDeck = ['room_1', 'room_2', 'room_3'];
+    const unlockedRoomDeck = ['room_1', 'room_2', 'room_3', 'room_4', 'room_5', 'room_6'];
     const roomRunDeck = generateRoomDeck(unlockedRoomDeck, this._allRooms);
     const roomHand = roomRunDeck.slice(0, handSize);
     const availableRoomDeck = roomRunDeck.slice(handSize);
@@ -361,41 +359,61 @@ export class GameEngine {
       if (!this.gameState || this.gameState.phase !== 'AWAITING_ENCOUNTER_FEEDBACK' || !this.gameState.offeredRooms) return;
 
       let adventurer = this.gameState.adventurer;
-      const feedback: string[] = [];
+      let feedback: string[] = [];
 
-      for (const room of this.gameState.offeredRooms) {
-        if (adventurer.hp <= 0) break;
+      const chosenRoomIndex = Math.floor(Math.random() * this.gameState.offeredRooms.length);
+      const chosenRoom = this.gameState.offeredRooms[chosenRoomIndex];
 
-        this.gameState.logger.info(`--- Encountering Room: ${room.name} ---`);
+      this.gameState.logger.info(`--- Encountering Room: ${chosenRoom.name} ---`);
 
-        switch (room.type) {
-          case 'enemy':
-          case 'boss':
-            const encounter: Encounter = {
-              enemyCount: room.units || 1,
-              enemyPower: room.stats.attack || 5,
-              enemyHp: room.stats.hp || 10,
-            };
-            const battleResult = this._simulateEncounter(adventurer, this.gameState.room, encounter);
-            adventurer = battleResult.newAdventurer;
-            feedback.push(...battleResult.feedback);
-            break;
+      switch (chosenRoom.type) {
+        case 'enemy':
+        case 'boss':
+          const encounter: Encounter = {
+            enemyCount: chosenRoom.units || 1,
+            enemyPower: chosenRoom.stats.attack || 5,
+            enemyHp: chosenRoom.stats.hp || 10,
+          };
+          const battleResult = this._simulateEncounter(adventurer, this.gameState.room, encounter);
+          adventurer = battleResult.newAdventurer;
+          feedback = battleResult.feedback;
+          break;
 
-          case 'healing':
-            const healing = room.stats.hp || 0;
-            adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healing);
-            feedback.push(t('game_engine.healing_room', { healing: healing }));
-            this.gameState.logger.info(`Adventurer found a healing fountain and recovered ${healing} HP.`);
-            break;
+        case 'healing':
+          const healing = chosenRoom.stats.hp || 0;
+          adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healing);
+          feedback.push(t('game_engine.healing_room', { healing: healing }));
+          this.gameState.logger.info(`Adventurer found a healing fountain and recovered ${healing} HP.`);
+          break;
 
-          case 'trap':
-            const damage = room.stats.attack || 0;
-            adventurer.hp -= damage;
-            feedback.push(t('game_engine.trap_room', { damage: damage }));
-            this.gameState.logger.info(`Adventurer fell into a trap and lost ${damage} HP.`);
-            break;
-        }
+        case 'trap':
+          const damage = chosenRoom.stats.attack || 0;
+          adventurer.hp -= damage;
+          feedback.push(t('game_engine.trap_room', { damage: damage }));
+          this.gameState.logger.info(`Adventurer fell into a trap and lost ${damage} HP.`);
+          break;
       }
+
+      // --- Room Hand and Deck Update Logic ---
+      let currentRoomHand = this.gameState.roomHand;
+      let currentRoomDeck = this.gameState.availableRoomDeck;
+
+      currentRoomHand.forEach(c => c.justDrafted = false);
+
+      const offeredRoomIds = this.gameState.offeredRooms.map(r => r.instanceId);
+      let newRoomHand = currentRoomHand.filter(room => !offeredRoomIds.includes(room.instanceId));
+
+      const numToDraw = this.gameState.handSize - newRoomHand.length;
+      const drawnCards = currentRoomDeck.slice(0, numToDraw);
+
+      drawnCards.forEach(c => {
+          c.draftedRoom = this.gameState!.room;
+          c.justDrafted = true;
+      });
+
+      const newRoomDeck = currentRoomDeck.slice(numToDraw);
+      newRoomHand.push(...drawnCards);
+      // --- End Room Hand and Deck Update ---
 
       const endRun = (reason: string) => {
         const newlyUnlocked = this.metaManager.checkForUnlocks(this.gameState!.run);
@@ -431,6 +449,8 @@ export class GameEngine {
           designer: { balancePoints: this.gameState.designer.balancePoints + BP_PER_ROOM },
           feedback: feedback,
           encounter: undefined,
+          roomHand: newRoomHand,
+          availableRoomDeck: newRoomDeck,
         };
       } else {
         this.gameState = {
@@ -439,6 +459,8 @@ export class GameEngine {
           adventurer: adventurer,
           feedback: feedback,
           encounter: undefined,
+          roomHand: newRoomHand,
+          availableRoomDeck: newRoomDeck,
         };
       }
 
