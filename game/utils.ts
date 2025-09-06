@@ -57,6 +57,14 @@ const generateDeck = <T extends { id: string; cost: number | null, rarity: strin
     }
   });
 
+  // Backfill with common items if deck is not full
+  const commonCandidates = unlockedItems.filter(item => item.rarity === 'Common');
+  while (deck.length < deckSize && commonCandidates.length > 0) {
+    const randomIndex = Math.floor(Math.random() * commonCandidates.length);
+    const item = commonCandidates[randomIndex];
+    deck.push(itemFactory(item));
+  }
+
   return shuffleArray(deck);
 };
 

@@ -7,13 +7,20 @@ import { MetaManager } from './meta';
 import { RoomChoice } from '../types';
 
 // Mock the items data
-const mockItems = [
-  { id: 'loot_1', name: 'Sword', type: 'Weapon', rarity: 'Common', stats: { power: 5 }, cost: null },
-  { id: 'loot_2', name: 'Shield', type: 'Armor', rarity: 'Common', stats: { maxHp: 10 }, cost: null },
-  { id: 'loot_3', name: 'Potion', type: 'Potion', rarity: 'Common', stats: { hp: 20 }, cost: null },
-  { id: 'loot_4', name: 'Axe', type: 'Weapon', rarity: 'Uncommon', stats: { power: 10 }, cost: 50 },
-  { id: 'loot_5', name: 'Helmet', type: 'Armor', rarity: 'Uncommon', stats: { maxHp: 15 }, cost: 50 },
-];
+const mockItems: LootChoice[] = Array.from({ length: 30 }, (_, i) => {
+    const rarity = i < 18 ? 'Common' : i < 27 ? 'Uncommon' : 'Rare';
+    const type = i % 3 === 0 ? 'Weapon' : i % 3 === 1 ? 'Armor' : 'Potion';
+    const cost = i < 5 ? null : Math.floor(Math.random() * 100) + 20; // First 5 items are free
+    return {
+        id: `loot_${i + 1}`,
+        instanceId: `l_${i+1}`,
+        name: `${rarity} ${type} ${i + 1}`,
+        type: type,
+        rarity: rarity,
+        cost: cost,
+        stats: type === 'Weapon' ? { power: 5 + i } : type === 'Armor' ? { maxHp: 10 + i } : { hp: 20 + i },
+    };
+});
 
 const mockRooms: RoomChoice[] = [
     { id: 'room_1', instanceId: 'r1', name: 'Test Room', type: 'enemy', rarity: 'Common', cost: null, stats: { attack: 5, hp: 10, minUnits: 1, maxUnits: 1 } },
@@ -34,6 +41,36 @@ global.fetch = vi.fn((url) => {
         return Promise.resolve({
             ok: true,
             json: () => Promise.resolve(mockRooms),
+        });
+    }
+    if (url.toString().includes('en.json')) {
+        return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve({
+                "game_engine": {
+                    "new_adventurer": "A new adventurer has arrived!",
+                    "adventurer_returns": "The adventurer returns for another go!",
+                    "adventurer_accepts_offer": "The adventurer accepts your offer of {itemName}.",
+                    "adventurer_declines_offer": "The adventurer considers your offer but declines.",
+                    "adventurer_declines_empty_offer": "The adventurer seems disappointed by the lack of options.",
+                    "healing_room": "The adventurer feels refreshed in the {name} and heals for {healing} HP.",
+                    "trap_room": "The adventurer stumbles into the {name} and takes {damage} damage!",
+                    "too_close_for_comfort": "A tough fight! The adventurer is rattled.",
+                    "great_battle": "A worthy battle! The adventurer feels invigorated.",
+                    "easy_fight": "An easy fight. The adventurer is a bit bored.",
+                    "worthy_challenge": "A worthy challenge. The adventurer is satisfied.",
+                    "adventurer_fell": "The adventurer fell in room {room} of run {run}.",
+                    "adventurer_bored": "The adventurer has grown bored and left in room {room} of run {run}.",
+                    "no_more_rooms": "You have no more rooms to offer. The adventurer leaves, disappointed.",
+                    "welcome_to_workshop": "Welcome to the Workshop! Spend your Balance Points to unlock new items and rooms.",
+                    "empty_hand": "Your hand is empty! The adventurer must press on without new items."
+                },
+                "global": {
+                    "error_loading_items": "Failed to load game items: {statusText}",
+                    "error_loading_rooms": "Failed to load game rooms: {statusText}",
+                    "unknown_error": "An unknown error occurred"
+                }
+            }),
         });
     }
     return Promise.reject(new Error('not found'));
@@ -66,9 +103,9 @@ describe('GameEngine', () => {
         expect(engine.gameState?.room).toBe(1);
         expect(engine.gameState?.designer.balancePoints).toBe(0);
         expect(engine.gameState?.adventurer).toBeInstanceOf(Adventurer);
-        expect(engine.gameState?.unlockedDeck).toHaveLength(3);
-        expect(engine.gameState?.availableDeck.length).toBe(constants.DECK_SIZE - constants.HAND_SIZE);
-        expect(engine.gameState?.hand).toHaveLength(constants.HAND_SIZE);
+        expect(engine.gameState?.unlockedDeck).toHaveLength(5);
+        expect(engine.gameState?.availableDeck.length).toBe(constants.DECK_SIZE - engine.gameState.handSize);
+        expect(engine.gameState?.hand).toHaveLength(engine.gameState.handSize);
         expect(engine.gameState?.roomHand).toHaveLength(constants.HAND_SIZE);
     });
 
@@ -112,8 +149,12 @@ describe('GameEngine', () => {
         engine.gameState!.adventurer.traits = { offense: 10, risk: 10, expertise: 10 }; // Defensive
         engine.gameState!.phase = 'DESIGNER_CHOOSING_ROOM';
         const initialHp = engine.gameState!.adventurer.hp;
+
+        // Find a damaging room in the hand to ensure the test is deterministic
+        const damagingRoom = engine.gameState!.roomHand.find(r => r.type === 'enemy' || r.type === 'trap' || r.type === 'boss');
+        expect(damagingRoom).toBeDefined();
         const initialRoomHand = [...engine.gameState!.roomHand];
-        const offeredRooms = initialRoomHand.slice(0, 3);
+        const offeredRooms = [damagingRoom!];
 
         engine.runEncounter(offeredRooms);
         await vi.runAllTimersAsync();
@@ -163,17 +204,16 @@ describe('GameEngine', () => {
 
             engine.gameState!.run = 1;
             engine.gameState!.designer.balancePoints = 100;
-            engine.enterWorkshop();
-            const itemToBuy = engine.gameState!.shopItems[0];
+
+            // Manually set shop items for deterministic test and add it to the engine's items
+            const itemToBuy: LootChoice = { id: 'buyable_item', instanceId: 'bi_1', name: 'Test Buyable', type: 'Weapon', rarity: 'Uncommon', cost: 75, stats: { power: 15 } };
+            (engine as any)._allItems.push(itemToBuy); // Inject item
+            engine.gameState!.shopItems = [itemToBuy];
 
             engine.purchaseItem(itemToBuy.id);
 
-            expect(engine.gameState?.designer.balancePoints).toBe(100 - (itemToBuy.cost || 0));
-            if (itemToBuy.type === 'Weapon' || itemToBuy.type === 'Armor' || itemToBuy.type === 'Potion') {
-                expect(engine.gameState?.unlockedDeck).toContain(itemToBuy.id);
-            } else {
-                expect(engine.gameState?.unlockedRoomDeck).toContain(itemToBuy.id);
-            }
+            expect(engine.gameState?.designer.balancePoints).toBe(25);
+            expect(engine.gameState?.unlockedDeck).toContain(itemToBuy.id);
             expect(engine.gameState?.shopItems).not.toContain(itemToBuy);
         });
     });
