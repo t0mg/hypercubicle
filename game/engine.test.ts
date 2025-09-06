@@ -2,7 +2,9 @@ import { describe, it, expect, vi, beforeEach, beforeAll, afterEach } from 'vite
 import { GameEngine } from './engine';
 import { Adventurer } from './adventurer';
 import * as constants from './constants';
-import { initLocalization } from '../text';
+import { initLocalization, t } from '../text';
+import { MetaManager } from './meta';
+import { RoomChoice } from '../types';
 
 // Mock the items data
 const mockItems = [
@@ -13,16 +15,30 @@ const mockItems = [
   { id: 'loot_5', name: 'Helmet', type: 'Armor', rarity: 'Uncommon', stats: { maxHp: 15 }, cost: 50 },
 ];
 
-// Mock fetch
-global.fetch = vi.fn(() =>
-  Promise.resolve({
-    ok: true,
-    json: () => Promise.resolve(mockItems),
-  })
-) as any;
+const mockRooms: RoomChoice[] = [
+    { id: 'room_1', instanceId: 'r1', name: 'Test Room', type: 'enemy', rarity: 'Common', cost: null, stats: { attack: 5, hp: 10, minUnits: 1, maxUnits: 1 } },
+    { id: 'room_2', instanceId: 'r2', name: 'Test Boss Room', type: 'boss', rarity: 'Rare', cost: 100, stats: { attack: 10, hp: 50 } },
+    { id: 'room_3', instanceId: 'r3', name: 'Healing Fountain', type: 'healing', rarity: 'Uncommon', cost: null, stats: { hp: 20 } },
+    { id: 'room_4', instanceId: 'r4', name: 'Trap Room', type: 'trap', rarity: 'Common', cost: null, stats: { attack: 15 } },
+];
 
-import { MetaManager } from './meta';
-import { t } from '../text';
+// Mock fetch
+global.fetch = vi.fn((url) => {
+    if (url.toString().includes('items.json')) {
+        return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(mockItems),
+        });
+    }
+    if (url.toString().includes('rooms.json')) {
+        return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(mockRooms),
+        });
+    }
+    return Promise.reject(new Error('not found'));
+}) as any;
+
 
 describe('GameEngine', () => {
     let engine: GameEngine;
@@ -37,7 +53,6 @@ describe('GameEngine', () => {
     });
 
     beforeEach(async () => {
-        // Reset the game state before each test
         metaManager = new MetaManager();
         engine = new GameEngine(metaManager);
         await engine.init();
@@ -46,14 +61,15 @@ describe('GameEngine', () => {
 
     it('should initialize a new game state correctly', () => {
         expect(engine.gameState).not.toBeNull();
-        expect(engine.gameState?.phase).toBe('DESIGNER_CHOOSING_DIFFICULTY');
+        expect(engine.gameState?.phase).toBe('DESIGNER_CHOOSING_ROOM');
         expect(engine.gameState?.run).toBe(1);
         expect(engine.gameState?.room).toBe(1);
         expect(engine.gameState?.designer.balancePoints).toBe(0);
         expect(engine.gameState?.adventurer).toBeInstanceOf(Adventurer);
         expect(engine.gameState?.unlockedDeck).toHaveLength(5);
-        expect(engine.gameState?.availableDeck.length).toBe(0);
-        expect(engine.gameState?.hand).toHaveLength(4);
+        expect(engine.gameState?.availableDeck.length).toBe(constants.MIN_DECK_SIZE - constants.HAND_SIZE);
+        expect(engine.gameState?.hand).toHaveLength(constants.HAND_SIZE);
+        expect(engine.gameState?.roomHand).toHaveLength(constants.HAND_SIZE);
     });
 
     it('should start a new run correctly', () => {
@@ -62,7 +78,7 @@ describe('GameEngine', () => {
         const previousAdventurer = engine.gameState!.adventurer;
         engine.startNewRun();
 
-        expect(engine.gameState?.phase).toBe('DESIGNER_CHOOSING_DIFFICULTY');
+        expect(engine.gameState?.phase).toBe('DESIGNER_CHOOSING_ROOM');
         expect(engine.gameState?.run).toBe(3); // Should be incremented
         expect(engine.gameState?.room).toBe(1);
         expect(engine.gameState?.designer.balancePoints).toBe(100); // Should not be reset
@@ -83,8 +99,8 @@ describe('GameEngine', () => {
 
         await vi.runAllTimersAsync();
 
-        expect(engine.gameState?.phase).toBe('DESIGNER_CHOOSING_DIFFICULTY');
-        expect(engine.gameState?.hand.length).toBe(2);
+        expect(engine.gameState?.phase).toBe('DESIGNER_CHOOSING_ROOM');
+        expect(engine.gameState?.hand.length).toBe(constants.HAND_SIZE);
         expect(engine.gameState?.hand).not.toEqual(initialHand);
 
         vi.useRealTimers();
@@ -94,25 +110,28 @@ describe('GameEngine', () => {
         vi.useFakeTimers();
         vi.spyOn(Math, 'random').mockReturnValue(0.1); // Ensure enemy hits
         engine.gameState!.adventurer.traits = { offense: 10, risk: 10, expertise: 10 }; // Defensive
-        engine.gameState!.phase = 'DESIGNER_CHOOSING_DIFFICULTY';
+        engine.gameState!.phase = 'DESIGNER_CHOOSING_ROOM';
         const initialHp = engine.gameState!.adventurer.hp;
-        const encounter = { enemyCount: 1, enemyPower: 5, enemyHp: 20 };
+        const initialRoomHand = [...engine.gameState!.roomHand];
+        const offeredRooms = initialRoomHand.slice(0, 3);
 
-        engine.runEncounter(encounter);
+        engine.runEncounter(offeredRooms);
         await vi.runAllTimersAsync();
 
         expect(engine.gameState?.phase).toBe('DESIGNER_CHOOSING_LOOT');
         expect(engine.gameState?.adventurer.hp).toBeLessThan(initialHp);
+        expect(engine.gameState?.roomHand.length).toBe(constants.HAND_SIZE);
+        expect(engine.gameState?.roomHand).not.toEqual(initialRoomHand);
         vi.useRealTimers();
     });
 
     it('should end the game if adventurer hp drops to 0', async () => {
         vi.useFakeTimers();
         engine.gameState!.adventurer.traits = { offense: 90, risk: 90, expertise: 0 }; // Risky
-        engine.gameState!.phase = 'DESIGNER_CHOOSING_DIFFICULTY';
-        const encounter = { enemyCount: 1, enemyPower: 1000, enemyHp: 1000 }; // A very strong enemy
+        engine.gameState!.phase = 'DESIGNER_CHOOSING_ROOM';
+        const room = { ...mockRooms.find(r => r.type === 'trap')!, stats: { attack: 1000 } };
 
-        engine.runEncounter(encounter);
+        engine.runEncounter([room]);
         await vi.runAllTimersAsync();
 
         expect(engine.gameState?.runEnded.isOver).toBe(true);
@@ -152,7 +171,11 @@ describe('GameEngine', () => {
             engine.purchaseItem(itemToBuy.id);
 
             expect(engine.gameState?.designer.balancePoints).toBe(100 - (itemToBuy.cost || 0));
-            expect(engine.gameState?.unlockedDeck).toContain(itemToBuy.id);
+            if (itemToBuy.type === 'Weapon' || itemToBuy.type === 'Armor' || itemToBuy.type === 'Potion') {
+                expect(engine.gameState?.unlockedDeck).toContain(itemToBuy.id);
+            } else {
+                expect(engine.gameState?.unlockedRoomDeck).toContain(itemToBuy.id);
+            }
             expect(engine.gameState?.shopItems).not.toContain(itemToBuy);
         });
     });
@@ -171,7 +194,7 @@ describe('GameEngine', () => {
             metaManager.updateRun(3);
             engine.continueGame();
             expect(engine.gameState?.run).toBe(1);
-            expect(engine.gameState?.phase).toBe('DESIGNER_CHOOSING_DIFFICULTY');
+            expect(engine.gameState?.phase).toBe('DESIGNER_CHOOSING_ROOM');
         });
 
         it('should handle the run-decision event and transition to the workshop', () => {

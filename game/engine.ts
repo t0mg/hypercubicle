@@ -1,4 +1,4 @@
-import type { GamePhase, GameState, LootChoice, AdventurerTraits, Encounter } from '../types';
+import type { GamePhase, GameState, LootChoice, AdventurerTraits, Encounter, RoomChoice } from '../types';
 import { Adventurer } from './adventurer';
 import { Logger } from './logger';
 import { MetaManager } from './meta';
@@ -10,11 +10,9 @@ import {
   INITIAL_UNLOCKED_DECK,
   INTEREST_THRESHOLD,
   MAX_POTIONS,
-  MIN_DECK_SIZE,
-  RARITY_SCORE
 } from './constants';
-import { generateRunDeck, shuffleArray } from './utils';
-import { UnlockableFeature, UNLOCKS } from './unlocks';
+import { generateRunDeck, generateRoomDeck, shuffleArray } from './utils';
+import { UnlockableFeature } from './unlocks';
 import { t } from '../text';
 
 type GameEngineListener = (state: GameState | null) => void;
@@ -25,6 +23,7 @@ export class GameEngine {
   public error: string | null = null;
 
   private _allItems: LootChoice[] = [];
+  private _allRooms: RoomChoice[] = [];
   private _listeners: { [key:string]: GameEngineListener[] } = {};
   public metaManager: MetaManager;
 
@@ -61,7 +60,7 @@ export class GameEngine {
     this.gameState?.logger.debug(`Current Gear: Weapon Power(${currentWeaponPower}), Armor HP(${currentArmorHp})`);
 
     const scoreItem = (item: LootChoice): number => {
-      let score = (RARITY_SCORE[item.rarity] || 1) * 5;
+      let score = (item.rarity === 'Uncommon' ? 2 : item.rarity === 'Rare' ? 3 : 1) * 5;
       switch (item.type) {
         case 'Weapon':
           const powerDelta = (item.stats.power || 0) - currentWeaponPower;
@@ -207,24 +206,34 @@ export class GameEngine {
     };
     const logger = new Logger();
     const newAdventurer = new Adventurer(newTraits, logger);
+
     const unlockedDeck = INITIAL_UNLOCKED_DECK;
     const runDeck = generateRunDeck(unlockedDeck, this._allItems);
     const handSize = this._getHandSize();
     const hand = runDeck.slice(0, handSize);
     const availableDeck = runDeck.slice(handSize);
 
+    const unlockedRoomDeck = ['room_1', 'room_2', 'room_3', 'room_4', 'room_5', 'room_6'];
+    const roomRunDeck = generateRoomDeck(unlockedRoomDeck, this._allRooms);
+    const roomHand = roomRunDeck.slice(0, handSize);
+    const availableRoomDeck = roomRunDeck.slice(handSize);
+
     logger.info(`--- Starting New Game (Run 1) ---`);
 
     this.gameState = {
-      phase: 'DESIGNER_CHOOSING_DIFFICULTY',
+      phase: 'DESIGNER_CHOOSING_ROOM',
       designer: { balancePoints: 0 },
       adventurer: newAdventurer,
       unlockedDeck: unlockedDeck,
       availableDeck: availableDeck,
       hand: hand,
+      unlockedRoomDeck: unlockedRoomDeck,
+      availableRoomDeck: availableRoomDeck,
+      roomHand: roomHand,
       handSize: handSize,
       shopItems: [],
       offeredLoot: [],
+      offeredRooms: [],
       feedback: t('game_engine.new_adventurer'),
       logger: logger,
       run: 1,
@@ -249,6 +258,10 @@ export class GameEngine {
     const hand = runDeck.slice(0, handSize);
     const availableDeck = runDeck.slice(handSize);
 
+    const roomRunDeck = generateRoomDeck(this.gameState.unlockedRoomDeck, this._allRooms);
+    const roomHand = roomRunDeck.slice(0, handSize);
+    const availableRoomDeck = roomRunDeck.slice(handSize);
+
     const resetAdventurer = new Adventurer(this.gameState.adventurer.traits, this.gameState.logger);
     resetAdventurer.interest = this.gameState.adventurer.interest;
 
@@ -256,9 +269,11 @@ export class GameEngine {
     this.gameState = {
       ...this.gameState,
       adventurer: resetAdventurer,
-      phase: 'DESIGNER_CHOOSING_DIFFICULTY',
+      phase: 'DESIGNER_CHOOSING_ROOM',
       availableDeck: availableDeck,
       hand: hand,
+      availableRoomDeck: availableRoomDeck,
+      roomHand: roomHand,
       handSize: handSize,
       room: 1,
       run: nextRun,
@@ -321,7 +336,7 @@ export class GameEngine {
 
       this.gameState = {
         ...this.gameState,
-        phase: 'DESIGNER_CHOOSING_DIFFICULTY',
+        phase: 'DESIGNER_CHOOSING_ROOM',
         adventurer: adventurer,
         feedback: feedback,
         availableDeck: newDeck,
@@ -333,40 +348,79 @@ export class GameEngine {
     }, ADVENTURER_ACTION_DELAY_MS);
   }
 
-  public runEncounter = (encounter: Encounter) => {
-    if (!this.gameState || this.gameState.phase !== 'DESIGNER_CHOOSING_DIFFICULTY') return;
-
-    let finalEncounter = { ...encounter };
-    let isBossFight = false;
-    if (this.gameState.room > 0 && this.gameState.room % 5 === 0) {
-      isBossFight = true;
-      const bossPower = Math.max(encounter.enemyPower, 20 + this.gameState.room);
-      const bossHp = Math.max(encounter.enemyHp, 50 + this.gameState.room * 5);
-      finalEncounter = {
-        enemyCount: 1,
-        enemyPower: bossPower,
-        enemyHp: bossHp,
-      };
-    }
+  public runEncounter = (roomChoices: RoomChoice[]) => {
+    if (!this.gameState || this.gameState.phase !== 'DESIGNER_CHOOSING_ROOM') return;
 
     this.gameState.phase = 'AWAITING_ENCOUNTER_FEEDBACK';
-    this.gameState.encounter = finalEncounter;
+    this.gameState.offeredRooms = roomChoices;
     this._emit('state-change', this.gameState);
 
     setTimeout(() => {
-      if (!this.gameState || this.gameState.phase !== 'AWAITING_ENCOUNTER_FEEDBACK' || !this.gameState.encounter) return;
+      if (!this.gameState || this.gameState.phase !== 'AWAITING_ENCOUNTER_FEEDBACK' || !this.gameState.offeredRooms) return;
 
-      if (isBossFight) {
-        this.gameState.logger.info("--- BOSS FIGHT ---");
+      let adventurer = this.gameState.adventurer;
+      let feedback: string[] = [];
+
+      const chosenRoomIndex = Math.floor(Math.random() * this.gameState.offeredRooms.length);
+      const chosenRoom = this.gameState.offeredRooms[chosenRoomIndex];
+
+      this.gameState.logger.info(`--- Encountering Room: ${chosenRoom.name} ---`);
+
+      switch (chosenRoom.type) {
+        case 'enemy':
+        case 'boss':
+          const encounter: Encounter = {
+            enemyCount: chosenRoom.units || 1,
+            enemyPower: chosenRoom.stats.attack || 5,
+            enemyHp: chosenRoom.stats.hp || 10,
+          };
+          const battleResult = this._simulateEncounter(adventurer, this.gameState.room, encounter);
+          adventurer = battleResult.newAdventurer;
+          feedback = battleResult.feedback;
+          break;
+
+        case 'healing':
+          const healing = chosenRoom.stats.hp || 0;
+          adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healing);
+          feedback.push(t('game_engine.healing_room', { healing: healing }));
+          this.gameState.logger.info(`Adventurer found a healing fountain and recovered ${healing} HP.`);
+          break;
+
+        case 'trap':
+          const damage = chosenRoom.stats.attack || 0;
+          adventurer.hp -= damage;
+          feedback.push(t('game_engine.trap_room', { damage: damage }));
+          this.gameState.logger.info(`Adventurer fell into a trap and lost ${damage} HP.`);
+          break;
       }
-      const { newAdventurer, feedback } = this._simulateEncounter(this.gameState.adventurer, this.gameState.room, this.gameState.encounter);
+
+      // --- Room Hand and Deck Update Logic ---
+      let currentRoomHand = this.gameState.roomHand;
+      let currentRoomDeck = this.gameState.availableRoomDeck;
+
+      currentRoomHand.forEach(c => c.justDrafted = false);
+
+      const offeredRoomIds = this.gameState.offeredRooms.map(r => r.instanceId);
+      let newRoomHand = currentRoomHand.filter(room => !offeredRoomIds.includes(room.instanceId));
+
+      const numToDraw = this.gameState.handSize - newRoomHand.length;
+      const drawnCards = currentRoomDeck.slice(0, numToDraw);
+
+      drawnCards.forEach(c => {
+          c.draftedRoom = this.gameState!.room;
+          c.justDrafted = true;
+      });
+
+      const newRoomDeck = currentRoomDeck.slice(numToDraw);
+      newRoomHand.push(...drawnCards);
+      // --- End Room Hand and Deck Update ---
 
       const endRun = (reason: string) => {
         const newlyUnlocked = this.metaManager.checkForUnlocks(this.gameState!.run);
         this.gameState!.logger.error(`GAME OVER: ${reason}`);
         this.gameState = {
             ...this.gameState!,
-            adventurer: newAdventurer,
+            adventurer: adventurer,
             designer: { balancePoints: this.gameState!.designer.balancePoints + BP_PER_ROOM },
             phase: 'RUN_OVER',
             runEnded: { isOver: true, reason: reason },
@@ -375,11 +429,11 @@ export class GameEngine {
         this._emit('state-change', this.gameState);
       }
 
-      if (newAdventurer.hp <= 0) {
+      if (adventurer.hp <= 0) {
         endRun(t('game_engine.adventurer_fell', { room: this.gameState.room, run: this.gameState.run }));
         return;
       }
-      if (newAdventurer.interest <= INTEREST_THRESHOLD) {
+      if (adventurer.interest <= INTEREST_THRESHOLD) {
         endRun(t('game_engine.adventurer_bored', { room: this.gameState.room, run: this.gameState.run }));
         return;
       }
@@ -389,20 +443,24 @@ export class GameEngine {
         feedback.push(t('game_engine.empty_hand'));
         this.gameState = {
           ...this.gameState,
-          phase: 'DESIGNER_CHOOSING_DIFFICULTY',
-          adventurer: newAdventurer,
+          phase: 'DESIGNER_CHOOSING_ROOM',
+          adventurer: adventurer,
           room: this.gameState.room + 1,
           designer: { balancePoints: this.gameState.designer.balancePoints + BP_PER_ROOM },
           feedback: feedback,
           encounter: undefined,
+          roomHand: newRoomHand,
+          availableRoomDeck: newRoomDeck,
         };
       } else {
         this.gameState = {
           ...this.gameState,
           phase: 'DESIGNER_CHOOSING_LOOT',
-          adventurer: newAdventurer,
+          adventurer: adventurer,
           feedback: feedback,
           encounter: undefined,
+          roomHand: newRoomHand,
+          availableRoomDeck: newRoomDeck,
         };
       }
 
@@ -423,12 +481,18 @@ export class GameEngine {
       .filter(item => item.cost !== null)
       .filter(item => !this.gameState!.unlockedDeck.includes(item.id));
 
+    const shopRooms = this._allRooms
+        .filter(room => room.cost !== null)
+        .filter(room => !this.gameState!.unlockedRoomDeck.includes(room.id));
+
+    const allShopItems = [...shopItems, ...shopRooms];
+
     this.gameState = {
       ...this.gameState,
       phase: 'SHOP',
       run: nextRun,
       room: 0,
-      shopItems: shuffleArray(shopItems).slice(0, 4),
+      shopItems: shuffleArray(allShopItems).slice(0, 4),
       runEnded: { isOver: false, reason: '' },
       feedback: t('game_engine.welcome_to_workshop')
     };
@@ -437,18 +501,31 @@ export class GameEngine {
 
   public purchaseItem = (itemId: string) => {
     if (!this.gameState) return;
-    const item = this._allItems.find(i => i.id === itemId);
-    if (!item || item.cost === null || this.gameState.designer.balancePoints < item.cost) return;
 
-    const newUnlockedDeck = [...this.gameState.unlockedDeck, itemId];
-    const newBalancePoints = this.gameState.designer.balancePoints - item.cost;
+    const item = this._allItems.find(i => i.id === itemId);
+    const room = this._allRooms.find(r => r.id === itemId);
+    const itemToBuy = item || room;
+
+    if (!itemToBuy || itemToBuy.cost === null || this.gameState.designer.balancePoints < itemToBuy.cost) return;
+
+    let newUnlockedDeck = this.gameState.unlockedDeck;
+    let newUnlockedRoomDeck = this.gameState.unlockedRoomDeck;
+
+    if (item) {
+        newUnlockedDeck = [...this.gameState.unlockedDeck, itemId];
+    } else if (room) {
+        newUnlockedRoomDeck = [...this.gameState.unlockedRoomDeck, itemId];
+    }
+
+    const newBalancePoints = this.gameState.designer.balancePoints - itemToBuy.cost;
     const newShopItems = this.gameState.shopItems.filter(i => i.id !== itemId);
 
-    this.gameState.logger.info(`Purchased ${item.name}.`);
+    this.gameState.logger.info(`Purchased ${itemToBuy.name}.`);
     this.gameState = {
       ...this.gameState,
       designer: { balancePoints: newBalancePoints },
       unlockedDeck: newUnlockedDeck,
+      unlockedRoomDeck: newUnlockedRoomDeck,
       shopItems: newShopItems
     };
     this._emit('state-change', this.gameState);
@@ -509,9 +586,13 @@ export class GameEngine {
       unlockedDeck: INITIAL_UNLOCKED_DECK,
       availableDeck: [],
       hand: [],
+      unlockedRoomDeck: [],
+      availableRoomDeck: [],
+      roomHand: [],
       handSize: this._getHandSize(),
       shopItems: [],
       offeredLoot: [],
+      offeredRooms: [],
       feedback: '',
       logger: logger,
       run: 0,
@@ -535,11 +616,17 @@ export class GameEngine {
   // --- INITIALIZATION ---
   private async _loadGameData() {
     try {
-      const response = await fetch(`${import.meta.env.BASE_URL}game/items.json`);
-      if (!response.ok) {
-        throw new Error(t('global.error_loading_items', { statusText: response.statusText }));
+      const itemResponse = await fetch(`${import.meta.env.BASE_URL}game/items.json`);
+      if (!itemResponse.ok) {
+        throw new Error(t('global.error_loading_items', { statusText: itemResponse.statusText }));
       }
-      this._allItems = await response.json();
+      this._allItems = await itemResponse.json();
+
+      const roomResponse = await fetch(`${import.meta.env.BASE_URL}game/rooms.json`);
+      if (!roomResponse.ok) {
+        throw new Error(t('global.error_loading_rooms', { statusText: roomResponse.statusText }));
+      }
+      this._allRooms = await roomResponse.json();
     } catch (e: any) {
       this.error = e.message || t('global.unknown_error');
       this._emit('error', null);

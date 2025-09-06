@@ -1,6 +1,6 @@
 import type { GameState } from './types';
 import type { AdventurerStatus } from './components/AdventurerStatus';
-import type { LootChoicePanel } from './components/LootChoicePanel';
+import type { ChoicePanel } from './components/ChoicePanel';
 import type { BattlePanel } from './components/BattlePanel';
 import type { LogPanel } from './components/LogPanel';
 import type { Workshop } from './components/Workshop';
@@ -22,9 +22,9 @@ const getLoadingText = (state: GameState) => {
 const renderGamePhasePanel = (state: GameState) => {
     switch (state.phase) {
         case 'DESIGNER_CHOOSING_LOOT':
-            return `<div class="lg:col-span-3"><loot-choice-panel></loot-choice-panel></div>`;
-        case 'DESIGNER_CHOOSING_DIFFICULTY':
-            return `<div class="lg:col-span-3"><battle-panel></battle-panel></div>`;
+            return `<div class="lg:col-span-3"><choice-panel id="loot-panel"></choice-panel></div>`;
+        case 'DESIGNER_CHOOSING_ROOM':
+            return `<div class="lg:col-span-3"><choice-panel id="room-panel"></choice-panel></div>`;
         case 'AWAITING_ADVENTURER_CHOICE':
         case 'AWAITING_ENCOUNTER_FEEDBACK':
             return `<div class="lg:col-span-3"><loading-indicator text="${getLoadingText(state)}"></loading-indicator></div>`;
@@ -101,10 +101,18 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
         adventurerStatusEl.adventurer = state.adventurer;
     }
 
-    const lootChoicePanelEl = document.querySelector('loot-choice-panel') as LootChoicePanel;
-    if (lootChoicePanelEl) {
-        lootChoicePanelEl.choices = state.hand;
-        lootChoicePanelEl.disabled = false; // Or determine from state
+    const lootPanel = document.querySelector('#loot-panel') as ChoicePanel;
+    if (lootPanel) {
+        lootPanel.choices = state.hand;
+        lootPanel.deckType = 'item';
+        lootPanel.disabled = false;
+    }
+
+    const roomPanel = document.querySelector('#room-panel') as ChoicePanel;
+    if (roomPanel) {
+        roomPanel.choices = state.roomHand;
+        roomPanel.deckType = 'room';
+        roomPanel.disabled = false;
     }
 
 
