@@ -40,7 +40,7 @@ export class MenuScreen extends HTMLElement {
       const adventurers = metaState.adventurers || 1;
       metaInfo = `
                 <p class="text-lg text-gray-400 mt-4">
-                    ${t('menu.adventurer_count', { count: adventurers })} | ${t('menu.max_runs', { count: metaState.highestRun })} | ${t('menu.unlocked_features', { count: metaState.unlockedFeatures.length })}
+                    ${t('menu.max_runs', { count: metaState.highestRun })} | ${t('menu.unlocked_features', { count: metaState.unlockedFeatures.length })} | ${t('menu.adventurer_count', { count: adventurers })}
                 </p>
             `;
     }

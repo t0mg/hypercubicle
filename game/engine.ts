@@ -383,6 +383,7 @@ export class GameEngine {
 
         case 'healing':
           const healing = chosenRoom.stats.hp || 0;
+          adventurer.modifyInterest(adventurer.hp/adventurer.maxHp < 0.33 ? 20 : 10, 3);
           adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healing);
           feedback.push(t('game_engine.healing_room', { name: chosenRoom.name, healing: healing }));
           this.gameState.logger.info(t('game_engine.healing_room', { name: chosenRoom.name, healing: healing }));
@@ -391,6 +392,7 @@ export class GameEngine {
         case 'trap':
           const damage = chosenRoom.stats.attack || 0;
           adventurer.hp -= damage;
+          adventurer.modifyInterest(adventurer.hp < 0 ? -25 : - 15, 5);
           feedback.push(t('game_engine.trap_room', { name: chosenRoom.name, damage: damage }));
           this.gameState.logger.info(t('game_engine.trap_room', { name: chosenRoom.name, damage: damage }));
           break;

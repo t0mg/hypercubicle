@@ -127,7 +127,7 @@ export class ChoicePanel extends HTMLElement {
         this.innerHTML = `
             <div class="w-full">
                 <h3 class="text-xl text-center mb-4 text-white">${title}</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="loot-card-container">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4" id="loot-card-container">
                     <!-- Loot cards will be inserted here -->
                 </div>
                 <div class="text-center mt-6">
