@@ -2,7 +2,7 @@
 @config "./tailwind.config.js";
 
 body {
-  font-size: 175%;
+  font-size: 150%;
 }
 
 .pixel-corners {

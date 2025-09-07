@@ -1,11 +1,12 @@
 import { t } from '../text';
 
 export enum UnlockableFeature {
-  WORKSHOP = 'workshop',
-  HAND_SIZE_INCREASE = 'hand_size_increase',
-  CUSTOM_ENCOUNTERS = 'custom_encounters',
-  PARTY_CONSTRAINTS = 'party_constraints',
-  BOSS_FIGHTS = 'boss_fights',
+  WORKSHOP = 'workshop',  // Gives access to the workshop where players can puchase items and rooms.
+  HAND_SIZE_INCREASE = 'hand_size_increase', // Increases the hand size to 12 items and 12 rooms.
+  ADVENTURER_TRAITS = "ADVENTURER_TRAITS", // Reveals the offense/risk/expertise traits of the adventurer.
+  BP_MULTIPLIER = "BP_MULTIPLIER", // Doubles the base BP gain.
+  WORKSHOP_ACCESS = "WORKSHOP_ACCESS", // Allows players to access the workshop at any time, puts the purchase at the top of their deck.
+  BP_MULTIPLIER_2 = "BP_MULTIPLIER_2", // Doubles the base BP gain again, for a total of 4x.
 }
 
 export interface Unlock {
@@ -29,21 +30,27 @@ export const UNLOCKS: Unlock[] = [
     description: () => t('unlocks.hand_size_increase.description'),
   },
   {
-    feature: UnlockableFeature.BOSS_FIGHTS,
+    feature: UnlockableFeature.ADVENTURER_TRAITS,
     runThreshold: 5,
-    title: () => t('unlocks.boss_fights.title'),
-    description: () => t('unlocks.boss_fights.description'),
+    title: () => t('unlocks.adventurer_traits.title'),
+    description: () => t('unlocks.adventurer_traits.description'),
   },
   {
-    feature: UnlockableFeature.CUSTOM_ENCOUNTERS,
+    feature: UnlockableFeature.BP_MULTIPLIER,
     runThreshold: 8,
-    title: () => t('unlocks.custom_encounters.title'),
-    description: () => t('unlocks.custom_encounters.description'),
+    title: () => t('unlocks.bp_multiplier.title'),
+    description: () => t('unlocks.bp_multiplier.description'),
   },
   {
-    feature: UnlockableFeature.PARTY_CONSTRAINTS,
-    runThreshold: 12,
-    title: () => t('unlocks.party_constraints.title'),
-    description: () => t('unlocks.party_constraints.description'),
+    feature: UnlockableFeature.WORKSHOP_ACCESS,
+    runThreshold: 13,
+    title: () => t('unlocks.workshop_access.title'),
+    description: () => t('unlocks.workshop_access.description'),
+  },
+  {
+    feature: UnlockableFeature.BP_MULTIPLIER_2,
+    runThreshold: 21,
+    title: () => t('unlocks.bp_multiplier_2.title'),
+    description: () => t('unlocks.bp_multiplier_2.description'),
   },
 ];
