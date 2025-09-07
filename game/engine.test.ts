@@ -6,6 +6,7 @@ import { initLocalization, t } from '../text';
 import { MetaManager } from './meta';
 import { RoomChoice, LootChoice } from '../types';
 import { UnlockableFeature } from './unlocks';
+import * as ai from './ai';
 
 // Mock the items data
 const mockItems: LootChoice[] = Array.from({ length: 30 }, (_, i) => {
@@ -54,6 +55,7 @@ global.fetch = vi.fn((url) => {
                     "adventurer_accepts_offer": "The adventurer accepts your offer of {itemName}.",
                     "adventurer_declines_offer": "The adventurer considers your offer but declines.",
                     "adventurer_declines_empty_offer": "The adventurer seems disappointed by the lack of options.",
+                    "adventurer_uses_buff": "Seeing a tough fight ahead, they use a {buffName}.",
                     "healing_room": "The adventurer feels refreshed in the {name} and heals for {healing} HP.",
                     "trap_room": "The adventurer stumbles into the {name} and takes {damage} damage!",
                     "too_close_for_comfort": "A tough fight! The adventurer is rattled.",
@@ -179,6 +181,57 @@ describe('GameEngine', () => {
         expect(engine.gameState?.runEnded.isOver).toBe(true);
         expect(engine.gameState?.phase).toBe('RUN_OVER');
         expect(engine.gameState?.runEnded.reason).toEqual(t('game_engine.adventurer_fell', { room: engine.gameState?.room, run: engine.gameState?.run }));
+        vi.useRealTimers();
+    });
+
+    it('should apply a buff immediately upon selection, decrement its duration, and preserve health percentage', async () => {
+        vi.useFakeTimers();
+        vi.spyOn(Math, 'random').mockReturnValue(0.75); // Make combat deterministic
+
+        const buffItem: LootChoice = {
+            id: 'buff_1', instanceId: 'b_1', name: 'Test Buff', type: 'Buff', rarity: 'Rare', cost: 100,
+            stats: { power: 10, maxHp: -20, duration: 2 },
+        };
+        (engine as any)._allItems.push(buffItem);
+
+        // Mock getAdventurerChoice to always choose the buff
+        vi.spyOn(ai, 'getAdventurerChoice').mockReturnValue({ choice: buffItem, reason: 'test' });
+
+        engine.gameState!.adventurer.hp = 80;
+        const initialPower = engine.gameState!.adventurer.power;
+
+        // --- Present the buff as an offer ---
+        engine.gameState!.phase = 'DESIGNER_CHOOSING_LOOT';
+        engine.gameState!.hand = [buffItem]; // Put buff in hand to be offered
+        engine.presentOffer([buffItem.instanceId]);
+        await vi.runAllTimersAsync();
+
+        // Check that buff was applied immediately
+        expect(engine.gameState!.adventurer.activeBuffs).toHaveLength(1);
+        expect(engine.gameState!.adventurer.activeBuffs[0].id).toBe('buff_1');
+        expect(engine.gameState!.adventurer.power).toBe(initialPower + 10);
+        // Check health percentage was maintained (80% of 80 is 64)
+        expect(engine.gameState!.adventurer.maxHp).toBe(80);
+        expect(engine.gameState!.adventurer.hp).toBe(64);
+
+        // --- Run Encounter 1 (buff duration ticks down) ---
+        // phase is now DESIGNER_CHOOSING_ROOM
+        engine.runEncounter([{...mockRooms[0], instanceId: 'r1_1'}]);
+        await vi.runAllTimersAsync();
+        expect(engine.gameState!.adventurer.activeBuffs[0].stats.duration).toBe(1);
+
+        // --- Run Encounter 2 (buff expires) ---
+        // phase is now DESIGNER_CHOOSING_LOOT, but we need to be in DESIGNER_CHOOSING_ROOM
+        engine.gameState!.phase = 'DESIGNER_CHOOSING_ROOM';
+        engine.runEncounter([{...mockRooms[0], instanceId: 'r1_2'}]);
+        await vi.runAllTimersAsync();
+
+        // Buff should have expired
+        expect(engine.gameState!.adventurer.activeBuffs).toHaveLength(0);
+        expect(engine.gameState!.adventurer.power).toBe(initialPower);
+        expect(engine.gameState!.adventurer.maxHp).toBe(100);
+        expect(engine.gameState!.adventurer.hp).toBe(80);
+
         vi.useRealTimers();
     });
 

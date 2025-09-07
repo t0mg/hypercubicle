@@ -22,11 +22,12 @@ export interface LootChoice {
     instanceId: string;
     name: string;
     rarity: string;
-    type: 'Weapon' | 'Armor' | 'Potion';
+    type: 'Weapon' | 'Armor' | 'Potion' | 'Buff';
     stats: {
         hp?: number; // For potions
         power?: number; // For equipment
         maxHp?: number; // For equipment
+        duration?: number; // For buffs
     };
     cost: number | null;
     draftedRoom?: number;
