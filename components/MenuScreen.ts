@@ -1,24 +1,27 @@
 import { t } from '../text';
 import { MetaManager } from '../game/meta';
+import { GameEngine } from '../game/engine';
 
 export class MenuScreen extends HTMLElement {
-  private metaManager: MetaManager;
+  public engine: GameEngine | null = null;
+  public metaManager: MetaManager | null = null;
 
   constructor() {
     super();
-    this.metaManager = new MetaManager();
     this.addEventListener('click', (e: Event) => {
+      if (!this.engine || !this.metaManager) return;
       const target = e.target as HTMLElement;
       if (target.id === 'new-game-button') {
         if (this.metaManager.metaState.highestRun > 0) {
           if (confirm(t('menu.new_game_confirm'))) {
-            this._dispatch('reset-game');
+            this.metaManager.reset();
+            this.engine.startNewGame();
           }
         } else {
-          this._dispatch('start-game');
+          this.engine.startNewGame();
         }
       } else if (target.id === 'continue-game-button') {
-        this._dispatch('continue-game');
+        this.engine.continueGame();
       }
     });
   }
@@ -27,11 +30,8 @@ export class MenuScreen extends HTMLElement {
     this.render();
   }
 
-  private _dispatch(eventName: string) {
-    this.dispatchEvent(new CustomEvent(eventName, { bubbles: true, composed: true }));
-  }
-
   render() {
+    if (!this.metaManager) return;
     const metaState = this.metaManager.metaState;
     const hasSave = metaState.highestRun > 0;
 
