@@ -32,7 +32,7 @@
     "weapon": "Weapon",
     "armor": "Armor",
     "potions": "Potions",
-    "buffs": "Buffs",
+    "buffs": "Temp. buffs",
     "pwr": "Pwr",
     "hp": "HP",
     "potions_held": "{count} held"

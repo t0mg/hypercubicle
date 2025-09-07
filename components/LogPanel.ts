@@ -27,7 +27,7 @@ export class LogPanel extends HTMLElement {
     private _getLogColor(level: string): string {
         switch (level) {
             case 'DEBUG':
-                return 'text-gray-500';
+                return 'text-blue-400';
             case 'INFO':
                 return 'text-gray-400';
             case 'WARN':

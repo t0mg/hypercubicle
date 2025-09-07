@@ -71,11 +71,6 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
     leftColumn.className = 'lg:col-span-1 space-y-6';
     gridContainer.appendChild(leftColumn);
 
-    const logPanel = document.createElement('log-panel') as LogPanel;
-    logPanel.logger = state.logger;
-    logPanel.traits = state.adventurer.traits;
-    leftColumn.appendChild(logPanel);
-
     const gameStats = document.createElement('game-stats') as GameStats;
     gameStats.engine = engine;
     if (engine.isWorkshopUnlocked()) {
@@ -90,6 +85,11 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
     const feedbackMessage = Array.isArray(state.feedback) ? state.feedback.join(' ') : state.feedback;
     feedbackPanel.setAttribute('message', feedbackMessage);
     leftColumn.appendChild(feedbackPanel);
+
+    const logPanel = document.createElement('log-panel') as LogPanel;
+    logPanel.logger = state.logger;
+    logPanel.traits = state.adventurer.traits;
+    leftColumn.appendChild(logPanel);
 
     const rightColumn = document.createElement('div');
     rightColumn.className = 'lg:col-span-2 space-y-6';

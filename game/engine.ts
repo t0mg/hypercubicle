@@ -158,7 +158,7 @@ export class GameEngine {
     const roomHand = roomRunDeck.slice(0, handSize);
     const availableRoomDeck = roomRunDeck.slice(handSize);
 
-    logger.info(`--- Starting New Game (Run 1) ---`);
+    logger.info(`--- Starting New Adventurer (Run 1) ---`);
 
     this.gameState = {
       phase: 'DESIGNER_CHOOSING_ROOM',
@@ -181,6 +181,7 @@ export class GameEngine {
       runEnded: { isOver: false, reason: '' },
       newlyUnlocked: [],
     };
+    this.gameState.logger.debug(`Unlocked features: ${[...this.metaManager.acls].join(', ')}`);
     this._emit('state-change', this.gameState);
   }
 
@@ -206,6 +207,7 @@ export class GameEngine {
     resetAdventurer.interest = this.gameState.adventurer.interest;
 
     this.gameState.logger.info(`--- Starting Run ${nextRun} ---`);
+    this.gameState.logger.debug(`Unlocked features: ${[...this.metaManager.acls].join(', ')}`);
     this.gameState = {
       ...this.gameState,
       adventurer: resetAdventurer,

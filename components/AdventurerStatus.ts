@@ -51,11 +51,11 @@ export class AdventurerStatus extends HTMLElement {
         this.innerHTML = `
             <div class="bg-brand-surface p-4 pixel-corners shadow-xl">
                 <h2 class="text-xl font-label mb-2 text-center text-white">${t('adventurer_status.title', { count: adventurerNumber })}</h2>
-                <div class="grid grid-cols-1 gap-2">
-                    <div class="space-y-2">
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="space-y-2 col-span-2">
                         <div>
                             <div class="flex justify-between items-center">
-                                <div class="flex items-center">${HealthIcon()} <span class="text-sm">${t('global.health')}</span></div>
+                                <div class="flex items-center">${HealthIcon()} <span>${t('global.health')}</span></div>
                                 <span class="font-label text-sm">${this._adventurer.hp} / ${this._adventurer.maxHp}</span>
                             </div>
                             <div class="w-full bg-gray-700 pixel-corners h-3">
@@ -64,7 +64,7 @@ export class AdventurerStatus extends HTMLElement {
                         </div>
                         <div>
                             <div class="flex justify-between items-center">
-                                <div class="flex items-center">${InterestIcon()} <span class="text-sm">${t('adventurer_status.interest')}</span></div>
+                                <div class="flex items-center">${InterestIcon()} <span>${t('adventurer_status.interest')}</span></div>
                                 <span class="font-label text-sm">${Math.round(this._adventurer.interest)}%</span>
                             </div>
                             <div class="w-full bg-gray-700 pixel-corners h-3">
@@ -74,7 +74,7 @@ export class AdventurerStatus extends HTMLElement {
                     </div>
                     <div class="flex items-center justify-center bg-brand-primary/50 p-2 pixel-corners">
                         ${PowerIcon()}
-                        <span class="mr-2 text-sm">${t('global.power')}</span>
+                        <span class="mr-2">${t('global.power')}</span>
                         <span class="font-label text-lg text-white">${this._adventurer.power}</span>
                     </div>
                 </div>
@@ -82,43 +82,43 @@ export class AdventurerStatus extends HTMLElement {
                 ${showTraits ? `
                 <div class="border-t border-gray-700 my-2"></div>
                 <div class="flex justify-around text-center p-1 bg-brand-primary/50 pixel-corners">
-                    <div class="text-xs">
-                        <span class="text-brand-text-muted block text-xs">${t('log_panel.offense')}</span>
+                    <div>
+                        <span class="text-brand-text-muted block">${t('log_panel.offense')}</span>
                         <span class="font-mono text-white">${this._adventurer.traits.offense}</span>
                     </div>
-                    <div class="text-xs">
-                        <span class="text-brand-text-muted block text-xs">${t('log_panel.risk')}</span>
+                    <div>
+                        <span class="text-brand-text-muted block">${t('log_panel.risk')}</span>
                         <span class="font-mono text-white">${this._adventurer.traits.risk}</span>
                     </div>
-                    <div class="text-xs">
-                        <span class="text-brand-text-muted block text-xs">${t('log_panel.expertise')}</span>
+                    <div>
+                        <span class="text-brand-text-muted block">${t('log_panel.expertise')}</span>
                         <span class="font-mono text-white">${this._adventurer.traits.expertise}</span>
                     </div>
                 </div>` : ''}
 
                 <div class="border-t border-gray-700 my-2"></div>
                 <h3 class="text-base font-label mb-1 text-center text-white">${t('adventurer_status.inventory')}</h3>
-                <div class="grid grid-cols-1 gap-2 text-center">
-                    <div class="bg-brand-primary/50 p-2 pixel-corners text-xs">
+                <div class="grid grid-cols-4 gap-2 text-center">
+                    <div class="bg-brand-primary/50 p-2 pixel-corners">
                         <div class="flex items-center justify-center text-brand-text-muted">${WeaponIcon()} <span class="ml-1">${t('adventurer_status.weapon')}</span></div>
-                        ${this._adventurer.inventory.weapon ? `<div><p class="text-white text-sm">${this._adventurer.inventory.weapon.name}</p><p class="text-xs text-brand-text-muted">${t('adventurer_status.pwr')}: ${this._adventurer.inventory.weapon.stats.power || 0}${this._adventurer.inventory.weapon.stats.maxHp ? `, ${t('adventurer_status.hp')}: ${this._adventurer.inventory.weapon.stats.maxHp}` : ''}</p></div>` : `<p class="text-brand-text-muted italic text-xs">${t('global.none')}</p>`}
+                        ${this._adventurer.inventory.weapon ? `<div><p class="text-white text-sm">${this._adventurer.inventory.weapon.name}</p><p class="text-xs text-brand-text-muted">${t('adventurer_status.pwr')}: ${this._adventurer.inventory.weapon.stats.power || 0}${this._adventurer.inventory.weapon.stats.maxHp ? `, ${t('adventurer_status.hp')}: ${this._adventurer.inventory.weapon.stats.maxHp}` : ''}</p></div>` : `<p class="text-brand-text-muted italic">${t('global.none')}</p>`}
                     </div>
-                    <div class="bg-brand-primary/50 p-2 pixel-corners text-xs">
+                    <div class="bg-brand-primary/50 p-2 pixel-corners">
                         <div class="flex items-center justify-center text-brand-text-muted">${ArmorIcon()} <span class="ml-1">${t('adventurer_status.armor')}</span></div>
-                        ${this._adventurer.inventory.armor ? `<div><p class="text-white text-sm">${this._adventurer.inventory.armor.name}</p><p class="text-xs text-brand-text-muted">${t('adventurer_status.hp')}: ${this._adventurer.inventory.armor.stats.maxHp || 0}${this._adventurer.inventory.armor.stats.power ? `, ${t('adventurer_status.pwr')}: ${this._adventurer.inventory.armor.stats.power}` : ''}</p></div>` : `<p class="text-brand-text-muted italic text-xs">${t('global.none')}</p>`}
+                        ${this._adventurer.inventory.armor ? `<div><p class="text-white text-sm">${this._adventurer.inventory.armor.name}</p><p class="text-xs text-brand-text-muted">${t('adventurer_status.hp')}: ${this._adventurer.inventory.armor.stats.maxHp || 0}${this._adventurer.inventory.armor.stats.power ? `, ${t('adventurer_status.pwr')}: ${this._adventurer.inventory.armor.stats.power}` : ''}</p></div>` : `<p class="text-brand-text-muted italic">${t('global.none')}</p>`}
                     </div>
-                    <div class="bg-brand-primary/50 p-2 pixel-corners text-xs">
-                        <div class="flex items-center justify-center text-brand-text-muted">${PotionIcon()} <span class="ml-1">${t('adventurer_status.potions')}</span></div>
-                        ${this._adventurer.inventory.potions.length > 0 ? `<p class="text-white text-sm">${t('adventurer_status.potions_held', { count: this._adventurer.inventory.potions.length })}</p>` : `<p class="text-brand-text-muted italic text-xs">${t('global.none')}</p>`}
-                    </div>
-                    <div class="bg-brand-primary/50 p-2 pixel-corners text-xs">
+                    <div class="bg-brand-primary/50 p-2 pixel-corners">
                         <div class="flex items-center justify-center text-brand-text-muted">${BuffIcon()} <span class="ml-1">${t('adventurer_status.buffs')}</span></div>
                         ${this._adventurer.activeBuffs.length > 0 ? this._adventurer.activeBuffs.map(buff => `
                             <div>
                                 <p class="text-white text-sm">${buff.name} (${t('global.duration')}: ${buff.stats.duration})</p>
                                 <p class="text-xs text-brand-text-muted">${Object.entries(buff.stats).filter(([stat]) => stat !== 'duration').map(([stat, value]) => `${t(`global.${stat}`)}: ${value}`).join(', ')}</p>
                             </div>
-                        `).join('') : `<p class="text-brand-text-muted italic text-xs">${t('global.none')}</p>`}
+                        `).join('') : `<p class="text-brand-text-muted italic">${t('global.none')}</p>`}
+                    </div>
+                    <div class="bg-brand-primary/50 p-2 pixel-corners">
+                        <div class="flex items-center justify-center text-brand-text-muted">${PotionIcon()} <span class="ml-1">${t('adventurer_status.potions')}</span></div>
+                        ${this._adventurer.inventory.potions.length > 0 ? `<p class="text-white text-sm">${t('adventurer_status.potions_held', { count: this._adventurer.inventory.potions.length })}</p>` : `<p class="text-brand-text-muted italic">${t('global.none')}</p>`}
                     </div>
                 </div>
             </div>

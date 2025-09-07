@@ -6,7 +6,6 @@ import { MetaManager } from './game/meta';
 
 // Import all web components to register them
 import './components/AdventurerStatus.ts';
-import './components/BattlePanel.ts';
 import './components/FeedbackPanel.ts';
 import './components/RunEndedScreen.ts';
 import './components/GameStats.ts';
