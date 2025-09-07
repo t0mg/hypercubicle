@@ -1,7 +1,7 @@
 import './index.css';
 import { GameEngine } from './game/engine';
 import { initLocalization, t } from './text';
-import { render } from './ui';
+import { render } from './rendering';
 import { MetaManager } from './game/meta';
 
 // Import all web components to register them
@@ -43,47 +43,6 @@ engine.on('state-change', (newState) => {
     return;
   }
   render(appElement, newState, engine);
-});
-
-appElement.addEventListener('present-offer', (e: Event) => {
-  const { ids } = (e as CustomEvent).detail;
-  engine.presentOffer(ids);
-});
-
-appElement.addEventListener('run-encounter', (e: Event) => {
-  const { rooms } = (e as CustomEvent).detail;
-  engine.runEncounter(rooms);
-});
-
-appElement.addEventListener('run-decision', (e: Event) => {
-  const { decision } = (e as CustomEvent).detail;
-  engine.handleEndOfRun(decision);
-});
-
-appElement.addEventListener('purchase-item', (e: Event) => {
-  const { itemId } = (e as CustomEvent).detail;
-  engine.purchaseItem(itemId);
-});
-
-appElement.addEventListener('start-game', () => {
-  engine.startNewGame();
-});
-
-appElement.addEventListener('start-run', () => {
-    engine.startNewRun();
-});
-
-appElement.addEventListener('roll-credits', () => {
-    engine.forceEndRun();
-});
-
-appElement.addEventListener('continue-game', () => {
-  engine.continueGame();
-});
-
-appElement.addEventListener('reset-game', () => {
-  metaManager.reset();
-  engine.startNewGame();
 });
 
 async function main() {

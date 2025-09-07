@@ -1,5 +1,6 @@
 import type { LootChoice, RoomChoice } from '../types';
 import { t } from '../text';
+import { GameEngine } from '../game/engine';
 
 const StatChange = (label: string, value: number, positive: boolean = true) => {
     const color = positive ? 'text-green-400' : 'text-red-400';
@@ -97,6 +98,7 @@ const ShopItemCard = (item: LootChoice | RoomChoice, canAfford: boolean) => {
 export class Workshop extends HTMLElement {
     private _items: (LootChoice | RoomChoice)[] = [];
     private _balancePoints: number = 0;
+    public engine: GameEngine | null = null;
 
     set items(value: (LootChoice | RoomChoice)[]) { this._items = value; this.render(); }
     set balancePoints(value: number) { this._balancePoints = value; this.render(); }
@@ -106,18 +108,11 @@ export class Workshop extends HTMLElement {
         this.addEventListener('click', (e: Event) => {
             const target = e.target as HTMLElement;
             const itemId = target.dataset.itemId;
-            if (itemId) {
-                this.dispatchEvent(new CustomEvent('purchase-item', {
-                    bubbles: true,
-                    composed: true,
-                    detail: { itemId }
-                }));
+            if (itemId && this.engine) {
+                this.engine.purchaseItem(itemId);
             }
-            if (target.id === 'start-run-button') {
-                this.dispatchEvent(new CustomEvent('start-run', {
-                    bubbles: true,
-                    composed: true
-                }));
+            if (target.id === 'start-run-button' && this.engine) {
+                this.engine.startNewRun();
             }
         });
     }

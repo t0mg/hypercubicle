@@ -2,12 +2,14 @@ import type { LootChoice, RoomChoice } from '../types';
 import './Card.ts';
 import { Card } from './Card.ts';
 import { t } from '../text';
+import { GameEngine } from '../game/engine';
 
 const MAX_SELECTION = 4;
 
 export class ChoicePanel extends HTMLElement {
   private _choices: (LootChoice | RoomChoice)[] = [];
   private _deckType: 'item' | 'room' = 'item';
+  public engine: GameEngine | null = null;
   private _disabled: boolean = false;
   private _selectedIds: string[] = [];
   private _initialRender: boolean = true;
@@ -45,26 +47,15 @@ export class ChoicePanel extends HTMLElement {
 
     this.addEventListener('click', (e: Event) => {
       const target = e.target as HTMLElement;
-      if (target.id === 'present-offer-button') {
+      if (target.id === 'present-offer-button' && this.engine) {
         if (this._deckType === 'item') {
-          this.dispatchEvent(new CustomEvent('present-offer', {
-            bubbles: true,
-            composed: true,
-            detail: { ids: this._selectedIds }
-          }));
+          this.engine.presentOffer(this._selectedIds);
         } else {
           if (this._roomSelectionImpossible) {
-            this.dispatchEvent(new CustomEvent('roll-credits', {
-              bubbles: true,
-              composed: true
-            }));
+            this.engine.forceEndRun();
           } else {
-            const selectedRooms = this._choices.filter(c => this._selectedIds.includes(c.instanceId));
-            this.dispatchEvent(new CustomEvent('run-encounter', {
-              bubbles: true,
-              composed: true,
-              detail: { rooms: selectedRooms }
-            }));
+            const selectedRooms = this._choices.filter(c => this._selectedIds.includes(c.instanceId)) as RoomChoice[];
+            this.engine.runEncounter(selectedRooms);
           }
         }
       }

@@ -1,9 +1,11 @@
 import { t } from '../text';
 import { UnlockableFeature, UNLOCKS } from '../game/unlocks';
+import { GameEngine } from '../game/engine';
 
 export class RunEndedScreen extends HTMLElement {
     private state: 'initial' | 'unlock-revealed' | 'decision-revealing' | 'decision-revealed' = 'initial';
     public decision: 'continue' | 'retire' | null = null;
+    public engine: GameEngine | null = null;
     public newlyUnlocked: UnlockableFeature[] = [];
 
     static get observedAttributes() {
@@ -16,18 +18,10 @@ export class RunEndedScreen extends HTMLElement {
             const target = e.composedPath()[0] as HTMLElement;
             if (target.id === 'unlock-dismiss-button') {
                 this.dismissUnlock();
-            } else if (target.id === 'continue-run-button') {
-                this.dispatchEvent(new CustomEvent('run-decision', {
-                    bubbles: true,
-                    composed: true,
-                    detail: { decision: 'continue' }
-                }));
-            } else if (target.id === 'retire-run-button') {
-                this.dispatchEvent(new CustomEvent('run-decision', {
-                    bubbles: true,
-                    composed: true,
-                    detail: { decision: 'retire' }
-                }));
+            } else if (target.id === 'continue-run-button' && this.engine) {
+                this.engine.handleEndOfRun('continue');
+            } else if (target.id === 'retire-run-button' && this.engine) {
+                this.engine.handleEndOfRun('retire');
             }
         });
     }
