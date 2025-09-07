@@ -10,6 +10,7 @@ export class Adventurer {
     public interest: number;
     public traits: AdventurerTraits;
     public inventory: AdventurerInventory;
+    public activeBuffs: LootChoice[];
     public logger: Logger;
 
     constructor(traits: AdventurerTraits, logger: Logger) {
@@ -19,6 +20,7 @@ export class Adventurer {
         this.interest = 33 + Math.floor(Math.random() * 50);
         this.traits = traits;
         this.inventory = { weapon: null, armor: null, potions: [] };
+        this.activeBuffs = [];
         this.logger = logger;
     }
 
@@ -47,7 +49,29 @@ export class Adventurer {
         }
     }
 
+    public applyBuff(item: LootChoice): void {
+        this.activeBuffs.push(item);
+        this.recalculateStats();
+    }
+
+    public updateBuffs(): void {
+        const expiredBuffs = this.activeBuffs.filter(b => b.stats.duration !== undefined && b.stats.duration <= 1);
+
+        this.activeBuffs = this.activeBuffs.map(b => {
+            if (b.stats.duration) {
+                b.stats.duration -= 1;
+            }
+            return b;
+        }).filter(b => b.stats.duration === undefined || b.stats.duration > 0);
+
+        if (expiredBuffs.length > 0) {
+            this.recalculateStats();
+        }
+    }
+
     public recalculateStats(): void {
+        const healthPercentage = this.hp / this.maxHp;
+
         let power = BASE_ADVENTURER_STATS.power;
         let maxHp = BASE_ADVENTURER_STATS.maxHp;
 
@@ -60,9 +84,13 @@ export class Adventurer {
             maxHp += this.inventory.armor.stats.maxHp || 0;
         }
 
-        const hpDiff = maxHp - this.maxHp;
+        this.activeBuffs.forEach(buff => {
+            power += buff.stats.power || 0;
+            maxHp += buff.stats.maxHp || 0;
+        });
+
         this.power = power;
         this.maxHp = maxHp;
-        this.hp += Math.max(0, hpDiff);
+        this.hp = Math.round(this.maxHp * healthPercentage);
     }
 }
