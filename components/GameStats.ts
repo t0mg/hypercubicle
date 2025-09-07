@@ -1,11 +1,12 @@
 import { t } from '../text';
-import { UnlockableFeature } from '../game/unlocks';
+import { GameEngine } from '../game/engine';
 
 export class GameStats extends HTMLElement {
     private _balancePoints: number | null = null;
     private _run: number = 0;
     private _room: number = 0;
     private _deckSize: number = 0;
+    public engine?: GameEngine;
 
     constructor() {
         super();
@@ -39,7 +40,7 @@ export class GameStats extends HTMLElement {
 
     render() {
         this.innerHTML = `
-            <div class="bg-brand-primary p-4 pixel-corners shadow-lg flex justify-around text-center">
+            <div class="bg-brand-primary p-4 pixel-corners shadow-lg flex justify-around items-center text-center">
                 ${this._balancePoints !== null ? `
                 <div>
                     <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.bp')}</span>
@@ -58,8 +59,19 @@ export class GameStats extends HTMLElement {
                     <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.deck')}</span>
                     <p class="text-2xl  text-white">${this._deckSize}</p>
                 </div>
+                ${this.engine?.isWorkshopAccessUnlocked() ? `
+                <div>
+                    <button id="enter-workshop-btn" class="bg-brand-secondary text-white py-2 px-4 pixel-corners transition-all transform hover:scale-105">
+                        ${t('global.workshop')}
+                    </button>
+                </div>
+                ` : ''}
             </div>
         `;
+
+        this.querySelector('#enter-workshop-btn')?.addEventListener('click', () => {
+            this.engine?.enterWorkshop();
+        });
     }
 }
 

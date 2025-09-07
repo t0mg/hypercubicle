@@ -84,7 +84,7 @@ describe('MetaManager', () => {
 
     const multipleUnlocks = metaManager.checkForUnlocks(5);
     expect(multipleUnlocks).toContain(UnlockableFeature.HAND_SIZE_INCREASE);
-    expect(multipleUnlocks).toContain(UnlockableFeature.BOSS_FIGHTS);
+    expect(multipleUnlocks).toContain(UnlockableFeature.ADVENTURER_TRAITS);
   });
 
   it('should return the correct acls', () => {
@@ -93,6 +93,6 @@ describe('MetaManager', () => {
     expect(acls).toBeInstanceOf(Set);
     expect(acls.has(UnlockableFeature.WORKSHOP)).toBe(true);
     expect(acls.has(UnlockableFeature.HAND_SIZE_INCREASE)).toBe(true);
-    expect(acls.has(UnlockableFeature.BOSS_FIGHTS)).toBe(false);
+    expect(acls.has(UnlockableFeature.ADVENTURER_TRAITS)).toBe(false);
   });
 });

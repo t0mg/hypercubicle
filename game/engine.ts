@@ -284,7 +284,7 @@ export class GameEngine {
       }
 
       const newRoom = this.gameState.room + 1;
-      const newBalancePoints = this.gameState.designer.balancePoints + BP_PER_ROOM;
+      const newBalancePoints = this.gameState.designer.balancePoints + this._getBpPerRoom();
 
       this.gameState = {
         ...this.gameState,
@@ -389,7 +389,7 @@ export class GameEngine {
           ...this.gameState,
           phase: 'DESIGNER_CHOOSING_ROOM',
           room: this.gameState.room + 1,
-          designer: { balancePoints: this.gameState.designer.balancePoints + BP_PER_ROOM },
+          designer: { balancePoints: this.gameState.designer.balancePoints + this._getBpPerRoom() },
           feedback: feedback,
           encounter: undefined,
           roomHand: newRoomHand,
@@ -471,11 +471,19 @@ export class GameEngine {
 
     let newUnlockedDeck = this.gameState.unlockedDeck;
     let newUnlockedRoomDeck = this.gameState.unlockedRoomDeck;
+    let newAvailableDeck = this.gameState.availableDeck;
+    let newAvailableRoomDeck = this.gameState.availableRoomDeck;
 
     if (item) {
         newUnlockedDeck = [...this.gameState.unlockedDeck, itemId];
+        if (this.isWorkshopAccessUnlocked()) {
+            newAvailableDeck = [item, ...this.gameState.availableDeck];
+        }
     } else if (room) {
         newUnlockedRoomDeck = [...this.gameState.unlockedRoomDeck, itemId];
+        if (this.isWorkshopAccessUnlocked()) {
+            newAvailableRoomDeck = [room, ...this.gameState.availableRoomDeck];
+        }
     }
 
     const newBalancePoints = this.gameState.designer.balancePoints - itemToBuy.cost;
@@ -487,6 +495,8 @@ export class GameEngine {
       designer: { balancePoints: newBalancePoints },
       unlockedDeck: newUnlockedDeck,
       unlockedRoomDeck: newUnlockedRoomDeck,
+      availableDeck: newAvailableDeck,
+      availableRoomDeck: newAvailableRoomDeck,
       shopItems: newShopItems
     };
     this._emit('state-change', this.gameState);
@@ -568,6 +578,20 @@ export class GameEngine {
       return 12;
     }
     return HAND_SIZE;
+  }
+
+  private _getBpPerRoom = (): number => {
+    if (this.metaManager.acls.has(UnlockableFeature.BP_MULTIPLIER_2)) {
+      return BP_PER_ROOM * 4;
+    }
+    if (this.metaManager.acls.has(UnlockableFeature.BP_MULTIPLIER)) {
+      return BP_PER_ROOM * 2;
+    }
+    return BP_PER_ROOM;
+  }
+
+  public isWorkshopAccessUnlocked(): boolean {
+    return this.metaManager.acls.has(UnlockableFeature.WORKSHOP_ACCESS);
   }
 
   public isWorkshopUnlocked(): boolean {
