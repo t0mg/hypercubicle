@@ -4,7 +4,8 @@ import { Adventurer } from './adventurer';
 import * as constants from './constants';
 import { initLocalization, t } from '../text';
 import { MetaManager } from './meta';
-import { RoomChoice } from '../types';
+import { RoomChoice, LootChoice } from '../types';
+import { UnlockableFeature } from './unlocks';
 
 // Mock the items data
 const mockItems: LootChoice[] = Array.from({ length: 30 }, (_, i) => {
@@ -247,6 +248,45 @@ describe('GameEngine', () => {
             engine.gameState!.run = 1;
             engine.handleEndOfRun('retire');
             expect(engine.gameState?.phase).toBe('MENU');
+        });
+    });
+
+    describe('Unlocks', () => {
+        it('should return correct BP based on unlocks', () => {
+            const metaManager = new MetaManager();
+            const engine = new GameEngine(metaManager);
+
+            // No unlocks
+            expect((engine as any)._getBpPerRoom()).toBe(constants.BP_PER_ROOM);
+
+            // BP_MULTIPLIER
+            metaManager.metaState.unlockedFeatures.push(UnlockableFeature.BP_MULTIPLIER);
+            expect((engine as any)._getBpPerRoom()).toBe(constants.BP_PER_ROOM * 2);
+
+            // BP_MULTIPLIER_2
+            metaManager.metaState.unlockedFeatures.push(UnlockableFeature.BP_MULTIPLIER_2);
+            expect((engine as any)._getBpPerRoom()).toBe(constants.BP_PER_ROOM * 4);
+        });
+
+        it('should add purchased item to top of deck with WORKSHOP_ACCESS', async () => {
+            const metaManager = new MetaManager();
+            const engine = new GameEngine(metaManager);
+            await engine.init();
+            engine.metaManager.checkForUnlocks(100); // Unlock everything
+            engine.startNewGame();
+
+            engine.gameState!.run = 1;
+            engine.gameState!.designer.balancePoints = 100;
+            const itemToBuy: LootChoice = { id: 'buyable_item_2', instanceId: 'bi_2', name: 'Test Buyable 2', type: 'Weapon', rarity: 'Uncommon', cost: 75, stats: { power: 15 } };
+            (engine as any)._allItems.push(itemToBuy);
+            engine.gameState!.shopItems = [itemToBuy];
+
+            engine.purchaseItem(itemToBuy.id);
+
+            expect(engine.gameState?.designer.balancePoints).toBe(25);
+            expect(engine.gameState?.unlockedDeck).toContain(itemToBuy.id);
+            expect(engine.gameState?.shopItems).not.toContain(itemToBuy);
+            expect(engine.gameState?.availableDeck[0].id).toBe(itemToBuy.id);
         });
     });
 });

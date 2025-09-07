@@ -3,6 +3,7 @@ import type { AdventurerStatus } from './components/AdventurerStatus';
 import type { ChoicePanel } from './components/ChoicePanel';
 import type { LogPanel } from './components/LogPanel';
 import type { Workshop } from './components/Workshop';
+import type { GameStats } from './components/GameStats';
 import { t } from './text';
 import { GameEngine } from './game/engine';
 import { isLootSelectionImpossible, isRoomSelectionImpossible } from './game/utils';
@@ -75,7 +76,8 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
     logPanel.traits = state.adventurer.traits;
     leftColumn.appendChild(logPanel);
 
-    const gameStats = document.createElement('game-stats');
+    const gameStats = document.createElement('game-stats') as GameStats;
+    gameStats.engine = engine;
     if (engine.isWorkshopUnlocked()) {
         gameStats.setAttribute('balance-points', state.designer.balancePoints.toString());
     }
