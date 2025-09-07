@@ -235,6 +235,7 @@ export class GameEngine {
 
     setTimeout(() => {
       if (!this.gameState || this.gameState.phase !== 'AWAITING_ADVENTURER_CHOICE' || !this.gameState.hand) return;
+      if (this.gameState.runEnded.isOver) return;
 
       let choice: LootChoice | null = null;
       let feedback: string;
@@ -311,6 +312,7 @@ export class GameEngine {
 
     setTimeout(() => {
       if (!this.gameState || this.gameState.phase !== 'AWAITING_ENCOUNTER_FEEDBACK' || !this.gameState.offeredRooms) return;
+      if (this.gameState.runEnded.isOver) return;
 
       let adventurer = this.gameState.adventurer;
       let feedback: string[] = [];
