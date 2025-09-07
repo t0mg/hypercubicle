@@ -93,7 +93,7 @@
     "welcome_to_workshop": "Welcome back. Spend your Balance Points wisely.",
     "healing_room": "The adventurer found the {name} and recovered {healing} health.",
     "trap_room": "The adventurer fell for the {name} and lost {damage} health.",
-    "no_more_rooms": "The adventurer reached the end of the dungeon."
+    "no_more_rooms": "The adventurer reached the end of the dungeon (without fighting a boss)."
   },
   "game_title": "Rogue Steward",
   "game_subtitle": "Keep your adventurer running.",
