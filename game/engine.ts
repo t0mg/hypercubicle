@@ -586,12 +586,12 @@ export class GameEngine {
     return BP_PER_ROOM;
   }
 
-  public isWorkshopUnlocked(): boolean {
-    return this.metaManager.acls.has(UnlockableFeature.WORKSHOP);
-  }
-
   public isWorkshopAccessUnlocked(): boolean {
     return this.metaManager.acls.has(UnlockableFeature.WORKSHOP_ACCESS);
+  }
+
+  public isWorkshopUnlocked(): boolean {
+    return this.metaManager.acls.has(UnlockableFeature.WORKSHOP);
   }
 
   // --- INITIALIZATION ---
