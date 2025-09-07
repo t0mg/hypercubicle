@@ -274,6 +274,8 @@ export class GameEngine {
       if (choice) {
         if (choice.type === 'Potion') {
             adventurer.addPotion(choice);
+        } else if (choice.type === 'Buff') {
+            adventurer.applyBuff(choice);
         } else {
             adventurer.equip(choice);
         }
@@ -345,6 +347,8 @@ export class GameEngine {
           this.gameState.logger.info(t('game_engine.trap_room', { name: chosenRoom.name, damage: damage }));
           break;
       }
+
+      adventurer.updateBuffs();
 
       // --- Room Hand and Deck Update Logic ---
       let currentRoomHand = this.gameState.roomHand;
