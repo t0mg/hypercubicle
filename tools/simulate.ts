@@ -5,7 +5,7 @@ import { LootChoice, RoomChoice, GameState } from '../types';
 import { initLocalization } from '../text';
 import { MemoryStorage } from '../game/storage';
 import { UnlockableFeature } from '../game/unlocks';
-import { DataLoaderFileSystem } from './data-loader-file-system';
+import { FileSystemDataLoader } from '../game/data-loader';
 import { Metrics } from './metrics';
 
 const getDesignerRoomChoice = (state: GameState): RoomChoice[] => {
@@ -43,13 +43,13 @@ export const getDesignerShopChoice = (state: GameState): string | null => {
 class Simulation {
   private engine: GameEngine;
   private metaManager: MetaManager;
-  private dataLoader: DataLoaderFileSystem;
+  private dataLoader: FileSystemDataLoader;
 
   constructor(seed: number) {
     rng.setSeed(seed);
     const storage = new MemoryStorage();
     this.metaManager = new MetaManager(storage);
-    this.dataLoader = new DataLoaderFileSystem();
+    this.dataLoader = new FileSystemDataLoader();
     this.engine = new GameEngine(this.metaManager, this.dataLoader);
   }
 
@@ -67,53 +67,65 @@ class Simulation {
 
     this.metaManager.metaState.unlockedFeatures.push(UnlockableFeature.WORKSHOP);
 
-    for (let i = 0; i < runs; i++) {
-      this.engine.startNewGame(initialUnlocked);
-      if (this.engine.gameState) {
-          this.engine.gameState.logger.on(metrics.handleLogEntry);
-      }
-      while (!this.engine.gameState?.runEnded.isOver) {
-        if (!this.engine.gameState) {
-          break;
+    this.engine.startNewGame(initialUnlocked);
+    while (metrics.getRuns() < runs) {
+        if (this.engine.gameState) {
+            this.engine.gameState.logger.on(metrics.handleLogEntry);
         }
 
-        switch (this.engine.gameState.phase) {
-          case 'DESIGNER_CHOOSING_ROOM':
-            const roomChoices = getDesignerRoomChoice(this.engine.gameState);
-            if (roomChoices.length === 0) {
-              this.engine.forceEndRun();
-            } else {
-              this.engine.runEncounter(roomChoices);
+        while (!this.engine.gameState?.runEnded.isOver) {
+            if (!this.engine.gameState) {
+            break;
             }
-            break;
-          case 'DESIGNER_CHOOSING_LOOT':
-            const lootChoices = getDesignerLootChoice(this.engine.gameState);
-            this.engine.presentOffer(lootChoices);
-            break;
-        }
-      }
 
-      // Handle end of run logic (shop, etc.)
-      if (this.engine.gameState) {
-          metrics.processRun(this.engine.gameState.room);
-          const decision = this.engine.getAdventurerEndRunDecision(true);
-          this.engine.handleEndOfRun(decision);
-          if (this.engine.gameState.phase === 'SHOP') {
-              const choice = getDesignerShopChoice(this.engine.gameState);
-              if (choice) {
-                  this.engine.purchaseItem(choice);
-              }
-              this.engine.exitWorkshop();
-          }
-      }
+            switch (this.engine.gameState.phase) {
+            case 'DESIGNER_CHOOSING_ROOM':
+                const roomChoices = getDesignerRoomChoice(this.engine.gameState);
+                if (roomChoices.length === 0) {
+                this.engine.forceEndRun();
+                } else {
+                this.engine.runEncounter(roomChoices);
+                }
+                break;
+            case 'DESIGNER_CHOOSING_LOOT':
+                const lootChoices = getDesignerLootChoice(this.engine.gameState);
+                this.engine.presentOffer(lootChoices);
+                break;
+            }
+        }
+
+        metrics.incrementRuns();
+
+        // Handle end of run logic (shop, etc.)
+        if (this.engine.gameState) {
+            const reason = this.engine.gameState.runEnded.reason;
+            if (reason.includes('fell') || reason.includes('bored')) {
+                // Hard failure, start a new adventurer
+                this.engine.startNewGame(initialUnlocked);
+            } else {
+                // Soft failure, can continue
+                const decision = this.engine.getAdventurerEndRunDecision();
+                this.engine.handleEndOfRun(decision);
+                if (this.engine.gameState.phase === 'SHOP') {
+                    const choice = getDesignerShopChoice(this.engine.gameState);
+                    if (choice) {
+                        this.engine.purchaseItem(choice);
+                    }
+                    this.engine.exitWorkshop();
+                } else {
+                    // Adventurer retired
+                    this.engine.startNewGame(initialUnlocked);
+                }
+            }
+        }
     }
     metrics.setMeta(this.metaManager.metaState);
     metrics.report();
   }
 }
 
-const runs = process.argv[2] ? parseInt(process.argv[2], 10) : 10;
-const seed = process.argv[3] ? parseInt(process.argv[3], 10) : Date.now();
+const seed = process.argv[2] ? parseInt(process.argv[2], 10) : Date.now();
+const runs = process.argv[3] ? parseInt(process.argv[3], 10) : 10;
 
 const simulation = new Simulation(seed);
 simulation.run(runs);

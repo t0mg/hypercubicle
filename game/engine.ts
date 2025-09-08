@@ -55,7 +55,7 @@ export class GameEngine {
   }
 
   private _simulateEncounter(adventurer: Adventurer, room: number, encounter: Encounter): { newAdventurer: Adventurer; feedback: string[]; totalDamageTaken: number; } {
-    this.gameState?.logger.log(`--- Encounter: Room ${room} ---`, 'INFO', { event: 'battle_started', encounter: encounter });
+    this.gameState?.logger.info(`--- Encounter: Room ${room} ---`, 'INFO', { event: 'battle_started', encounter: encounter });
     const feedback: string[] = [];
     let totalDamageTaken = 0;
     let enemiesDefeated = 0;
@@ -509,10 +509,7 @@ export class GameEngine {
     this._emit('state-change', this.gameState);
   }
 
-  public getAdventurerEndRunDecision(isSimulation: boolean = false): 'continue' | 'retire' {
-    if (isSimulation) {
-        return 'continue';
-    }
+  public getAdventurerEndRunDecision(): 'continue' | 'retire' {
     if (!this.gameState) {
       return 'retire';
     }

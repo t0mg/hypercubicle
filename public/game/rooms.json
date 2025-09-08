@@ -13,26 +13,13 @@
         }
     },
     {
-        "id": "room_1b",
-        "name": "Goblin Garnison",
-        "type": "enemy",
-        "rarity": "Common",
-        "cost": 50,
-        "stats": {
-            "attack": 5,
-            "hp": 10,
-            "minUnits": 5,
-            "maxUnits": 20
-        }
-    },
-    {
         "id": "room_2",
         "name": "Spike Trap",
         "type": "trap",
-        "rarity": "Common",
+        "rarity": "Uncommon",
         "cost": null,
         "stats": {
-            "attack": 25
+            "attack": 15
         }
     },
     {
@@ -55,7 +42,7 @@
             "attack": 10,
             "hp": 25,
             "minUnits": 2,
-            "maxUnits": 6
+            "maxUnits": 4
         }
     },
     {
@@ -63,7 +50,7 @@
         "name": "Dragon's Lair",
         "type": "boss",
         "rarity": "Rare",
-        "cost": 150,
+        "cost": 300,
         "stats": {
             "attack": 25,
             "hp": 100
@@ -74,7 +61,7 @@
         "name": "Death Pit",
         "type": "trap",
         "rarity": "Rare",
-        "cost": 100,
+        "cost": 200,
         "stats": {
             "attack": 999
         }

@@ -36,7 +36,7 @@
         "name": "Crude Bandages",
         "type": "Potion",
         "rarity": "Common",
-        "stats": { "hp": 10 },
+        "stats": { "hp": 15 },
         "cost": null
     },
     {
@@ -45,7 +45,7 @@
         "type": "Armor",
         "rarity": "Uncommon",
         "stats": { "power": 1, "maxHp": 15 },
-        "cost": 80
+        "cost": 150
     },
     {
         "id": "loot_7",
@@ -53,7 +53,7 @@
         "type": "Weapon",
         "rarity": "Uncommon",
         "stats": { "power": 6, "maxHp": -10 },
-        "cost": 80
+        "cost": 150
     },
     {
         "id": "loot_8",
@@ -85,7 +85,7 @@
         "type": "Armor",
         "rarity": "Rare",
         "stats": { "maxHp": 50, "power": -2 },
-        "cost": 200
+        "cost": 300
     },
     {
         "id": "loot_12",
@@ -93,7 +93,7 @@
         "type": "Weapon",
         "rarity": "Rare",
         "stats": { "power": 10 },
-        "cost": 250
+        "cost": 350
     },
     {
         "id": "loot_13",
@@ -101,7 +101,7 @@
         "type": "Potion",
         "rarity": "Rare",
         "stats": { "hp": 150 },
-        "cost": 200
+        "cost": 250
     },
     {
         "id": "loot_14",
@@ -109,7 +109,7 @@
         "type": "Armor",
         "rarity": "Rare",
         "stats": { "power": 3, "maxHp": 25 },
-        "cost": 220
+        "cost": 320
     },
     {
         "id": "loot_15",
@@ -117,7 +117,7 @@
         "type": "Armor",
         "rarity": "Rare",
         "stats": { "maxHp": 30, "power": 3 },
-        "cost": 220
+        "cost": 320
     },
     {
         "id": "loot_16",
@@ -125,6 +125,6 @@
         "type": "Buff",
         "rarity": "Rare",
         "stats": { "power": 20, "maxHp": -50, "duration": 5 },
-        "cost": 100
+        "cost": 200
     }
 ]

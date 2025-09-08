@@ -11,8 +11,6 @@ export class Metrics {
   private purchases: Map<string, number> = new Map();
   private battles: number = 0;
   private monsters: number = 0;
-  private totalRoomsReached: number = 0;
-  private maxRoomsReached: number = 0;
 
   public handleLogEntry = (entry: LogEntry): void => {
     if (entry.data?.event === 'room_encountered') {
@@ -37,33 +35,27 @@ export class Metrics {
     meta.unlockedFeatures.forEach(f => this.unlockedFeatures.add(f));
   }
 
-  public processRun(roomsReached: number) {
-    this.runs++;
-    this.totalRoomsReached += roomsReached;
-    if (roomsReached > this.maxRoomsReached) {
-      this.maxRoomsReached = roomsReached;
-    }
+  public incrementRuns() {
+      this.runs++;
+  }
+
+  public getRuns(): number {
+      return this.runs;
   }
 
   public report(): void {
-    console.log("\n--- Simulation Report ---\n");
+    console.log("\n--- Simulation Report ---");
     console.log(`Total Runs: ${this.runs}`);
     console.log(`Total Adventurers: ${this.adventurers}`);
     console.log(`Highest Run Reached: ${this.highestRun}`);
-    console.log(`Max Rooms Reached: ${this.maxRoomsReached}`);
-    console.log(`Average Rooms Reached: ${this.runs > 0 ? (this.totalRoomsReached / this.runs).toFixed(2) : 'N/A'}`);
     console.log(`Unlocked Features: ${this.unlockedFeatures.size}`);
-    console.log(`\n--- Room Usage ---
-`);
+    console.log(`\n--- Room Usage ---`);
     this.roomUsage.forEach((count, name) => console.log(`${name}: ${count}`));
-    console.log(`\n--- Item Usage ---
-`);
+    console.log(`\n--- Item Usage ---`);
     this.itemUsage.forEach((count, name) => console.log(`${name}: ${count}`));
-    console.log(`\n--- Shop Purchases ---
-`);
+    console.log(`\n--- Shop Purchases ---`);
     this.purchases.forEach((count, name) => console.log(`${name}: ${count}`));
-    console.log(`\n--- Combat Stats ---
-`);
+    console.log(`\n--- Combat Stats ---`);
     console.log(`Total Battles: ${this.battles}`);
     console.log(`Total Monsters Defeated: ${this.monsters}`);
     console.log("-----------------------\n");

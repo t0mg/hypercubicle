@@ -9,7 +9,7 @@ import { UnlockableFeature } from './unlocks';
 import * as ai from './ai';
 import { rng } from './random';
 import { MemoryStorage } from './storage';
-import { DataLoaderFileSystem } from '../tools/data-loader-file-system';
+import { FileSystemDataLoader } from './data-loader';
 
 // Mock the items data
 const mockItems: LootChoice[] = Array.from({ length: 30 }, (_, i) => {
@@ -38,10 +38,10 @@ describe('GameEngine', () => {
     let engine: GameEngine;
     let metaManager: MetaManager;
     let storage: MemoryStorage;
-    let dataLoader: DataLoaderFileSystem;
+    let dataLoader: FileSystemDataLoader;
 
     beforeAll(async () => {
-        dataLoader = new DataLoaderFileSystem();
+        dataLoader = new FileSystemDataLoader();
         await initLocalization(dataLoader);
     });
 
@@ -195,7 +195,7 @@ describe('GameEngine', () => {
         it('should transition to the SHOP phase correctly', async () => {
             const storage = new MemoryStorage();
             const metaManager = new MetaManager(storage);
-            const dataLoader = new DataLoaderFileSystem();
+            const dataLoader = new FileSystemDataLoader();
             const engine = new GameEngine(metaManager, dataLoader);
             await engine.init();
             engine.metaManager.checkForUnlocks(10); // Unlock workshop
@@ -210,7 +210,7 @@ describe('GameEngine', () => {
         it('should allow purchasing an item from the shop', async () => {
             const storage = new MemoryStorage();
             const metaManager = new MetaManager(storage);
-            const dataLoader = new DataLoaderFileSystem();
+            const dataLoader = new FileSystemDataLoader();
             const engine = new GameEngine(metaManager, dataLoader);
             await engine.init();
             engine.metaManager.checkForUnlocks(10); // Unlock workshop
@@ -268,7 +268,7 @@ describe('GameEngine', () => {
         it('should return correct BP based on unlocks', () => {
             const storage = new MemoryStorage();
             const metaManager = new MetaManager(storage);
-            const dataLoader = new DataLoaderFileSystem();
+            const dataLoader = new FileSystemDataLoader();
             const engine = new GameEngine(metaManager, dataLoader);
 
             // No unlocks
@@ -286,7 +286,7 @@ describe('GameEngine', () => {
         it('should add purchased item to top of deck with WORKSHOP_ACCESS', async () => {
             const storage = new MemoryStorage();
             const metaManager = new MetaManager(storage);
-            const dataLoader = new DataLoaderFileSystem();
+            const dataLoader = new FileSystemDataLoader();
             const engine = new GameEngine(metaManager, dataLoader);
             await engine.init();
             engine.metaManager.checkForUnlocks(100); // Unlock everything
