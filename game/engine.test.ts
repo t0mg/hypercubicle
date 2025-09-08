@@ -7,12 +7,15 @@ import { MetaManager } from './meta';
 import { RoomChoice, LootChoice } from '../types';
 import { UnlockableFeature } from './unlocks';
 import * as ai from './ai';
+import { rng } from './random';
+import { MemoryStorage } from './storage';
+import { FileSystemDataLoader } from './data-loader';
 
 // Mock the items data
 const mockItems: LootChoice[] = Array.from({ length: 30 }, (_, i) => {
     const rarity = i < 18 ? 'Common' : i < 27 ? 'Uncommon' : 'Rare';
     const type = i % 3 === 0 ? 'Weapon' : i % 3 === 1 ? 'Armor' : 'Potion';
-    const cost = i < 5 ? null : Math.floor(Math.random() * 100) + 20; // First 5 items are free
+    const cost = i < 5 ? null : rng.nextInt(20, 120); // First 5 items are free
     return {
         id: `loot_${i + 1}`,
         instanceId: `l_${i+1}`,
@@ -31,61 +34,15 @@ const mockRooms: RoomChoice[] = [
     { id: 'room_4', instanceId: 'r4', name: 'Trap Room', type: 'trap', rarity: 'Common', cost: null, stats: { attack: 15 } },
 ];
 
-// Mock fetch
-global.fetch = vi.fn((url) => {
-    if (url.toString().includes('items.json')) {
-        return Promise.resolve({
-            ok: true,
-            json: () => Promise.resolve(mockItems),
-        });
-    }
-    if (url.toString().includes('rooms.json')) {
-        return Promise.resolve({
-            ok: true,
-            json: () => Promise.resolve(mockRooms),
-        });
-    }
-    if (url.toString().includes('en.json')) {
-        return Promise.resolve({
-            ok: true,
-            json: () => Promise.resolve({
-                "game_engine": {
-                    "new_adventurer": "A new adventurer has arrived!",
-                    "adventurer_returns": "The adventurer returns for another go!",
-                    "adventurer_accepts_offer": "The adventurer accepts your offer of {itemName}.",
-                    "adventurer_declines_offer": "The adventurer considers your offer but declines.",
-                    "adventurer_declines_empty_offer": "The adventurer seems disappointed by the lack of options.",
-                    "adventurer_uses_buff": "Seeing a tough fight ahead, they use a {buffName}.",
-                    "healing_room": "The adventurer feels refreshed in the {name} and heals for {healing} HP.",
-                    "trap_room": "The adventurer stumbles into the {name} and takes {damage} damage!",
-                    "too_close_for_comfort": "A tough fight! The adventurer is rattled.",
-                    "great_battle": "A worthy battle! The adventurer feels invigorated.",
-                    "easy_fight": "An easy fight. The adventurer is a bit bored.",
-                    "worthy_challenge": "A worthy challenge. The adventurer is satisfied.",
-                    "adventurer_fell": "The adventurer fell in room {room} of run {run}.",
-                    "adventurer_bored": "The adventurer has grown bored and left in room {room} of run {run}.",
-                    "no_more_rooms": "You have no more rooms to offer. The adventurer leaves, disappointed.",
-                    "welcome_to_workshop": "Welcome to the Workshop! Spend your Balance Points to unlock new items and rooms.",
-                    "empty_hand": "Your hand is empty! The adventurer must press on without new items."
-                },
-                "global": {
-                    "error_loading_items": "Failed to load game items: {statusText}",
-                    "error_loading_rooms": "Failed to load game rooms: {statusText}",
-                    "unknown_error": "An unknown error occurred"
-                }
-            }),
-        });
-    }
-    return Promise.reject(new Error('not found'));
-}) as any;
-
-
 describe('GameEngine', () => {
     let engine: GameEngine;
     let metaManager: MetaManager;
+    let storage: MemoryStorage;
+    let dataLoader: FileSystemDataLoader;
 
     beforeAll(async () => {
-        await initLocalization();
+        dataLoader = new FileSystemDataLoader();
+        await initLocalization(dataLoader);
     });
 
     afterEach(() => {
@@ -93,8 +50,10 @@ describe('GameEngine', () => {
     });
 
     beforeEach(async () => {
-        metaManager = new MetaManager();
-        engine = new GameEngine(metaManager);
+        rng.setSeed(12345);
+        storage = new MemoryStorage();
+        metaManager = new MetaManager(storage);
+        engine = new GameEngine(metaManager, dataLoader);
         await engine.init();
         engine.startNewGame();
     });
@@ -129,7 +88,6 @@ describe('GameEngine', () => {
     it('should process a loot offer and update the game state', async () => {
         vi.useFakeTimers();
         engine.gameState!.adventurer.traits = { offense: 90, risk: 10, expertise: 10 };
-        vi.spyOn(Math, 'random').mockReturnValue(0.1); // Low randomness
 
         engine.gameState!.phase = 'DESIGNER_CHOOSING_LOOT';
         const initialHand = [...engine.gameState!.hand];
@@ -148,7 +106,6 @@ describe('GameEngine', () => {
 
     it('should run an encounter and update adventurer state', async () => {
         vi.useFakeTimers();
-        vi.spyOn(Math, 'random').mockReturnValue(0.1); // Ensure enemy hits
         engine.gameState!.adventurer.traits = { offense: 10, risk: 10, expertise: 10 }; // Defensive
         engine.gameState!.phase = 'DESIGNER_CHOOSING_ROOM';
         const initialHp = engine.gameState!.adventurer.hp;
@@ -186,7 +143,6 @@ describe('GameEngine', () => {
 
     it('should apply a buff immediately upon selection, decrement its duration, and preserve health percentage', async () => {
         vi.useFakeTimers();
-        vi.spyOn(Math, 'random').mockReturnValue(0.75); // Make combat deterministic
 
         const buffItem: LootChoice = {
             id: 'buff_1', instanceId: 'b_1', name: 'Test Buff', type: 'Buff', rarity: 'Rare', cost: 100,
@@ -237,8 +193,10 @@ describe('GameEngine', () => {
 
     describe('Workshop', () => {
         it('should transition to the SHOP phase correctly', async () => {
-            const metaManager = new MetaManager();
-            const engine = new GameEngine(metaManager);
+            const storage = new MemoryStorage();
+            const metaManager = new MetaManager(storage);
+            const dataLoader = new FileSystemDataLoader();
+            const engine = new GameEngine(metaManager, dataLoader);
             await engine.init();
             engine.metaManager.checkForUnlocks(10); // Unlock workshop
             engine.startNewGame();
@@ -250,8 +208,10 @@ describe('GameEngine', () => {
         });
 
         it('should allow purchasing an item from the shop', async () => {
-            const metaManager = new MetaManager();
-            const engine = new GameEngine(metaManager);
+            const storage = new MemoryStorage();
+            const metaManager = new MetaManager(storage);
+            const dataLoader = new FileSystemDataLoader();
+            const engine = new GameEngine(metaManager, dataLoader);
             await engine.init();
             engine.metaManager.checkForUnlocks(10); // Unlock workshop
             engine.startNewGame();
@@ -306,8 +266,10 @@ describe('GameEngine', () => {
 
     describe('Unlocks', () => {
         it('should return correct BP based on unlocks', () => {
-            const metaManager = new MetaManager();
-            const engine = new GameEngine(metaManager);
+            const storage = new MemoryStorage();
+            const metaManager = new MetaManager(storage);
+            const dataLoader = new FileSystemDataLoader();
+            const engine = new GameEngine(metaManager, dataLoader);
 
             // No unlocks
             expect((engine as any)._getBpPerRoom()).toBe(constants.BP_PER_ROOM);
@@ -322,8 +284,10 @@ describe('GameEngine', () => {
         });
 
         it('should add purchased item to top of deck with WORKSHOP_ACCESS', async () => {
-            const metaManager = new MetaManager();
-            const engine = new GameEngine(metaManager);
+            const storage = new MemoryStorage();
+            const metaManager = new MetaManager(storage);
+            const dataLoader = new FileSystemDataLoader();
+            const engine = new GameEngine(metaManager, dataLoader);
             await engine.init();
             engine.metaManager.checkForUnlocks(100); // Unlock everything
             engine.startNewGame();

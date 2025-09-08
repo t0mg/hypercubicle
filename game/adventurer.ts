@@ -1,5 +1,6 @@
 import { AdventurerTraits, AdventurerInventory, LootChoice } from '../types';
 import { Logger } from './logger';
+import { rng } from './random';
 
 const BASE_ADVENTURER_STATS = { hp: 100, maxHp: 100, power: 5 };
 
@@ -17,7 +18,7 @@ export class Adventurer {
         this.hp = BASE_ADVENTURER_STATS.hp;
         this.maxHp = BASE_ADVENTURER_STATS.maxHp;
         this.power = BASE_ADVENTURER_STATS.power;
-        this.interest = 33 + Math.floor(Math.random() * 50);
+        this.interest = 33 + rng.nextInt(0, 49);
         this.traits = traits;
         this.inventory = { weapon: null, armor: null, potions: [] };
         this.activeBuffs = [];
@@ -26,7 +27,7 @@ export class Adventurer {
 
     public modifyInterest(base: number, randomDeviation: number): void {
         const expertiseDampening = Math.max(0.1, (1000 - this.traits.expertise) / 1000);
-        const randomValue = (Math.random() * 2 - 1) * randomDeviation;
+        const randomValue = (rng.nextFloat() * 2 - 1) * randomDeviation;
         const totalModification = (base + randomValue) * expertiseDampening;
 
         const oldInterest = this.interest;

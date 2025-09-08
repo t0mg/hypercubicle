@@ -95,4 +95,14 @@ export interface GameState {
         reason: string;
     };
     newlyUnlocked: UnlockableFeature[];
+    shopReturnPhase?: GamePhase | null;
+}
+
+export interface Storage {
+    getItem(key: string): string | null;
+    setItem(key: string, value: string): void;
+}
+
+export interface DataLoader {
+    loadJson(path: string): Promise<any>;
 }

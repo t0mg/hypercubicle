@@ -1,4 +1,5 @@
 import { UnlockableFeature, UNLOCKS } from './unlocks';
+import { Storage } from '../types';
 
 export interface MetaState {
   highestRun: number;
@@ -10,8 +11,10 @@ const META_STORAGE_KEY = 'rogue-steward-meta';
 
 export class MetaManager {
   private _metaState: MetaState;
+  private storage: Storage;
 
-  constructor() {
+  constructor(storage: Storage) {
+    this.storage = storage;
     this._metaState = this._load();
   }
 
@@ -51,7 +54,7 @@ export class MetaManager {
 
   private _load(): MetaState {
     try {
-      const saved = localStorage.getItem(META_STORAGE_KEY);
+      const saved = this.storage.getItem(META_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
         // Basic validation
@@ -71,7 +74,7 @@ export class MetaManager {
 
   public save(): void {
     try {
-      localStorage.setItem(META_STORAGE_KEY, JSON.stringify(this._metaState));
+      this.storage.setItem(META_STORAGE_KEY, JSON.stringify(this._metaState));
     } catch (error) {
       console.error("Failed to save meta state:", error);
     }

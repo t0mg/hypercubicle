@@ -1,25 +1,26 @@
 
 
+import { DataLoader } from "../types";
+
 let translations: any = {};
 
-async function loadTranslations(lang: string): Promise<void> {
+async function loadTranslations(lang: string, dataLoader: DataLoader): Promise<void> {
   try {
-    const response = await fetch(`${import.meta.env.BASE_URL}locales/${lang}.json`);
-    if (!response.ok) {
-      throw new Error(`Could not load ${lang}.json`);
-    }
-    translations = await response.json();
+    translations = await dataLoader.loadJson(`locales/${lang}.json`);
   } catch (error) {
     console.warn(`Failed to load ${lang} translations:`, error);
     // Fallback to English if the desired language fails to load
     if (lang !== 'en') {
-      await loadTranslations('en');
+      await loadTranslations('en', dataLoader);
     }
   }
 }
 
 function getLanguage(): string {
-  return navigator.language.split('-')[0];
+  if (typeof navigator !== 'undefined' && navigator.language) {
+    return navigator.language.split('-')[0];
+  }
+  return 'en';
 }
 
 export function t(key: string, replacements: Record<string, string | number> = {}): string {
@@ -40,7 +41,7 @@ export function t(key: string, replacements: Record<string, string | number> = {
 
 
 
-export async function initLocalization(): Promise<void> {
+export async function initLocalization(dataLoader: DataLoader): Promise<void> {
   const lang = getLanguage();
-  await loadTranslations(lang);
+  await loadTranslations(lang, dataLoader);
 }

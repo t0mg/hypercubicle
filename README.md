@@ -30,15 +30,15 @@ This project is a single-page web application built with **TypeScript** and **na
 This directory contains all the reusable Web Components that make up the UI. Each component is defined in its own file and registered as a custom element.
 
 -   `AdventurerStatus.ts`: Displays the adventurer's current stats, including HP, interest, power, and inventory.
--   `DebugEncounterPanel.ts`: A development tool that allows for manually setting encounter parameters like base damage and difficulty factor to test game balance.
--   `DebugLog.ts`: A panel that shows a running log of game events and the adventurer's decision-making process, along with their personality traits.
 -   `FeedbackPanel.ts`: A simple component to display messages and feedback from the adventurer.
 -   `RunEndedScreen.ts`: A modal screen that appears when a run ends.
 -   `GameStats.ts`: Displays high-level game information like current BP, run number, and room number.
 -   `LoadingIndicator.ts`: A spinner used during asynchronous operations, like when the AI is "thinking".
--   `LootCard.ts`: Renders a single piece of loot, showing its stats and rarity.
--   `LootChoicePanel.ts`: The main interface for the player to select which loot items to offer to the adventurer.
+-   `Card.ts`: Renders a single card (item or room).
+-   `ChoicePanel.ts`: The main interface for the player to select which items or rooms to offer to the adventurer.
 -   `Workshop.ts`: The screen shown between runs where the player can spend BP to unlock new items.
+-   `MenuScreen.ts`: The main menu screen.
+-   `LogPanel.ts`: A panel that shows a running log of game events.
 
 ## Testing
 
@@ -48,6 +48,24 @@ To run the tests, use the following command:
 
 ```bash
 npm test
+```
+
+## Simulation Tool
+
+This project includes a command-line simulation tool to help with game balancing and tuning. The tool runs the game in a headless mode for a specified number of runs with a given seed and will eventually output metrics about the simulation.
+
+To run the simulation, use the following command:
+
+```bash
+npm run simulate <seed> <runs>
+```
+
+-   `<seed>` (optional): A number to seed the random number generator for reproducible runs. If not provided, a random seed will be used.
+-   `<runs>` (optional): The number of runs to simulate. Defaults to 10.
+
+Example:
+```bash
+npm run simulate 123 100
 ```
 
 ## Running the Project
