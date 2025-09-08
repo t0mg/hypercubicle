@@ -181,7 +181,7 @@ export class GameEngine {
       logger: logger,
       run: 1,
       room: 1,
-      runEnded: { isOver: false, reason: '' },
+      runEnded: { isOver: false, reason: '', success: false },
       newlyUnlocked: [],
       shopReturnPhase: null,
     };
@@ -224,7 +224,7 @@ export class GameEngine {
       room: 1,
       run: nextRun,
       feedback: t('game_engine.adventurer_returns'),
-      runEnded: { isOver: false, reason: '' },
+      runEnded: { isOver: false, reason: '', success: false },
     };
     this._emit('state-change', this.gameState);
   }
@@ -412,17 +412,17 @@ export class GameEngine {
   public forceEndRun = () => {
     if (!this.gameState) return;
     this.gameState.adventurer.interest -= 30;
-    this._endRun(t('game_engine.no_more_rooms'));
+    this._endRun(t('game_engine.no_more_rooms'), true);
   }
 
-  private _endRun(reason: string) {
+  private _endRun(reason: string, success: boolean = false) {
     if (!this.gameState) return;
     const newlyUnlocked = this.metaManager.checkForUnlocks(this.gameState.run);
     this.gameState.logger.error(`GAME OVER: ${reason}`);
     this.gameState = {
       ...this.gameState,
       phase: 'RUN_OVER',
-      runEnded: { isOver: true, reason: reason },
+      runEnded: { isOver: true, reason: reason, success },
       newlyUnlocked: newlyUnlocked,
     };
     this._emit('state-change', this.gameState);
@@ -528,20 +528,17 @@ export class GameEngine {
     }
   }
 
-  public handleEndOfRun(decision: 'continue' | 'retire'): Promise<void> {
-    return new Promise(resolve => {
-        if (!this.gameState) return resolve();
-        this.gameState.logger.info(`Adventurer decided to ${decision}.`);
+  public handleEndOfRun(decision: 'continue' | 'retire') {
+    if (!this.gameState) return;
+    this.gameState.logger.info(`Adventurer decided to ${decision}.`);
 
-        if (decision === 'retire') {
-        this.showMenu();
-        return resolve();
-        }
+    if (decision === 'retire') {
+      this.showMenu();
+      return;
+    }
 
-        // Player chose to continue, so we enter the workshop (or start a new run if not unlocked)
-        this.enterWorkshop();
-        resolve();
-    });
+    // Player chose to continue, so we enter the workshop (or start a new run if not unlocked)
+    this.enterWorkshop();
   }
 
   public showMenu = () => {

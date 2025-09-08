@@ -67,55 +67,50 @@ class Simulation {
 
     this.metaManager.metaState.unlockedFeatures.push(UnlockableFeature.WORKSHOP);
 
-    this.engine.startNewGame(initialUnlocked);
-    while (metrics.getRuns() < runs) {
+    for (let i = 0; i < runs; i++) {
+        this.engine.startNewGame(initialUnlocked);
         if (this.engine.gameState) {
             this.engine.gameState.logger.on(metrics.handleLogEntry);
         }
 
-        while (!this.engine.gameState?.runEnded.isOver) {
-            if (!this.engine.gameState) {
-            break;
-            }
-
-            switch (this.engine.gameState.phase) {
-            case 'DESIGNER_CHOOSING_ROOM':
-                const roomChoices = getDesignerRoomChoice(this.engine.gameState);
-                if (roomChoices.length === 0) {
-                this.engine.forceEndRun();
-                } else {
-                this.engine.runEncounter(roomChoices);
+        let runCount = 0;
+        while(true) {
+            runCount++;
+            while (!this.engine.gameState?.runEnded.isOver) {
+                if (!this.engine.gameState) {
+                break;
                 }
-                break;
-            case 'DESIGNER_CHOOSING_LOOT':
-                const lootChoices = getDesignerLootChoice(this.engine.gameState);
-                this.engine.presentOffer(lootChoices);
-                break;
-            }
-        }
 
-        metrics.incrementRuns();
-
-        // Handle end of run logic (shop, etc.)
-        if (this.engine.gameState) {
-            const reason = this.engine.gameState.runEnded.reason;
-            if (reason.includes('fell') || reason.includes('bored')) {
-                // Hard failure, start a new adventurer
-                this.engine.startNewGame(initialUnlocked);
-            } else {
-                // Soft failure, can continue
-                const decision = this.engine.getAdventurerEndRunDecision();
-                this.engine.handleEndOfRun(decision);
-                if (this.engine.gameState.phase === 'SHOP') {
-                    const choice = getDesignerShopChoice(this.engine.gameState);
-                    if (choice) {
-                        this.engine.purchaseItem(choice);
+                switch (this.engine.gameState.phase) {
+                case 'DESIGNER_CHOOSING_ROOM':
+                    const roomChoices = getDesignerRoomChoice(this.engine.gameState);
+                    if (roomChoices.length === 0) {
+                    this.engine.forceEndRun();
+                    } else {
+                    this.engine.runEncounter(roomChoices);
                     }
-                    this.engine.exitWorkshop();
-                } else {
-                    // Adventurer retired
-                    this.engine.startNewGame(initialUnlocked);
+                    break;
+                case 'DESIGNER_CHOOSING_LOOT':
+                    const lootChoices = getDesignerLootChoice(this.engine.gameState);
+                    this.engine.presentOffer(lootChoices);
+                    break;
                 }
+            }
+            metrics.incrementRuns();
+            if (!this.engine.gameState) break;
+
+            const decision = this.engine.getAdventurerEndRunDecision();
+            this.engine.handleEndOfRun(decision);
+
+            if (this.engine.gameState.phase === 'SHOP') {
+                const choice = getDesignerShopChoice(this.engine.gameState);
+                if (choice) {
+                    this.engine.purchaseItem(choice);
+                }
+                this.engine.exitWorkshop(); // This will start a new run
+            } else {
+                // Adventurer retired or died
+                break;
             }
         }
     }

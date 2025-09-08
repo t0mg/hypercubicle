@@ -93,6 +93,7 @@ export interface GameState {
     runEnded: {
         isOver: boolean;
         reason: string;
+        success: boolean;
     };
     newlyUnlocked: UnlockableFeature[];
     shopReturnPhase?: GamePhase | null;

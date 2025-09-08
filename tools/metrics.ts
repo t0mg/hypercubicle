@@ -39,10 +39,6 @@ export class Metrics {
       this.runs++;
   }
 
-  public getRuns(): number {
-      return this.runs;
-  }
-
   public report(): void {
     console.log("\n--- Simulation Report ---");
     console.log(`Total Runs: ${this.runs}`);
