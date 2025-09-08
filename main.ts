@@ -4,7 +4,7 @@ import { initLocalization, t } from './text';
 import { render } from './rendering';
 import { MetaManager } from './game/meta';
 import { LocalStorage } from './game/storage';
-import { FetchDataLoader } from './game/data-loader';
+import { DataLoaderFetch } from './game/data-loader-fetch.ts';
 
 // Import all web components to register them
 import './components/AdventurerStatus.ts';
@@ -26,7 +26,7 @@ if (!appElement) {
 
 const storage = new LocalStorage();
 const metaManager = new MetaManager(storage);
-const dataLoader = new FetchDataLoader();
+const dataLoader = new DataLoaderFetch();
 const engine = new GameEngine(metaManager, dataLoader);
 
 engine.on('state-change', (newState) => {
