@@ -57,15 +57,15 @@ This project includes a command-line simulation tool to help with game balancing
 To run the simulation, use the following command:
 
 ```bash
-npm run simulate <seed> <runs>
+npm run simulate <runs> <seed>
 ```
 
--   `<seed>` (optional): A number to seed the random number generator for reproducible runs. If not provided, a random seed will be used.
 -   `<runs>` (optional): The number of runs to simulate. Defaults to 10.
+-   `<seed>` (optional): A number to seed the random number generator for reproducible runs. If not provided, a random seed will be used.
 
 Example:
 ```bash
-npm run simulate 123 100
+npm run simulate 100 123
 ```
 
 ## Running the Project

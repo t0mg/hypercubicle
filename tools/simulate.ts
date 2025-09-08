@@ -95,6 +95,7 @@ class Simulation {
 
       // Handle end of run logic (shop, etc.)
       if (this.engine.gameState) {
+          metrics.processRun(this.engine.gameState.room);
           const decision = this.engine.getAdventurerEndRunDecision(true);
           this.engine.handleEndOfRun(decision);
           if (this.engine.gameState.phase === 'SHOP') {
@@ -105,15 +106,14 @@ class Simulation {
               this.engine.exitWorkshop();
           }
       }
-      metrics.incrementRuns();
     }
     metrics.setMeta(this.metaManager.metaState);
     metrics.report();
   }
 }
 
-const seed = process.argv[2] ? parseInt(process.argv[2], 10) : Date.now();
-const runs = process.argv[3] ? parseInt(process.argv[3], 10) : 10;
+const runs = process.argv[2] ? parseInt(process.argv[2], 10) : 10;
+const seed = process.argv[3] ? parseInt(process.argv[3], 10) : Date.now();
 
 const simulation = new Simulation(seed);
 simulation.run(runs);
