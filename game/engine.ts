@@ -55,7 +55,7 @@ export class GameEngine {
   }
 
   private _simulateEncounter(adventurer: Adventurer, room: number, encounter: Encounter): { newAdventurer: Adventurer; feedback: string[]; totalDamageTaken: number; } {
-    this.gameState?.logger.info(`--- Encounter: Room ${room} ---`, 'INFO', { event: 'battle_started', encounter: encounter });
+    this.gameState?.logger.log(`--- Encounter: Room ${room} ---`, 'INFO', { event: 'battle_started', encounter: encounter });
     const feedback: string[] = [];
     let totalDamageTaken = 0;
     let enemiesDefeated = 0;
@@ -456,7 +456,7 @@ export class GameEngine {
       run: nextRun,
       room: 0,
       shopItems: shuffleArray(allShopItems).slice(0, 4),
-      runEnded: { isOver: false, reason: '' },
+      runEnded: { isOver: false, reason: '', success: false},
       feedback: t('game_engine.welcome_to_workshop')
     };
     this._emit('state-change', this.gameState);
@@ -576,7 +576,7 @@ export class GameEngine {
       logger: logger,
       run: 0,
       room: 0,
-      runEnded: { isOver: false, reason: '' },
+      runEnded: { isOver: false, reason: '', success: false },
       newlyUnlocked: [],
       shopReturnPhase: null,
     };

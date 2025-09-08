@@ -5,7 +5,7 @@ import { LootChoice, RoomChoice, GameState } from '../types';
 import { initLocalization } from '../text';
 import { MemoryStorage } from '../game/storage';
 import { UnlockableFeature } from '../game/unlocks';
-import { FileSystemDataLoader } from '../game/data-loader';
+import { DataLoaderFileSystem } from './data-loader-file-system';
 import { Metrics } from './metrics';
 
 const getDesignerRoomChoice = (state: GameState): RoomChoice[] => {
@@ -43,13 +43,13 @@ export const getDesignerShopChoice = (state: GameState): string | null => {
 class Simulation {
   private engine: GameEngine;
   private metaManager: MetaManager;
-  private dataLoader: FileSystemDataLoader;
+  private dataLoader: DataLoaderFileSystem;
 
   constructor(seed: number) {
     rng.setSeed(seed);
     const storage = new MemoryStorage();
     this.metaManager = new MetaManager(storage);
-    this.dataLoader = new FileSystemDataLoader();
+    this.dataLoader = new DataLoaderFileSystem();
     this.engine = new GameEngine(this.metaManager, this.dataLoader);
   }
 
