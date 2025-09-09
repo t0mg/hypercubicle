@@ -1,34 +1,16 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { MetaManager, MetaState } from './meta';
 import { UnlockableFeature, UNLOCKS } from './unlocks';
+import { MemoryStorage } from './storage';
 
-// Mock localStorage
-const localStorageMock = (() => {
-  let store: Record<string, string> = {};
-  return {
-    getItem: (key: string) => store[key] || null,
-    setItem: (key: string, value: string) => {
-      store[key] = value.toString();
-    },
-    clear: () => {
-      store = {};
-    },
-    removeItem: (key: string) => {
-      delete store[key];
-    }
-  };
-})();
-
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock
-});
 
 describe('MetaManager', () => {
   let metaManager: MetaManager;
+  let storage: MemoryStorage;
 
   beforeEach(() => {
-    localStorageMock.clear();
-    metaManager = new MetaManager();
+    storage = new MemoryStorage();
+    metaManager = new MetaManager(storage);
   });
 
   it('should initialize with a default state', () => {
@@ -45,9 +27,9 @@ describe('MetaManager', () => {
       unlockedFeatures: [UnlockableFeature.WORKSHOP],
       adventurers: 1,
     };
-    localStorageMock.setItem('rogue-steward-meta', JSON.stringify(state));
+    storage.setItem('rogue-steward-meta', JSON.stringify(state));
 
-    const newMetaManager = new MetaManager();
+    const newMetaManager = new MetaManager(storage);
     expect(newMetaManager.metaState).toEqual(state);
   });
 

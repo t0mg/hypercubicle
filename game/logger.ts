@@ -4,14 +4,26 @@ export interface LogEntry {
     message: string;
     level: LogLevel;
     timestamp: number;
+    data?: any;
 }
+
+type LogListener = (entry: LogEntry) => void;
 
 export class Logger {
     public entries: LogEntry[] = [];
+    private listeners: LogListener[] = [];
 
-    public log(message: string, level: LogLevel = 'INFO'): void {
-        this.entries.push({ message, level, timestamp: Date.now() });
-        console.log(`[${level}] ${message}`);
+    public on(listener: LogListener): void {
+        this.listeners.push(listener);
+    }
+
+    public log(message: string, level: LogLevel = 'INFO', data?: any): void {
+        const entry = { message, level, timestamp: Date.now(), data };
+        this.entries.push(entry);
+        if (level !== 'DEBUG') {
+            console.log(`[${level}] ${message}`);
+        }
+        this.listeners.forEach(listener => listener(entry));
     }
 
     public debug(message: string): void {

@@ -1,15 +1,16 @@
 import { LootChoice, RoomChoice, GameState } from "../types";
+import { rng } from './random';
 
-export const generateId = (baseId: string) => `${baseId}_${Math.random().toString(36).substr(2, 9)}`;
+export const generateId = (baseId: string) => `${baseId}_${rng.nextFloat().toString(36).substr(2, 9)}`;
 
 export const getRandomInt = (min: number, max: number) => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  return rng.nextInt(min, max);
 }
 
 export const shuffleArray = <T>(array: T[]): T[] => {
   const newArray = [...array];
   for (let i = newArray.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = rng.nextInt(0, i);
     [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
   }
   return newArray;
@@ -50,7 +51,7 @@ const generateDeck = <T extends { id: string; cost: number | null, rarity: strin
     const candidates = unlockedItems.filter(item => item.rarity === rarity);
     while (rarityCounts[rarity] < distributionTarget[rarity]) {
       if (candidates.length === 0) break; // No more candidates of this rarity
-      const randomIndex = Math.floor(Math.random() * candidates.length);
+      const randomIndex = rng.nextInt(0, candidates.length - 1);
       const item = candidates[randomIndex];
       deck.push(itemFactory(item));
       rarityCounts[rarity] += 1;
@@ -60,7 +61,7 @@ const generateDeck = <T extends { id: string; cost: number | null, rarity: strin
   // Backfill with common items if deck is not full
   const commonCandidates = unlockedItems.filter(item => item.rarity === 'Common');
   while (deck.length < deckSize && commonCandidates.length > 0) {
-    const randomIndex = Math.floor(Math.random() * commonCandidates.length);
+    const randomIndex = rng.nextInt(0, commonCandidates.length - 1);
     const item = commonCandidates[randomIndex];
     deck.push(itemFactory(item));
   }

@@ -3,6 +3,8 @@ import { GameEngine } from './game/engine';
 import { initLocalization, t } from './text';
 import { render } from './rendering';
 import { MetaManager } from './game/meta';
+import { LocalStorage } from './game/storage';
+import { DataLoaderFetch } from './game/data-loader-fetch';
 
 // Import all web components to register them
 import './components/AdventurerStatus.ts';
@@ -22,8 +24,10 @@ if (!appElement) {
   throw new Error("Could not find app element to mount to");
 }
 
-const metaManager = new MetaManager();
-const engine = new GameEngine(metaManager);
+const storage = new LocalStorage();
+const metaManager = new MetaManager(storage);
+const dataLoader = new DataLoaderFetch();
+const engine = new GameEngine(metaManager, dataLoader);
 
 engine.on('state-change', (newState) => {
   if (engine.isLoading) {
@@ -45,7 +49,7 @@ engine.on('state-change', (newState) => {
 });
 
 async function main() {
-  await initLocalization();
+  await initLocalization(dataLoader);
   await engine.init();
 
   // Initial render for loading state

@@ -1,4 +1,4 @@
-import type { GamePhase, GameState, LootChoice, AdventurerTraits, Encounter, RoomChoice } from '../types';
+import type { GamePhase, GameState, LootChoice, AdventurerTraits, Encounter, RoomChoice, DataLoader } from '../types';
 import { Adventurer } from './adventurer';
 import { Logger } from './logger';
 import { MetaManager } from './meta';
@@ -15,6 +15,7 @@ import { generateLootDeck, generateRoomDeck, shuffleArray } from './utils';
 import { UnlockableFeature } from './unlocks';
 import { t } from '../text';
 import { getAdventurerChoice } from './ai';
+import { rng } from './random';
 
 type GameEngineListener = (state: GameState | null) => void;
 
@@ -27,9 +28,11 @@ export class GameEngine {
   private _allRooms: RoomChoice[] = [];
   private _listeners: { [key:string]: GameEngineListener[] } = {};
   public metaManager: MetaManager;
+  private dataLoader: DataLoader;
 
-  constructor(metaManager: MetaManager) {
+  constructor(metaManager: MetaManager, dataLoader: DataLoader) {
     this.metaManager = metaManager;
+    this.dataLoader = dataLoader;
   }
 
   public init = async () => {
@@ -52,7 +55,7 @@ export class GameEngine {
   }
 
   private _simulateEncounter(adventurer: Adventurer, room: number, encounter: Encounter): { newAdventurer: Adventurer; feedback: string[]; totalDamageTaken: number; } {
-    this.gameState?.logger.info(`--- Encounter: Room ${room} ---`);
+    this.gameState?.logger.log(`--- Encounter: Room ${room} ---`, 'INFO', { event: 'battle_started', encounter: encounter });
     const feedback: string[] = [];
     let totalDamageTaken = 0;
     let enemiesDefeated = 0;
@@ -77,7 +80,7 @@ export class GameEngine {
         while (currentEnemyHp > 0 && adventurer.hp > 0) {
             // Adventurer's turn
             const adventurerHitChance = Math.min(0.95, 0.75 + (adventurer.traits.expertise / 500) + (adventurer.traits.offense / 1000));
-            if (Math.random() < adventurerHitChance) {
+            if (rng.nextFloat() < adventurerHitChance) {
                 const damageDealt = adventurer.power;
                 currentEnemyHp -= damageDealt;
                 this.gameState?.logger.debug(`Adventurer hits for ${damageDealt} damage.`);
@@ -93,7 +96,7 @@ export class GameEngine {
 
             // Enemy's turn
             const enemyHitChance = Math.max(0.4, 0.75 - (adventurer.traits.expertise / 500) - ((100 - adventurer.traits.offense) / 1000));
-            if (Math.random() < enemyHitChance) {
+            if (rng.nextFloat() < enemyHitChance) {
                 const armor = (adventurer.inventory.armor?.stats.maxHp || 0) / 10;
                 const damageTaken = Math.max(1, encounter.enemyPower - armor);
                 totalDamageTaken += damageTaken;
@@ -137,23 +140,23 @@ export class GameEngine {
   }
 
   // --- PUBLIC ACTIONS ---
-  public startNewGame = () => {
+  public startNewGame = (initialUnlocked?: { items?: string[], rooms?: string[] }) => {
     this.metaManager.incrementAdventurers();
     const newTraits: AdventurerTraits = {
-      offense: Math.floor(Math.random() * 81) + 10,
-      risk: Math.floor(Math.random() * 81) + 10,
+      offense: rng.nextInt(10, 90),
+      risk: rng.nextInt(10, 90),
       expertise: 0,
     };
     const logger = new Logger();
     const newAdventurer = new Adventurer(newTraits, logger);
 
-    const unlockedDeck = this._allItems.filter(item => item.cost === null).map(item => item.id);
+    const unlockedDeck = initialUnlocked?.items || this._allItems.filter(item => item.cost === null).map(item => item.id);
     const runDeck = generateLootDeck(unlockedDeck, this._allItems, DECK_SIZE);
     const handSize = this._getHandSize();
     const hand = runDeck.slice(0, handSize);
     const availableDeck = runDeck.slice(handSize);
 
-    const unlockedRoomDeck = this._allRooms.filter(item => item.cost === null).map(item => item.id);
+    const unlockedRoomDeck = initialUnlocked?.rooms || this._allRooms.filter(item => item.cost === null).map(item => item.id);
     const roomRunDeck = generateRoomDeck(unlockedRoomDeck, this._allRooms, DECK_SIZE);
     const roomHand = roomRunDeck.slice(0, handSize);
     const availableRoomDeck = roomRunDeck.slice(handSize);
@@ -178,8 +181,9 @@ export class GameEngine {
       logger: logger,
       run: 1,
       room: 1,
-      runEnded: { isOver: false, reason: '' },
+      runEnded: { isOver: false, reason: '', success: false, decision: null },
       newlyUnlocked: [],
+      shopReturnPhase: null,
     };
     this.gameState.logger.debug(`Unlocked features: ${[...this.metaManager.acls].join(', ')}`);
     this._emit('state-change', this.gameState);
@@ -220,7 +224,7 @@ export class GameEngine {
       room: 1,
       run: nextRun,
       feedback: t('game_engine.adventurer_returns'),
-      runEnded: { isOver: false, reason: '' },
+      runEnded: { isOver: false, reason: '', success: false, decision: null },
     };
     this._emit('state-change', this.gameState);
   }
@@ -229,13 +233,7 @@ export class GameEngine {
     if (!this.gameState || this.gameState.phase !== 'DESIGNER_CHOOSING_LOOT' || !this.gameState.hand) return;
 
     const offeredLoot = this.gameState.hand.filter(item => offeredIds.includes(item.instanceId));
-    this.gameState.phase = 'AWAITING_ADVENTURER_CHOICE';
     this.gameState.offeredLoot = offeredLoot;
-    this._emit('state-change', this.gameState);
-
-    setTimeout(() => {
-      if (!this.gameState || this.gameState.phase !== 'AWAITING_ADVENTURER_CHOICE' || !this.gameState.hand) return;
-      if (this.gameState.runEnded.isOver) return;
 
       let choice: LootChoice | null = null;
       let feedback: string;
@@ -248,6 +246,10 @@ export class GameEngine {
           const result = getAdventurerChoice(adventurer, this.gameState.offeredLoot, this.gameState.logger);
           choice = result.choice;
           feedback = result.reason;
+      }
+
+      if (choice) {
+          this.gameState.logger.log('Item chosen by adventurer', 'INFO', { event: 'item_chosen', item: choice });
       }
 
       // --- Hand and Deck Update Logic ---
@@ -300,27 +302,20 @@ export class GameEngine {
         designer: { balancePoints: newBalancePoints },
       };
       this._emit('state-change', this.gameState);
-    }, ADVENTURER_ACTION_DELAY_MS);
   }
 
   public runEncounter = (roomChoices: RoomChoice[]) => {
     if (!this.gameState || this.gameState.phase !== 'DESIGNER_CHOOSING_ROOM') return;
 
-    this.gameState.phase = 'AWAITING_ENCOUNTER_FEEDBACK';
     this.gameState.offeredRooms = roomChoices;
-    this._emit('state-change', this.gameState);
-
-    setTimeout(() => {
-      if (!this.gameState || this.gameState.phase !== 'AWAITING_ENCOUNTER_FEEDBACK' || !this.gameState.offeredRooms) return;
-      if (this.gameState.runEnded.isOver) return;
 
       let adventurer = this.gameState.adventurer;
       let feedback: string[] = [];
 
-      const chosenRoomIndex = Math.floor(Math.random() * this.gameState.offeredRooms.length);
+      const chosenRoomIndex = rng.nextInt(0, this.gameState.offeredRooms.length - 1);
       const chosenRoom = this.gameState.offeredRooms[chosenRoomIndex];
 
-      this.gameState.logger.info(`--- Encountering Room: ${chosenRoom.name} ---`);
+      this.gameState.logger.log(`--- Encountering Room: ${chosenRoom.name} ---`, 'INFO', { event: 'room_encountered', room: chosenRoom });
 
       switch (chosenRoom.type) {
         case 'enemy':
@@ -353,6 +348,7 @@ export class GameEngine {
       }
 
       adventurer.updateBuffs();
+      this.gameState.designer.balancePoints += this._getBpPerRoom();
 
       // --- Room Hand and Deck Update Logic ---
       let currentRoomHand = this.gameState.roomHand;
@@ -411,23 +407,25 @@ export class GameEngine {
       }
 
       this._emit('state-change', this.gameState);
-    }, ADVENTURER_ACTION_DELAY_MS);
   }
 
   public forceEndRun = () => {
     if (!this.gameState) return;
     this.gameState.adventurer.interest -= 30;
-    this._endRun(t('game_engine.no_more_rooms'));
+    this._endRun(t('game_engine.no_more_rooms'), true);
   }
 
-  private _endRun(reason: string) {
+  private _endRun(reason: string, success: boolean = false) {
     if (!this.gameState) return;
     const newlyUnlocked = this.metaManager.checkForUnlocks(this.gameState.run);
     this.gameState.logger.error(`GAME OVER: ${reason}`);
+
+    const decision = this._getAdventurerEndRunDecision();
+
     this.gameState = {
       ...this.gameState,
       phase: 'RUN_OVER',
-      runEnded: { isOver: true, reason: reason },
+      runEnded: { isOver: true, reason: reason, success, decision },
       newlyUnlocked: newlyUnlocked,
     };
     this._emit('state-change', this.gameState);
@@ -435,8 +433,10 @@ export class GameEngine {
 
   public enterWorkshop = () => {
     if (!this.gameState) return;
+    this.gameState.logger.info(`Entering workshop.`);
 
     if (!this.metaManager.acls.has(UnlockableFeature.WORKSHOP)) {
+        this.gameState.logger.info(`Workshop not unlocked, starting new run.`);
         this.startNewRun();
         return;
     }
@@ -455,13 +455,19 @@ export class GameEngine {
     this.gameState = {
       ...this.gameState,
       phase: 'SHOP',
+      shopReturnPhase: this.gameState.phase,
       run: nextRun,
       room: 0,
       shopItems: shuffleArray(allShopItems).slice(0, 4),
-      runEnded: { isOver: false, reason: '' },
+      runEnded: { isOver: false, reason: '', success: false, decision: null },
       feedback: t('game_engine.welcome_to_workshop')
     };
     this._emit('state-change', this.gameState);
+  }
+
+  public exitWorkshop = () => {
+      if (!this.gameState) return;
+      this.startNewRun();
   }
 
   public purchaseItem = (itemId: string) => {
@@ -493,7 +499,7 @@ export class GameEngine {
     const newBalancePoints = this.gameState.designer.balancePoints - itemToBuy.cost;
     const newShopItems = this.gameState.shopItems.filter(i => i.id !== itemId);
 
-    this.gameState.logger.info(`Purchased ${itemToBuy.name}.`);
+    this.gameState.logger.log(`Purchased ${itemToBuy.name}.`, 'INFO', { event: 'item_purchased', item: itemToBuy });
     this.gameState = {
       ...this.gameState,
       designer: { balancePoints: newBalancePoints },
@@ -506,19 +512,23 @@ export class GameEngine {
     this._emit('state-change', this.gameState);
   }
 
-  public getAdventurerEndRunDecision(): 'continue' | 'retire' {
+  private _getAdventurerEndRunDecision(): 'continue' | 'retire' {
     if (!this.gameState) {
       return 'retire';
     }
     const { interest } = this.gameState.adventurer;
     const interestDifference = interest - INTEREST_THRESHOLD;
 
-    // Ponder factor to add randomness. Range: -10 to 10
-    const ponder = (Math.random() - 0.5) * 20;
+    // Ponder factor to add randomness. Range: 0 to 20
+    const ponder = rng.nextFloat() * 20;
+
+    if (interest <= INTEREST_THRESHOLD) {
+      return 'retire';
+    }
 
     const finalScore = interestDifference + ponder;
 
-    if (finalScore > 0) {
+    if (finalScore > 10) {
       return 'continue';
     } else {
       return 'retire';
@@ -527,6 +537,7 @@ export class GameEngine {
 
   public handleEndOfRun(decision: 'continue' | 'retire') {
     if (!this.gameState) return;
+    this.gameState.logger.info(`Adventurer decided to ${decision}.`);
 
     if (decision === 'retire') {
       this.showMenu();
@@ -548,8 +559,8 @@ export class GameEngine {
 
   private _getInitialGameState(): GameState {
     const newTraits: AdventurerTraits = {
-      offense: Math.floor(Math.random() * 81) + 10,
-      risk: Math.floor(Math.random() * 81) + 10,
+      offense: rng.nextInt(10, 90),
+      risk: rng.nextInt(10, 90),
       expertise: 0,
     };
     const logger = new Logger();
@@ -572,8 +583,9 @@ export class GameEngine {
       logger: logger,
       run: 0,
       room: 0,
-      runEnded: { isOver: false, reason: '' },
+      runEnded: { isOver: false, reason: '', success: false, decision: null },
       newlyUnlocked: [],
+      shopReturnPhase: null,
     };
   }
 
@@ -605,17 +617,8 @@ export class GameEngine {
   // --- INITIALIZATION ---
   private async _loadGameData() {
     try {
-      const itemResponse = await fetch(`${import.meta.env.BASE_URL}game/items.json`);
-      if (!itemResponse.ok) {
-        throw new Error(t('global.error_loading_items', { statusText: itemResponse.statusText }));
-      }
-      this._allItems = await itemResponse.json();
-
-      const roomResponse = await fetch(`${import.meta.env.BASE_URL}game/rooms.json`);
-      if (!roomResponse.ok) {
-        throw new Error(t('global.error_loading_rooms', { statusText: roomResponse.statusText }));
-      }
-      this._allRooms = await roomResponse.json();
+      this._allItems = await this.dataLoader.loadJson('game/items.json');
+      this._allRooms = await this.dataLoader.loadJson('game/rooms.json');
     } catch (e: any) {
       this.error = e.message || t('global.unknown_error');
       this._emit('error', null);

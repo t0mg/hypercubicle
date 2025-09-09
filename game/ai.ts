@@ -1,5 +1,5 @@
 import type { Adventurer } from './adventurer';
-import type { LootChoice } from '../types';
+import type { LootChoice, RoomChoice, GameState } from '../types';
 import { t } from '../text';
 import { CHOICE_SCORE_THRESHOLD, MAX_POTIONS } from './constants';
 import { Logger } from './logger';

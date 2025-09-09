@@ -93,6 +93,18 @@ export interface GameState {
     runEnded: {
         isOver: boolean;
         reason: string;
+        success: boolean;
+        decision: 'continue' | 'retire' | null;
     };
     newlyUnlocked: UnlockableFeature[];
+    shopReturnPhase?: GamePhase | null;
+}
+
+export interface Storage {
+    getItem(key: string): string | null;
+    setItem(key: string, value: string): void;
+}
+
+export interface DataLoader {
+    loadJson(path: string): Promise<any>;
 }
