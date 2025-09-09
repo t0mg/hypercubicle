@@ -59,7 +59,9 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
         }
         runEndedEl.newlyUnlocked = state.newlyUnlocked;
         runEndedEl.engine = engine;
-        runEndedEl.setDecision(engine.getAdventurerEndRunDecision());
+        if (state.runEnded.decision) {
+            runEndedEl.setDecision(state.runEnded.decision);
+        }
         mainContainer.appendChild(runEndedEl);
     }
 

@@ -181,7 +181,7 @@ export class GameEngine {
       logger: logger,
       run: 1,
       room: 1,
-      runEnded: { isOver: false, reason: '', success: false },
+      runEnded: { isOver: false, reason: '', success: false, decision: null },
       newlyUnlocked: [],
       shopReturnPhase: null,
     };
@@ -224,7 +224,7 @@ export class GameEngine {
       room: 1,
       run: nextRun,
       feedback: t('game_engine.adventurer_returns'),
-      runEnded: { isOver: false, reason: '', success: false },
+      runEnded: { isOver: false, reason: '', success: false, decision: null },
     };
     this._emit('state-change', this.gameState);
   }
@@ -419,10 +419,13 @@ export class GameEngine {
     if (!this.gameState) return;
     const newlyUnlocked = this.metaManager.checkForUnlocks(this.gameState.run);
     this.gameState.logger.error(`GAME OVER: ${reason}`);
+
+    const decision = this._getAdventurerEndRunDecision();
+
     this.gameState = {
       ...this.gameState,
       phase: 'RUN_OVER',
-      runEnded: { isOver: true, reason: reason, success },
+      runEnded: { isOver: true, reason: reason, success, decision },
       newlyUnlocked: newlyUnlocked,
     };
     this._emit('state-change', this.gameState);
@@ -456,7 +459,7 @@ export class GameEngine {
       run: nextRun,
       room: 0,
       shopItems: shuffleArray(allShopItems).slice(0, 4),
-      runEnded: { isOver: false, reason: '', success: false},
+      runEnded: { isOver: false, reason: '', success: false, decision: null },
       feedback: t('game_engine.welcome_to_workshop')
     };
     this._emit('state-change', this.gameState);
@@ -509,7 +512,7 @@ export class GameEngine {
     this._emit('state-change', this.gameState);
   }
 
-  public getAdventurerEndRunDecision(): 'continue' | 'retire' {
+  private _getAdventurerEndRunDecision(): 'continue' | 'retire' {
     if (!this.gameState) {
       return 'retire';
     }
@@ -519,9 +522,13 @@ export class GameEngine {
     // Ponder factor to add randomness. Range: 0 to 20
     const ponder = rng.nextFloat() * 20;
 
+    if (interest <= INTEREST_THRESHOLD) {
+      return 'retire';
+    }
+
     const finalScore = interestDifference + ponder;
 
-    if (finalScore > 0) {
+    if (finalScore > 10) {
       return 'continue';
     } else {
       return 'retire';
@@ -576,7 +583,7 @@ export class GameEngine {
       logger: logger,
       run: 0,
       room: 0,
-      runEnded: { isOver: false, reason: '', success: false },
+      runEnded: { isOver: false, reason: '', success: false, decision: null },
       newlyUnlocked: [],
       shopReturnPhase: null,
     };

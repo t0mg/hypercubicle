@@ -94,6 +94,7 @@ export interface GameState {
         isOver: boolean;
         reason: string;
         success: boolean;
+        decision: 'continue' | 'retire' | null;
     };
     newlyUnlocked: UnlockableFeature[];
     shopReturnPhase?: GamePhase | null;

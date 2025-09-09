@@ -99,7 +99,11 @@ class Simulation {
             metrics.incrementRuns();
             if (!this.engine.gameState) break;
 
-            const decision = this.engine.getAdventurerEndRunDecision();
+            const decision = this.engine.gameState.runEnded.decision;
+            if (!decision) {
+                // Should not happen
+                break;
+            }
             this.engine.handleEndOfRun(decision);
 
             if (this.engine.gameState.phase === 'SHOP') {
