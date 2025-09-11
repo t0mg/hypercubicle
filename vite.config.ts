@@ -7,5 +7,10 @@ export default defineConfig(({ mode }) => {
     test: {
       environment: 'jsdom',
     },
+    server: {
+      watch: {
+        usePolling: true,
+      },
+    },
   };
 });
