@@ -46,7 +46,7 @@ export class MenuScreen extends HTMLElement {
     }
 
     this.innerHTML = `
-            <div class="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4 text-center">
+            <div class="relative min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4 text-center">
                 <h1 class="text-8xl text-red-500 font-title mb-2">${t('game_title')}</h1>
                 <p class="text-2xl text-gray-300 mb-8">${t('game_subtitle')}</p>
                 ${metaInfo}
@@ -59,6 +59,9 @@ export class MenuScreen extends HTMLElement {
                     <button id="new-game-button" class="bg-gray-700 hover:bg-gray-600 text-white  py-3 px-6 pixel-corners text-xl min-w-[250px] transition-colors">
                         ${t('menu.new_game')}
                     </button>
+                </div>
+                <div class="absolute bottom-2 right-2 text-xs text-gray-500">
+                    v${__APP_VERSION__} (build ${__BUILD_NUMBER__})
                 </div>
             </div>
         `;

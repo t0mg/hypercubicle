@@ -321,7 +321,7 @@ export class GameEngine {
         case 'enemy':
         case 'boss':
           const encounter: Encounter = {
-            enemyCount: chosenRoom.units || 1,
+            enemyCount: chosenRoom.units ?? 1,
             enemyPower: chosenRoom.stats.attack || 5,
             enemyHp: chosenRoom.stats.hp || 10,
           };

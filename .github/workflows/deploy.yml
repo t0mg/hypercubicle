@@ -29,6 +29,8 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
