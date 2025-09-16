@@ -32,6 +32,7 @@ const mockRooms: RoomChoice[] = [
     { id: 'room_2', instanceId: 'r2', name: 'Test Boss Room', type: 'boss', rarity: 'Rare', cost: 100, stats: { attack: 10, hp: 50 } },
     { id: 'room_3', instanceId: 'r3', name: 'Healing Fountain', type: 'healing', rarity: 'Uncommon', cost: null, stats: { hp: 20 } },
     { id: 'room_4', instanceId: 'r4', name: 'Trap Room', type: 'trap', rarity: 'Common', cost: null, stats: { attack: 15 } },
+    { id: 'room_5', instanceId: 'r5', name: 'Harmless Room', type: 'enemy', rarity: 'Common', cost: null, units: 0, stats: { attack: 0, hp: 10 } },
 ];
 
 describe('GameEngine', () => {
@@ -170,16 +171,19 @@ describe('GameEngine', () => {
         expect(engine.gameState!.adventurer.maxHp).toBe(80);
         expect(engine.gameState!.adventurer.hp).toBe(64);
 
+        const harmlessRoom = mockRooms.find(r => r.name === 'Harmless Room')!;
+
         // --- Run Encounter 1 (buff duration ticks down) ---
         // phase is now DESIGNER_CHOOSING_ROOM
-        engine.runEncounter([{...mockRooms[0], instanceId: 'r1_1'}]);
+        engine.runEncounter([{ ...harmlessRoom, instanceId: 'r5_1' }]);
         await vi.runAllTimersAsync();
         expect(engine.gameState!.adventurer.activeBuffs[0].stats.duration).toBe(1);
+        expect(engine.gameState!.adventurer.hp).toBe(64); // Health should be unchanged
 
         // --- Run Encounter 2 (buff expires) ---
         // phase is now DESIGNER_CHOOSING_LOOT, but we need to be in DESIGNER_CHOOSING_ROOM
         engine.gameState!.phase = 'DESIGNER_CHOOSING_ROOM';
-        engine.runEncounter([{...mockRooms[0], instanceId: 'r1_2'}]);
+        engine.runEncounter([{ ...harmlessRoom, instanceId: 'r5_2' }]);
         await vi.runAllTimersAsync();
 
         // Buff should have expired
