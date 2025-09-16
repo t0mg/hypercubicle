@@ -1,7 +1,7 @@
 [
     {
         "id": "room_1",
-        "name": "Goblin Den",
+        "name": "Goblin Field",
         "type": "enemy",
         "rarity": "Common",
         "cost": null,
@@ -13,10 +13,23 @@
         }
     },
     {
+      "id": "room_1b",
+      "name": "Goblin Den",
+      "type": "enemy",
+      "rarity": "Common",
+      "cost": null,
+      "stats": {
+          "attack": 4,
+          "hp": 8,
+          "minUnits": 5,
+          "maxUnits": 10
+      }
+    },
+    {
         "id": "room_2",
         "name": "Spike Trap",
         "type": "trap",
-        "rarity": "Uncommon",
+        "rarity": "Common",
         "cost": null,
         "stats": {
             "attack": 15
@@ -43,6 +56,19 @@
             "hp": 25,
             "minUnits": 2,
             "maxUnits": 4
+        }
+    },
+      {
+        "id": "room_troll",
+        "name": "Troll Bridge",
+        "type": "enemy",
+        "rarity": "Uncommon",
+        "cost": null,
+        "stats": {
+            "attack": 15,
+            "hp": 35,
+            "minUnits": 1,
+            "maxUnits": 2
         }
     },
     {

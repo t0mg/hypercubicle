@@ -11,6 +11,7 @@ export class Metrics {
   private purchases: Map<string, number> = new Map();
   private battles: number = 0;
   private monsters: number = 0;
+  private totalBP: number = 0;
 
   public handleLogEntry = (entry: LogEntry): void => {
     if (entry.data?.event === 'room_encountered') {
@@ -26,6 +27,8 @@ export class Metrics {
     } else if (entry.data?.event === 'item_purchased') {
         const itemName = entry.data.item.name;
         this.purchases.set(itemName, (this.purchases.get(itemName) || 0) + 1);
+    } else if (entry.data?.event === 'run_end') {
+        this.totalBP += entry.data.bp;
     }
   };
 
@@ -39,18 +42,24 @@ export class Metrics {
       this.runs++;
   }
 
+  private _printSortedMap(title: string, map: Map<string, number>): void {
+    console.log(title);
+    const sortedEntries = [...map.entries()].sort((a, b) => b[1] - a[1]);
+    sortedEntries.forEach(([name, count]) => console.log(`${name}: ${count}`));
+  }
+
   public report(): void {
     console.log("\n--- Simulation Report ---");
     console.log(`Total Runs: ${this.runs}`);
     console.log(`Total Adventurers: ${this.adventurers}`);
     console.log(`Highest Run Reached: ${this.highestRun}`);
     console.log(`Unlocked Features: ${this.unlockedFeatures.size}`);
-    console.log(`\n--- Room Usage ---`);
-    this.roomUsage.forEach((count, name) => console.log(`${name}: ${count}`));
-    console.log(`\n--- Item Usage ---`);
-    this.itemUsage.forEach((count, name) => console.log(`${name}: ${count}`));
-    console.log(`\n--- Shop Purchases ---`);
-    this.purchases.forEach((count, name) => console.log(`${name}: ${count}`));
+    console.log(`Average BP per Adventurer: ${this.adventurers > 0 ? (this.totalBP / this.adventurers).toFixed(2) : 'N/A'}`);
+
+    this._printSortedMap("\n--- Room Usage ---", this.roomUsage);
+    this._printSortedMap("\n--- Item Usage ---", this.itemUsage);
+    this._printSortedMap("\n--- Shop Purchases ---", this.purchases);
+
     console.log(`\n--- Combat Stats ---`);
     console.log(`Total Battles: ${this.battles}`);
     console.log(`Total Monsters Defeated: ${this.monsters}`);

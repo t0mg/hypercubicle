@@ -418,6 +418,7 @@ export class GameEngine {
   private _endRun(reason: string, success: boolean = false) {
     if (!this.gameState) return;
     const newlyUnlocked = this.metaManager.checkForUnlocks(this.gameState.run);
+    this.gameState.logger.log(`Run ended with ${this.gameState.designer.balancePoints} BP.`, 'INFO', { event: 'run_end', bp: this.gameState.designer.balancePoints });
     this.gameState.logger.error(`GAME OVER: ${reason}`);
 
     const decision = this._getAdventurerEndRunDecision();

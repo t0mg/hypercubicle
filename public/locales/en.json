@@ -79,8 +79,8 @@
   "game_engine": {
     "adventurer_declines_offer": "Disappointed by your offers, they decide to take nothing.",
     "adventurer_accepts_offer": "They pick the {itemName}.",
-    "adventurer_drinks_potion": "Sensing danger, they use a {potionName}.",
-    "adventurer_uses_buff": "Seeing a tough fight ahead, they use a {buffName}.",
+    "adventurer_drinks_potion": "Sensing danger, they use the {potionName}.",
+    "adventurer_uses_buff": "Seeing a tough fight ahead, they use the {buffName}.",
     "easy_fight": "An easy fight. Too easy...",
     "worthy_challenge": "A worthy, but simple challenge.",
     "great_battle": "A great battle! They feel alive!",
