@@ -126,5 +126,13 @@
         "rarity": "Rare",
         "stats": { "power": 20, "maxHp": -50, "duration": 5 },
         "cost": 200
+    },
+    {
+        "id": "buff_heal",
+        "name": "Brittle Healing Amulet",
+        "type": "Buff",
+        "rarity": "Uncommon",
+        "stats": { "power": 0, "maxHp": 30, "hp": 30, "duration": 3 },
+        "cost": 100
     }
 ]
