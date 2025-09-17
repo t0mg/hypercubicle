@@ -49,22 +49,6 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
     mainContainer.className = 'min-h-screen p-4 md:p-6 lg:p-8 flex flex-col items-center';
     appElement.appendChild(mainContainer);
 
-    if (state.runEnded.isOver) {
-        const runEndedEl = document.createElement('run-ended-screen') as RunEndedScreen;
-        runEndedEl.setAttribute('final-bp', state.designer.balancePoints.toString());
-        runEndedEl.setAttribute('reason', state.runEnded.reason);
-        runEndedEl.setAttribute('run', state.run.toString());
-        if (engine.isWorkshopUnlocked()) {
-            runEndedEl.setAttribute('workshop-unlocked', '');
-        }
-        runEndedEl.newlyUnlocked = state.newlyUnlocked;
-        runEndedEl.engine = engine;
-        if (state.runEnded.decision) {
-            runEndedEl.setDecision(state.runEnded.decision);
-        }
-        mainContainer.appendChild(runEndedEl);
-    }
-
     const gridContainer = document.createElement('div');
     gridContainer.className = 'w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6';
     mainContainer.appendChild(gridContainer);
@@ -107,6 +91,22 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
     gridContainer.appendChild(gamePhasePanel);
 
     switch (state.phase) {
+        case 'RUN_OVER': {
+            const runEndedEl = document.createElement('run-ended-screen') as RunEndedScreen;
+            runEndedEl.setAttribute('final-bp', state.designer.balancePoints.toString());
+            runEndedEl.setAttribute('reason', state.runEnded.reason);
+            runEndedEl.setAttribute('run', state.run.toString());
+            if (engine.isWorkshopUnlocked()) {
+                runEndedEl.setAttribute('workshop-unlocked', '');
+            }
+            runEndedEl.newlyUnlocked = state.newlyUnlocked;
+            runEndedEl.engine = engine;
+            if (state.runEnded.decision) {
+                runEndedEl.setDecision(state.runEnded.decision);
+            }
+            gamePhasePanel.appendChild(runEndedEl);
+            break;
+        }
         case 'DESIGNER_CHOOSING_LOOT':
             gamePhasePanel.appendChild(renderChoicePanel(state, engine, 'item'));
             break;
@@ -118,9 +118,7 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
             gamePhasePanel.appendChild(renderLoadingIndicator(state));
             break;
         default:
-            const unhandledPhaseDiv = document.createElement('div');
-            unhandledPhaseDiv.textContent = t('main.unhandled_game_phase', { phase: state.phase });
-            gamePhasePanel.appendChild(unhandledPhaseDiv);
+            // Don't render anything for unhandled phases, let it be blank.
             break;
     }
 };
