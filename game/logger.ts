@@ -12,6 +12,7 @@ type LogListener = (entry: LogEntry) => void;
 export class Logger {
     public entries: LogEntry[] = [];
     private listeners: LogListener[] = [];
+    public muted: boolean = false;
 
     public on(listener: LogListener): void {
         this.listeners.push(listener);
@@ -19,9 +20,11 @@ export class Logger {
 
     public log(message: string, level: LogLevel = 'INFO', data?: any): void {
         const entry = { message, level, timestamp: Date.now(), data };
-        this.entries.push(entry);
-        if (level !== 'DEBUG') {
-            console.log(`[${level}] ${message}`);
+        if (!this.muted) {
+            this.entries.push(entry);
+            if (level !== 'DEBUG') {
+                console.log(`[${level}] ${message}`);
+            }
         }
         this.listeners.forEach(listener => listener(entry));
     }

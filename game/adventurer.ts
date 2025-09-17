@@ -1,38 +1,71 @@
-import { AdventurerTraits, AdventurerInventory, LootChoice } from '../types';
+import { AdventurerTraits, AdventurerInventory, LootChoice, FlowState } from '../types';
 import { Logger } from './logger';
-import { rng } from './random';
+import { getFlowState } from './utils';
 
 const BASE_ADVENTURER_STATS = { hp: 100, maxHp: 100, power: 5 };
+const CHALLENGE_HISTORY_MAX_LENGTH = 15;
 
 export class Adventurer {
     public hp: number;
     public maxHp: number;
     public power: number;
-    public interest: number;
     public traits: AdventurerTraits;
     public inventory: AdventurerInventory;
     public activeBuffs: LootChoice[];
     public logger: Logger;
+    public skill: number;
+    public challengeHistory: number[];
+    public flowState: FlowState;
+    public roomHistory: string[];
+    public lootHistory: string[];
 
     constructor(traits: AdventurerTraits, logger: Logger) {
         this.hp = BASE_ADVENTURER_STATS.hp;
         this.maxHp = BASE_ADVENTURER_STATS.maxHp;
         this.power = BASE_ADVENTURER_STATS.power;
-        this.interest = 33 + rng.nextInt(0, 49);
+        this.skill = traits.skill;
+        this.challengeHistory = [50]; // Starting challenge
+        this.flowState = FlowState.Boredom; // Initial state
         this.traits = traits;
         this.inventory = { weapon: null, armor: null, potions: [] };
         this.activeBuffs = [];
         this.logger = logger;
+        this.roomHistory = [];
+        this.lootHistory = [];
     }
 
-    public modifyInterest(base: number, randomDeviation: number): void {
-        const expertiseDampening = Math.max(0.1, (1000 - this.traits.expertise) / 1000);
-        const randomValue = (rng.nextFloat() * 2 - 1) * randomDeviation;
-        const totalModification = (base + randomValue) * expertiseDampening;
+    public get challenge(): number {
+        if (this.challengeHistory.length === 0) {
+            return 50; // Default challenge
+        }
+        const sum = this.challengeHistory.reduce((a, b) => a + b, 0);
+        return sum / this.challengeHistory.length;
+    }
 
-        const oldInterest = this.interest;
-        this.interest = Math.max(0, Math.min(100, this.interest + totalModification));
-        this.logger.debug(`Interest changed from ${oldInterest.toFixed(1)} to ${this.interest.toFixed(1)} (Base: ${base}, Rand: ${randomValue.toFixed(1)}, Total: ${totalModification.toFixed(1)})`);
+    public modifySkill(amount: number): void {
+        const oldSkill = this.skill;
+        this.skill = Math.max(0, Math.min(100, this.skill + amount));
+        if (oldSkill.toFixed(1) !== this.skill.toFixed(1)) {
+            this.logger.debug(`Skill changed from ${oldSkill.toFixed(1)} to ${this.skill.toFixed(1)}`);
+        }
+    }
+
+    public modifyChallenge(value: number): void {
+        const oldChallenge = this.challenge;
+        const newChallengeValue = Math.max(0, Math.min(100, value));
+        this.challengeHistory.push(newChallengeValue);
+        if (this.challengeHistory.length > CHALLENGE_HISTORY_MAX_LENGTH) {
+            this.challengeHistory.shift(); // Keep the array size fixed
+        }
+        this.logger.debug(`Challenge changed from ${oldChallenge.toFixed(1)} to ${this.challenge.toFixed(1)} (new value: ${newChallengeValue})`);
+    }
+
+    public updateFlowState(): void {
+        const oldFlowState = this.flowState;
+        this.flowState = getFlowState(this.skill, this.challenge);
+        if (oldFlowState !== this.flowState) {
+            this.logger.info(`Adventurer's state of mind changed from ${FlowState[oldFlowState]} to ${FlowState[this.flowState]}`);
+        }
     }
 
     public equip(item: LootChoice): void {
