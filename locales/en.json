@@ -27,7 +27,7 @@
   },
   "adventurer_status": {
     "title": "Adventurer #{count}",
-    "interest": "Interest",
+    "flow_state": "Mindstate",
     "inventory": "Inventory",
     "weapon": "Weapon",
     "armor": "Armor",
