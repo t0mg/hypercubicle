@@ -1,3 +1,4 @@
+import { FlowState } from '../types';
 import type { Adventurer } from '../types';
 import { t } from '../text';
 import { MetaState } from '../game/meta';
@@ -64,11 +65,8 @@ export class AdventurerStatus extends HTMLElement {
                         </div>
                         <div>
                             <div class="flex justify-between items-center">
-                                <div class="flex items-center">${InterestIcon()} <span>${t('adventurer_status.interest')}</span></div>
-                                <span class="font-label text-sm">${Math.round(this._adventurer.interest)}%</span>
-                            </div>
-                            <div class="w-full bg-gray-700 pixel-corners h-3">
-                                <div class="bg-brand-interest h-3 pixel-corners transition-all duration-500 ease-out" style="width: ${this._adventurer.interest}%"></div>
+                                <div class="flex items-center">${InterestIcon()} <span>${t('adventurer_status.flow_state')}</span></div>
+                                <span class="font-label text-sm">${FlowState[this._adventurer.flowState]}</span>
                             </div>
                         </div>
                     </div>

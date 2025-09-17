@@ -114,16 +114,14 @@ export class RunEndedScreen extends HTMLElement {
                 .animate-dots::after { content: '...'; animation: dots 1.5s infinite; }
             </style>
             <div id="unlock-container"></div>
-            <div class="absolute inset-0 bg-black/80 flex items-center justify-center z-40 backdrop-blur-md">
-                <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-secondary animate-fade-in w-full max-w-3/4">
-                    <h2 class="text-4xl font-title text-brand-secondary mb-2">${t('run_ended_screen.run_complete')}</h2>
-                    <p class="text-brand-text-muted mb-4">${reason}</p>
-                    <div id="decision-container" class="h-24">
-                        <p class="text-brand-text-muted text-lg animate-fade-in-up">${t('run_ended_screen.adventurer_considers_fate')}<span class="animate-dots"></span></p>
-                    </div>
-                    <div id="button-container" class="flex justify-center gap-4 mt-4">
-                        <!-- Buttons will be revealed here -->
-                    </div>
+            <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-secondary animate-fade-in w-full">
+                <h2 class="text-4xl font-title text-brand-secondary mb-2">${t('run_ended_screen.run_complete')}</h2>
+                <p class="text-brand-text-muted mb-4">${reason}</p>
+                <div id="decision-container" class="h-24">
+                    <p class="text-brand-text-muted text-lg animate-fade-in-up">${t('run_ended_screen.adventurer_considers_fate')}<span class="animate-dots"></span></p>
+                </div>
+                <div id="button-container" class="flex justify-center gap-4 mt-4">
+                    <!-- Buttons will be revealed here -->
                 </div>
             </div>
         `;
