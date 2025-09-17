@@ -1,7 +1,7 @@
 import { GameEngine } from '../game/engine';
 import { MetaManager } from '../game/meta';
 import { rng } from '../game/random';
-import { LootChoice, RoomChoice, GameState } from '../types';
+import { LootChoice, RoomChoice, GameState, FlowState } from '../types';
 import { initLocalization } from '../text';
 import { MemoryStorage } from '../game/storage';
 import { UnlockableFeature } from '../game/unlocks';
@@ -44,8 +44,10 @@ class Simulation {
   private engine: GameEngine;
   private metaManager: MetaManager;
   private dataLoader: DataLoaderFileSystem;
+  private isSilent: boolean;
 
-  constructor(seed: number) {
+  constructor(seed: number, isSilent: boolean) {
+    this.isSilent = isSilent;
     rng.setSeed(seed);
     const storage = new MemoryStorage();
     this.metaManager = new MetaManager(storage);
@@ -56,7 +58,9 @@ class Simulation {
   public async run(runs: number) {
     await initLocalization(this.dataLoader);
     await this.engine.init();
-    console.log('Simulation started.');
+    if (!this.isSilent) {
+      console.log('Simulation started.');
+    }
 
     const metrics = new Metrics();
 
@@ -71,6 +75,9 @@ class Simulation {
         this.engine.startNewGame(initialUnlocked);
         if (this.engine.gameState) {
             this.engine.gameState.logger.on(metrics.handleLogEntry);
+            if (this.isSilent) {
+                this.engine.gameState.logger.muted = true;
+            }
         }
 
         let runCount = 0;
@@ -99,6 +106,12 @@ class Simulation {
             metrics.incrementRuns();
             if (!this.engine.gameState) break;
 
+            // Record metrics before handling the end of the run
+            const { adventurer, runEnded } = this.engine.gameState;
+            const flowStateName = (FlowState as any)[adventurer.flowState];
+            const endReason = runEnded.reason.includes('fell') ? 'death' : 'dropout';
+            metrics.recordRunEnd(flowStateName, endReason);
+
             const decision = this.engine.gameState.runEnded.decision;
             if (!decision) {
                 // Should not happen
@@ -123,8 +136,11 @@ class Simulation {
   }
 }
 
-const seed = process.argv[2] ? parseInt(process.argv[2], 10) : Date.now();
-const runs = process.argv[3] ? parseInt(process.argv[3], 10) : 10;
+const args = process.argv.slice(2);
+const isSilent = args.includes('--silent');
+const runsArg = args.find(arg => !isNaN(parseInt(arg, 10)));
+const runs = runsArg ? parseInt(runsArg, 10) : 10;
+const seed = Date.now();
 
-const simulation = new Simulation(seed);
+const simulation = new Simulation(seed, isSilent);
 simulation.run(runs);

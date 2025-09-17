@@ -1,8 +1,19 @@
 
+export enum FlowState {
+    Arousal,
+    Flow,
+    Control,
+    Relaxation,
+    Boredom,
+    Apathy,
+    Worry,
+    Anxiety,
+}
+
 export interface AdventurerTraits {
     offense: number; // 0-100: Defensive -> Offensive
-    risk: number;    // 0-100: Conservative -> Optimistic
-    expertise: number; // 0-100: Increases with runs
+    resilience: number; // 0-100: Copes with adversity
+    skill: number; // 0-100: Increases with runs
 }
 
 export interface AdventurerInventory {
@@ -51,6 +62,8 @@ export interface RoomChoice {
     justDrafted?: boolean;
     draftedRoom?: number;
 }
+
+export type BattleAction = 'attack' | 'use_potion';
 
 export type GamePhase =
   | 'MENU'

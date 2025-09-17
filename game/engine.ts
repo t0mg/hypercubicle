@@ -1,4 +1,5 @@
 import type { GamePhase, GameState, LootChoice, AdventurerTraits, Encounter, RoomChoice, DataLoader } from '../types';
+import { FlowState } from '../types';
 import { Adventurer } from './adventurer';
 import { Logger } from './logger';
 import { MetaManager } from './meta';
@@ -14,7 +15,15 @@ import {
 import { generateLootDeck, generateRoomDeck, shuffleArray } from './utils';
 import { UnlockableFeature } from './unlocks';
 import { t } from '../text';
-import { getAdventurerChoice } from './ai';
+import {
+    getAdventurerLootChoice,
+    getAdventurerBattleChoice,
+    processLootChoice,
+    processRoomEntry,
+    processTrap,
+    processBattleTurn,
+    processBattleOutcome
+} from './ai';
 import { rng } from './random';
 
 type GameEngineListener = (state: GameState | null) => void;
@@ -64,28 +73,29 @@ export class GameEngine {
     for (let i = 0; i < encounter.enemyCount; i++) {
         this.gameState?.logger.info(`Adventurer encounters enemy ${i + 1}/${encounter.enemyCount}.`);
 
-        const healthPercentage = adventurer.hp / adventurer.maxHp;
-        const potionUseThreshold = 1 - (adventurer.traits.risk / 120);
-        if (healthPercentage < potionUseThreshold && adventurer.inventory.potions.length > 0) {
-            const potionToUse = adventurer.inventory.potions.shift();
-            if (potionToUse) {
-                const healedAmount = potionToUse.stats.hp || 0;
-                adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healedAmount);
-                feedback.push(t('game_engine.adventurer_drinks_potion', { potionName: potionToUse.name }));
-                this.gameState?.logger.info(`Adventurer used ${potionToUse.name} and recovered ${healedAmount} HP.`);
-            }
-        }
-
         let currentEnemyHp = encounter.enemyHp;
         while (currentEnemyHp > 0 && adventurer.hp > 0) {
+            const battleAction = getAdventurerBattleChoice(adventurer, encounter);
+            if (battleAction === 'use_potion') {
+                const potionToUse = adventurer.inventory.potions.shift();
+                if (potionToUse) {
+                    const healedAmount = potionToUse.stats.hp || 0;
+                    adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healedAmount);
+                    feedback.push(t('game_engine.adventurer_drinks_potion', { potionName: potionToUse.name }));
+                    this.gameState?.logger.info(`Adventurer used ${potionToUse.name} and recovered ${healedAmount} HP.`);
+                }
+            }
+
             // Adventurer's turn
-            const adventurerHitChance = Math.min(0.95, 0.75 + (adventurer.traits.expertise / 500) + (adventurer.traits.offense / 1000));
+            const adventurerHitChance = Math.min(0.95, 0.75 + (adventurer.traits.skill / 500) + (adventurer.traits.offense / 1000));
             if (rng.nextFloat() < adventurerHitChance) {
                 const damageDealt = adventurer.power;
                 currentEnemyHp -= damageDealt;
                 this.gameState?.logger.debug(`Adventurer hits for ${damageDealt} damage.`);
+                processBattleTurn(adventurer, 'hit');
             } else {
                 this.gameState?.logger.debug(`Adventurer misses.`);
+                processBattleTurn(adventurer, 'miss');
             }
 
             if (currentEnemyHp <= 0) {
@@ -95,13 +105,14 @@ export class GameEngine {
             }
 
             // Enemy's turn
-            const enemyHitChance = Math.max(0.4, 0.75 - (adventurer.traits.expertise / 500) - ((100 - adventurer.traits.offense) / 1000));
+            const enemyHitChance = Math.max(0.4, 0.75 - (adventurer.traits.skill / 500) - ((100 - adventurer.traits.offense) / 1000));
             if (rng.nextFloat() < enemyHitChance) {
                 const armor = (adventurer.inventory.armor?.stats.maxHp || 0) / 10;
                 const damageTaken = Math.max(1, encounter.enemyPower - armor);
                 totalDamageTaken += damageTaken;
                 adventurer.hp -= damageTaken;
                 this.gameState?.logger.debug(`Enemy hits for ${damageTaken} damage.`);
+                processBattleTurn(adventurer, 'take_damage');
             } else {
                 this.gameState?.logger.debug(`Enemy misses.`);
             }
@@ -113,28 +124,12 @@ export class GameEngine {
         }
     }
 
-    let battleFeedback: string;
     const hpLost = initialHp - adventurer.hp;
     const hpLostRatio = hpLost / adventurer.maxHp;
     this.gameState?.logger.debug(`hpLost: ${hpLost}, hpLostRatio: ${hpLostRatio.toFixed(2)}`);
-    if (hpLostRatio > 0.7) {
-        battleFeedback = t('game_engine.too_close_for_comfort');
-        adventurer.modifyInterest(-15, 5);
-    } else if (hpLostRatio > 0.4) {
-        battleFeedback = t('game_engine.great_battle');
-        adventurer.modifyInterest(10, 5);
-    } else if (enemiesDefeated > 3 && adventurer.traits.offense > 60) {
-        battleFeedback = t('game_engine.easy_fight');
-        adventurer.modifyInterest(0, 5);
-    } else {
-        battleFeedback = t('game_engine.worthy_challenge');
-        adventurer.modifyInterest(-2, 3);
-    }
-    feedback.push(battleFeedback);
 
-    if (adventurer.hp > 0 && enemiesDefeated === encounter.enemyCount) {
-        adventurer.traits.expertise += 1;
-    }
+    const battleFeedback = processBattleOutcome(adventurer, hpLostRatio, enemiesDefeated, encounter.enemyCount);
+    feedback.push(battleFeedback);
 
     return { newAdventurer: adventurer, feedback, totalDamageTaken };
   }
@@ -144,8 +139,8 @@ export class GameEngine {
     this.metaManager.incrementAdventurers();
     const newTraits: AdventurerTraits = {
       offense: rng.nextInt(10, 90),
-      risk: rng.nextInt(10, 90),
-      expertise: 0,
+      resilience: rng.nextInt(10, 90),
+      skill: 0,
     };
     const logger = new Logger();
     const newAdventurer = new Adventurer(newTraits, logger);
@@ -208,7 +203,8 @@ export class GameEngine {
     const availableRoomDeck = roomRunDeck.slice(handSize);
 
     const resetAdventurer = new Adventurer(this.gameState.adventurer.traits, this.gameState.logger);
-    resetAdventurer.interest = this.gameState.adventurer.interest;
+    resetAdventurer.skill = this.gameState.adventurer.skill;
+    resetAdventurer.challengeHistory = [...this.gameState.adventurer.challengeHistory];
 
     this.gameState.logger.info(`--- Starting Run ${nextRun} ---`);
     this.gameState.logger.debug(`Unlocked features: ${[...this.metaManager.acls].join(', ')}`);
@@ -235,18 +231,10 @@ export class GameEngine {
     const offeredLoot = this.gameState.hand.filter(item => offeredIds.includes(item.instanceId));
     this.gameState.offeredLoot = offeredLoot;
 
-      let choice: LootChoice | null = null;
-      let feedback: string;
       const adventurer = this.gameState.adventurer;
+      const { choice, reason: feedback } = getAdventurerLootChoice(adventurer, this.gameState.offeredLoot, this.gameState.logger);
 
-      if (this.gameState.offeredLoot.length === 0) {
-          adventurer.modifyInterest(-15, 5);
-          feedback = t('game_engine.adventurer_declines_empty_offer');
-      } else {
-          const result = getAdventurerChoice(adventurer, this.gameState.offeredLoot, this.gameState.logger);
-          choice = result.choice;
-          feedback = result.reason;
-      }
+      processLootChoice(adventurer, choice, this.gameState.offeredLoot);
 
       if (choice) {
           this.gameState.logger.log('Item chosen by adventurer', 'INFO', { event: 'item_chosen', item: choice });
@@ -284,8 +272,6 @@ export class GameEngine {
         } else {
             adventurer.equip(choice);
         }
-      } else if (offeredIds.length > 0) {
-        adventurer.interest = Math.max(0, adventurer.interest - 10);
       }
 
       const newRoom = this.gameState.room + 1;
@@ -315,6 +301,9 @@ export class GameEngine {
       const chosenRoomIndex = rng.nextInt(0, this.gameState.offeredRooms.length - 1);
       const chosenRoom = this.gameState.offeredRooms[chosenRoomIndex];
 
+      adventurer.roomHistory.push(chosenRoom.id);
+      processRoomEntry(adventurer, chosenRoom);
+
       this.gameState.logger.log(`--- Encountering Room: ${chosenRoom.name} ---`, 'INFO', { event: 'room_encountered', room: chosenRoom });
 
       switch (chosenRoom.type) {
@@ -332,7 +321,6 @@ export class GameEngine {
 
         case 'healing':
           const healing = chosenRoom.stats.hp || 0;
-          adventurer.modifyInterest(adventurer.hp/adventurer.maxHp < 0.33 ? 20 : 10, 3);
           adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healing);
           feedback.push(t('game_engine.healing_room', { name: chosenRoom.name, healing: healing }));
           this.gameState.logger.info(t('game_engine.healing_room', { name: chosenRoom.name, healing: healing }));
@@ -341,7 +329,7 @@ export class GameEngine {
         case 'trap':
           const damage = chosenRoom.stats.attack || 0;
           adventurer.hp -= damage;
-          adventurer.modifyInterest(adventurer.hp < 0 ? -25 : - 15, 5);
+          processTrap(adventurer);
           feedback.push(t('game_engine.trap_room', { name: chosenRoom.name, damage: damage }));
           this.gameState.logger.info(t('game_engine.trap_room', { name: chosenRoom.name, damage: damage }));
           break;
@@ -377,7 +365,7 @@ export class GameEngine {
         this._endRun(t('game_engine.adventurer_fell', { room: this.gameState.room, run: this.gameState.run }));
         return;
       }
-      if (adventurer.interest <= INTEREST_THRESHOLD) {
+      if ([FlowState.Boredom, FlowState.Apathy].includes(adventurer.flowState)) {
         this._endRun(t('game_engine.adventurer_bored', { room: this.gameState.room, run: this.gameState.run }));
         return;
       }
@@ -411,7 +399,8 @@ export class GameEngine {
 
   public forceEndRun = () => {
     if (!this.gameState) return;
-    this.gameState.adventurer.interest -= 30;
+    this.gameState.adventurer.modifyChallenge(-20);
+    this.gameState.adventurer.updateFlowState();
     this._endRun(t('game_engine.no_more_rooms'), true);
   }
 
@@ -517,23 +506,28 @@ export class GameEngine {
     if (!this.gameState) {
       return 'retire';
     }
-    const { interest } = this.gameState.adventurer;
-    const interestDifference = interest - INTEREST_THRESHOLD;
+    const { flowState, traits } = this.gameState.adventurer;
 
-    // Ponder factor to add randomness. Range: 0 to 20
-    const ponder = rng.nextFloat() * 20;
-
-    if (interest <= INTEREST_THRESHOLD) {
-      return 'retire';
+    if (flowState === FlowState.Boredom || flowState === FlowState.Apathy) {
+        return 'retire';
     }
 
-    const finalScore = interestDifference + ponder;
+    if (flowState === FlowState.Worry || flowState === FlowState.Anxiety) {
+        const resilienceFactor = traits.resilience / 100; // 0-1
+        const offenseFactor = traits.offense / 100; // 0-1
+        const randomFactor = rng.nextFloat();
 
-    if (finalScore > 10) {
-      return 'continue';
-    } else {
-      return 'retire';
+        // Higher resilience and offense make it more likely to continue
+        const continueThreshold = 0.5 - (resilienceFactor * 0.25) - (offenseFactor * 0.25);
+
+        if (randomFactor > continueThreshold) {
+            return 'continue';
+        } else {
+            return 'retire';
+        }
     }
+
+    return 'continue';
   }
 
   public handleEndOfRun(decision: 'continue' | 'retire') {
@@ -561,8 +555,8 @@ export class GameEngine {
   private _getInitialGameState(): GameState {
     const newTraits: AdventurerTraits = {
       offense: rng.nextInt(10, 90),
-      risk: rng.nextInt(10, 90),
-      expertise: 0,
+      resilience: rng.nextInt(10, 90),
+      skill: 0,
     };
     const logger = new Logger();
     const newAdventurer = new Adventurer(newTraits, logger);

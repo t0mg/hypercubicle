@@ -88,7 +88,7 @@ describe('GameEngine', () => {
 
     it('should process a loot offer and update the game state', async () => {
         vi.useFakeTimers();
-        engine.gameState!.adventurer.traits = { offense: 90, risk: 10, expertise: 10 };
+        engine.gameState!.adventurer.traits = { offense: 90, resilience: 10, skill: 10 };
 
         engine.gameState!.phase = 'DESIGNER_CHOOSING_LOOT';
         const initialHand = [...engine.gameState!.hand];
@@ -107,7 +107,7 @@ describe('GameEngine', () => {
 
     it('should run an encounter and update adventurer state', async () => {
         vi.useFakeTimers();
-        engine.gameState!.adventurer.traits = { offense: 10, risk: 10, expertise: 10 }; // Defensive
+        engine.gameState!.adventurer.traits = { offense: 10, resilience: 10, skill: 10 }; // Defensive
         engine.gameState!.phase = 'DESIGNER_CHOOSING_ROOM';
         const initialHp = engine.gameState!.adventurer.hp;
 
@@ -129,7 +129,7 @@ describe('GameEngine', () => {
 
     it('should end the game if adventurer hp drops to 0', async () => {
         vi.useFakeTimers();
-        engine.gameState!.adventurer.traits = { offense: 90, risk: 90, expertise: 0 }; // Risky
+        engine.gameState!.adventurer.traits = { offense: 90, resilience: 10, skill: 0 }; // High offense, low resilience
         engine.gameState!.phase = 'DESIGNER_CHOOSING_ROOM';
         const room = { ...mockRooms.find(r => r.type === 'trap')!, stats: { attack: 1000 } };
 
@@ -151,8 +151,8 @@ describe('GameEngine', () => {
         };
         (engine as any)._allItems.push(buffItem);
 
-        // Mock getAdventurerChoice to always choose the buff
-        vi.spyOn(ai, 'getAdventurerChoice').mockReturnValue({ choice: buffItem, reason: 'test' });
+        // Mock getAdventurerLootChoice to always choose the buff
+        vi.spyOn(ai, 'getAdventurerLootChoice').mockReturnValue({ choice: buffItem, reason: 'test' });
 
         engine.gameState!.adventurer.hp = 80;
         const initialPower = engine.gameState!.adventurer.power;

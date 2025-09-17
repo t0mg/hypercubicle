@@ -12,6 +12,17 @@ export class Metrics {
   private battles: number = 0;
   private monsters: number = 0;
   private totalBP: number = 0;
+  private flowStateCounts: Map<string, number> = new Map();
+  private runEndCounts: { death: number, dropout: number } = { death: 0, dropout: 0 };
+
+  public recordRunEnd(flowState: string, reason: 'death' | 'dropout'): void {
+    this.flowStateCounts.set(flowState, (this.flowStateCounts.get(flowState) || 0) + 1);
+    if (reason === 'death') {
+      this.runEndCounts.death++;
+    } else {
+      this.runEndCounts.dropout++;
+    }
+  }
 
   public handleLogEntry = (entry: LogEntry): void => {
     if (entry.data?.event === 'room_encountered') {
@@ -63,6 +74,12 @@ export class Metrics {
     console.log(`\n--- Combat Stats ---`);
     console.log(`Total Battles: ${this.battles}`);
     console.log(`Total Monsters Defeated: ${this.monsters}`);
+
+    this._printSortedMap("\n--- Final Flow States ---", this.flowStateCounts);
+
+    console.log(`\n--- Run End Reasons ---`);
+    console.log(`Death: ${this.runEndCounts.death}`);
+    console.log(`Dropout: ${this.runEndCounts.dropout}`);
     console.log("-----------------------\n");
   }
 }
