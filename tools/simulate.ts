@@ -69,64 +69,59 @@ class Simulation {
 
     this.metaManager.metaState.unlockedFeatures.push(UnlockableFeature.WORKSHOP);
 
-    for (let i = 0; i < runs; i++) {
-        this.engine.startNewGame(initialUnlocked);
-        if (this.engine.gameState) {
-            this.engine.gameState.logger.on(metrics.handleLogEntry);
-            if (this.isSilent) {
-                this.engine.gameState.logger.muted = true;
+    this.engine.startNewGame(initialUnlocked);
+    if (this.engine.gameState) {
+        this.engine.gameState.logger.on(metrics.handleLogEntry);
+        if (this.isSilent) {
+            this.engine.gameState.logger.muted = true;
+        }
+    }
+
+    let totalRunCount = 0;
+    while(totalRunCount < runs) {
+        totalRunCount++;
+        while (!this.engine.gameState?.runEnded.isOver) {
+            if (!this.engine.gameState) {
+            break;
+            }
+
+            switch (this.engine.gameState.phase) {
+            case 'DESIGNER_CHOOSING_ROOM':
+                const roomChoices = getDesignerRoomChoice(this.engine.gameState);
+                if (roomChoices.length === 0) {
+                this.engine.forceEndRun();
+                } else {
+                this.engine.runEncounter(roomChoices);
+                }
+                break;
+            case 'DESIGNER_CHOOSING_LOOT':
+                const lootChoices = getDesignerLootChoice(this.engine.gameState);
+                this.engine.presentOffer(lootChoices);
+                break;
             }
         }
+        metrics.incrementRuns();
+        if (!this.engine.gameState) break;
 
-        let runCount = 0;
-        while(true) {
-            runCount++;
-            while (!this.engine.gameState?.runEnded.isOver) {
-                if (!this.engine.gameState) {
-                break;
-                }
+        const { adventurer, runEnded } = this.engine.gameState;
+        const flowStateName = (FlowState as any)[adventurer.flowState];
+        const endReason = runEnded.reason.includes('fell') ? 'death' : 'dropout';
+        metrics.recordRunEnd(flowStateName, endReason);
 
-                switch (this.engine.gameState.phase) {
-                case 'DESIGNER_CHOOSING_ROOM':
-                    const roomChoices = getDesignerRoomChoice(this.engine.gameState);
-                    if (roomChoices.length === 0) {
-                    this.engine.forceEndRun();
-                    } else {
-                    this.engine.runEncounter(roomChoices);
-                    }
-                    break;
-                case 'DESIGNER_CHOOSING_LOOT':
-                    const lootChoices = getDesignerLootChoice(this.engine.gameState);
-                    this.engine.presentOffer(lootChoices);
-                    break;
-                }
+        const decision = this.engine.gameState.runEnded.decision;
+        if (!decision) {
+            break;
+        }
+        this.engine.handleEndOfRun(decision);
+
+        if (this.engine.gameState.phase === 'SHOP') {
+            const choice = getDesignerShopChoice(this.engine.gameState);
+            if (choice) {
+                this.engine.purchaseItem(choice);
             }
-            metrics.incrementRuns();
-            if (!this.engine.gameState) break;
-
-            // Record metrics before handling the end of the run
-            const { adventurer, runEnded } = this.engine.gameState;
-            const flowStateName = (FlowState as any)[adventurer.flowState];
-            const endReason = runEnded.reason.includes('fell') ? 'death' : 'dropout';
-            metrics.recordRunEnd(flowStateName, endReason);
-
-            const decision = this.engine.gameState.runEnded.decision;
-            if (!decision) {
-                // Should not happen
-                break;
-            }
-            this.engine.handleEndOfRun(decision);
-
-            if (this.engine.gameState.phase === 'SHOP') {
-                const choice = getDesignerShopChoice(this.engine.gameState);
-                if (choice) {
-                    this.engine.purchaseItem(choice);
-                }
-                this.engine.exitWorkshop(); // This will start a new run
-            } else {
-                // Adventurer retired or died
-                break;
-            }
+            this.engine.exitWorkshop(); // This will start a new run
+        } else if (this.engine.gameState.phase === 'MENU') {
+            this.engine.startNewGame(initialUnlocked);
         }
     }
     metrics.setMeta(this.metaManager.metaState);
