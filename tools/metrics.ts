@@ -12,16 +12,21 @@ export class Metrics {
   private battles: number = 0;
   private monsters: number = 0;
   private totalBP: number = 0;
-  private flowStateCounts: Map<string, number> = new Map();
+  private finalFlowStateCounts: Map<string, number> = new Map();
+  private flowStateOccurrences: Map<string, number> = new Map();
   private runEndCounts: { death: number, dropout: number } = { death: 0, dropout: 0 };
 
   public recordRunEnd(flowState: string, reason: 'death' | 'dropout'): void {
-    this.flowStateCounts.set(flowState, (this.flowStateCounts.get(flowState) || 0) + 1);
+    this.finalFlowStateCounts.set(flowState, (this.finalFlowStateCounts.get(flowState) || 0) + 1);
     if (reason === 'death') {
       this.runEndCounts.death++;
     } else {
       this.runEndCounts.dropout++;
     }
+  }
+
+  public recordFlowState(flowState: string): void {
+    this.flowStateOccurrences.set(flowState, (this.flowStateOccurrences.get(flowState) || 0) + 1);
   }
 
   public handleLogEntry = (entry: LogEntry): void => {
@@ -40,6 +45,8 @@ export class Metrics {
         this.purchases.set(itemName, (this.purchases.get(itemName) || 0) + 1);
     } else if (entry.data?.event === 'run_end') {
         this.totalBP += entry.data.bp;
+    } else if (entry.data?.event === 'flow_state_changed') {
+        this.recordFlowState(entry.data.flowState);
     }
   };
 
@@ -75,7 +82,8 @@ export class Metrics {
     console.log(`Total Battles: ${this.battles}`);
     console.log(`Total Monsters Defeated: ${this.monsters}`);
 
-    this._printSortedMap("\n--- Final Flow States ---", this.flowStateCounts);
+    this._printSortedMap("\n--- Flow State Occurrences ---", this.flowStateOccurrences);
+    this._printSortedMap("\n--- Final Flow States ---", this.finalFlowStateCounts);
 
     console.log(`\n--- Run End Reasons ---`);
     console.log(`Death: ${this.runEndCounts.death}`);

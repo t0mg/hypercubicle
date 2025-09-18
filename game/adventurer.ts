@@ -3,7 +3,7 @@ import { Logger } from './logger';
 import { getFlowState } from './utils';
 
 const BASE_ADVENTURER_STATS = { hp: 100, maxHp: 100, power: 5 };
-const CHALLENGE_HISTORY_MAX_LENGTH = 15;
+const CHALLENGE_HISTORY_MAX_LENGTH = 4;
 
 export class Adventurer {
     public hp: number;
@@ -65,6 +65,10 @@ export class Adventurer {
         this.flowState = getFlowState(this.skill, this.challenge);
         if (oldFlowState !== this.flowState) {
             this.logger.info(`Adventurer's state of mind changed from ${FlowState[oldFlowState]} to ${FlowState[this.flowState]}`);
+            this.logger.log({
+                event: 'flow_state_changed',
+                flowState: FlowState[this.flowState],
+            });
         }
     }
 
