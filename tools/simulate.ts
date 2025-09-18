@@ -137,7 +137,7 @@ class Simulation {
 }
 
 const args = process.argv.slice(2);
-const isSilent = !args.includes('--verose');
+const isSilent = !args.includes('--verbose');
 const runsArg = args.find(arg => !isNaN(parseInt(arg, 10)));
 const runs = runsArg ? parseInt(runsArg, 10) : 10;
 const seedArg = args.find(arg => arg.startsWith('--seed='));
