@@ -66,7 +66,7 @@ export class AdventurerStatus extends HTMLElement {
                         <div>
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center">${InterestIcon()} <span>${t('adventurer_status.flow_state')}</span></div>
-                                <span class="font-label text-sm">${FlowState[this._adventurer.flowState]}</span>
+                                <span class="font-label text-sm ${this.getFlowStateColor(this._adventurer.flowState)}">${FlowState[this._adventurer.flowState]}</span>
                             </div>
                         </div>
                     </div>
@@ -121,6 +121,25 @@ export class AdventurerStatus extends HTMLElement {
                 </div>
             </div>
         `;
+    }
+
+    getFlowStateColor(flowState: FlowState): string {
+        switch (flowState) {
+            case FlowState.Boredom:
+            case FlowState.Apathy:
+                return 'text-red-500';
+            case FlowState.Anxiety:
+            case FlowState.Worry:
+                return 'text-orange-500';
+            case FlowState.Arousal:
+            case FlowState.Control:
+            case FlowState.Relaxation:
+                return 'text-white';
+            case FlowState.Flow:
+                return 'text-yellow-400 animate-pulse';
+            default:
+                return 'text-white';
+        }
     }
 }
 
