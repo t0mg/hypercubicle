@@ -45,7 +45,8 @@ export class AdventurerStatus extends HTMLElement {
         }
 
         const adventurerNumber = this._metaState?.adventurers || 1;
-        const healthPercentage = (this._adventurer.hp / this._adventurer.maxHp) * 100;
+        const displayHp = Math.max(0, this._adventurer.hp);
+        const healthPercentage = (displayHp / this._adventurer.maxHp) * 100;
 
         const showTraits = this._metaState?.unlockedFeatures.includes(UnlockableFeature.ADVENTURER_TRAITS);
 
@@ -57,7 +58,7 @@ export class AdventurerStatus extends HTMLElement {
                         <div>
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center">${HealthIcon()} <span>${t('global.health')}</span></div>
-                                <span class="font-label text-sm">${this._adventurer.hp} / ${this._adventurer.maxHp}</span>
+                                <span class="font-label text-sm">${displayHp} / ${this._adventurer.maxHp}</span>
                             </div>
                             <div class="w-full bg-gray-700 pixel-corners h-3">
                                 <div class="bg-green-500 h-3 pixel-corners transition-all duration-500 ease-out" style="width: ${healthPercentage}%"></div>

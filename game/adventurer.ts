@@ -18,6 +18,7 @@ export class Adventurer {
     public flowState: FlowState;
     public roomHistory: string[];
     public lootHistory: string[];
+    public boredomCounter: number;
 
     constructor(traits: AdventurerTraits, logger: Logger) {
         this.hp = BASE_ADVENTURER_STATS.hp;
@@ -48,6 +49,7 @@ export class Adventurer {
         if (oldSkill.toFixed(1) !== this.skill.toFixed(1)) {
             this.logger.debug(`Skill changed from ${oldSkill.toFixed(1)} to ${this.skill.toFixed(1)}`);
         }
+        this.updateFlowState();
     }
 
     public modifyChallenge(value: number): void {
@@ -58,6 +60,7 @@ export class Adventurer {
             this.challengeHistory.shift(); // Keep the array size fixed
         }
         this.logger.debug(`Challenge changed from ${oldChallenge.toFixed(1)} to ${this.challenge.toFixed(1)} (new value: ${newChallengeValue})`);
+        this.updateFlowState();
     }
 
     public updateFlowState(): void {
@@ -65,10 +68,7 @@ export class Adventurer {
         this.flowState = getFlowState(this.skill, this.challenge);
         if (oldFlowState !== this.flowState) {
             this.logger.info(`Adventurer's state of mind changed from ${FlowState[oldFlowState]} to ${FlowState[this.flowState]}`);
-            this.logger.log({
-                event: 'flow_state_changed',
-                flowState: FlowState[this.flowState],
-            });
+            this.logger.log(`Flow state changed to ${FlowState[this.flowState]}`, 'INFO', { event: 'flow_state_changed', flowState: FlowState[this.flowState] });
         }
     }
 

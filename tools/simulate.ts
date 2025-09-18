@@ -9,8 +9,8 @@ import { DataLoaderFileSystem } from './data-loader-file-system';
 import { Metrics } from './metrics';
 
 const getDesignerRoomChoice = (state: GameState): RoomChoice[] => {
-  // A simple AI: returns the first three rooms.
-  return state.roomHand.slice(0, 3);
+  // A simple AI: returns the last three rooms.
+  return state.roomHand.slice(-3);
 };
 
 const getDesignerLootChoice = (state: GameState): string[] => {
@@ -58,9 +58,7 @@ class Simulation {
   public async run(runs: number) {
     await initLocalization(this.dataLoader);
     await this.engine.init();
-    if (!this.isSilent) {
-      console.log('Simulation started.');
-    }
+    console.log('Simulation started.');
 
     const metrics = new Metrics();
 
@@ -132,15 +130,17 @@ class Simulation {
         }
     }
     metrics.setMeta(this.metaManager.metaState);
-    metrics.report();
+    if (!this.isSilent) {
+        metrics.report();
+    }
   }
 }
 
 const args = process.argv.slice(2);
-const isSilent = args.includes('--silent');
+const isSilent = !args.includes('--verose');
 const runsArg = args.find(arg => !isNaN(parseInt(arg, 10)));
 const runs = runsArg ? parseInt(runsArg, 10) : 10;
-const seed = Date.now();
-
+const seedArg = args.find(arg => arg.startsWith('--seed='));
+const seed = seedArg ? parseInt(seedArg.split('=')[1], 10) : Date.now();
 const simulation = new Simulation(seed, isSilent);
 simulation.run(runs);

@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "simulate": "vite-node tools/simulate.ts"
+    "simulate": "vite-node tools/simulate.ts --"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.12",
