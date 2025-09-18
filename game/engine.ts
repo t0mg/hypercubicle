@@ -365,7 +365,12 @@ export class GameEngine {
         this._endRun(t('game_engine.adventurer_fell', { room: this.gameState.room, run: this.gameState.run }));
         return;
       }
-      if ([FlowState.Boredom, FlowState.Apathy].includes(adventurer.flowState)) {
+      if (adventurer.flowState === FlowState.Apathy) {
+        this._endRun(t('game_engine.adventurer_apathy', { room: this.gameState.room, run: this.gameState.run }));
+        return;
+      }
+
+      if (adventurer.boredomCounter > 2) {
         this._endRun(t('game_engine.adventurer_bored', { room: this.gameState.room, run: this.gameState.run }));
         return;
       }

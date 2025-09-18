@@ -89,6 +89,7 @@
     "adventurer_returns": "The adventurer returns for another run!",
     "adventurer_fell": "The adventurer fell on room {room} of run {run}.",
     "adventurer_bored": "The adventurer grew bored on room {room} of run {run}, and quit.",
+    "adventurer_apathy": "The adventurer became apathetic on room {room} of run {run}, and quit.",
     "empty_hand": "The adventurer waits for your decision, unaware that you have nothing left to offer.",
     "welcome_to_workshop": "Welcome back. Spend your Balance Points wisely.",
     "healing_room": "The adventurer found the {name} and recovered {healing} health.",

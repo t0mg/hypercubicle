@@ -80,11 +80,16 @@ export class RunEndedScreen extends HTMLElement {
         if (this.state !== 'unlock-revealed') return;
 
         this.state = 'decision-revealing';
-        // const decisionContainer = this.querySelector('#decision-container');
-        // if (decisionContainer) {
-        //     // Clear the "adventurer considers" message
-        //     decisionContainer.innerHTML = '';
-        // }
+        const reason = this.getAttribute('reason') || '';
+        const isBored = reason.includes('bored');
+
+        if (isBored) {
+            // If the adventurer is bored, we know the decision is to retire.
+            // No need to wait for a "reveal".
+            this.state = 'decision-revealed';
+            this.updateDecision(false); // No animation needed
+            return;
+        }
 
         setTimeout(() => {
             this.state = 'decision-revealed';
