@@ -313,7 +313,7 @@
                     </button>
                 </div>
                 <div class="absolute bottom-2 right-2 text-xs text-gray-500">
-                    v0.0.0 (build 62)
+                    v0.0.0 (build 63)
                 </div>
             </div>
         `}}customElements.define("menu-screen",Ve);const C=document.getElementById("app");if(!C)throw new Error("Could not find app element to mount to");const Qe=new Re,Ke=new Ie(Qe),X=new Ee,I=new xe(Ke,X);I.on("state-change",s=>{if(I.isLoading){C.innerHTML=`<div>${r("global.loading_game_data")}</div>`;return}if(I.error){C.innerHTML=`
