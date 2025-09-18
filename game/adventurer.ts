@@ -16,7 +16,6 @@ export class Adventurer {
     public skill: number;
     public challengeHistory: number[];
     public flowState: FlowState;
-    public boredomCounter: number;
     public roomHistory: string[];
     public lootHistory: string[];
 
@@ -27,7 +26,6 @@ export class Adventurer {
         this.skill = traits.skill;
         this.challengeHistory = [50]; // Starting challenge
         this.flowState = FlowState.Boredom; // Initial state
-        this.boredomCounter = 0;
         this.traits = traits;
         this.inventory = { weapon: null, armor: null, potions: [] };
         this.activeBuffs = [];
@@ -65,17 +63,6 @@ export class Adventurer {
     public updateFlowState(): void {
         const oldFlowState = this.flowState;
         this.flowState = getFlowState(this.skill, this.challenge);
-
-        if (this.flowState === FlowState.Boredom) {
-            this.boredomCounter++;
-            this.logger.info(`Adventurer is still bored. Boredom counter is now ${this.boredomCounter}`);
-        } else {
-            if (this.boredomCounter > 0) {
-                this.logger.info(`Adventurer is no longer bored. Resetting boredom counter.`);
-            }
-            this.boredomCounter = 0;
-        }
-
         if (oldFlowState !== this.flowState) {
             this.logger.info(`Adventurer's state of mind changed from ${FlowState[oldFlowState]} to ${FlowState[this.flowState]}`);
             this.logger.log({

@@ -81,7 +81,7 @@ export class RunEndedScreen extends HTMLElement {
 
         this.state = 'decision-revealing';
         const reason = this.getAttribute('reason') || '';
-        const isBored = reason.includes('bored');
+        const isBored = reason.includes('bored') || reason.includes('apathetic');
 
         if (isBored) {
             // If the adventurer is bored, we know the decision is to retire.

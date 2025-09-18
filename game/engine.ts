@@ -365,13 +365,11 @@ export class GameEngine {
         this._endRun(t('game_engine.adventurer_fell', { room: this.gameState.room, run: this.gameState.run }));
         return;
       }
-      if (adventurer.flowState === FlowState.Apathy) {
-        this._endRun(t('game_engine.adventurer_apathy', { room: this.gameState.room, run: this.gameState.run }));
-        return;
-      }
-
       if (adventurer.boredomCounter > 2) {
-        this._endRun(t('game_engine.adventurer_bored', { room: this.gameState.room, run: this.gameState.run }));
+        const reason = adventurer.flowState === FlowState.Boredom
+          ? t('game_engine.adventurer_bored', { room: this.gameState.room, run: this.gameState.run })
+          : t('game_engine.adventurer_apathy', { room: this.gameState.room, run: this.gameState.run });
+        this._endRun(reason);
         return;
       }
 
