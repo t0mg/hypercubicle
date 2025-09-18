@@ -205,6 +205,7 @@ export class GameEngine {
     const resetAdventurer = new Adventurer(this.gameState.adventurer.traits, this.gameState.logger);
     resetAdventurer.skill = this.gameState.adventurer.skill;
     resetAdventurer.challengeHistory = [...this.gameState.adventurer.challengeHistory];
+    resetAdventurer.flowState = this.gameState.adventurer.flowState;
 
     this.gameState.logger.info(`--- Starting Run ${nextRun} ---`);
     this.gameState.logger.debug(`Unlocked features: ${[...this.metaManager.acls].join(', ')}`);

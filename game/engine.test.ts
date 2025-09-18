@@ -4,7 +4,7 @@ import { Adventurer } from './adventurer';
 import * as constants from './constants';
 import { initLocalization, t } from '../text';
 import { MetaManager } from './meta';
-import { RoomChoice, LootChoice } from '../types';
+import { RoomChoice, LootChoice, FlowState } from '../types';
 import { UnlockableFeature } from './unlocks';
 import * as ai from './ai';
 import { rng } from './random';
@@ -309,5 +309,19 @@ describe('GameEngine', () => {
             expect(engine.gameState?.shopItems).not.toContain(itemToBuy);
             expect(engine.gameState?.availableDeck[0].id).toBe(itemToBuy.id);
         });
+    });
+
+    it('should preserve flow state between runs', () => {
+        // Manually set the flow state to something other than Boredom
+        engine.gameState!.adventurer.flowState = FlowState.Control;
+
+        // End the current run
+        engine.handleEndOfRun('continue');
+
+        // Start a new run
+        engine.startNewRun();
+
+        // Check if the flow state is preserved
+        expect(engine.gameState!.adventurer.flowState).toBe(FlowState.Control);
     });
 });
