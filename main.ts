@@ -61,24 +61,8 @@ async function main() {
   // Initialize tooltip listeners
   document.body.addEventListener('mouseover', (e) => tooltipManager.handleMouseEnter(e));
   document.body.addEventListener('mouseout', () => tooltipManager.handleMouseLeave());
-
-  let touchTimer: number | null = null;
-  document.body.addEventListener('touchstart', (e) => {
-    touchTimer = window.setTimeout(() => {
-        tooltipManager.handleMouseEnter(e as unknown as MouseEvent);
-        touchTimer = null;
-    }, 700); // 700ms for long press
-  });
-
-  document.body.addEventListener('touchend', () => {
-    if (touchTimer) {
-        clearTimeout(touchTimer);
-        touchTimer = null;
-    } else {
-        // If timer is null, it means long press was activated, so we hide the tooltip
-        tooltipManager.handleMouseLeave();
-    }
-  });
+  document.body.addEventListener('touchstart', (e) => tooltipManager.handleTouchStart(e));
+  document.body.addEventListener('touchend', () => tooltipManager.handleTouchEnd());
 
 
   engine.showMenu();

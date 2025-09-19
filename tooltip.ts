@@ -22,6 +22,7 @@ class TooltipManager {
     }
 
     public handleMouseEnter(event: MouseEvent) {
+        if (this.isTouchDevice()) return;
         if (this.hideTimeout) {
             clearTimeout(this.hideTimeout);
             this.hideTimeout = null;
@@ -41,6 +42,7 @@ class TooltipManager {
     }
 
     public handleMouseLeave() {
+        if (this.isTouchDevice()) return;
         if (this.showTimeout) {
             clearTimeout(this.showTimeout);
             this.showTimeout = null;
@@ -48,6 +50,39 @@ class TooltipManager {
         this.hideTimeout = window.setTimeout(() => {
             this.tooltipBox.hide();
         }, 100); // 100ms delay before hiding
+    }
+
+    public handleTouchStart(event: TouchEvent) {
+        if (this.showTimeout) {
+            clearTimeout(this.showTimeout);
+            this.showTimeout = null;
+        }
+
+        const target = event.target as HTMLElement;
+        const tooltipKey = this.findTooltipKey(target);
+
+        if (tooltipKey) {
+            // Prevent the mouse event from firing
+            event.preventDefault();
+            this.showTimeout = window.setTimeout(() => {
+                const tooltipContent = this.getTooltipContent(tooltipKey);
+                if (tooltipContent) {
+                    this.tooltipBox.show(tooltipContent, 0, 0); // Position is handled by CSS for touch
+                }
+            }, 300); // 300ms delay before showing
+        }
+    }
+
+    public handleTouchEnd() {
+        if (this.showTimeout) {
+            clearTimeout(this.showTimeout);
+            this.showTimeout = null;
+        }
+        // No hide timeout on touch, the user can tap away or use a close button
+    }
+
+    private isTouchDevice(): boolean {
+        return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     }
 
     private findTooltipKey(element: HTMLElement | null): string | null {
