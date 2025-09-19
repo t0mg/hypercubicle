@@ -130,5 +130,19 @@
       "title": "Party Constraints",
       "description": "You can now apply constraints to the adventurer's party, adding a new layer of challenge."
     }
+  },
+  "tooltips": {
+    "adventurer_health": {
+      "title": "Adventurer's Health",
+      "body": "This is the adventurer's current health. If it reaches <b>zero</b>, the run ends."
+    },
+    "adventurer_power": {
+      "title": "Adventurer's Power",
+      "body": "This is the adventurer's power level. It affects how much damage they deal in combat.<ul><li>Higher power is better</li><li>Can be increased by items</li></ul>"
+    },
+    "adventurer_flow_state": {
+        "title": "Mindstate",
+        "body": "The adventurer's mental state. This is affected by the difficulty of encounters. <br/><br/>If they get too <b>bored</b> or too <b>anxious</b>, they might quit."
+    }
   }
 }

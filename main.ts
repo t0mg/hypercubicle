@@ -17,6 +17,9 @@ import './components/Card.ts';
 import './components/ChoicePanel.ts';
 import './components/Workshop.ts';
 import './components/MenuScreen.ts';
+import './components/TooltipBox.ts';
+
+import { tooltipManager } from './tooltip';
 
 const appElement = document.getElementById('app');
 
@@ -54,6 +57,29 @@ async function main() {
 
   // Initial render for loading state
   appElement.innerHTML = `<div>${t('global.initializing')}</div>`;
+
+  // Initialize tooltip listeners
+  document.body.addEventListener('mouseover', (e) => tooltipManager.handleMouseEnter(e));
+  document.body.addEventListener('mouseout', () => tooltipManager.handleMouseLeave());
+
+  let touchTimer: number | null = null;
+  document.body.addEventListener('touchstart', (e) => {
+    touchTimer = window.setTimeout(() => {
+        tooltipManager.handleMouseEnter(e as unknown as MouseEvent);
+        touchTimer = null;
+    }, 700); // 700ms for long press
+  });
+
+  document.body.addEventListener('touchend', () => {
+    if (touchTimer) {
+        clearTimeout(touchTimer);
+        touchTimer = null;
+    } else {
+        // If timer is null, it means long press was activated, so we hide the tooltip
+        tooltipManager.handleMouseLeave();
+    }
+  });
+
 
   engine.showMenu();
 }
