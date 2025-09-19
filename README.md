@@ -6,12 +6,12 @@ A reverse roguelike game where you act as a dungeon designer for an AI adventure
 
 ## How to Play
 
-Each turn, you will be presented with a selection of potential loot. You must choose up to three items to offer the adventurer. The AI adventurer, with its own hidden personality and goals, will then choose one of your offerings before proceeding to the next room of the dungeon.
+Each turn, you will be presented with a selection of potential loot. You must choose up to three items to offer the adventurer. The AI adventurer, with its own hidden traits and ever-changing flow state, will then choose one of your offerings before proceeding to the next room of the dungeon.
 
 - If the dungeon is too easy, the adventurer will grow bored.
-- If it's too difficult or the rewards don't match their playstyle, they will become frustrated.
+- If it's too difficult or the rewards don't match their playstyle, they will become frustrated and may quit.
 
-Your score is based on how many rooms the adventurer clears before they either fall in battle or lose interest and quit. After each run, you can enter the Workshop to spend Balance Points (BP) on unlocking new, more powerful items for future runs.
+Your goal is to keep the adventurer engaged for as long as possible. Reaching higher runs, and perhaps even winning, will unlock new, more powerful items and rooms for future runs, expanding your strategic options.
 
 ## Project Structure
 
@@ -19,11 +19,26 @@ This project is a single-page web application built with **TypeScript** and **na
 
 -   `index.html`: The main HTML file and entry point for the application. It includes the setup for Tailwind CSS and the root element for the app.
 -   `main.ts`: The script that initializes the `GameEngine` and manages the overall application flow, state, and renders different components based on the current `gamePhase`.
--   `game/engine.ts`: The heart of the game. This class manages the entire `GameState`, including all core game logic: starting new runs, processing loot offers, simulating adventurer choices, running encounters, and handling the game over state.
 -   `types.ts`: Contains all the core TypeScript type and interface definitions used across the application (e.g., `GameState`, `Adventurer`, `LootChoice`).
--   `game/items.json`: A JSON file containing the definitions for all loot items available in the game, including their stats, rarity, and cost.
 -   `vite.config.ts`: Configuration file for the Vite development server and build tool.
 -   `tsconfig.json`: TypeScript compiler configuration.
+
+### `game/`
+
+This directory contains the core game logic and state management.
+
+-   `engine.ts`: The heart of the game. This class manages the entire `GameState`, including all core game logic: starting new runs, processing loot offers, simulating adventurer choices, running encounters, and handling the game over state.
+-   `adventurer.ts`: Defines the `Adventurer` class, which represents the AI-controlled hero, including their stats, traits, inventory, and state.
+-   `ai.ts`: Contains the logic that governs the adventurer's decision-making process, such as choosing which loot to take or how to act in battle.
+-   `meta.ts`: Manages meta-progression, such as unlocking new features and tracking statistics across multiple runs.
+-   `storage.ts`: Handles saving and loading game data to and from the browser's local storage.
+
+### `public/`
+
+This directory contains static assets that are served directly to the browser.
+
+-   `public/game/items.json`: A JSON file containing the definitions for all loot items available in the game.
+-   `public/game/rooms.json`: A JSON file containing the definitions for all rooms (e.g., encounters, traps, healing rooms) that can appear in the dungeon.
 
 ### `components/`
 
@@ -39,6 +54,13 @@ This directory contains all the reusable Web Components that make up the UI. Eac
 -   `Workshop.ts`: The screen shown between runs where the player can spend BP to unlock new items.
 -   `MenuScreen.ts`: The main menu screen.
 -   `LogPanel.ts`: A panel that shows a running log of game events.
+
+### `tools/`
+
+This directory contains command-line tools for development and analysis.
+
+-   `simulate.ts`: A script to run the game in a headless mode for a specified number of runs. This is useful for game balancing and tuning.
+-   `metrics.ts`: A helper module for the simulation tool that collects and reports various metrics about the simulation runs.
 
 ## Testing
 
@@ -57,15 +79,16 @@ This project includes a command-line simulation tool to help with game balancing
 To run the simulation, use the following command:
 
 ```bash
-npm run simulate <seed> <runs>
+npm run simulate -- [options] [runs]
 ```
 
--   `<seed>` (optional): A number to seed the random number generator for reproducible runs. If not provided, a random seed will be used.
--   `<runs>` (optional): The number of runs to simulate. Defaults to 10.
+-   `[runs]` (optional): The number of runs to simulate. Defaults to 10.
+-   `--seed=<number>` (optional): A number to seed the random number generator for reproducible runs. If not provided, a random seed will be used.
+-   `--verbose` (optional): By default, the simulation runs in silent mode. Use this flag to print detailed logs to the console.
 
 Example:
 ```bash
-npm run simulate 123 100
+npm run simulate -- --seed=123 100
 ```
 
 ## Running the Project
