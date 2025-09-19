@@ -55,7 +55,7 @@ export class AdventurerStatus extends HTMLElement {
                 <h2 class="text-xl font-label mb-2 text-center text-white">${t('adventurer_status.title', { count: adventurerNumber })}</h2>
                 <div class="grid grid-cols-3 gap-2">
                     <div class="space-y-2 col-span-2">
-                        <div>
+                        <div data-tooltip-key="adventurer_health">
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center">${HealthIcon()} <span>${t('global.health')}</span></div>
                                 <span class="font-label text-sm">${displayHp} / ${this._adventurer.maxHp}</span>
@@ -64,14 +64,14 @@ export class AdventurerStatus extends HTMLElement {
                                 <div class="bg-green-500 h-3 pixel-corners transition-all duration-500 ease-out" style="width: ${healthPercentage}%"></div>
                             </div>
                         </div>
-                        <div>
+                        <div data-tooltip-key="adventurer_flow_state">
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center">${InterestIcon()} <span>${t('adventurer_status.flow_state')}</span></div>
                                 <span class="font-label text-sm ${this.getFlowStateColor(this._adventurer.flowState)}">${FlowState[this._adventurer.flowState]}</span>
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center justify-center bg-brand-primary/50 p-2 pixel-corners">
+                    <div class="flex items-center justify-center bg-brand-primary/50 p-2 pixel-corners" data-tooltip-key="adventurer_power">
                         ${PowerIcon()}
                         <span class="mr-2">${t('global.power')}</span>
                         <span class="font-label text-lg text-white">${this._adventurer.power}</span>
