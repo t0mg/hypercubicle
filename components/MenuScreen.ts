@@ -12,7 +12,7 @@ export class MenuScreen extends HTMLElement {
       if (!this.engine || !this.metaManager) return;
       const target = e.target as HTMLElement;
       if (target.id === 'new-game-button') {
-        if (this.metaManager.metaState.highestRun > 0) {
+        if (this.metaManager.metaState.adventurers > 0) {
           if (confirm(t('menu.new_game_confirm'))) {
             this.metaManager.reset();
             this.engine.startNewGame();
@@ -33,7 +33,7 @@ export class MenuScreen extends HTMLElement {
   render() {
     if (!this.metaManager) return;
     const metaState = this.metaManager.metaState;
-    const hasSave = metaState.highestRun > 0;
+    const hasSave = metaState.adventurers > 0;
 
     let metaInfo = '';
     if (hasSave) {
