@@ -3,7 +3,7 @@ import { Logger } from './logger';
 import { getFlowState } from './utils';
 
 const BASE_ADVENTURER_STATS = { hp: 100, maxHp: 100, power: 5 };
-const CHALLENGE_HISTORY_MAX_LENGTH = 4;
+const CHALLENGE_HISTORY_MAX_LENGTH = 3;
 
 export class Adventurer {
     public hp: number;

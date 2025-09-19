@@ -84,7 +84,7 @@ export function getAdventurerBattleChoice(adventurer: Adventurer, _encounter: En
     }
     potionThreshold -= (traits.resilience / 200); // Resilience makes them less likely to panic
 
-    if (healthRatio < potionThreshold) {
+    if (healthRatio < Math.max(0.1, potionThreshold)) {
         return 'use_potion';
     }
 
@@ -167,7 +167,7 @@ export function processBattleOutcome(adventurer: Adventurer, hpLostRatio: number
     if (hpLostRatio > 0.7) {
         battleFeedback = t('game_engine.too_close_for_comfort');
         adventurer.modifyChallenge(adventurer.challenge + 10);
-        adventurer.modifySkill(-5);
+        adventurer.modifySkill(-3);
     } else if (hpLostRatio > 0.4) {
         battleFeedback = t('game_engine.great_battle');
         adventurer.modifyChallenge(adventurer.challenge + 5);
@@ -177,7 +177,7 @@ export function processBattleOutcome(adventurer: Adventurer, hpLostRatio: number
         adventurer.modifyChallenge(adventurer.challenge - 10);
     } else {
         battleFeedback = t('game_engine.worthy_challenge');
-        adventurer.modifyChallenge(adventurer.challenge - 5);
+        adventurer.modifyChallenge(adventurer.challenge - 2);
         adventurer.modifySkill(2);
     }
 
