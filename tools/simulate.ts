@@ -115,9 +115,10 @@ class Simulation {
         this.engine.handleEndOfRun(decision);
 
         if (this.engine.gameState.phase === 'SHOP') {
-            const choice = getDesignerShopChoice(this.engine.gameState);
-            if (choice) {
+            let choice = getDesignerShopChoice(this.engine.gameState);
+            while(choice) {
                 this.engine.purchaseItem(choice);
+                choice = getDesignerShopChoice(this.engine.gameState);
             }
             this.engine.exitWorkshop(); // This will start a new run
         } else if (this.engine.gameState.phase === 'MENU') {
