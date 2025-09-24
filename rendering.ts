@@ -99,10 +99,8 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
             if (engine.isWorkshopUnlocked()) {
                 runEndedEl.setAttribute('workshop-unlocked', '');
             }
-            runEndedEl.newlyUnlocked = state.newlyUnlocked;
-            runEndedEl.engine = engine;
             if (state.runEnded.decision) {
-                runEndedEl.setDecision(state.runEnded.decision);
+                runEndedEl.initialize(state.runEnded.decision, state.newlyUnlocked, engine);
             }
             gamePhasePanel.appendChild(runEndedEl);
             break;

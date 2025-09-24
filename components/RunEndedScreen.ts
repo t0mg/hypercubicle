@@ -26,15 +26,12 @@ export class RunEndedScreen extends HTMLElement {
         });
     }
 
-    public setDecision(decision: 'continue' | 'retire') {
+    public initialize(decision: 'continue' | 'retire', newlyUnlocked: UnlockableFeature[], engine: GameEngine) {
         this.decision = decision;
-        // This is now the entry point for the component's flow
-        this.startFlow();
-    }
-
-    connectedCallback() {
+        this.newlyUnlocked = newlyUnlocked;
+        this.engine = engine;
         this.render();
-        // Do not start the flow here, wait for setDecision
+        this.startFlow();
     }
 
     startFlow() {
@@ -91,8 +88,10 @@ export class RunEndedScreen extends HTMLElement {
             return;
         }
 
-        this.state = 'decision-revealed';
-        this.updateDecision(true);
+        setTimeout(() => {
+            this.state = 'decision-revealed';
+            this.updateDecision(true);
+        }, 2000);
     }
 
     render() {
