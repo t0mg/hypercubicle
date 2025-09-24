@@ -122,6 +122,12 @@ class Simulation {
             this.engine.exitWorkshop(); // This will start a new run
         } else if (this.engine.gameState.phase === 'MENU') {
             this.engine.startNewGame(initialUnlocked);
+            if (this.engine.gameState) {
+                this.engine.gameState.logger.on(metrics.handleLogEntry);
+                if (this.isSilent) {
+                    this.engine.gameState.logger.muted = true;
+                }
+            }
         }
     }
     metrics.setMeta(this.metaManager.metaState);
