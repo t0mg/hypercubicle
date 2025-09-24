@@ -91,10 +91,8 @@ export class RunEndedScreen extends HTMLElement {
             return;
         }
 
-        setTimeout(() => {
-            this.state = 'decision-revealed';
-            this.updateDecision(true);
-        }, 2000);
+        this.state = 'decision-revealed';
+        this.updateDecision(true);
     }
 
     render() {
