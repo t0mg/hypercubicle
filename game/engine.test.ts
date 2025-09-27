@@ -324,4 +324,28 @@ describe('GameEngine', () => {
         // Check if the flow state is preserved
         expect(engine.gameState!.adventurer.flowState).toBe(FlowState.Control);
     });
+
+    it('should not attack in the same turn a potion is used', () => {
+        const adventurer = engine.gameState!.adventurer;
+        const potion: LootChoice = { id: 'p_1', instanceId: 'p_1', name: 'Test Potion', type: 'Potion', rarity: 'Common', cost: 10, stats: { hp: 50 } };
+        adventurer.inventory.potions.push(potion);
+        adventurer.hp = 10; // Low HP to trigger potion use
+
+        // Mock the AI decision to ensure a potion is used
+        vi.spyOn(ai, 'getAdventurerBattleChoice').mockReturnValue('use_potion');
+
+        const encounter = {
+            enemyCount: 1,
+            enemyHp: 30,
+            enemyPower: 10,
+        };
+
+        // Directly call the private method to test it in isolation
+        (engine as any)._simulateEncounter(adventurer, 1, encounter);
+
+        // The key assertion is that no attack log was generated during the encounter,
+        // because the adventurer should only be using a potion.
+        const attackLog = engine.gameState?.logger.entries.find(e => e.message.includes('Adventurer hits for'));
+        expect(attackLog).toBeUndefined();
+    });
 });

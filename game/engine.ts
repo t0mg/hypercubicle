@@ -84,18 +84,18 @@ export class GameEngine {
                     feedback.push(t('game_engine.adventurer_drinks_potion', { potionName: potionToUse.name }));
                     this.gameState?.logger.info(`Adventurer used ${potionToUse.name} and recovered ${healedAmount} HP.`);
                 }
-            }
-
-            // Adventurer's turn
-            const adventurerHitChance = Math.min(0.95, 0.75 + (adventurer.traits.skill / 500) + (adventurer.traits.offense / 1000));
-            if (rng.nextFloat() < adventurerHitChance) {
-                const damageDealt = adventurer.power;
-                currentEnemyHp -= damageDealt;
-                this.gameState?.logger.debug(`Adventurer hits for ${damageDealt} damage.`);
-                processBattleTurn(adventurer, 'hit');
             } else {
-                this.gameState?.logger.debug(`Adventurer misses.`);
-                processBattleTurn(adventurer, 'miss');
+                // Adventurer's turn
+                const adventurerHitChance = Math.min(0.95, 0.75 + (adventurer.traits.skill / 500) + (adventurer.traits.offense / 1000));
+                if (rng.nextFloat() < adventurerHitChance) {
+                    const damageDealt = adventurer.power;
+                    currentEnemyHp -= damageDealt;
+                    this.gameState?.logger.debug(`Adventurer hits for ${damageDealt} damage.`);
+                    processBattleTurn(adventurer, 'hit');
+                } else {
+                    this.gameState?.logger.debug(`Adventurer misses.`);
+                    processBattleTurn(adventurer, 'miss');
+                }
             }
 
             if (currentEnemyHp <= 0) {
