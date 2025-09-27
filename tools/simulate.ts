@@ -106,7 +106,7 @@ class Simulation {
         const { adventurer, runEnded } = this.engine.gameState;
         const flowStateName = (FlowState as any)[adventurer.flowState];
         const endReason = runEnded.reason.includes('fell') ? 'death' : 'dropout';
-        metrics.recordRunEnd(flowStateName, endReason);
+        metrics.recordRunEnd(endReason);
 
         const decision = this.engine.gameState.runEnded.decision;
         if (!decision) {
@@ -121,7 +121,22 @@ class Simulation {
             }
             this.engine.exitWorkshop(); // This will start a new run
         } else if (this.engine.gameState.phase === 'MENU') {
+            metrics.recordFinalFlowState(flowStateName);
             this.engine.startNewGame(initialUnlocked);
+            if (this.engine.gameState) {
+                this.engine.gameState.logger.on(metrics.handleLogEntry);
+                if (this.isSilent) {
+                    this.engine.gameState.logger.muted = true;
+                }
+            }
+        }
+    }
+
+    if (this.engine.gameState?.adventurer) {
+        const totalRecorded = [...metrics.finalFlowStateCounts.values()].reduce((a, b) => a + b, 0);
+        if (this.metaManager.metaState.adventurers > totalRecorded) {
+            const flowStateName = (FlowState as any)[this.engine.gameState.adventurer.flowState];
+            metrics.recordFinalFlowState(flowStateName);
         }
     }
     metrics.setMeta(this.metaManager.metaState);
