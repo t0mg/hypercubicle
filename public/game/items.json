@@ -134,5 +134,245 @@
         "rarity": "Uncommon",
         "stats": { "power": 0, "maxHp": 30, "hp": 30, "duration": 3 },
         "cost": 100
+    },
+    {
+        "id": "common_1",
+        "name": "Sharpened Dirk",
+        "type": "Weapon",
+        "rarity": "Common",
+        "stats": { "power": 3 },
+        "cost": 50
+    },
+    {
+        "id": "common_2",
+        "name": "Reinforced Leather Tunic",
+        "type": "Armor",
+        "rarity": "Common",
+        "stats": { "maxHp": 15 },
+        "cost": 40
+    },
+    {
+        "id": "common_3",
+        "name": "Minor Healing Draught",
+        "type": "Potion",
+        "rarity": "Common",
+        "stats": { "hp": 25 },
+        "cost": 30
+    },
+    {
+        "id": "common_4",
+        "name": "Heavy Iron Mace",
+        "type": "Weapon",
+        "rarity": "Common",
+        "stats": { "power": 4, "maxHp": -5 },
+        "cost": 60
+    },
+    {
+        "id": "common_5",
+        "name": "Gambler's Blade",
+        "type": "Weapon",
+        "rarity": "Common",
+        "stats": { "power": 5 },
+        "cost": 100
+    },
+    {
+        "id": "common_6",
+        "name": "Thick Hide Shield",
+        "type": "Armor",
+        "rarity": "Common",
+        "stats": { "maxHp": 20 },
+        "cost": 70
+    },
+    {
+        "id": "common_7",
+        "name": "Barbed Arrow",
+        "type": "Weapon",
+        "rarity": "Common",
+        "stats": { "power": 2, "duration": 3 },
+        "cost": 80
+    },
+    {
+        "id": "common_8",
+        "name": "Spiked Gauntlets",
+        "type": "Armor",
+        "rarity": "Common",
+        "stats": { "power": 1, "maxHp": 5 },
+        "cost": 90
+    },
+    {
+        "id": "common_9",
+        "name": "Troll's Blood Vial",
+        "type": "Potion",
+        "rarity": "Common",
+        "stats": { "hp": 35 },
+        "cost": 80
+    },
+    {
+        "id": "common_10",
+        "name": "Lucky Charm",
+        "type": "Armor",
+        "rarity": "Common",
+        "stats": { "maxHp": 5 },
+        "cost": 100
+    },
+    {
+        "id": "uncommon_1",
+        "name": "Venom-Tipped Spear",
+        "type": "Weapon",
+        "rarity": "Uncommon",
+        "stats": { "power": 5, "duration": 2 },
+        "cost": 180
+    },
+    {
+        "id": "uncommon_2",
+        "name": "Elven Chainmail",
+        "type": "Armor",
+        "rarity": "Uncommon",
+        "stats": { "maxHp": 30, "power": 1 },
+        "cost": 200
+    },
+    {
+        "id": "uncommon_3",
+        "name": "Potion of Greater Healing",
+        "type": "Potion",
+        "rarity": "Uncommon",
+        "stats": { "hp": 60 },
+        "cost": 150
+    },
+    {
+        "id": "uncommon_4",
+        "name": "Dwarven Waraxe",
+        "type": "Weapon",
+        "rarity": "Uncommon",
+        "stats": { "power": 7 },
+        "cost": 220
+    },
+    {
+        "id": "uncommon_5",
+        "name": "Aegis of the Protector",
+        "type": "Armor",
+        "rarity": "Uncommon",
+        "stats": { "maxHp": 40 },
+        "cost": 210
+    },
+    {
+        "id": "uncommon_6",
+        "name": "Stoneskin Potion",
+        "type": "Buff",
+        "rarity": "Uncommon",
+        "stats": { "maxHp": 25, "duration": 5 },
+        "cost": 130
+    },
+    {
+        "id": "uncommon_7",
+        "name": "Serrated Dagger",
+        "type": "Weapon",
+        "rarity": "Uncommon",
+        "stats": { "power": 4, "duration": 4 },
+        "cost": 190
+    },
+    {
+        "id": "uncommon_8",
+        "name": "Boots of Speed",
+        "type": "Armor",
+        "rarity": "Uncommon",
+        "stats": { "power": 2, "maxHp": 10 },
+        "cost": 160
+    },
+    {
+        "id": "uncommon_9",
+        "name": "Tincture of Vigor",
+        "type": "Potion",
+        "rarity": "Uncommon",
+        "stats": { "hp": 40, "power": 2 },
+        "cost": 170
+    },
+    {
+        "id": "uncommon_10",
+        "name": "Rage Elixir",
+        "type": "Buff",
+        "rarity": "Uncommon",
+        "stats": { "power": 5, "maxHp": -10, "duration": 4 },
+        "cost": 140
+    },
+    {
+        "id": "rare_1",
+        "name": "Frostbrand, the Glacial Blade",
+        "type": "Weapon",
+        "rarity": "Rare",
+        "stats": { "power": 12, "maxHp": 10 },
+        "cost": 400
+    },
+    {
+        "id": "rare_2",
+        "name": "Dragonscale Armor",
+        "type": "Armor",
+        "rarity": "Rare",
+        "stats": { "maxHp": 60, "power": 2 },
+        "cost": 450
+    },
+    {
+        "id": "rare_3",
+        "name": "Panacea",
+        "type": "Potion",
+        "rarity": "Rare",
+        "stats": { "hp": 200 },
+        "cost": 300
+    },
+    {
+        "id": "rare_4",
+        "name": "Stormcaller's Hammer",
+        "type": "Weapon",
+        "rarity": "Rare",
+        "stats": { "power": 15 },
+        "cost": 420
+    },
+    {
+        "id": "rare_5",
+        "name": "Bulwark of the Ancients",
+        "type": "Armor",
+        "rarity": "Rare",
+        "stats": { "maxHp": 80, "power": -3 },
+        "cost": 380
+    },
+    {
+        "id": "rare_6",
+        "name": "Elixir of Immortality",
+        "type": "Buff",
+        "rarity": "Rare",
+        "stats": { "hp": 100, "duration": 3, "maxHp": 50 },
+        "cost": 350
+    },
+    {
+        "id": "rare_7",
+        "name": "Soul-Drinker Axe",
+        "type": "Weapon",
+        "rarity": "Rare",
+        "stats": { "power": 10, "hp": 20 },
+        "cost": 430
+    },
+    {
+        "id": "rare_8",
+        "name": "Helm of Command",
+        "type": "Armor",
+        "rarity": "Rare",
+        "stats": { "power": 5, "maxHp": 30 },
+        "cost": 410
+    },
+    {
+        "id": "rare_9",
+        "name": "Draught of the Titans",
+        "type": "Potion",
+        "rarity": "Rare",
+        "stats": { "maxHp": 100, "power": 5 },
+        "cost": 390
+    },
+    {
+        "id": "rare_10",
+        "name": "Aegis of Deflection",
+        "type": "Buff",
+        "rarity": "Rare",
+        "stats": { "maxHp": 50, "duration": 5, "power": -2 },
+        "cost": 320
     }
 ]

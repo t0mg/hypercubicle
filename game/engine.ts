@@ -374,6 +374,11 @@ export class GameEngine {
         return;
       }
 
+      if (this.gameState.room >= 30) {
+        this._endRun(t('game_engine.adventurer_reached_max_rooms', { room: this.gameState.room, run: this.gameState.run }), true);
+        return;
+      }
+
       if (this.gameState.hand && this.gameState.hand.length === 0) {
         this.gameState.logger.warn("Your hand is empty! The adventurer must press on without new items.");
         feedback.push(t('game_engine.empty_hand'));
@@ -435,7 +440,6 @@ export class GameEngine {
         return;
     }
 
-    const nextRun = this.gameState.run + 1;
     const shopItems = this._allItems
       .filter(item => item.cost !== null)
       .filter(item => !this.gameState!.unlockedDeck.includes(item.id));
@@ -450,7 +454,6 @@ export class GameEngine {
       ...this.gameState,
       phase: 'SHOP',
       shopReturnPhase: this.gameState.phase,
-      run: nextRun,
       room: 0,
       shopItems: shuffleArray(allShopItems).slice(0, 4),
       runEnded: { isOver: false, reason: '', success: false, decision: null },

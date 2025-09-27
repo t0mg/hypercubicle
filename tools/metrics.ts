@@ -16,13 +16,16 @@ export class Metrics {
   private flowStateOccurrences: Map<string, number> = new Map();
   private runEndCounts: { death: number, dropout: number } = { death: 0, dropout: 0 };
 
-  public recordRunEnd(flowState: string, reason: 'death' | 'dropout'): void {
-    this.finalFlowStateCounts.set(flowState, (this.finalFlowStateCounts.get(flowState) || 0) + 1);
+  public recordRunEnd(reason: 'death' | 'dropout'): void {
     if (reason === 'death') {
       this.runEndCounts.death++;
     } else {
       this.runEndCounts.dropout++;
     }
+  }
+
+  public recordFinalFlowState(flowState: string): void {
+    this.finalFlowStateCounts.set(flowState, (this.finalFlowStateCounts.get(flowState) || 0) + 1);
   }
 
   public recordFlowState(flowState: string): void {
