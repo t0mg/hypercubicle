@@ -2,6 +2,7 @@ import './index.css';
 import { GameEngine } from './game/engine';
 import { initLocalization, t } from './text';
 import { render } from './rendering';
+import { initializeTooltipIcons } from './components/TooltipHelper';
 import { MetaManager } from './game/meta';
 import { LocalStorage } from './game/storage';
 import { DataLoaderFetch } from './game/data-loader-fetch';
@@ -49,6 +50,7 @@ engine.on('state-change', (newState) => {
     return;
   }
   render(appElement, newState, engine);
+  initializeTooltipIcons();
 });
 
 async function main() {
@@ -61,8 +63,7 @@ async function main() {
   // Initialize tooltip listeners
   document.body.addEventListener('mouseover', (e) => tooltipManager.handleMouseEnter(e));
   document.body.addEventListener('mouseout', () => tooltipManager.handleMouseLeave());
-  document.body.addEventListener('touchstart', (e) => tooltipManager.handleTouchStart(e));
-  document.body.addEventListener('touchend', () => tooltipManager.handleTouchEnd());
+  document.body.addEventListener('click', (e) => tooltipManager.handleClick(e));
 
 
   engine.showMenu();
