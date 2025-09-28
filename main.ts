@@ -63,6 +63,7 @@ async function main() {
   // Initialize tooltip listeners
   document.body.addEventListener('mouseover', (e) => tooltipManager.handleMouseEnter(e));
   document.body.addEventListener('mouseout', () => tooltipManager.handleMouseLeave());
+  document.body.addEventListener('mousemove', (e) => tooltipManager.handleMouseMove(e));
   document.body.addEventListener('click', (e) => tooltipManager.handleClick(e));
 
 

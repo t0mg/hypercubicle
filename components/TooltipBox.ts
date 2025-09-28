@@ -38,7 +38,7 @@ export class TooltipBox extends HTMLElement {
 
             .content-container {
                 position: relative;
-                padding: 1.5rem; /* Correctly apply padding here */
+                padding: 1.5rem;
             }
 
             .close-button {
@@ -63,6 +63,7 @@ export class TooltipBox extends HTMLElement {
                     height: 100%;
                     background-color: rgba(0, 0, 0, 0.7);
                     pointer-events: auto;
+                    max-width: none; /* Override desktop max-width */
                 }
 
                 .content-container {
@@ -80,14 +81,15 @@ export class TooltipBox extends HTMLElement {
                 .close-button {
                     display: block;
                     position: absolute;
-                    top: 0.5rem;
-                    right: 0.5rem;
+                    top: 1rem;
+                    right: 1rem;
                     font-size: 2.5rem;
                     color: #cbd5e0;
                     cursor: pointer;
                     background: none;
                     border: none;
                     line-height: 1;
+                    z-index: 10;
                 }
 
                 h3 {
@@ -117,7 +119,7 @@ export class TooltipBox extends HTMLElement {
     }
 
     connectedCallback() {
-      // Apply pixel-corners class after the element is in the DOM
+      // Apply pixel-corners class after the element is in the DOM.
       if (window.matchMedia('(pointer: coarse)').matches) {
         this.contentContainer.classList.add('pixel-corners');
       } else {
@@ -142,6 +144,14 @@ export class TooltipBox extends HTMLElement {
     hide() {
         this.classList.remove('show');
         this.style.display = 'none';
+    }
+
+    updatePosition(x: number, y: number) {
+        // This should only affect desktop tooltips, as mobile is not positioned this way.
+        if (!window.matchMedia('(pointer: coarse)').matches) {
+            this.style.left = `${x + 15}px`;
+            this.style.top = `${y + 15}px`;
+        }
     }
 }
 

@@ -7,6 +7,7 @@ class TooltipManager {
     private tooltipBox: TooltipBox;
     private showTimeout: number | null = null;
     private hideTimeout: number | null = null;
+    private desktopTooltipActive = false;
 
     private constructor() {
         // The TooltipBox component is expected to be registered via import
@@ -36,6 +37,7 @@ class TooltipManager {
                 const tooltipContent = this.getTooltipContent(tooltipKey);
                 if (tooltipContent) {
                     this.tooltipBox.show(tooltipContent, event.clientX, event.clientY);
+                    this.desktopTooltipActive = true;
                 }
             }, 300); // 300ms delay before showing
         }
@@ -49,7 +51,14 @@ class TooltipManager {
         }
         this.hideTimeout = window.setTimeout(() => {
             this.tooltipBox.hide();
+            this.desktopTooltipActive = false;
         }, 100); // 100ms delay before hiding
+    }
+
+    public handleMouseMove(event: MouseEvent) {
+        if (this.desktopTooltipActive) {
+            this.tooltipBox.updatePosition(event.clientX, event.clientY);
+        }
     }
 
     public handleClick(event: MouseEvent) {
@@ -75,20 +84,14 @@ class TooltipManager {
     }
 
     private getTooltipContent(key: string): { title: string, body: string } | null {
-        // For now, we'll use a placeholder.
-        // In a later step, we will get this from the localization file.
         const body = t(`tooltips.${key}.body`);
         if (body.includes('tooltips.')) {
-            // Key not found
             return null;
         }
-
-        // Check if a title exists for this key
         let title = t(`tooltips.${key}.title`);
         if (title.includes('tooltips.')) {
-            title = t('global.information'); // Default title
+            title = t('global.information');
         }
-
         return {
             title: title,
             body: body
