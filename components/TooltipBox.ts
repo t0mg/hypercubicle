@@ -3,16 +3,26 @@ import { t } from '../text';
 export class TooltipBox extends HTMLElement {
     private titleElement: HTMLElement;
     private bodyElement: HTMLElement;
-
-    private overlayElement: HTMLElement;
     private closeButton: HTMLElement;
+    private contentContainer: HTMLElement;
 
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
 
+        this.onclick = (e) => {
+            if (window.matchMedia('(pointer: coarse)').matches && e.target === this) {
+                this.hide();
+            }
+        };
+
         const style = document.createElement('style');
         style.textContent = `
+            .pixel-corners {
+              clip-path: polygon(0 5px, 5px 5px, 5px 0, calc(100% - 5px) 0, calc(100% - 5px) 5px, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 5px calc(100% - 5px), 0 calc(100% - 5px));
+            }
+
+            /* Default desktop styles */
             :host {
                 display: none;
                 position: fixed;
@@ -20,68 +30,77 @@ export class TooltipBox extends HTMLElement {
                 pointer-events: none;
                 background-color: #1a202c;
                 border: 1px solid #4a5568;
-                padding: 1rem;
-                border-radius: 0.25rem;
                 max-width: 350px;
                 font-size: 0.875rem;
                 color: #cbd5e0;
                 box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             }
 
-            .overlay {
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.7);
-                z-index: 999;
+            .content-container {
+                position: relative;
+                padding: 1.5rem; /* Correctly apply padding here */
             }
 
             .close-button {
-                position: absolute;
-                top: 1rem;
-                right: 1rem;
-                font-size: 1.5rem;
-                color: #cbd5e0;
-                cursor: pointer;
-                background: none;
-                border: none;
+                display: none;
             }
 
+            h3 {
+                margin-top: 0;
+                font-weight: bold;
+                margin-bottom: 8px;
+            }
+
+            /* Mobile styles */
             @media (pointer: coarse) {
                 :host(.show) {
                     display: flex;
-                    flex-direction: column;
-                    left: 50%;
-                    top: 50%;
-                    transform: translate(-50%, -50%);
-                    width: 90vw;
-                    max-width: 500px;
-                    font-size: 1.125rem; /* text-lg */
+                    align-items: center;
+                    justify-content: center;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.7);
                     pointer-events: auto;
                 }
 
-                :host(.show) .overlay {
+                .content-container {
+                    background-color: #1a202c;
+                    border: 1px solid #4a5568;
+                    padding: 1.5rem;
+                    max-width: 90vw;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    position: relative;
+                    color: #cbd5e0;
+                    font-size: 1.125rem;
+                }
+
+                .close-button {
                     display: block;
+                    position: absolute;
+                    top: 0.5rem;
+                    right: 0.5rem;
+                    font-size: 2.5rem;
+                    color: #cbd5e0;
+                    cursor: pointer;
+                    background: none;
+                    border: none;
+                    line-height: 1;
                 }
 
                 h3 {
-                    font-size: 1.5rem; /* text-2xl */
+                    font-size: 1.5rem;
+                    text-align: center;
                 }
             }
         `;
 
-        this.overlayElement = document.createElement('div');
-        this.overlayElement.className = 'overlay';
-        this.overlayElement.onclick = () => this.hide();
+        this.contentContainer = document.createElement('div');
+        this.contentContainer.className = 'content-container';
 
-        const container = document.createElement('div');
         this.titleElement = document.createElement('h3');
-        this.titleElement.style.fontWeight = 'bold';
-        this.titleElement.style.marginBottom = '8px';
-
         this.bodyElement = document.createElement('div');
 
         this.closeButton = document.createElement('button');
@@ -89,13 +108,21 @@ export class TooltipBox extends HTMLElement {
         this.closeButton.innerHTML = '&times;';
         this.closeButton.onclick = () => this.hide();
 
-        container.appendChild(this.closeButton);
-        container.appendChild(this.titleElement);
-        container.appendChild(this.bodyElement);
+        this.contentContainer.appendChild(this.closeButton);
+        this.contentContainer.appendChild(this.titleElement);
+        this.contentContainer.appendChild(this.bodyElement);
 
         this.shadowRoot!.appendChild(style);
-        this.shadowRoot!.appendChild(this.overlayElement);
-        this.shadowRoot!.appendChild(container);
+        this.shadowRoot!.appendChild(this.contentContainer);
+    }
+
+    connectedCallback() {
+      // Apply pixel-corners class after the element is in the DOM
+      if (window.matchMedia('(pointer: coarse)').matches) {
+        this.contentContainer.classList.add('pixel-corners');
+      } else {
+        this.classList.add('pixel-corners');
+      }
     }
 
     show(content: { title: string, body: string }, x: number, y: number) {
@@ -103,10 +130,8 @@ export class TooltipBox extends HTMLElement {
         this.bodyElement.innerHTML = content.body;
 
         if (window.matchMedia('(pointer: coarse)').matches) {
-            this.style.display = ''; // Clear inline style to allow class to take over
+            this.style.display = '';
             this.classList.add('show');
-            this.overlayElement.style.display = 'block';
-            this.closeButton.style.display = 'block';
         } else {
             this.style.display = 'block';
             this.style.left = `${x + 15}px`;
@@ -115,10 +140,8 @@ export class TooltipBox extends HTMLElement {
     }
 
     hide() {
-        this.style.display = 'none';
         this.classList.remove('show');
-        this.overlayElement.style.display = 'none';
-        this.closeButton.style.display = 'none';
+        this.style.display = 'none';
     }
 }
 

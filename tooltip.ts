@@ -52,33 +52,17 @@ class TooltipManager {
         }, 100); // 100ms delay before hiding
     }
 
-    public handleTouchStart(event: TouchEvent) {
-        if (this.showTimeout) {
-            clearTimeout(this.showTimeout);
-            this.showTimeout = null;
-        }
-
+    public handleClick(event: MouseEvent) {
         const target = event.target as HTMLElement;
-        const tooltipKey = this.findTooltipKey(target);
-
-        if (tooltipKey) {
-            // Prevent the mouse event from firing
-            event.preventDefault();
-            this.showTimeout = window.setTimeout(() => {
+        if (target.classList.contains('tooltip-icon')) {
+            const tooltipKey = this.findTooltipKey(target.parentElement);
+            if (tooltipKey) {
                 const tooltipContent = this.getTooltipContent(tooltipKey);
                 if (tooltipContent) {
                     this.tooltipBox.show(tooltipContent, 0, 0); // Position is handled by CSS for touch
                 }
-            }, 300); // 300ms delay before showing
+            }
         }
-    }
-
-    public handleTouchEnd() {
-        if (this.showTimeout) {
-            clearTimeout(this.showTimeout);
-            this.showTimeout = null;
-        }
-        // No hide timeout on touch, the user can tap away or use a close button
     }
 
     private isTouchDevice(): boolean {
