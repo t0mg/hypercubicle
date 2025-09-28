@@ -313,7 +313,7 @@
                     </button>
                 </div>
                 <div class="absolute bottom-2 right-2 text-xs text-gray-500">
-                    v0.0.0 (build 74)
+                    v0.0.0 (build 75)
                 </div>
             </div>
         `}}customElements.define("menu-screen",Qe);class Ye extends HTMLElement{constructor(){super(),this.rect=new DOMRect(0,0,0,0),this.isDesktop=!0,this.attachShadow({mode:"open"}),this.onclick=t=>{window.matchMedia("(pointer: coarse)").matches&&t.target===this&&this.hide()};const e=document.createElement("style");e.textContent=`
