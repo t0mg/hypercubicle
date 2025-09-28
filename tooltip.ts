@@ -8,6 +8,7 @@ class TooltipManager {
     private showTimeout: number | null = null;
     private hideTimeout: number | null = null;
     private desktopTooltipActive = false;
+    private activeToolipKey: string;
 
     private constructor() {
         // The TooltipBox component is expected to be registered via import
@@ -24,22 +25,25 @@ class TooltipManager {
 
     public handleMouseEnter(event: MouseEvent) {
         if (this.isTouchDevice()) return;
-        if (this.hideTimeout) {
-            clearTimeout(this.hideTimeout);
-            this.hideTimeout = null;
-        }
 
         const target = event.target as HTMLElement;
         const tooltipKey = this.findTooltipKey(target);
 
-        if (tooltipKey) {
-            this.showTimeout = window.setTimeout(() => {
-                const tooltipContent = this.getTooltipContent(tooltipKey);
-                if (tooltipContent) {
-                    this.tooltipBox.show(tooltipContent, event.clientX, event.clientY);
-                    this.desktopTooltipActive = true;
-                }
-            }, 300); // 300ms delay before showing
+        if (this.showTimeout) {
+            clearTimeout(this.showTimeout);
+            this.showTimeout = null;
+        }
+
+        if (tooltipKey && this.activeToolipKey !== tooltipKey) {
+          this.showTimeout = window.setTimeout(() => {
+            target.addEventListener('mouseleave', this.handleMouseLeave.bind(this), { once: true });      
+            this.activeToolipKey = tooltipKey;
+            const tooltipContent = this.getTooltipContent(tooltipKey);
+            if (tooltipContent) {
+              this.tooltipBox.show(tooltipContent, event.clientX, event.clientY);
+              this.desktopTooltipActive = true;
+            }
+          }, 300); // 300ms delay before showing
         }
     }
 
@@ -49,10 +53,9 @@ class TooltipManager {
             clearTimeout(this.showTimeout);
             this.showTimeout = null;
         }
-        this.hideTimeout = window.setTimeout(() => {
-            this.tooltipBox.hide();
-            this.desktopTooltipActive = false;
-        }, 100); // 100ms delay before hiding
+        this.tooltipBox.hide();
+        this.activeToolipKey = '';
+        this.desktopTooltipActive = false;
     }
 
     public handleMouseMove(event: MouseEvent) {
