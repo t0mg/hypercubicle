@@ -2,6 +2,7 @@ import type { LootChoice, RoomChoice } from '../types';
 import './Card.ts';
 import { Card } from './Card.ts';
 import { t } from '../text';
+import { InfoModal } from './InfoModal.ts';
 import { GameEngine } from '../game/engine';
 
 const MAX_SELECTION = 4;
@@ -89,15 +90,19 @@ export class ChoicePanel extends HTMLElement {
         }
       }
     } else {
-      const instanceIdToBaseIdMap = new Map(this._choices.map(c => [c.instanceId, c.id]));
-      if (isSelected) {
-        this._selectedIds = this._selectedIds.filter(id => id !== instanceId);
+      // For items, selection is based on the base item ID, due to stacking.
+      const allInstancesOfBaseId = this._choices.filter(c => c.id === itemToSelect.id);
+      const allInstanceIds = allInstancesOfBaseId.map(c => c.instanceId);
+      const isAnySelected = allInstanceIds.some(id => this._selectedIds.includes(id));
+
+      if (isAnySelected) {
+        // Deselect all instances of this item.
+        this._selectedIds = this._selectedIds.filter(id => !allInstanceIds.includes(id));
       } else {
-        const selectedBaseIds = this._selectedIds.map(id => instanceIdToBaseIdMap.get(id));
-        if (selectedBaseIds.includes(itemToSelect.id)) {
-          return;
-        }
+        // Select the first instance of this item. The offer is for unique items.
         if (this._selectedIds.length < MAX_SELECTION) {
+           // We only add one instanceId to the selection, as the offer is for unique items.
+           // The original logic of preventing multiple selections of the same base item is preserved.
           this._selectedIds.push(instanceId);
         }
       }
@@ -108,7 +113,96 @@ export class ChoicePanel extends HTMLElement {
   render() {
     if (!this._choices) return;
 
+    // const newlyDrafted = this._choices.filter(c => c.justDrafted && this._initialRender);
+    // if (newlyDrafted.length > 0) {
+    //   this.innerHTML = ''; // Clear the panel to show the modal
+    //   const modal = document.createElement('info-modal');
+    //   this.appendChild(modal);
+
+    //   Promise.all([
+    //     customElements.whenDefined('info-modal'),
+    //     customElements.whenDefined('choice-card')
+    //   ]).then(() => {
+    //     const modalContent = newlyDrafted.map(item => {
+    //       const card = document.createElement('choice-card') as Card;
+    //       card.item = item;
+    //       return card.outerHTML;
+    //     }).join('');
+
+    //     const infoModal = modal as InfoModal;
+    //     infoModal.show(
+    //       t('choice_panel.new_items_title'),
+    //       `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${modalContent}</div>`
+    //     );
+
+    //     infoModal.addEventListener('modal-close', () => {
+    //       this._choices.forEach(c => c.justDrafted = false);
+    //       this._initialRender = true; // Reset for the main render
+    //       this.render();
+    //     }, { once: true });
+    //   });
+
+    //   return;
+    // }
+
+    const rarityOrder: { [key: string]: number } = { 'Common': 0, 'Uncommon': 1, 'Rare': 2 };
+    const itemTypeOrder: { [key: string]: number } = { 'Weapon': 0, 'Armor': 1, 'Potion': 2, 'Buff': 3 };
+    const roomTypeOrder: { [key: string]: number } = { 'enemy': 0, 'trap': 1, 'healing': 2, 'boss': 3 };
+
+    let sortedChoices = [...this._choices];
+
+    if (this._deckType === 'item') {
+      sortedChoices.sort((a, b) => {
+        const typeComparison = itemTypeOrder[a.type] - itemTypeOrder[b.type];
+        if (typeComparison !== 0) return typeComparison;
+
+        const rarityA = rarityOrder[a.rarity] || 0;
+        const rarityB = rarityOrder[b.rarity] || 0;
+        return rarityA - rarityB;
+      });
+    } else {
+      sortedChoices.sort((a, b) => {
+        const roomA = a as RoomChoice;
+        const roomB = b as RoomChoice;
+
+        const typeComparison = roomTypeOrder[roomA.type] - roomTypeOrder[roomB.type];
+        if (typeComparison !== 0) return typeComparison;
+
+        const hpA = roomA.stats.hp || 0;
+        const hpB = roomB.stats.hp || 0;
+        if (hpA !== hpB) return hpB - hpA;
+
+        const attackA = roomA.stats.attack || 0;
+        const attackB = roomB.stats.attack || 0;
+        return attackB - attackA;
+      });
+    }
+
     const isRoomSelection = this._deckType === 'room';
+
+    interface StackedLootChoice extends LootChoice {
+      stackCount: number;
+    }
+    let displayChoices: (StackedLootChoice | RoomChoice)[];
+
+    if (isRoomSelection) {
+      displayChoices = sortedChoices as RoomChoice[];
+    } else {
+      const itemStacks = new Map<string, { choice: LootChoice; count: number }>();
+      sortedChoices.forEach(c => {
+        const choice = c as LootChoice;
+        if (itemStacks.has(choice.id)) {
+          itemStacks.get(choice.id)!.count++;
+        } else {
+          itemStacks.set(choice.id, { choice, count: 1 });
+        }
+      });
+      displayChoices = Array.from(itemStacks.values()).map(stack => ({
+        ...stack.choice,
+        stackCount: stack.count,
+      }));
+    }
+
     const title = isRoomSelection ? t('choice_panel.title_room') : t('choice_panel.title');
     let buttonText = isRoomSelection ? t('choice_panel.begin_encounter') : t('choice_panel.present_offer');
     if (this._offerImpossible) {
@@ -158,9 +252,12 @@ export class ChoicePanel extends HTMLElement {
 
     const container = this.querySelector('#loot-card-container');
     if (container) {
-      this._choices.forEach(item => {
+      displayChoices.forEach(item => {
         const card = document.createElement('choice-card') as Card;
         card.item = item;
+        if ('stackCount' in item) {
+          card.stackCount = (item as StackedLootChoice).stackCount;
+        }
         card.isSelected = this._selectedIds.includes(item.instanceId);
 
         let isDisabled = this._disabled;

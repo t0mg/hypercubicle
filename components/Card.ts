@@ -23,9 +23,13 @@ export class Card extends HTMLElement {
   private _isSelected: boolean = false;
   private _isDisabled: boolean = false;
   private _isNewlyDrafted: boolean = false;
+  private _stackCount: number = 1;
 
   set item(value: LootChoice | RoomChoice) { this._item = value; this.render(); }
   get item(): LootChoice | RoomChoice { return this._item!; }
+
+  set stackCount(value: number) { this._stackCount = value; this.render(); }
+  get stackCount(): number { return this._stackCount; }
 
   set isSelected(value: boolean) { this._isSelected = value; this.render(); }
   get isSelected(): boolean { return this._isSelected; }
@@ -69,7 +73,7 @@ export class Card extends HTMLElement {
     if (!this._item) return;
 
     const rarityColor = rarityColorMap[this._item.rarity] || 'text-gray-400';
-    const baseClasses = 'bg-brand-surface border pixel-corners p-4 flex flex-col justify-between transition-all duration-200 shadow-lg';
+    const baseClasses = 'relative bg-brand-surface border pixel-corners p-4 flex flex-col justify-between transition-all duration-200 shadow-lg';
 
     let stateClasses = '';
     if (this._isDisabled) {
@@ -80,8 +84,15 @@ export class Card extends HTMLElement {
       stateClasses = 'border-brand-primary hover:border-brand-secondary cursor-pointer transform hover:scale-105';
     }
 
+    let stackClasses = '';
+    if (this._stackCount > 1) {
+      const outlineCount = Math.min(this._stackCount - 1, 2); // Max 2 outlines for now
+      if (outlineCount >= 1) stackClasses += ' stack-outline-1';
+      if (outlineCount >= 2) stackClasses += ' stack-outline-2';
+    }
+
     const animationClass = this.classList.contains('animate-newly-drafted') ? ' animate-newly-drafted' : '';
-    this.className = `${baseClasses} ${stateClasses}${animationClass}`;
+    this.className = `${baseClasses} ${stateClasses}${stackClasses}${animationClass}`;
 
     let itemName = this._item.name;
 
@@ -123,6 +134,10 @@ export class Card extends HTMLElement {
             break;
         }
       }
+    }
+
+    if (this._stackCount > 1) {
+      itemName = t('choice_panel.stacked_items_title', { name: this._item.name, count: this._stackCount });
     }
 
     this.innerHTML = `

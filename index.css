@@ -44,3 +44,29 @@ body {
         display: inline-block;
     }
 }
+
+.stack-outline-1::before,
+.stack-outline-2::before,
+.stack-outline-2::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid #4a5568; /* border-brand-primary */
+  z-index: -1;
+  background-color: #1a202c; /* bg-brand-surface */
+  clip-path: polygon(0 5px, 5px 5px, 5px 0, calc(100% - 5px) 0, calc(100% - 5px) 5px, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 5px calc(100% - 5px), 0 calc(100% - 5px));
+}
+
+.stack-outline-1::before {
+  transform: translate(4px, -4px);
+}
+
+.stack-outline-2::before {
+  transform: translate(4px, -4px);
+}
+.stack-outline-2::after {
+  transform: translate(8px, -8px);
+}
