@@ -102,7 +102,7 @@ export function getFlowState(skill: number, challenge:number): FlowState {
 
     if (normChallenge > 66) {
         if (normSkill < 33) return FlowState.Anxiety;
-        if (normSkill < 67) return FlowState.Arousal;
+        if (normSkill < 87) return FlowState.Arousal;
         return FlowState.Flow;
     } else if (normChallenge > 33) {
         if (normSkill < 33) return FlowState.Worry;

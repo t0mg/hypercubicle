@@ -516,22 +516,35 @@ export class GameEngine {
         return 'retire';
     }
 
-    if (flowState === FlowState.Worry || flowState === FlowState.Anxiety) {
-        const resilienceFactor = traits.resilience / 100; // 0-1
-        const offenseFactor = traits.offense / 100; // 0-1
-        const randomFactor = rng.nextFloat();
-
-        // Higher resilience and offense make it more likely to continue
-        const continueThreshold = 0.5 - (resilienceFactor * 0.25) - (offenseFactor * 0.25);
-
-        if (randomFactor > continueThreshold) {
-            return 'continue';
-        } else {
-            return 'retire';
-        }
+    const resilienceFactor = traits.resilience / 100; // 0-1
+    const offenseFactor = traits.offense / 100; // 0-1
+    const randomFactor = rng.nextFloat();
+    
+    let continueThreshold: number;
+    switch (flowState) {
+      case FlowState.Worry:
+      case FlowState.Anxiety:
+          // Higher resilience and offense make it more likely to continue
+          continueThreshold = 0.5 - (resilienceFactor * 0.35) - (offenseFactor * 0.15);
+          break;
+      case FlowState.Relaxation:
+      case FlowState.Control:
+          continueThreshold = 0.5 + (resilienceFactor * 0.1) + (offenseFactor * 0.1);
+          break;
+      case FlowState.Arousal:
+          continueThreshold = 0.1 + (resilienceFactor * 0.25) - (offenseFactor * 0.25);
+          break;
+      case FlowState.Flow:
+      default:
+          // Just continue if in flow state
+          continueThreshold = 0;
+          break;
     }
-
-    return 'continue';
+    if (randomFactor > continueThreshold) {
+        return 'continue';
+    } else {
+        return 'retire';
+    }
   }
 
   public handleEndOfRun(decision: 'continue' | 'retire') {
