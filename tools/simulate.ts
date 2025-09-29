@@ -44,10 +44,10 @@ class Simulation {
   private engine: GameEngine;
   private metaManager: MetaManager;
   private dataLoader: DataLoaderFileSystem;
-  private isSilent: boolean;
+  private isVerbose: boolean;
 
-  constructor(seed: number, isSilent: boolean) {
-    this.isSilent = isSilent;
+  constructor(seed: number, isVerbose: boolean) {
+    this.isVerbose = isVerbose;
     rng.setSeed(seed);
     const storage = new MemoryStorage();
     this.metaManager = new MetaManager(storage);
@@ -62,6 +62,15 @@ class Simulation {
 
     const metrics = new Metrics();
 
+    const attachLogger = () => {
+        if (this.engine.gameState) {
+            this.engine.gameState.logger.on(metrics.handleLogEntry);
+            if (!this.isVerbose) {
+                this.engine.gameState.logger.muted = true;
+            }
+        }
+    }
+
     const initialUnlocked = {
         items: (this.engine as any)._allItems.filter((item: LootChoice) => item.cost === null).map((item: LootChoice) => item.id),
         rooms: (this.engine as any)._allRooms.filter((room: RoomChoice) => room.cost === null).map((room: RoomChoice) => room.id),
@@ -70,12 +79,7 @@ class Simulation {
     this.metaManager.metaState.unlockedFeatures.push(UnlockableFeature.WORKSHOP);
 
     this.engine.startNewGame(initialUnlocked);
-    if (this.engine.gameState) {
-        this.engine.gameState.logger.on(metrics.handleLogEntry);
-        if (this.isSilent) {
-            this.engine.gameState.logger.muted = true;
-        }
-    }
+    attachLogger();
 
     let totalRunCount = 0;
     while(totalRunCount < runs) {
@@ -120,22 +124,22 @@ class Simulation {
                 this.engine.purchaseItem(choice);
             }
             this.engine.exitWorkshop(); // This will start a new run
+            attachLogger();
         } else if (this.engine.gameState.phase === 'MENU') {
             this.engine.startNewGame(initialUnlocked);
+            attachLogger();
         }
     }
     metrics.setMeta(this.metaManager.metaState);
-    if (!this.isSilent) {
-        metrics.report();
-    }
+    metrics.report();
   }
 }
 
 const args = process.argv.slice(2);
-const isSilent = !args.includes('--verbose');
+const isVerbose = args.includes('--verbose');
 const runsArg = args.find(arg => !isNaN(parseInt(arg, 10)));
 const runs = runsArg ? parseInt(runsArg, 10) : 10;
 const seedArg = args.find(arg => arg.startsWith('--seed='));
 const seed = seedArg ? parseInt(seedArg.split('=')[1], 10) : Date.now();
-const simulation = new Simulation(seed, isSilent);
+const simulation = new Simulation(seed, isVerbose);
 simulation.run(runs);
