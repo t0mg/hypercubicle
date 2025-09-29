@@ -33,11 +33,11 @@ const getDesignerLootChoice = (state: GameState): string[] => {
 };
 
 export const getDesignerShopChoice = (state: GameState): string | null => {
-    const affordableItems = state.shopItems.filter(item => item.cost !== null && item.cost <= state.designer.balancePoints);
-    if (affordableItems.length > 0) {
-        return affordableItems[0].id;
-    }
-    return null;
+  const affordableItems = state.shopItems.filter(item => item.cost !== null && item.cost <= state.designer.balancePoints);
+  if (affordableItems.length > 0) {
+    return affordableItems[0].id;
+  }
+  return null;
 }
 
 class Simulation {
@@ -63,17 +63,17 @@ class Simulation {
     const metrics = new Metrics();
 
     const attachLogger = () => {
-        if (this.engine.gameState) {
-            this.engine.gameState.logger.on(metrics.handleLogEntry);
-            if (!this.isVerbose) {
-                this.engine.gameState.logger.muted = true;
-            }
+      if (this.engine.gameState) {
+        this.engine.gameState.logger.on(metrics.handleLogEntry);
+        if (!this.isVerbose) {
+          this.engine.gameState.logger.muted = true;
         }
+      }
     }
 
     const initialUnlocked = {
-        items: (this.engine as any)._allItems.filter((item: LootChoice) => item.cost === null).map((item: LootChoice) => item.id),
-        rooms: (this.engine as any)._allRooms.filter((room: RoomChoice) => room.cost === null).map((room: RoomChoice) => room.id),
+      items: (this.engine as any)._allItems.filter((item: LootChoice) => item.cost === null).map((item: LootChoice) => item.id),
+      rooms: (this.engine as any)._allRooms.filter((room: RoomChoice) => room.cost === null).map((room: RoomChoice) => room.id),
     };
 
     this.metaManager.metaState.unlockedFeatures.push(UnlockableFeature.WORKSHOP);
@@ -82,53 +82,53 @@ class Simulation {
     attachLogger();
 
     let totalRunCount = 0;
-    while(totalRunCount < runs) {
-        totalRunCount++;
-        while (!this.engine.gameState?.runEnded.isOver) {
-            if (!this.engine.gameState) {
-            break;
-            }
-
-            switch (this.engine.gameState.phase) {
-            case 'DESIGNER_CHOOSING_ROOM':
-                const roomChoices = getDesignerRoomChoice(this.engine.gameState);
-                if (roomChoices.length === 0) {
-                this.engine.forceEndRun();
-                } else {
-                this.engine.runEncounter(roomChoices);
-                }
-                break;
-            case 'DESIGNER_CHOOSING_LOOT':
-                const lootChoices = getDesignerLootChoice(this.engine.gameState);
-                this.engine.presentOffer(lootChoices);
-                break;
-            }
+    while (totalRunCount < runs) {
+      totalRunCount++;
+      while (!this.engine.gameState?.runEnded.isOver) {
+        if (!this.engine.gameState) {
+          break;
         }
-        metrics.incrementRuns();
-        if (!this.engine.gameState) break;
 
-        const { adventurer, runEnded } = this.engine.gameState;
-        const flowStateName = (FlowState as any)[adventurer.flowState];
-        const endReason = runEnded.reason.includes('fell') ? 'death' : 'dropout';
-        metrics.recordRunEnd(flowStateName, endReason);
-
-        const decision = this.engine.gameState.runEnded.decision;
-        if (!decision) {
+        switch (this.engine.gameState.phase) {
+          case 'DESIGNER_CHOOSING_ROOM':
+            const roomChoices = getDesignerRoomChoice(this.engine.gameState);
+            if (roomChoices.length < 3) {
+              this.engine.forceEndRun();
+            } else {
+              this.engine.runEncounter(roomChoices);
+            }
+            break;
+          case 'DESIGNER_CHOOSING_LOOT':
+            const lootChoices = getDesignerLootChoice(this.engine.gameState);
+            this.engine.presentOffer(lootChoices);
             break;
         }
-        this.engine.handleEndOfRun(decision);
+      }
+      metrics.incrementRuns();
+      if (!this.engine.gameState) break;
 
-        if (this.engine.gameState.phase === 'SHOP') {
-            const choice = getDesignerShopChoice(this.engine.gameState);
-            if (choice) {
-                this.engine.purchaseItem(choice);
-            }
-            this.engine.exitWorkshop(); // This will start a new run
-            attachLogger();
-        } else if (this.engine.gameState.phase === 'MENU') {
-            this.engine.startNewGame(initialUnlocked);
-            attachLogger();
+      const { adventurer, runEnded } = this.engine.gameState;
+      const flowStateName = (FlowState as any)[adventurer.flowState];
+      const endReason = runEnded.reason.includes('fell') ? 'death' : 'dropout';
+      metrics.recordRunEnd(flowStateName, endReason);
+
+      const decision = this.engine.gameState.runEnded.decision;
+      if (!decision) {
+        break;
+      }
+      this.engine.handleEndOfRun(decision);
+
+      if (this.engine.gameState.phase === 'SHOP') {
+        const choice = getDesignerShopChoice(this.engine.gameState);
+        if (choice) {
+          this.engine.purchaseItem(choice);
         }
+        this.engine.exitWorkshop(); // This will start a new run
+        attachLogger();
+      } else if (this.engine.gameState.phase === 'MENU') {
+        this.engine.startNewGame(initialUnlocked);
+        attachLogger();
+      }
     }
     metrics.setMeta(this.metaManager.metaState);
     metrics.report();

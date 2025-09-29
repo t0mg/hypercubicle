@@ -415,6 +415,7 @@ export class GameEngine {
     this.gameState.logger.error(`GAME OVER: ${reason}`);
 
     const decision = this._getAdventurerEndRunDecision();
+    this.gameState.logger.log(`Adventuree decision: ${decision}`);
 
     this.gameState = {
       ...this.gameState,
