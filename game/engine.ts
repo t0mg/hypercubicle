@@ -510,40 +510,60 @@ export class GameEngine {
     if (!this.gameState) {
       return 'retire';
     }
-    const { flowState, traits } = this.gameState.adventurer;
+    const { flowState, traits, skill } = this.gameState.adventurer;
+    const { resilience, offense } = traits;
 
-    if (flowState === FlowState.Boredom || flowState === FlowState.Apathy) {
-        return 'retire';
+    // The adventurers experience, capped at 100
+    const experienceFactor = Math.min(skill / 100, 1);
+
+    if (flowState === FlowState.Flow) {
+      return 'continue';
     }
-
-    const resilienceFactor = traits.resilience / 100; // 0-1
-    const offenseFactor = traits.offense / 100; // 0-1
-    const randomFactor = rng.nextFloat();
     
-    let continueThreshold: number;
+    // Base retire chance: 55%
+    let retireChance = 0.55;
+
     switch (flowState) {
-      case FlowState.Worry:
-      case FlowState.Anxiety:
-          // Higher resilience and offense make it more likely to continue
-          continueThreshold = 0.5 - (resilienceFactor * 0.35) - (offenseFactor * 0.15);
-          break;
-      case FlowState.Relaxation:
-      case FlowState.Control:
-          continueThreshold = 0.5 + (resilienceFactor * 0.1) + (offenseFactor * 0.1);
-          break;
-      case FlowState.Arousal:
-          continueThreshold = 0.1 + (resilienceFactor * 0.25) - (offenseFactor * 0.25);
-          break;
-      case FlowState.Flow:
-      default:
-          // Just continue if in flow state
-          continueThreshold = 0;
-          break;
+        case FlowState.Anxiety:
+            // High challenge, low skill. High retire chance, but resilient adventurers might push through.
+            retireChance += 0.25 - (resilience / 400);
+            break;
+        case FlowState.Arousal:
+            // High challenge, medium skill. Exciting, but risky. Offensive adventurers might enjoy the risk.
+            retireChance -= 0.1 - (offense / 1000);
+            break;
+        case FlowState.Worry:
+            // Medium challenge, low skill. Cautious state.
+            retireChance += 0.2;
+            break;
+        case FlowState.Control:
+            // Medium challenge, high skill. Confident, but might get cocky or decide they've proven enough.
+            retireChance -= 0.15;
+            break;
+        case FlowState.Relaxation:
+            // Low challenge, high skill. Content, good chance of retiring.
+            retireChance += 0.1;
+            break;
+        case FlowState.Boredom:
+            // Low challenge, medium skill. Very high chance of retiring.
+            retireChance += 0.3;
+            break;
+        case FlowState.Apathy:
+            // Low challenge, low skill. Almost guaranteed to retire.
+            retireChance += 0.4;
+            break;
     }
-    if (randomFactor > continueThreshold) {
-        return 'continue';
-    } else {
+
+    // Experience makes adventurers slightly less likely to retire
+    retireChance -= experienceFactor * 0.1;
+
+    // Ensure retireChance is within a reasonable range (e.g., 5% to 95%)
+    retireChance = Math.max(0.05, Math.min(0.95, retireChance));
+
+    if (rng.nextFloat() < retireChance) {
         return 'retire';
+    } else {
+        return 'continue';
     }
   }
 

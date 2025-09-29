@@ -348,4 +348,23 @@ describe('GameEngine', () => {
         const attackLog = engine.gameState?.logger.entries.find(e => e.message.includes('Adventurer hits for'));
         expect(attackLog).toBeUndefined();
     });
+
+    describe('_getAdventurerEndRunDecision', () => {
+        it('should allow a bored adventurer to continue with a lucky roll', () => {
+            const adventurer = engine.gameState!.adventurer;
+            adventurer.flowState = FlowState.Boredom;
+            adventurer.skill = 50; // experienceFactor = 0.5
+
+            // With the new logic, retireChance will be:
+            // 0.55 (base) + 0.3 (boredom) - 0.1 * 0.5 (experience) = 0.8
+            // A random roll > 0.8 should result in 'continue'.
+            // The original logic would always retire a bored adventurer.
+            const rngSpy = vi.spyOn(rng, 'nextFloat').mockReturnValue(0.85);
+
+            const decision = (engine as any)._getAdventurerEndRunDecision();
+
+            expect(decision).toBe('continue');
+            expect(rngSpy).toHaveBeenCalled();
+        });
+    });
 });
