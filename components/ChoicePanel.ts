@@ -113,37 +113,37 @@ export class ChoicePanel extends HTMLElement {
   render() {
     if (!this._choices) return;
 
-    // const newlyDrafted = this._choices.filter(c => c.justDrafted && this._initialRender);
-    // if (newlyDrafted.length > 0) {
-    //   this.innerHTML = ''; // Clear the panel to show the modal
-    //   const modal = document.createElement('info-modal');
-    //   this.appendChild(modal);
+    const newlyDrafted = this._choices.filter(c => c.justDrafted && this._initialRender);
+    if (newlyDrafted.length > 0) {
+      this.innerHTML = ''; // Clear the panel to show the modal
+      const modal = document.createElement('info-modal');
+      this.appendChild(modal);
 
-    //   Promise.all([
-    //     customElements.whenDefined('info-modal'),
-    //     customElements.whenDefined('choice-card')
-    //   ]).then(() => {
-    //     const modalContent = newlyDrafted.map(item => {
-    //       const card = document.createElement('choice-card') as Card;
-    //       card.item = item;
-    //       return card.outerHTML;
-    //     }).join('');
+      Promise.all([
+        customElements.whenDefined('info-modal'),
+        customElements.whenDefined('choice-card')
+      ]).then(() => {
+        const modalContent = newlyDrafted.map(item => {
+          const card = document.createElement('choice-card') as Card;
+          card.item = item;
+          return card.outerHTML;
+        }).join('');
 
-    //     const infoModal = modal as InfoModal;
-    //     infoModal.show(
-    //       t('choice_panel.new_items_title'),
-    //       `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${modalContent}</div>`
-    //     );
+        const infoModal = modal as InfoModal;
+        infoModal.show(
+          t('choice_panel.new_items_title'),
+          `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${modalContent}</div>`
+        );
 
-    //     infoModal.addEventListener('modal-close', () => {
-    //       this._choices.forEach(c => c.justDrafted = false);
-    //       this._initialRender = true; // Reset for the main render
-    //       this.render();
-    //     }, { once: true });
-    //   });
+        infoModal.addEventListener('modal-close', () => {
+          this._choices.forEach(c => c.justDrafted = false);
+          this._initialRender = true; // Reset for the main render
+          this.render();
+        }, { once: true });
+      });
 
-    //   return;
-    // }
+      return;
+    }
 
     const rarityOrder: { [key: string]: number } = { 'Common': 0, 'Uncommon': 1, 'Rare': 2 };
     const itemTypeOrder: { [key: string]: number } = { 'Weapon': 0, 'Armor': 1, 'Potion': 2, 'Buff': 3 };
