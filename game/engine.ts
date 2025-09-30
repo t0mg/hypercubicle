@@ -3,6 +3,7 @@ import { FlowState } from '../types';
 import { Adventurer } from './adventurer';
 import { Logger } from './logger';
 import { MetaManager } from './meta';
+import { GameSaver } from './saver';
 import {
   ADVENTURER_ACTION_DELAY_MS,
   BP_PER_ROOM,
@@ -38,10 +39,12 @@ export class GameEngine {
   private _listeners: { [key:string]: GameEngineListener[] } = {};
   public metaManager: MetaManager;
   private dataLoader: DataLoader;
+  private gameSaver: GameSaver;
 
-  constructor(metaManager: MetaManager, dataLoader: DataLoader) {
+  constructor(metaManager: MetaManager, dataLoader: DataLoader, gameSaver: GameSaver) {
     this.metaManager = metaManager;
     this.dataLoader = dataLoader;
+    this.gameSaver = gameSaver;
   }
 
   public init = async () => {
@@ -57,6 +60,9 @@ export class GameEngine {
   }
 
   private _emit(eventName: 'state-change' | 'error', data: GameState | null): void {
+    if (eventName === 'state-change') {
+      this.saveGame();
+    }
     const listeners = this._listeners[eventName];
     if (listeners) {
       listeners.forEach(listener => listener(data));
@@ -185,7 +191,14 @@ export class GameEngine {
   }
 
   public continueGame = () => {
-    this.startNewGame();
+    const savedState = this.gameSaver.load();
+    if (savedState) {
+      this.gameState = savedState;
+      this._emit('state-change', this.gameState);
+    } else {
+      // Fallback to a new game if there's no save file
+      this.startNewGame();
+    }
   }
 
   public startNewRun = (runNumber?: number) => {
@@ -572,12 +585,19 @@ export class GameEngine {
     this.gameState.logger.info(`Adventurer decided to ${decision}.`);
 
     if (decision === 'retire') {
-      this.showMenu();
+      this.quitGame(false); // Don't clear save on retire, as they might want to continue that run later
       return;
     }
 
     // Player chose to continue, so we enter the workshop (or start a new run if not unlocked)
     this.enterWorkshop();
+  }
+
+  public quitGame = (clearSave: boolean = true) => {
+    if (clearSave) {
+      this.gameSaver.clear();
+    }
+    this.showMenu();
   }
 
   public showMenu = () => {
@@ -644,6 +664,17 @@ export class GameEngine {
 
   public isWorkshopUnlocked(): boolean {
     return this.metaManager.acls.has(UnlockableFeature.WORKSHOP);
+  }
+
+  public hasSaveGame(): boolean {
+    return this.gameSaver.hasSaveGame();
+  }
+
+  private saveGame = () => {
+    // We don't save in the menu or on the run over screen.
+    if (this.gameState && this.gameState.phase !== 'MENU' && this.gameState.phase !== 'RUN_OVER') {
+      this.gameSaver.save(this.gameState);
+    }
   }
 
   // --- INITIALIZATION ---

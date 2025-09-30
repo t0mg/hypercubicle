@@ -4,6 +4,7 @@ import { rng } from '../game/random';
 import { LootChoice, RoomChoice, GameState, FlowState } from '../types';
 import { initLocalization } from '../text';
 import { MemoryStorage } from '../game/storage';
+import { GameSaver } from '../game/saver';
 import { UnlockableFeature } from '../game/unlocks';
 import { DataLoaderFileSystem } from './data-loader-file-system';
 import { Metrics } from './metrics';
@@ -50,9 +51,10 @@ class Simulation {
     this.isVerbose = isVerbose;
     rng.setSeed(seed);
     const storage = new MemoryStorage();
+    const saver = new GameSaver(storage);
     this.metaManager = new MetaManager(storage);
     this.dataLoader = new DataLoaderFileSystem();
-    this.engine = new GameEngine(this.metaManager, this.dataLoader);
+    this.engine = new GameEngine(this.metaManager, this.dataLoader, saver);
   }
 
   public async run(runs: number) {

@@ -66,11 +66,21 @@ export class GameStats extends HTMLElement {
                     </button>
                 </div>
                 ` : ''}
+                <div>
+                    <button id="quit-game-btn" class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 pixel-corners transition-all transform hover:scale-105">
+                        ${t('global.quit')}
+                    </button>
+                </div>
             </div>
         `;
 
         this.querySelector('#enter-workshop-btn')?.addEventListener('click', () => {
             this.engine?.enterWorkshop();
+        });
+        this.querySelector('#quit-game-btn')?.addEventListener('click', () => {
+            if (confirm(t('global.quit_confirm'))) {
+                this.engine?.quitGame(false); // Pass false to preserve the save file
+            }
         });
     }
 }

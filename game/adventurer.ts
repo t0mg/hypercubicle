@@ -33,6 +33,7 @@ export class Adventurer {
         this.logger = logger;
         this.roomHistory = [];
         this.lootHistory = [];
+        this.boredomCounter = 0;
     }
 
     public get challenge(): number {
@@ -130,5 +131,41 @@ export class Adventurer {
         this.power = power;
         this.maxHp = maxHp;
         this.hp = Math.round(this.maxHp * healthPercentage);
+    }
+
+    public toJSON(): any {
+        return {
+            hp: this.hp,
+            maxHp: this.maxHp,
+            power: this.power,
+            traits: this.traits,
+            inventory: this.inventory,
+            activeBuffs: this.activeBuffs,
+            skill: this.skill,
+            challengeHistory: this.challengeHistory,
+            flowState: this.flowState,
+            roomHistory: this.roomHistory,
+            lootHistory: this.lootHistory,
+            boredomCounter: this.boredomCounter,
+        };
+    }
+
+    public static fromJSON(data: any, logger: Logger): Adventurer {
+        const traits = data.traits;
+        const adventurer = new Adventurer(traits, logger);
+
+        adventurer.hp = data.hp;
+        adventurer.maxHp = data.maxHp;
+        adventurer.power = data.power;
+        adventurer.inventory = data.inventory;
+        adventurer.activeBuffs = data.activeBuffs;
+        adventurer.skill = data.skill;
+        adventurer.challengeHistory = data.challengeHistory;
+        adventurer.flowState = data.flowState;
+        adventurer.roomHistory = data.roomHistory;
+        adventurer.lootHistory = data.lootHistory;
+        adventurer.boredomCounter = data.boredomCounter;
+
+        return adventurer;
     }
 }

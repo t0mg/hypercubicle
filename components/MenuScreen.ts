@@ -31,12 +31,13 @@ export class MenuScreen extends HTMLElement {
   }
 
   render() {
-    if (!this.metaManager) return;
+    if (!this.metaManager || !this.engine) return;
     const metaState = this.metaManager.metaState;
-    const hasSave = metaState.adventurers > 0;
+    const hasSave = this.engine.hasSaveGame();
+    const hasMeta = metaState.adventurers > 0;
 
     let metaInfo = '';
-    if (hasSave) {
+    if (hasMeta) {
       const adventurers = metaState.adventurers || 1;
       metaInfo = `
                 <p class="text-lg text-gray-400 mt-4">

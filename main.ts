@@ -4,6 +4,7 @@ import { initLocalization, t } from './text';
 import { render } from './rendering';
 import { initializeTooltipIcons } from './components/TooltipHelper';
 import { MetaManager } from './game/meta';
+import { GameSaver } from './game/saver';
 import { LocalStorage } from './game/storage';
 import { DataLoaderFetch } from './game/data-loader-fetch';
 
@@ -30,8 +31,9 @@ if (!appElement) {
 
 const storage = new LocalStorage();
 const metaManager = new MetaManager(storage);
+const gameSaver = new GameSaver(storage);
 const dataLoader = new DataLoaderFetch();
-const engine = new GameEngine(metaManager, dataLoader);
+const engine = new GameEngine(metaManager, dataLoader, gameSaver);
 
 engine.on('state-change', (newState) => {
   if (engine.isLoading) {
