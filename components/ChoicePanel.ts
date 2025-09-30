@@ -114,35 +114,24 @@ export class ChoicePanel extends HTMLElement {
     if (!this._choices) return;
 
     const newlyDrafted = this._choices.filter(c => c.justDrafted && this._initialRender);
-    if (newlyDrafted.length > 0) {
-      this.innerHTML = ''; // Clear the panel to show the modal
-      const modal = document.createElement('info-modal');
-      this.appendChild(modal);
+    if (newlyDrafted.length > 0 && this._initialRender) {
+      this._initialRender = false; // prevent re-triggering
+      
+      const modalContent = newlyDrafted.map(item => {
+        const card = document.createElement('choice-card') as Card;
+        card.item = item;
+        return card.outerHTML;
+      }).join('');
 
-      Promise.all([
-        customElements.whenDefined('info-modal'),
-        customElements.whenDefined('choice-card')
-      ]).then(() => {
-        const modalContent = newlyDrafted.map(item => {
-          const card = document.createElement('choice-card') as Card;
-          card.item = item;
-          return card.outerHTML;
-        }).join('');
-
-        const infoModal = modal as InfoModal;
-        infoModal.show(
-          t('choice_panel.new_items_title'),
-          `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${modalContent}</div>`
-        );
-
-        infoModal.addEventListener('modal-close', () => {
-          this._choices.forEach(c => c.justDrafted = false);
-          this._initialRender = true; // Reset for the main render
-          this.render();
-        }, { once: true });
+      InfoModal.show(
+        t('choice_panel.new_items_title'),
+        `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${modalContent}</div>`
+      ).then(() => {
+        this._choices.forEach(c => c.justDrafted = false);
+        this.render();
       });
 
-      return;
+      return; // Stop rendering the main panel until modal is closed
     }
 
     const rarityOrder: { [key: string]: number } = { 'Common': 0, 'Uncommon': 1, 'Rare': 2 };

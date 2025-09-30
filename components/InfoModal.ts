@@ -1,50 +1,92 @@
 import { t } from '../text';
 
-export class InfoModal extends HTMLElement {
-  private _isOpen = false;
+export class InfoModal {
+  private element: HTMLDivElement;
+  private resolve: () => void;
+  private handleKeydown: (event: KeyboardEvent) => void;
 
-  constructor() {
-    super();
-    this.addEventListener('click', (e) => {
-      const target = e.composedPath()[0] as HTMLElement;
-      if (target.id === 'modal-close-button' || target.id === 'modal-overlay') {
-        this.hide();
+  private constructor(title: string, content: string, buttonText: string, resolve: () => void) {
+    this.resolve = resolve;
+
+    const overlay = document.createElement("div");
+    overlay.className = "info-modal-overlay";
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) {
+        this.dismiss();
+      }
+    });
+
+    const modal = document.createElement("div");
+    this.element = modal;
+    modal.className = "info-modal";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-labelledby", "info-modal-title");
+
+    const titleEl = document.createElement("h2");
+    titleEl.id = "info-modal-title";
+    titleEl.textContent = title;
+    modal.appendChild(titleEl);
+
+    const contentEl = document.createElement("p");
+    contentEl.innerHTML = content;
+    modal.appendChild(contentEl);
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = "info-modal-buttons";
+
+    const actionButton = document.createElement("button");
+    actionButton.textContent = buttonText;
+    actionButton.addEventListener("click", () => {
+      this.dismiss();
+    });
+    buttonContainer.appendChild(actionButton);
+
+    modal.appendChild(buttonContainer);
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    this.handleKeydown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        this.dismiss();
+      }
+    };
+    document.addEventListener("keydown", this.handleKeydown);
+
+    const focusableElements = modal.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    firstElement?.focus();
+
+    modal.addEventListener("keydown", (e) => {
+      if (e.key !== "Tab") return;
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          lastElement.focus();
+          e.preventDefault();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          firstElement.focus();
+          e.preventDefault();
+        }
       }
     });
   }
 
-  public show(title: string, content: string, buttonText?: string) {
-    this._isOpen = true;
-    this.render(title, content, buttonText);
+  private dismiss() {
+    this.element.parentElement!.remove();
+    document.removeEventListener("keydown", this.handleKeydown);
+    this.resolve();
   }
 
-  public hide() {
-    if (!this._isOpen) return;
-    this._isOpen = false;
-    this.innerHTML = '';
-    this.dispatchEvent(new CustomEvent('modal-close', { bubbles: true, composed: true }));
-  }
-
-  private render(title: string, content: string, buttonText: string = t('global.continue')) {
-    if (!this._isOpen) {
-      this.innerHTML = '';
-      return;
-    }
-
-    this.innerHTML = `
-      <div id="modal-overlay" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 animate-fade-in">
-        <div class="bg-brand-surface p-8 pixel-corners shadow-2xl text-center border-2 border-brand-primary animate-fade-in-up w-full max-w-2xl">
-          <h2 class="text-4xl font-title text-brand-secondary mb-4">${title}</h2>
-          <div class="text-brand-text mb-6 max-h-[60vh] overflow-y-auto text-left">
-            ${content}
-          </div>
-          <button id="modal-close-button" class="bg-brand-primary text-white py-3 px-8 pixel-corners hover:scale-105 transition-transform transform">
-            ${buttonText}
-          </button>
-        </div>
-      </div>
-    `;
+  public static show(title: string, content: string, buttonText: string = t('global.continue')): Promise<void> {
+    return new Promise((resolve) => {
+      new InfoModal(title, content, buttonText, resolve);
+    });
   }
 }
-
-customElements.define('info-modal', InfoModal);
