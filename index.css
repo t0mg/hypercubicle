@@ -10,39 +10,42 @@ body {
 }
 
 [data-tooltip-key] {
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10+ */
-  user-select: none; /* Standard syntax */
+  -webkit-user-select: none;
+  /* Safari */
+  -ms-user-select: none;
+  /* IE 10+ */
+  user-select: none;
+  /* Standard syntax */
   position: relative;
   cursor: help;
 }
 
 .tooltip-icon {
-    display: none;
-    position: absolute;
-    top: -0.5rem;
-    right: -0.5rem;
-    width: 1.25rem;
-    height: 1.25rem;
-    background-color: #4a5568;
-    color: white;
-    border-radius: 50%;
-    text-align: center;
-    line-height: 1.25rem;
-    font-size: 0.875rem;
-    font-weight: bold;
-    cursor: pointer;
-    z-index: 10;
+  display: none;
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  background-color: #4a5568;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 1.25rem;
+  font-size: 0.875rem;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 10;
 }
 
 @media (pointer: coarse) {
-    [data-tooltip-key] {
-        cursor: default;
-    }
+  [data-tooltip-key] {
+    cursor: default;
+  }
 
-    .tooltip-icon {
-        display: inline-block;
-    }
+  .tooltip-icon {
+    display: inline-block;
+  }
 }
 
 .stack-outline-1::before,
@@ -54,7 +57,8 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  border: 2px solid #4a5568; /* border-brand-primary */
+  border: 2px solid #4a5568;
+  /* border-brand-primary */
   z-index: -1;
   clip-path: polygon(0 5px, 5px 5px, 5px 0, calc(100% - 5px) 0, calc(100% - 5px) 5px, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 5px calc(100% - 5px), 0 calc(100% - 5px));
 }
@@ -66,8 +70,14 @@ body {
 .stack-outline-2::before {
   transform: translate(4px, -4px);
 }
+
 .stack-outline-2::after {
   transform: translate(8px, -8px);
+}
+
+.info-modal {
+  background-color: #1a202c;
+  border: 1px solid #4a5568;
 }
 
 .info-modal-overlay {
@@ -88,12 +98,4 @@ body {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-}
-
-.info-modal {
-  background-color: #333;
-  padding: 20px;
-  border-radius: 5px;
-  min-width: 300px;
-  max-width: 80%;
 }

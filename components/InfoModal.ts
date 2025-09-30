@@ -18,7 +18,7 @@ export class InfoModal {
 
     const modal = document.createElement("div");
     this.element = modal;
-    modal.className = "info-modal";
+    modal.className = "info-modal p-4 flex flex-col justify-between shadow-lg gap-4 animate-fade-in";
     modal.setAttribute("role", "dialog");
     modal.setAttribute("aria-modal", "true");
     modal.setAttribute("aria-labelledby", "info-modal-title");
@@ -36,6 +36,7 @@ export class InfoModal {
     buttonContainer.className = "info-modal-buttons";
 
     const actionButton = document.createElement("button");
+    actionButton.className = "bg-brand-primary text-white py-3 px-8 pixel-corners transition-all transform hover:scale-105";
     actionButton.textContent = buttonText;
     actionButton.addEventListener("click", () => {
       this.dismiss();

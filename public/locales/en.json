@@ -67,7 +67,7 @@
     "begin_encounter": "Begin Encounter",
     "multiple_enemies_title": "{name} ({count} mobs)",
     "stacked_items_title": "{name} (x{count})",
-    "new_items_title": "New Additions!",
+    "new_items_title": "Newly drawn:",
     "continue_without_loot": "Continue without offering loot",
     "roll_credits": "Roll credits"
   },
