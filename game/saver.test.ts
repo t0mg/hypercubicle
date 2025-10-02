@@ -1,0 +1,105 @@
+import { describe, it, expect, beforeEach } from 'vitest';
+import { GameSaver } from './saver';
+import { GameState, GamePhase } from '../types';
+import { Adventurer } from './adventurer';
+import { Logger } from './logger';
+import { MemoryStorage } from './storage';
+
+describe('GameSaver', () => {
+  let storage: MemoryStorage;
+  let saver: GameSaver;
+  let gameState: GameState;
+
+  beforeEach(() => {
+    storage = new MemoryStorage();
+    saver = new GameSaver(storage);
+    const logger = new Logger();
+    const adventurer = new Adventurer({ offense: 50, resilience: 50, skill: 10 }, logger);
+
+    // Create a complex game state to test serialization
+    gameState = {
+      phase: 'DESIGNER_CHOOSING_LOOT' as GamePhase,
+      adventurer: adventurer,
+      run: 2,
+      room: 5,
+      logger: logger,
+      designer: { balancePoints: 100 },
+      unlockedDeck: ['item1', 'item2'],
+      availableDeck: [{ id: 'item3', instanceId: 'i3', name: 'Deck Item', type: 'Weapon', cost: null, stats: {}, description: '' }],
+      hand: [{ id: 'item4', instanceId: 'i4', name: 'Hand Item', type: 'Armor', cost: null, stats: {}, description: '' }],
+      unlockedRoomDeck: ['room1'],
+      availableRoomDeck: [{ id: 'room2', instanceId: 'r2', name: 'Deck Room', type: 'enemy', cost: null, stats: {}, description: '' }],
+      roomHand: [{ id: 'room3', instanceId: 'r3', name: 'Hand Room', type: 'trap', cost: null, stats: {}, description: '' }],
+      handSize: 10,
+      shopItems: [],
+      offeredLoot: [],
+      offeredRooms: [],
+      feedback: 'Initial state',
+      runEnded: { isOver: false, reason: '', success: false, decision: null },
+      newlyUnlocked: [],
+      shopReturnPhase: null,
+    };
+  });
+
+  it('should save and load a game state correctly', () => {
+    // Modify state before saving
+    gameState.adventurer.hp = 80;
+    gameState.adventurer.power = 15;
+    gameState.logger.info('This is a test log entry.');
+    gameState.designer.balancePoints = 150;
+
+    saver.save(gameState);
+
+    const loadedState = saver.load();
+
+    expect(loadedState).not.toBeNull();
+    if (!loadedState) return;
+
+    // Verify root-level properties
+    expect(loadedState.run).toBe(gameState.run);
+    expect(loadedState.room).toBe(gameState.room);
+    expect(loadedState.phase).toBe(gameState.phase);
+    expect(loadedState.designer.balancePoints).toBe(150);
+
+    // Verify complex properties (deep equality)
+    expect(loadedState.hand).toEqual(gameState.hand);
+    expect(loadedState.availableDeck).toEqual(gameState.availableDeck);
+
+    // Verify deserialized Adventurer
+    expect(loadedState.adventurer).toBeInstanceOf(Adventurer);
+    expect(loadedState.adventurer.hp).toBe(80);
+    expect(loadedState.adventurer.power).toBe(15);
+    expect(loadedState.adventurer.traits).toEqual(gameState.adventurer.traits);
+
+    // Verify deserialized Logger
+    expect(loadedState.logger).toBeInstanceOf(Logger);
+    expect(loadedState.logger.entries.length).toBe(1);
+    expect(loadedState.logger.entries[0].message).toBe('This is a test log entry.');
+
+    // Check that the adventurer's logger instance is the same as the state's logger instance
+    expect(loadedState.adventurer.logger).toBe(loadedState.logger);
+  });
+
+  it('should return null if no save game exists', () => {
+    const loadedState = saver.load();
+    expect(loadedState).toBeNull();
+  });
+
+  it('should clear the save game', () => {
+    saver.save(gameState);
+    expect(saver.hasSaveGame()).toBe(true);
+    saver.clear();
+    expect(saver.hasSaveGame()).toBe(false);
+    expect(saver.load()).toBeNull();
+  });
+
+  it('should handle version mismatch by clearing the save', () => {
+    // Manually save with a different version
+    const oldState = { version: '0.0.1', ...gameState };
+    storage.setItem('rogue-steward-savegame', JSON.stringify(oldState));
+
+    const loadedState = saver.load();
+    expect(loadedState).toBeNull();
+    expect(saver.hasSaveGame()).toBe(false); // It should have cleared the invalid save
+  });
+});

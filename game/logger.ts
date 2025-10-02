@@ -44,4 +44,16 @@ export class Logger {
     public error(message: string): void {
         this.log(message, 'ERROR');
     }
+
+    public toJSON(): { entries: LogEntry[] } {
+        return {
+            entries: this.entries,
+        };
+    }
+
+    public static fromJSON(data: { entries: LogEntry[] }): Logger {
+        const logger = new Logger();
+        logger.entries = data.entries || [];
+        return logger;
+    }
 }

@@ -18,7 +18,9 @@
     "an_error_occurred": "An Error Occurred",
     "error_loading_items": "Failed to load items.json: {statusText}",
     "unknown_error": "An unknown error occurred while loading game data.",
-    "continue": "Continue"
+    "continue": "Continue",
+    "quit": "Quit",
+    "quit_confirm": "Are you sure you want to return to the main menu? Your progress will be saved."
   },
   "main": {
     "adventurer_considering_offer": "Adventurer is considering your offer...",

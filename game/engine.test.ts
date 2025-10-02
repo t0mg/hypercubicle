@@ -9,6 +9,7 @@ import { UnlockableFeature } from './unlocks';
 import * as ai from './ai';
 import { rng } from './random';
 import { MemoryStorage } from './storage';
+import { GameSaver } from './saver';
 import { DataLoaderFileSystem } from '../tools/data-loader-file-system';
 
 // Mock the items data
@@ -40,6 +41,7 @@ describe('GameEngine', () => {
     let metaManager: MetaManager;
     let storage: MemoryStorage;
     let dataLoader: DataLoaderFileSystem;
+    let saver: GameSaver;
 
     beforeAll(async () => {
         dataLoader = new DataLoaderFileSystem();
@@ -54,7 +56,8 @@ describe('GameEngine', () => {
         rng.setSeed(12345);
         storage = new MemoryStorage();
         metaManager = new MetaManager(storage);
-        engine = new GameEngine(metaManager, dataLoader);
+        saver = new GameSaver(storage);
+        engine = new GameEngine(metaManager, dataLoader, saver);
         await engine.init();
         engine.startNewGame();
     });
@@ -200,7 +203,8 @@ describe('GameEngine', () => {
             const storage = new MemoryStorage();
             const metaManager = new MetaManager(storage);
             const dataLoader = new DataLoaderFileSystem();
-            const engine = new GameEngine(metaManager, dataLoader);
+            const saver = new GameSaver(storage);
+            const engine = new GameEngine(metaManager, dataLoader, saver);
             await engine.init();
             engine.metaManager.checkForUnlocks(10); // Unlock workshop
             engine.startNewGame();
@@ -215,7 +219,8 @@ describe('GameEngine', () => {
             const storage = new MemoryStorage();
             const metaManager = new MetaManager(storage);
             const dataLoader = new DataLoaderFileSystem();
-            const engine = new GameEngine(metaManager, dataLoader);
+            const saver = new GameSaver(storage);
+            const engine = new GameEngine(metaManager, dataLoader, saver);
             await engine.init();
             engine.metaManager.checkForUnlocks(10); // Unlock workshop
             engine.startNewGame();
@@ -273,7 +278,8 @@ describe('GameEngine', () => {
             const storage = new MemoryStorage();
             const metaManager = new MetaManager(storage);
             const dataLoader = new DataLoaderFileSystem();
-            const engine = new GameEngine(metaManager, dataLoader);
+            const saver = new GameSaver(storage);
+            const engine = new GameEngine(metaManager, dataLoader, saver);
 
             // No unlocks
             expect((engine as any)._getBpPerRoom()).toBe(constants.BP_PER_ROOM);
@@ -291,7 +297,8 @@ describe('GameEngine', () => {
             const storage = new MemoryStorage();
             const metaManager = new MetaManager(storage);
             const dataLoader = new DataLoaderFileSystem();
-            const engine = new GameEngine(metaManager, dataLoader);
+            const saver = new GameSaver(storage);
+            const engine = new GameEngine(metaManager, dataLoader, saver);
             await engine.init();
             engine.metaManager.checkForUnlocks(100); // Unlock everything
             engine.startNewGame();
