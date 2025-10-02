@@ -119,6 +119,10 @@
       "title": "The Workshop",
       "description": "Between runs, you can now visit the Workshop and spend Balance Points to add new items to your deck (until the adventurer retires)."
     },
+    "room_deck_size_increase": {
+      "title": "Room Deck Size Increased",
+      "description": "The number of rooms in your deck has been increased to 36."
+    },
     "hand_size_increase": {
       "title": "Hand Size Increased",
       "description": "You can now hold more cards in your hand, giving you more options."
