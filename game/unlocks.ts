@@ -2,6 +2,7 @@ import { t } from '../text';
 
 export enum UnlockableFeature {
   WORKSHOP = 'workshop',  // Gives access to the workshop where players can puchase items and rooms.
+  ROOM_DECK_SIZE_INCREASE = 'room_deck_size_increase', // Increases the room deck size to 36.
   HAND_SIZE_INCREASE = 'hand_size_increase', // Increases the hand size to 12 items and 12 rooms.
   ADVENTURER_TRAITS = "ADVENTURER_TRAITS", // Reveals the offense/risk/expertise traits of the adventurer.
   BP_MULTIPLIER = "BP_MULTIPLIER", // Doubles the base BP gain.
@@ -24,8 +25,14 @@ export const UNLOCKS: Unlock[] = [
     description: () => t('unlocks.workshop.description'),
   },
   {
-    feature: UnlockableFeature.HAND_SIZE_INCREASE,
+    feature: UnlockableFeature.ROOM_DECK_SIZE_INCREASE,
     runThreshold: 3,
+    title: () => t('unlocks.room_deck_size_increase.title'),
+    description: () => t('unlocks.room_deck_size_increase.description'),
+  },
+  {
+    feature: UnlockableFeature.HAND_SIZE_INCREASE,
+    runThreshold: 4,
     title: () => t('unlocks.hand_size_increase.title'),
     description: () => t('unlocks.hand_size_increase.description'),
   },
