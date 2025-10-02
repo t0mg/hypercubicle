@@ -11,6 +11,7 @@ import {
   HAND_SIZE,
   INTEREST_THRESHOLD,
   DECK_SIZE,
+  ROOM_DECK_SIZE,
   MAX_POTIONS,
 } from './constants';
 import { generateLootDeck, generateRoomDeck, shuffleArray } from './utils';
@@ -652,7 +653,7 @@ export class GameEngine {
     if (this.metaManager.acls.has(UnlockableFeature.ROOM_DECK_SIZE_INCREASE)) {
       return 36;
     }
-    return DECK_SIZE;
+    return ROOM_DECK_SIZE;
   }
 
   private _getBpPerRoom = (): number => {
