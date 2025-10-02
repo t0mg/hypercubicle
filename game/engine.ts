@@ -11,6 +11,7 @@ import {
   HAND_SIZE,
   INTEREST_THRESHOLD,
   DECK_SIZE,
+  ROOM_DECK_SIZE,
   MAX_POTIONS,
 } from './constants';
 import { generateLootDeck, generateRoomDeck, shuffleArray } from './utils';
@@ -158,7 +159,7 @@ export class GameEngine {
     const availableDeck = runDeck.slice(handSize);
 
     const unlockedRoomDeck = initialUnlocked?.rooms || this._allRooms.filter(item => item.cost === null).map(item => item.id);
-    const roomRunDeck = generateRoomDeck(unlockedRoomDeck, this._allRooms, DECK_SIZE);
+    const roomRunDeck = generateRoomDeck(unlockedRoomDeck, this._allRooms, this._getRoomDeckSize());
     const roomHand = roomRunDeck.slice(0, handSize);
     const availableRoomDeck = roomRunDeck.slice(handSize);
 
@@ -211,7 +212,7 @@ export class GameEngine {
     const hand = runDeck.slice(0, handSize);
     const availableDeck = runDeck.slice(handSize);
 
-    const roomRunDeck = generateRoomDeck(this.gameState.unlockedRoomDeck, this._allRooms, DECK_SIZE);
+    const roomRunDeck = generateRoomDeck(this.gameState.unlockedRoomDeck, this._allRooms, this._getRoomDeckSize());
     const roomHand = roomRunDeck.slice(0, handSize);
     const availableRoomDeck = roomRunDeck.slice(handSize);
 
@@ -646,6 +647,13 @@ export class GameEngine {
       return 12;
     }
     return HAND_SIZE;
+  }
+
+  private _getRoomDeckSize(): number {
+    if (this.metaManager.acls.has(UnlockableFeature.ROOM_DECK_SIZE_INCREASE)) {
+      return 36;
+    }
+    return ROOM_DECK_SIZE;
   }
 
   private _getBpPerRoom = (): number => {

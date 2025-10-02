@@ -70,10 +70,11 @@ describe('MetaManager', () => {
   });
 
   it('should return the correct acls', () => {
-    metaManager.checkForUnlocks(3);
+    metaManager.checkForUnlocks(4);
     const acls = metaManager.acls;
     expect(acls).toBeInstanceOf(Set);
     expect(acls.has(UnlockableFeature.WORKSHOP)).toBe(true);
+    expect(acls.has(UnlockableFeature.ROOM_DECK_SIZE_INCREASE)).toBe(true);
     expect(acls.has(UnlockableFeature.HAND_SIZE_INCREASE)).toBe(true);
     expect(acls.has(UnlockableFeature.ADVENTURER_TRAITS)).toBe(false);
   });

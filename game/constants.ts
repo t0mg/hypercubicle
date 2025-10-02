@@ -4,5 +4,6 @@ export const RARITY_SCORE: Record<string, number> = { 'Common': 1, 'Uncommon': 2
 export const CHOICE_SCORE_THRESHOLD = 10;
 export const BP_PER_ROOM = 10;
 export const DECK_SIZE = 32;
+export const ROOM_DECK_SIZE = 18;
 export const HAND_SIZE = 8;
 export const ADVENTURER_ACTION_DELAY_MS = 300;
