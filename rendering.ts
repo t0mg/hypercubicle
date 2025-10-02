@@ -65,6 +65,7 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
     gameStats.setAttribute('run', state.run.toString());
     gameStats.setAttribute('room', state.room.toString());
     gameStats.setAttribute('deck-size', state.availableDeck.length.toString());
+    gameStats.setAttribute('room-deck-size', state.availableRoomDeck.length.toString());
     leftColumn.appendChild(gameStats);
 
     const feedbackPanel = document.createElement('feedback-panel');

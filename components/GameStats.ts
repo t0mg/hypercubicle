@@ -6,6 +6,7 @@ export class GameStats extends HTMLElement {
     private _run: number = 0;
     private _room: number = 0;
     private _deckSize: number = 0;
+    private _roomDeckSize: number = 0;
     public engine?: GameEngine;
 
     constructor() {
@@ -13,7 +14,7 @@ export class GameStats extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['balance-points', 'run', 'room', 'deck-size'];
+        return ['balance-points', 'run', 'room', 'deck-size', 'room-deck-size'];
     }
 
     attributeChangedCallback(name: string, oldValue: string, newValue: string) {
@@ -29,6 +30,9 @@ export class GameStats extends HTMLElement {
                 break;
             case 'deck-size':
                 this._deckSize = Number(newValue);
+                break;
+            case 'room-deck-size':
+                this._roomDeckSize = Number(newValue);
                 break;
         }
         this.render();
@@ -58,6 +62,10 @@ export class GameStats extends HTMLElement {
                 <div>
                     <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.deck')}</span>
                     <p class="text-2xl  text-white">${this._deckSize}</p>
+                </div>
+                <div>
+                    <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.rooms')}</span>
+                    <p class="text-2xl  text-white">${this._roomDeckSize}</p>
                 </div>
                 ${this.engine?.isWorkshopAccessUnlocked() ? `
                 <div>
