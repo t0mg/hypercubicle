@@ -302,15 +302,15 @@
                     </button>
                 </div>
             </div>
-        `}}customElements.define("workshop-screen",tt);class st extends HTMLElement{constructor(){super(),this.engine=null,this.metaManager=null,this.addEventListener("click",e=>{if(!this.engine||!this.metaManager)return;const t=e.target;t.id==="new-game-button"?this.metaManager.metaState.adventurers>0?confirm(o("menu.new_game_confirm"))&&(this.metaManager.reset(),this.engine.startNewGame()):this.engine.startNewGame():t.id==="continue-game-button"&&this.engine.continueGame()})}connectedCallback(){this.render()}render(){if(!this.metaManager||!this.engine)return;const e=this.metaManager.metaState,t=this.engine.hasSaveGame(),n=e.adventurers>0;let i="";if(n){const a=e.adventurers||1;i=`
+        `}}customElements.define("workshop-screen",tt);class st extends HTMLElement{constructor(){super(),this.engine=null,this.metaManager=null,this.addEventListener("click",e=>{if(!this.engine||!this.metaManager)return;const t=e.target;t.id==="new-game-button"?this.metaManager.metaState.adventurers>0?confirm(o("menu.new_game_confirm"))&&(this.metaManager.reset(),this.engine.startNewGame()):this.engine.startNewGame():t.id==="continue-game-button"&&this.engine.continueGame()})}connectedCallback(){this.render()}render(){if(!this.metaManager||!this.engine)return;const e=this.metaManager.metaState,t=this.engine.hasSaveGame();let n="";if(t){const i=e.adventurers||1;n=`
                 <p class="text-lg text-gray-400 mt-4">
-                    ${o("menu.max_runs",{count:e.highestRun})} | ${o("menu.unlocked_features",{count:e.unlockedFeatures.length})} | ${o("menu.adventurer_count",{count:a})}
+                    ${o("menu.max_runs",{count:e.highestRun})} | ${o("menu.unlocked_features",{count:e.unlockedFeatures.length})} | ${o("menu.adventurer_count",{count:i})}
                 </p>
             `}this.innerHTML=`
             <div class="relative min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4 text-center">
                 <h1 class="text-8xl text-red-500 font-title mb-2">${o("game_title")}</h1>
                 <p class="text-2xl text-gray-300 mb-8">${o("game_subtitle")}</p>
-                ${i}
+                ${n}
                 <div class="mt-8 space-y-4">
                         ${t?`
                         <button id="continue-game-button" class="bg-red-500 hover:bg-red-600 text-white py-3 px-6 pixel-corners min-w-[250px] transition-colors">
@@ -322,7 +322,7 @@
                     </button>
                 </div>
                 <div class="absolute bottom-2 right-2 text-xs text-gray-500">
-                    v0.0.0 (build 88)
+                    v0.0.0 (build 89)
                 </div>
             </div>
         `}}customElements.define("menu-screen",st);class nt extends HTMLElement{constructor(){super(),this.rect=new DOMRect(0,0,0,0),this.isDesktop=!0,this.attachShadow({mode:"open"}),this.onclick=t=>{window.matchMedia("(pointer: coarse)").matches&&t.target===this&&this.hide()};const e=document.createElement("style");e.textContent=`
