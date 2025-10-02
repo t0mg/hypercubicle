@@ -21,7 +21,9 @@
     "unknown_error": "An unknown error occurred while loading game data.",
     "continue": "Continue",
     "quit": "Quit",
-    "quit_confirm": "Are you sure you want to return to the main menu? Your progress will be saved."
+    "quit_confirm": "Are you sure you want to return to the main menu? Your progress will be saved.",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
   },
   "main": {
     "adventurer_considering_offer": "Adventurer is considering your offer...",
@@ -108,6 +110,7 @@
     "continue_game": "Continue",
     "reset_save": "Reset Save",
     "new_game_confirm": "Starting a new game will erase your current progress. Are you sure?",
+    "reset_save_confirm": "This will permanently delete all your progress, including unlocked features and adventurer history. Are you absolutely sure?",
     "adventurer_count": "Adventurers burned: {count}",
     "max_runs": "Best adventurer: {count} runs",
     "unlocked_features": "Unlocked Features: {count}"
