@@ -34,10 +34,9 @@ export class MenuScreen extends HTMLElement {
     if (!this.metaManager || !this.engine) return;
     const metaState = this.metaManager.metaState;
     const hasSave = this.engine.hasSaveGame();
-    const hasMeta = metaState.adventurers > 0;
 
     let metaInfo = '';
-    if (hasMeta) {
+    if (hasSave) {
       const adventurers = metaState.adventurers || 1;
       metaInfo = `
                 <p class="text-lg text-gray-400 mt-4">
