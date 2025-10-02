@@ -1,5 +1,6 @@
 import { t } from '../text';
 import { GameEngine } from '../game/engine';
+import { ConfirmModal } from './ConfirmModal';
 
 export class GameStats extends HTMLElement {
     private _balancePoints: number | null = null;
@@ -85,8 +86,8 @@ export class GameStats extends HTMLElement {
         this.querySelector('#enter-workshop-btn')?.addEventListener('click', () => {
             this.engine?.enterWorkshop();
         });
-        this.querySelector('#quit-game-btn')?.addEventListener('click', () => {
-            if (confirm(t('global.quit_confirm'))) {
+        this.querySelector('#quit-game-btn')?.addEventListener('click', async () => {
+            if (await ConfirmModal.show(t('global.quit'), t('global.quit_confirm'))) {
                 this.engine?.quitGame(false); // Pass false to preserve the save file
             }
         });
