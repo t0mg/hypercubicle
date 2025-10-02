@@ -586,7 +586,7 @@ export class GameEngine {
     this.gameState.logger.info(`Adventurer decided to ${decision}.`);
 
     if (decision === 'retire') {
-      this.quitGame(false); // Don't clear save on retire, as they might want to continue that run later
+      this.quitGame(true); // Clear save on retire, only meta progression is kept.
       return;
     }
 
