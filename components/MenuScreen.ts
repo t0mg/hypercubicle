@@ -49,11 +49,9 @@ export class MenuScreen extends HTMLElement {
   render() {
     if (!this.metaManager || !this.engine) return;
     const metaState = this.metaManager.metaState;
-    const hasSave = this.engine.hasSaveGame();
-
     let metaInfo = '';
-    if (hasSave) {
-      const adventurers = metaState.adventurers || 1;
+    if (!!metastate.adventurers || !!metastate.highestRun || !!metastate.unlockedFeatures.length) {
+      const adventurers = metaState.adventurers || 0;
       metaInfo = `
                 <p class="text-lg text-gray-400 mt-4">
                     ${t('menu.max_runs', { count: metaState.highestRun })} | ${t('menu.unlocked_features', { count: metaState.unlockedFeatures.length })} | ${t('menu.adventurer_count', { count: adventurers })}
