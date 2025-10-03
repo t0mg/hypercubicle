@@ -26,8 +26,6 @@
     "cancel": "Cancel"
   },
   "main": {
-    "adventurer_considering_offer": "Adventurer is considering your offer...",
-    "adventurer_facing_encounter": "Adventurer is facing the encounter...",
     "unhandled_game_phase": "Unhandled game phase: {phase}"
   },
   "adventurer_status": {

@@ -48,7 +48,6 @@ This directory contains all the reusable Web Components that make up the UI. Eac
 -   `FeedbackPanel.ts`: A simple component to display messages and feedback from the adventurer.
 -   `RunEndedScreen.ts`: A modal screen that appears when a run ends.
 -   `GameStats.ts`: Displays high-level game information like current BP, run number, and room number.
--   `LoadingIndicator.ts`: A spinner used during asynchronous operations, like when the AI is "thinking".
 -   `Card.ts`: Renders a single card (item or room).
 -   `ChoicePanel.ts`: The main interface for the player to select which items or rooms to offer to the adventurer.
 -   `Workshop.ts`: The screen shown between runs where the player can spend BP to unlock new items.
