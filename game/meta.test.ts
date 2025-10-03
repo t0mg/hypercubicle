@@ -78,4 +78,22 @@ describe('MetaManager', () => {
     expect(acls.has(UnlockableFeature.HAND_SIZE_INCREASE)).toBe(true);
     expect(acls.has(UnlockableFeature.ADVENTURER_TRAITS)).toBe(false);
   });
+
+  it('should correctly increment adventurers count and persist it', () => {
+    // First adventurer
+    metaManager.incrementAdventurers();
+    expect(metaManager.metaState.adventurers).toBe(1);
+
+    // Simulate a "new session" by creating a new manager with the same storage
+    const newMetaManager = new MetaManager(storage);
+    expect(newMetaManager.metaState.adventurers).toBe(1);
+
+    // Second adventurer
+    newMetaManager.incrementAdventurers();
+    expect(newMetaManager.metaState.adventurers).toBe(2);
+
+    // Simulate another "new session"
+    const finalMetaManager = new MetaManager(storage);
+    expect(finalMetaManager.metaState.adventurers).toBe(2);
+  });
 });
