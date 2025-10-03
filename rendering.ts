@@ -9,23 +9,6 @@ import { GameEngine } from './game/engine';
 import { isLootSelectionImpossible, isRoomSelectionImpossible } from './game/utils';
 import { RunEndedScreen } from './components/RunEndedScreen';
 
-const getLoadingText = (state: GameState) => {
-    if (!state) return t('global.initializing');
-    switch (state.phase) {
-        case 'AWAITING_ADVENTURER_CHOICE':
-            return t('main.adventurer_considering_offer');
-        case 'AWAITING_ENCOUNTER_FEEDBACK':
-            return t('main.adventurer_facing_encounter');
-        default:
-            return t('global.loading');
-    }
-};
-
-const renderLoadingIndicator = (state: GameState) => {
-    const loadingIndicator = document.createElement('loading-indicator');
-    loadingIndicator.setAttribute('text', getLoadingText(state));
-    return loadingIndicator;
-}
 
 const renderChoicePanel = (state: GameState, engine: GameEngine, type: 'item' | 'room') => {
     const choicePanel = document.createElement('choice-panel') as ChoicePanel;
@@ -111,10 +94,6 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
             break;
         case 'DESIGNER_CHOOSING_ROOM':
             gamePhasePanel.appendChild(renderChoicePanel(state, engine, 'room'));
-            break;
-        case 'AWAITING_ADVENTURER_CHOICE':
-        case 'AWAITING_ENCOUNTER_FEEDBACK':
-            gamePhasePanel.appendChild(renderLoadingIndicator(state));
             break;
         default:
             // Don't render anything for unhandled phases, let it be blank.
