@@ -88,7 +88,8 @@ describe('MenuScreen', () => {
     expect(modal?.textContent).toContain(t('menu.reset_save_confirm'));
 
     // 7. Find and click the confirm button in the modal
-    const confirmButton = modal?.querySelector<HTMLButtonElement>('button.bg-brand-primary');
+    const buttons = modal?.querySelectorAll('button');
+    const confirmButton = Array.from(buttons || []).find(btn => btn.textContent === t('global.confirm'));
     expect(confirmButton).not.toBeNull();
     confirmButton?.click();
 

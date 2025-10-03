@@ -18,6 +18,6 @@ export class ConfirmModal {
         variant: 'primary',
       },
     ];
-    return InfoModal.show({ title, content, buttons });
+    return InfoModal.show(title, content, buttons);
   }
 }
