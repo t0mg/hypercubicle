@@ -13,7 +13,6 @@ import './components/AdventurerStatus.ts';
 import './components/FeedbackPanel.ts';
 import './components/RunEndedScreen.ts';
 import './components/GameStats.ts';
-import './components/LoadingIndicator.ts';
 import './components/LogPanel.ts';
 import './components/Card.ts';
 import './components/ChoicePanel.ts';
