@@ -293,7 +293,7 @@
                     </button>
                 </div>
             </div>
-        `}}customElements.define("workshop-screen",st);class nt extends HTMLElement{constructor(){super(),this.engine=null,this.metaManager=null,this.addEventListener("click",async e=>{if(!this.engine||!this.metaManager)return;const t=e.target;if(t.id==="new-game-button"){const n=this.metaManager.metaState.adventurers>0||this.metaManager.metaState.highestRun>0;this.engine.hasSaveGame()||n?await j.show(a("menu.new_game"),a("menu.new_game_confirm"))&&this.engine.startNewGame():this.engine.startNewGame()}else t.id==="continue-game-button"?this.engine.continueGame():t.id==="reset-game-button"&&await j.show(a("menu.reset_save"),a("menu.reset_save_confirm"))&&(this.metaManager.reset(),this.engine.quitGame(!0))})}connectedCallback(){this.render()}render(){if(!this.metaManager||!this.engine)return;const e=this.metaManager.metaState,t=this.engine.hasSaveGame();let n="";if(t){const i=e.adventurers||1;n=`
+        `}}customElements.define("workshop-screen",st);class nt extends HTMLElement{constructor(){super(),this.engine=null,this.metaManager=null,this.addEventListener("click",async e=>{if(!this.engine||!this.metaManager)return;const t=e.target;if(t.id==="new-game-button"){const n=this.metaManager.metaState.adventurers>0||this.metaManager.metaState.highestRun>0;this.engine.hasSaveGame()||n?await j.show(a("menu.new_game"),a("menu.new_game_confirm"))&&this.engine.startNewGame():this.engine.startNewGame()}else t.id==="continue-game-button"?this.engine.continueGame():t.id==="reset-game-button"&&await j.show(a("menu.reset_save"),a("menu.reset_save_confirm"))&&(this.metaManager.reset(),this.engine.quitGame(!0))})}connectedCallback(){this.render()}render(){if(!this.metaManager||!this.engine)return;const e=this.metaManager.metaState,t=this.engine.hasSaveGame();let n="";if(e.adventurers||e.highestRun||e.unlockedFeatures.length){const i=e.adventurers||0;n=`
                 <p class="text-lg text-gray-400 mt-4">
                     ${a("menu.max_runs",{count:e.highestRun})} | ${a("menu.unlocked_features",{count:e.unlockedFeatures.length})} | ${a("menu.adventurer_count",{count:i})}
                 </p>
@@ -318,7 +318,7 @@
                     `:""}
                 </div>
                 <div class="absolute bottom-2 right-2 text-xs text-gray-500">
-                    v0.0.0 (build 94)
+                    v0.0.0 (build 97)
                 </div>
             </div>
         `}}customElements.define("menu-screen",nt);class it extends HTMLElement{constructor(){super(),this.rect=new DOMRect(0,0,0,0),this.isDesktop=!0,this.attachShadow({mode:"open"}),this.onclick=t=>{window.matchMedia("(pointer: coarse)").matches&&t.target===this&&this.hide()};const e=document.createElement("style");e.textContent=`
