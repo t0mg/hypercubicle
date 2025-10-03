@@ -49,6 +49,7 @@ export class MenuScreen extends HTMLElement {
   render() {
     if (!this.metaManager || !this.engine) return;
     const metaState = this.metaManager.metaState;
+    const hasSave = this.engine.hasSaveGame();
     let metaInfo = '';
     if (!!metaState.adventurers || !!metaState.highestRun || !!metaState.unlockedFeatures.length) {
       const adventurers = metaState.adventurers || 0;
