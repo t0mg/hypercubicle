@@ -37,6 +37,7 @@ export class MenuScreen extends HTMLElement {
         ) {
           this.metaManager.reset();
           this.engine.quitGame(true);
+          this.render();
         }
       }
     });
