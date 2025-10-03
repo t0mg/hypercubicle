@@ -123,7 +123,7 @@ export class ChoicePanel extends HTMLElement {
         return card.outerHTML;
       }).join('');
 
-      InfoModal.show(
+      InfoModal.showInfo(
         t('choice_panel.new_items_title'),
         `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${modalContent}</div>`
       ).then(() => {
