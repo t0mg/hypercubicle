@@ -42,10 +42,7 @@ export class MetaManager {
 
   public incrementAdventurers(): void {
     this._metaState.adventurers = (this._metaState.adventurers || 0) + 1;
-    if (this._metaState.adventurers > 1) {
-      // Don't save if it's the first adventurer (initial state)
-      this.save();
-    }
+    this.save();
   }
 
   public updateRun(run: number): void {
