@@ -6,32 +6,21 @@ export type ModalButton<T> = {
   variant?: 'primary' | 'secondary';
 };
 
-export type ModalOptions<T> = {
-  title: string;
-  content: string;
-  buttons: ModalButton<T>[];
-  customClasses?: {
-    overlay?: string;
-    modal?: string;
-    title?: string;
-    content?: string;
-    buttonContainer?: string;
-    primaryButton?: string;
-    secondaryButton?: string;
-  };
-};
-
 export class InfoModal<T> {
   private element: HTMLDivElement;
   private resolve: (value: T) => void;
   private handleKeydown: (event: KeyboardEvent) => void;
 
-  private constructor(options: ModalOptions<T>, resolve: (value: T) => void) {
-    const { title, content, buttons, customClasses = {} } = options;
+  private constructor(
+    title: string,
+    content: string,
+    buttons: ModalButton<T>[],
+    resolve: (value: T) => void
+  ) {
     this.resolve = resolve;
 
     const overlay = document.createElement('div');
-    overlay.className = customClasses.overlay || 'info-modal-overlay';
+    overlay.className = 'info-modal-overlay animate-fade-in';
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) {
         // Find a 'cancel' or 'close' button if it exists
@@ -47,31 +36,30 @@ export class InfoModal<T> {
 
     const modal = document.createElement('div');
     this.element = modal;
-    modal.className = customClasses.modal || 'info-modal p-4 flex flex-col justify-between shadow-lg gap-4 animate-fade-in';
+    modal.className = 'bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-primary animate-fade-in-up w-full max-w-3/4';
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-modal', 'true');
     modal.setAttribute('aria-labelledby', 'info-modal-title');
 
     const titleEl = document.createElement('h2');
     titleEl.id = 'info-modal-title';
-    titleEl.className = customClasses.title || '';
+    titleEl.className = 'text-4xl font-title text-brand-secondary mb-3';
     titleEl.textContent = title;
     modal.appendChild(titleEl);
 
     const contentEl = document.createElement('div');
-    contentEl.className = customClasses.content || '';
     contentEl.innerHTML = content;
     modal.appendChild(contentEl);
 
     const buttonContainer = document.createElement('div');
-    buttonContainer.className = customClasses.buttonContainer || 'info-modal-buttons';
+    buttonContainer.className = 'text-center mt-6';
 
     buttons.forEach((button, index) => {
       const buttonEl = document.createElement('button');
       const isPrimary = button.variant === 'primary' || (button.variant !== 'secondary' && index === 0);
 
-      const primaryClasses = customClasses.primaryButton || 'bg-brand-primary text-white py-3 px-8 pixel-corners transition-all transform hover:scale-105';
-      const secondaryClasses = customClasses.secondaryButton || 'bg-gray-600 text-white py-3 px-8 pixel-corners transition-all transform hover:scale-105';
+      const primaryClasses = 'bg-brand-primary text-white py-2 px-6 rounded-lg hover:bg-brand-primary/80 transition-colors';
+      const secondaryClasses = 'bg-gray-600 text-white py-2 px-6 rounded-lg hover:bg-gray-700 transition-colors';
 
       buttonEl.className = isPrimary ? primaryClasses : secondaryClasses;
       buttonEl.textContent = button.text;
@@ -129,19 +117,22 @@ export class InfoModal<T> {
     this.resolve(value);
   }
 
-  public static show<T>(options: ModalOptions<T>): Promise<T> {
+  public static show<T>(
+    title: string,
+    content: string,
+    buttons: ModalButton<T>[]
+  ): Promise<T> {
     return new Promise((resolve) => {
-      new InfoModal<T>(options, resolve);
+      new InfoModal<T>(title, content, buttons, resolve);
     });
   }
 
   public static showInfo(
     title: string,
     content: string,
-    buttonText: string = t('global.continue'),
-    customClasses?: ModalOptions<void>['customClasses']
+    buttonText: string = t('global.continue')
   ): Promise<void> {
     const buttons: ModalButton<void>[] = [{ text: buttonText, value: undefined }];
-    return InfoModal.show({ title, content, buttons, customClasses });
+    return InfoModal.show(title, content, buttons);
   }
 }

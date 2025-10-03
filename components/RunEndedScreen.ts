@@ -52,19 +52,10 @@ export class RunEndedScreen extends HTMLElement {
             <p class="text-brand-text mb-6">${unlockInfo.description()}</p>
         `;
 
-        const customClasses = {
-            overlay: 'info-modal-overlay animate-fade-in',
-            modal: 'bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-primary animate-fade-in-up w-full max-w-3/4',
-            title: 'text-4xl font-title text-brand-secondary mb-3',
-            buttonContainer: 'text-center',
-            primaryButton: 'bg-brand-primary text-white py-2 px-6 rounded-lg hover:bg-brand-primary/80 transition-colors'
-        };
-
         await InfoModal.showInfo(
             title,
             content,
-            t('global.continue'),
-            customClasses
+            t('global.continue')
         );
         this.dismissUnlock();
     }
