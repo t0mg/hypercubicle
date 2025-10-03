@@ -8,6 +8,10 @@ export class LocalStorage implements Storage {
   public setItem(key: string, value: string): void {
     window.localStorage.setItem(key, value);
   }
+
+  public removeItem(key: string): void {
+    window.localStorage.removeItem(key);
+  }
 }
 
 export class MemoryStorage implements Storage {
@@ -19,5 +23,9 @@ export class MemoryStorage implements Storage {
 
   public setItem(key: string, value: string): void {
     this.data[key] = value;
+  }
+
+  public removeItem(key: string): void {
+    delete this.data[key];
   }
 }

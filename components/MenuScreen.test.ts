@@ -105,4 +105,41 @@ describe('MenuScreen', () => {
     expect(finalMeta.adventurers).toBe(0);
     expect(newEngine.gameState?.phase).toBe('MENU');
   });
+
+  it('should hide continue and reset buttons after resetting the game', async () => {
+    // 1. Setup: Start a new game, which creates a save file.
+    engine.startNewGame();
+    expect(saver.hasSaveGame()).toBe(true);
+
+    // 2. Render: Go back to the menu and render.
+    engine.showMenu();
+    menuScreen.engine = engine;
+    menuScreen.metaManager = metaManager;
+    menuScreen.render();
+
+    // 3. Assert Initial State: Buttons should be visible.
+    let continueButton = menuScreen.querySelector('#continue-game-button');
+    let resetButton = menuScreen.querySelector<HTMLButtonElement>('#reset-game-button');
+    expect(continueButton, 'Continue button should be visible before reset').not.toBeNull();
+    expect(resetButton, 'Reset button should be visible before reset').not.toBeNull();
+
+    // 4. Action: Click the reset button and confirm.
+    resetButton?.click();
+
+    // Wait for modal to appear
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    const modal = document.body.querySelector('.info-modal-overlay');
+    const confirmButton = Array.from(modal?.querySelectorAll('button') || []).find(btn => btn.textContent === t('global.confirm'));
+    confirmButton?.click();
+
+    // Wait for async operations and re-render to complete
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    // 5. Assert Final State: Buttons should be gone.
+    continueButton = menuScreen.querySelector('#continue-game-button');
+    resetButton = menuScreen.querySelector('#reset-game-button');
+    expect(continueButton, 'Continue button should be hidden after reset').toBeNull();
+    expect(resetButton, 'Reset button should be hidden after reset').toBeNull();
+  });
 });

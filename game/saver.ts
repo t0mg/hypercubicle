@@ -54,7 +54,7 @@ export class GameSaver {
   }
 
   public clear(): void {
-    this.storage.setItem(SAVE_GAME_KEY, ''); // Use setItem with empty string to effectively clear it
+    this.storage.removeItem(SAVE_GAME_KEY);
   }
 
   private _serialize(state: GameState): SerializableGameState {
