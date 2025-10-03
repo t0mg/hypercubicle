@@ -271,6 +271,21 @@ describe('GameEngine', () => {
             engine.handleEndOfRun('retire');
             expect(engine.gameState?.phase).toBe('MENU');
         });
+
+        it('should update meta progression when a run ends', () => {
+            // Initial state: highestRun is 0
+            expect(metaManager.metaState.highestRun).toBe(0);
+
+            // Game starts, run 1 begins
+            engine.startNewGame();
+            expect(engine.gameState?.run).toBe(1);
+
+            // End the run
+            (engine as any)._endRun('test reason', true);
+
+            // Meta state should be updated immediately
+            expect(metaManager.metaState.highestRun).toBe(1);
+        });
     });
 
     describe('Unlocks', () => {
