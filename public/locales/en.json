@@ -107,9 +107,9 @@
     "new_game": "New Game",
     "continue_game": "Continue",
     "reset_save": "Reset Save",
-    "new_game_confirm": "Starting a new game will erase your current progress. Are you sure?",
+    "new_game_confirm": "Starting a new Game creates a new Adventurer, retiring the current one. Only unlocked features are preserved. Are you sure?",
     "reset_save_confirm": "This will permanently delete all your progress, including unlocked features and adventurer history. Are you absolutely sure?",
-    "adventurer_count": "Adventurers burned: {count}",
+    "adventurer_count": "Adventurers (Games): {count}",
     "max_runs": "Best adventurer: {count} runs",
     "unlocked_features": "Unlocked Features: {count}"
   },
