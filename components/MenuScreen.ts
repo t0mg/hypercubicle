@@ -50,7 +50,7 @@ export class MenuScreen extends HTMLElement {
     if (!this.metaManager || !this.engine) return;
     const metaState = this.metaManager.metaState;
     let metaInfo = '';
-    if (!!metastate.adventurers || !!metastate.highestRun || !!metastate.unlockedFeatures.length) {
+    if (!!metaState.adventurers || !!metaState.highestRun || !!metaState.unlockedFeatures.length) {
       const adventurers = metaState.adventurers || 0;
       metaInfo = `
                 <p class="text-lg text-gray-400 mt-4">
