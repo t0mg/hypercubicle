@@ -123,10 +123,11 @@ export class ChoicePanel extends HTMLElement {
         return card.outerHTML;
       }).join('');
 
-      InfoModal.showInfo(
-        t('choice_panel.new_items_title'),
-        `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${modalContent}</div>`
-      ).then(() => {
+      InfoModal.show({
+        title: t('choice_panel.new_items_title'),
+        content: `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${modalContent}</div>`,
+        buttons: [{ text: t('global.continue'), value: undefined }]
+      }).then(() => {
         this._choices.forEach(c => c.justDrafted = false);
         this.render();
       });

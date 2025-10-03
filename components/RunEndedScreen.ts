@@ -1,6 +1,7 @@
 import { t } from '../text';
 import { UnlockableFeature, UNLOCKS } from '../game/unlocks';
 import { GameEngine } from '../game/engine';
+import { InfoModal } from './InfoModal';
 
 export class RunEndedScreen extends HTMLElement {
     private state: 'initial' | 'unlock-revealed' | 'decision-revealing' | 'decision-revealed' = 'initial';
@@ -16,9 +17,7 @@ export class RunEndedScreen extends HTMLElement {
         super();
         this.addEventListener('click', (e: Event) => {
             const target = e.composedPath()[0] as HTMLElement;
-            if (target.id === 'unlock-dismiss-button') {
-                this.dismissUnlock();
-            } else if (target.id === 'continue-run-button' && this.engine) {
+            if (target.id === 'continue-run-button' && this.engine) {
                 this.engine.handleEndOfRun('continue');
             } else if (target.id === 'retire-run-button' && this.engine) {
                 this.engine.handleEndOfRun('retire');
@@ -26,49 +25,42 @@ export class RunEndedScreen extends HTMLElement {
         });
     }
 
-    public initialize(decision: 'continue' | 'retire', newlyUnlocked: UnlockableFeature[], engine: GameEngine) {
+    public async initialize(decision: 'continue' | 'retire', newlyUnlocked: UnlockableFeature[], engine: GameEngine) {
         this.decision = decision;
         this.newlyUnlocked = newlyUnlocked;
         this.engine = engine;
         this.render();
-        this.startFlow();
+        await this.startFlow();
     }
 
-    startFlow() {
+    async startFlow() {
         if (this.newlyUnlocked.length > 0) {
-            this.renderUnlock();
+            await this.renderUnlock();
         } else {
             this.state = 'unlock-revealed'; // Skip unlock phase
             this.revealDecision();
         }
     }
 
-    renderUnlock() {
-        const unlockContainer = this.querySelector('#unlock-container');
-        if (!unlockContainer) return;
-
+    async renderUnlock() {
         const unlockInfo = UNLOCKS.find(u => u.feature === this.newlyUnlocked[0]);
         if (!unlockInfo) return;
 
-        unlockContainer.innerHTML = `
-            <div class="absolute inset-0 bg-black/70 flex items-center justify-center z-50 animate-fade-in">
-                <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-primary animate-fade-in-up w-full max-w-3/4">
-                    <h2 class="text-4xl font-title text-brand-secondary mb-3">${t('unlocks.title')}</h2>
-                    <h3 class="font-label text-white">${unlockInfo.title()}</h3>
-                    <p class="text-brand-text mb-6">${unlockInfo.description()}</p>
-                    <button id="unlock-dismiss-button" class="bg-brand-primary text-white py-2 px-6 rounded-lg hover:bg-brand-primary/80 transition-colors">
-                        ${t('global.continue')}
-                    </button>
-                </div>
-            </div>
+        const title = t('unlocks.title');
+        const content = `
+            <h3 class="font-label text-white">${unlockInfo.title()}</h3>
+            <p class="text-brand-text mb-6">${unlockInfo.description()}</p>
         `;
+
+        await InfoModal.showInfo(
+            title,
+            content,
+            t('global.continue')
+        );
+        this.dismissUnlock();
     }
 
     dismissUnlock() {
-        const unlockContainer = this.querySelector('#unlock-container');
-        if (unlockContainer) {
-            unlockContainer.innerHTML = '';
-        }
         this.state = 'unlock-revealed';
         this.revealDecision();
     }
@@ -115,7 +107,6 @@ export class RunEndedScreen extends HTMLElement {
                 }
                 .animate-dots::after { content: '...'; animation: dots 1.5s infinite; }
             </style>
-            <div id="unlock-container"></div>
             <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-secondary animate-fade-in w-full">
                 <h2 class="text-4xl font-title text-brand-secondary mb-2">${t('run_ended_screen.run_complete')}</h2>
                 <p class="text-brand-text-muted mb-4">${reason}</p>
