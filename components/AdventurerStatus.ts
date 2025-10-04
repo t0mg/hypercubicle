@@ -86,12 +86,12 @@ export class AdventurerStatus extends HTMLElement {
                         <span class="font-mono text-white">${this._adventurer.traits.offense}</span>
                     </div>
                     <div>
-                        <span class="text-brand-text-muted block">${t('log_panel.risk')}</span>
-                        <span class="font-mono text-white">${this._adventurer.traits.risk}</span>
+                        <span class="text-brand-text-muted block">${t('log_panel.resilience')}</span>
+                        <span class="font-mono text-white">${this._adventurer.traits.resilience}</span>
                     </div>
                     <div>
-                        <span class="text-brand-text-muted block">${t('log_panel.expertise')}</span>
-                        <span class="font-mono text-white">${this._adventurer.traits.expertise}</span>
+                        <span class="text-brand-text-muted block">${t('log_panel.skill')}</span>
+                        <span class="font-mono text-white">${this._adventurer.traits.skill}</span>
                     </div>
                 </div>` : ''}
 

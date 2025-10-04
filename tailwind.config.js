@@ -15,8 +15,8 @@ export default {
         'brand-text-muted': '#a0a0a0',
         'brand-interest': '#f59e0b',
         'rarity-common': '#9ca3af',
-        'rarity-uncommon': '#22c55e',
-        'rarity-rare': '#3b82f6',
+        'rarity-uncommon': '#c5a722ff',
+        'rarity-rare': '#b23bf6ff',
       },
       fontFamily: {
         sans: ['"VT323"', 'monospace'],

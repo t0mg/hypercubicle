@@ -58,8 +58,8 @@ export class InfoModal<T> {
       const buttonEl = document.createElement('button');
       const isPrimary = button.variant === 'primary' || (button.variant !== 'secondary' && index === 0);
 
-      const primaryClasses = 'bg-brand-primary text-white py-2 px-6 rounded-lg hover:bg-brand-primary/80 transition-colors';
-      const secondaryClasses = 'bg-gray-600 text-white py-2 px-6 rounded-lg hover:bg-gray-700 transition-colors';
+      const primaryClasses = 'bg-brand-primary mx-4 pixel-corners text-white py-2 px-6 rounded-lg hover:bg-brand-primary/80 transition-colors';
+      const secondaryClasses = 'bg-gray-600 mx-4 pixel-corners text-white py-2 px-6 rounded-lg hover:bg-gray-700 transition-colors';
 
       buttonEl.className = isPrimary ? primaryClasses : secondaryClasses;
       buttonEl.textContent = button.text;

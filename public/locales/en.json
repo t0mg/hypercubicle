@@ -1,10 +1,23 @@
 {
+  "game_title": "Rogue Steward",
+  "game_subtitle": "Keep your adventurer running.",
+  "menu": {
+    "new_game": "New Game",
+    "continue_game": "Continue",
+    "reset_save": "Reset Save",
+    "new_game_confirm": "Starting a new Game creates a new Adventurer, retiring the current one. Only unlocked features are preserved. Are you sure?",
+    "reset_save_confirm": "This will permanently delete all your progress, including unlocked features and adventurer history. Are you absolutely sure?",
+    "adventurer_count": "Adventurers (Games): {count}",
+    "max_runs": "Best adventurer: {count} runs",
+    "unlocked_features": "Unlocked Features: {count}"
+  },
   "global": {
     "health": "Health",
     "max_hp": "Max HP",
     "power": "Power",
     "duration": "Duration",
     "attack": "Attack",
+    "units":" (per mob)",
     "bp": "BP",
     "run": "Run",
     "room": "Room",
@@ -35,7 +48,7 @@
     "weapon": "Weapon",
     "armor": "Armor",
     "potions": "Potions",
-    "buffs": "Temp. buffs",
+    "buffs": "Buffs",
     "pwr": "Pwr",
     "hp": "HP",
     "potions_held": "{count} held"
@@ -48,8 +61,8 @@
   "log_panel": {
     "title": "Game Log & Debug Info",
     "offense": "OFFENSE",
-    "risk": "RISK",
-    "expertise": "EXPERTISE"
+    "resilience": "RESILIENCE",
+    "skill": "SKILL"
   },
   "run_ended_screen": {
     "run_complete": "The Adventurer's run is over.",
@@ -72,7 +85,7 @@
     "stacked_items_title": "{name} (x{count})",
     "new_items_title": "Newly drawn:",
     "continue_without_loot": "Continue without offering loot",
-    "roll_credits": "Roll credits"
+    "roll_credits": "No more rooms. Roll credits"
   },
   "workshop": {
     "title": "The Workshop",
@@ -100,18 +113,6 @@
     "healing_room": "The adventurer found the {name} and recovered {healing} health.",
     "trap_room": "The adventurer fell for the {name} and lost {damage} health.",
     "no_more_rooms": "The adventurer reached the end of the dungeon (without fighting a boss)."
-  },
-  "game_title": "Rogue Steward",
-  "game_subtitle": "Keep your adventurer running.",
-  "menu": {
-    "new_game": "New Game",
-    "continue_game": "Continue",
-    "reset_save": "Reset Save",
-    "new_game_confirm": "Starting a new Game creates a new Adventurer, retiring the current one. Only unlocked features are preserved. Are you sure?",
-    "reset_save_confirm": "This will permanently delete all your progress, including unlocked features and adventurer history. Are you absolutely sure?",
-    "adventurer_count": "Adventurers (Games): {count}",
-    "max_runs": "Best adventurer: {count} runs",
-    "unlocked_features": "Unlocked Features: {count}"
   },
   "unlocks": {
     "title": "You Unlocked a New Feature",
@@ -151,8 +152,12 @@
       "body": "This is the adventurer's power level. It affects how much damage they deal in combat.<ul><li>Higher power is better</li><li>Can be increased by items</li></ul>"
     },
     "adventurer_flow_state": {
-        "title": "Mindstate",
-        "body": "The adventurer's mental state. This is affected by the difficulty of encounters. <br/><br/>If they get too <b>bored</b> or too <b>anxious</b>, they might quit."
+      "title": "Mindstate",
+      "body": "The adventurer's mental state. This is affected by the difficulty of encounters. <br/><br/>If they get too <b>bored</b> or too <b>anxious</b>, they might quit."
+    },
+    "multiple_units": {
+      "title": "Mobs",
+      "body": "Stats apply to eaxh individual mob in this room."
     }
   }
 }

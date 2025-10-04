@@ -30,7 +30,7 @@ export class TooltipBox extends HTMLElement {
                 position: fixed;
                 left: 0;
                 top: 0;
-                z-index: 1000;
+                z-index: 2000;
                 pointer-events: none;
                 background-color: #1a202c;
                 border: 1px solid #4a5568;

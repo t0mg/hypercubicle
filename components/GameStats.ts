@@ -46,6 +46,11 @@ export class GameStats extends HTMLElement {
     render() {
         this.innerHTML = `
             <div class="bg-brand-primary p-4 pixel-corners shadow-lg flex justify-around items-center text-center">
+                <div>
+                    <button id="quit-game-btn" class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 pixel-corners transition-all transform hover:scale-105">
+                        ${t('global.quit')}
+                    </button>
+                </div>
                 ${this._balancePoints !== null ? `
                 <div>
                     <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.bp')}</span>
@@ -75,11 +80,6 @@ export class GameStats extends HTMLElement {
                     </button>
                 </div>
                 ` : ''}
-                <div>
-                    <button id="quit-game-btn" class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 pixel-corners transition-all transform hover:scale-105">
-                        ${t('global.quit')}
-                    </button>
-                </div>
             </div>
         `;
 

@@ -14,7 +14,7 @@ export class MenuScreen extends HTMLElement {
       const target = e.target as HTMLElement;
       if (target.id === 'new-game-button') {
         const hasMetaState = this.metaManager.metaState.adventurers > 0 || this.metaManager.metaState.highestRun > 0;
-        if (this.engine.hasSaveGame() || hasMetaState) {
+        if (this.engine.hasSaveGame()) {
           if (
             await ConfirmModal.show(
               t('menu.new_game'),
@@ -72,11 +72,11 @@ export class MenuScreen extends HTMLElement {
                             ${t('menu.continue_game')}
                         </button>
                     ` : ''}
-                    <button id="new-game-button" class="bg-gray-700 hover:bg-gray-600 text-white py-3 px-6 pixel-corners min-w-[250px] transition-colors">
+                    <button id="new-game-button" class="${!hasSave ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-800 hover:bg-gray-600'} text-700 text-white py-3 px-6 pixel-corners min-w-[250px] transition-colors">
                         ${t('menu.new_game')}
                     </button>
                     ${hasSave ? `
-                        <button id="reset-game-button" class="bg-gray-800 hover:bg-gray-700 text-gray-400 py-2 px-4 pixel-corners min-w-[250px] transition-colors text-sm">
+                        <button id="reset-game-button" class="bg-gray-800 hover:bg-gray-700 text-gray-400 py-3 px-6 pixel-corners min-w-[250px] transition-colors">
                             ${t('menu.reset_save')}
                         </button>
                     ` : ''}
