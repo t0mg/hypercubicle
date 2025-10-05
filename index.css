@@ -53,12 +53,12 @@ body {
         transform: scale(1);
     }
     50% {
-        transform: scale(1.1);
+        transform: scale(2);
     }
 }
 
 .animate-pulse-once {
-    animation: pulse-once 0.5s ease-in-out;
+    animation: pulse-once 3s ease-in-out;
 }
 
 .stack-outline-1::before,
