@@ -14,9 +14,17 @@ const BuffIcon = () => `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 t
 
 export class AdventurerStatus extends HTMLElement {
     private _adventurer: Adventurer | null = null;
+    private _previousAdventurer: Adventurer | null = null;
     private _metaState: MetaState | null = null;
+    private _hasRendered: boolean = false;
 
     set adventurer(value: Adventurer) {
+        if (this._adventurer) {
+            // Deep copy to ensure nested objects like traits are also snapshotted.
+            this._previousAdventurer = JSON.parse(JSON.stringify(this._adventurer));
+        } else {
+            this._previousAdventurer = value;
+        }
         this._adventurer = value;
         this.render();
     }
@@ -41,87 +49,158 @@ export class AdventurerStatus extends HTMLElement {
     render() {
         if (!this._adventurer) {
             this.innerHTML = '';
+            this._hasRendered = false;
             return;
         }
 
-        const adventurerNumber = this._metaState?.adventurers || 1;
-        const displayHp = Math.max(0, this._adventurer.hp);
-        const healthPercentage = (displayHp / this._adventurer.maxHp) * 100;
+        if (!this._hasRendered) {
+            this.initialRender();
+        }
+        this.update();
+    }
 
+    initialRender() {
+        if (!this._adventurer) return;
+
+        const adventurerNumber = this._metaState?.adventurers || 1;
         const showTraits = this._metaState?.unlockedFeatures.includes(UnlockableFeature.ADVENTURER_TRAITS);
 
         this.innerHTML = `
             <div class="bg-brand-surface p-4 pixel-corners shadow-xl">
-                <h2 class="text-xl font-label mb-2 text-center text-white">${t('adventurer_status.title', { count: adventurerNumber })}</h2>
+                <h2 id="adventurer-title" class="text-xl font-label mb-2 text-center text-white">${t('adventurer_status.title', { count: adventurerNumber })}</h2>
                 <div class="grid grid-cols-3 gap-2">
                     <div class="space-y-2 col-span-2">
                         <div data-tooltip-key="adventurer_health">
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center">${HealthIcon()} <span>${t('global.health')}</span></div>
-                                <span class="font-label text-sm">${displayHp} / ${this._adventurer.maxHp}</span>
+                                <span id="hp-text" class="font-label text-sm"></span>
                             </div>
                             <div class="w-full bg-gray-700 pixel-corners h-3">
-                                <div class="bg-green-500 h-3 pixel-corners transition-all duration-500 ease-out" style="width: ${healthPercentage}%"></div>
+                                <div id="hp-bar" class="bg-green-500 h-3 pixel-corners transition-all duration-500 ease-out"></div>
                             </div>
                         </div>
                         <div data-tooltip-key="adventurer_flow_state">
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center">${InterestIcon()} <span>${t('adventurer_status.flow_state')}</span></div>
-                                <span class="font-label text-sm ${this.getFlowStateColor(this._adventurer.flowState)}">${FlowState[this._adventurer.flowState]}</span>
+                                <span id="flow-state-text" class="font-label text-sm"></span>
                             </div>
                         </div>
                     </div>
                     <div class="flex items-center justify-center bg-brand-primary/50 p-2 pixel-corners" data-tooltip-key="adventurer_power">
                         ${PowerIcon()}
                         <span class="mr-2">${t('global.power')}</span>
-                        <span class="font-label text-lg text-white">${this._adventurer.power}</span>
+                        <span id="power-text" class="font-label text-lg text-white"></span>
                     </div>
                 </div>
 
-                ${showTraits ? `
-                <div class="border-t border-gray-700 my-2"></div>
-                <div class="flex justify-around text-center p-1 bg-brand-primary/50 pixel-corners">
-                    <div>
-                        <span class="text-brand-text-muted block">${t('log_panel.offense')}</span>
-                        <span class="font-mono text-white">${this._adventurer.traits.offense}</span>
+                <div id="traits-section" class="${showTraits ? '' : 'hidden'}">
+                    <div class="border-t border-gray-700 my-2"></div>
+                    <div class="flex justify-around text-center p-1 bg-brand-primary/50 pixel-corners">
+                        <div>
+                            <span class="text-brand-text-muted block">${t('log_panel.offense')}</span>
+                            <span id="offense-trait" class="font-mono text-white"></span>
+                        </div>
+                        <div>
+                            <span class="text-brand-text-muted block">${t('log_panel.resilience')}</span>
+                            <span id="resilience-trait" class="font-mono text-white"></span>
+                        </div>
+                        <div>
+                            <span class="text-brand-text-muted block">${t('log_panel.skill')}</span>
+                            <span id="skill-trait" class="font-mono text-white"></span>
+                        </div>
                     </div>
-                    <div>
-                        <span class="text-brand-text-muted block">${t('log_panel.resilience')}</span>
-                        <span class="font-mono text-white">${this._adventurer.traits.resilience}</span>
-                    </div>
-                    <div>
-                        <span class="text-brand-text-muted block">${t('log_panel.skill')}</span>
-                        <span class="font-mono text-white">${this._adventurer.traits.skill}</span>
-                    </div>
-                </div>` : ''}
+                </div>
 
                 <div class="border-t border-gray-700 my-2"></div>
                 <h3 class="text-base font-label mb-1 text-center text-white">${t('adventurer_status.inventory')}</h3>
                 <div class="grid grid-cols-4 gap-2 text-center">
-                    <div class="bg-brand-primary/50 p-2 pixel-corners">
-                        <div class="flex items-center justify-center text-brand-text-muted">${WeaponIcon()} <span class="ml-1">${t('adventurer_status.weapon')}</span></div>
-                        ${this._adventurer.inventory.weapon ? `<div><p class="text-white text-sm">${this._adventurer.inventory.weapon.name}</p><p class="text-xs text-brand-text-muted">${t('adventurer_status.pwr')}: ${this._adventurer.inventory.weapon.stats.power || 0}${this._adventurer.inventory.weapon.stats.maxHp ? `, ${t('adventurer_status.hp')}: ${this._adventurer.inventory.weapon.stats.maxHp}` : ''}</p></div>` : `<p class="text-brand-text-muted italic">${t('global.none')}</p>`}
-                    </div>
-                    <div class="bg-brand-primary/50 p-2 pixel-corners">
-                        <div class="flex items-center justify-center text-brand-text-muted">${ArmorIcon()} <span class="ml-1">${t('adventurer_status.armor')}</span></div>
-                        ${this._adventurer.inventory.armor ? `<div><p class="text-white text-sm">${this._adventurer.inventory.armor.name}</p><p class="text-xs text-brand-text-muted">${t('adventurer_status.hp')}: ${this._adventurer.inventory.armor.stats.maxHp || 0}${this._adventurer.inventory.armor.stats.power ? `, ${t('adventurer_status.pwr')}: ${this._adventurer.inventory.armor.stats.power}` : ''}</p></div>` : `<p class="text-brand-text-muted italic">${t('global.none')}</p>`}
-                    </div>
-                    <div class="bg-brand-primary/50 p-2 pixel-corners">
-                        <div class="flex items-center justify-center text-brand-text-muted">${BuffIcon()} <span class="ml-1">${t('adventurer_status.buffs')}</span></div>
-                        ${this._adventurer.activeBuffs.length > 0 ? this._adventurer.activeBuffs.map(buff => `
-                            <div>
-                                <p class="text-white text-sm">${buff.name} (${t('global.duration')}: ${buff.stats.duration})</p>
-                                <p class="text-xs text-brand-text-muted">${Object.entries(buff.stats).filter(([stat]) => stat !== 'duration').map(([stat, value]) => `${t(`global.${stat}`)}: ${value}`).join(', ')}</p>
-                            </div>
-                        `).join('') : `<p class="text-brand-text-muted italic">${t('global.none')}</p>`}
-                    </div>
-                    <div class="bg-brand-primary/50 p-2 pixel-corners">
-                        <div class="flex items-center justify-center text-brand-text-muted">${PotionIcon()} <span class="ml-1">${t('adventurer_status.potions')}</span></div>
-                        ${this._adventurer.inventory.potions.length > 0 ? `<p class="text-white text-sm">${t('adventurer_status.potions_held', { count: this._adventurer.inventory.potions.length })}</p>` : `<p class="text-brand-text-muted italic">${t('global.none')}</p>`}
-                    </div>
+                    <div id="weapon-slot" class="bg-brand-primary/50 p-2 pixel-corners"></div>
+                    <div id="armor-slot" class="bg-brand-primary/50 p-2 pixel-corners"></div>
+                    <div id="buffs-slot" class="bg-brand-primary/50 p-2 pixel-corners"></div>
+                    <div id="potions-slot" class="bg-brand-primary/50 p-2 pixel-corners"></div>
                 </div>
             </div>
         `;
+        this._hasRendered = true;
+    }
+
+    update() {
+        if (!this._adventurer || !this._previousAdventurer) return;
+
+        const displayHp = Math.max(0, this._adventurer.hp);
+        const healthPercentage = (displayHp / this._adventurer.maxHp) * 100;
+
+        this.querySelector('#hp-text')!.textContent = `${displayHp} / ${this._adventurer.maxHp}`;
+        (this.querySelector('#hp-bar') as HTMLElement)!.style.width = `${healthPercentage}%`;
+
+        const flowStateText = this.querySelector('#flow-state-text') as HTMLElement;
+        if (this._adventurer.flowState !== this._previousAdventurer.flowState) {
+            this._pulseElement(flowStateText);
+        }
+        flowStateText.textContent = FlowState[this._adventurer.flowState];
+        flowStateText.className = `font-label text-sm ${this.getFlowStateColor(this._adventurer.flowState)}`;
+
+        const powerText = this.querySelector('#power-text') as HTMLElement;
+        if (this._adventurer.power !== this._previousAdventurer.power) {
+            this._pulseElement(powerText);
+        }
+        powerText.textContent = `${this._adventurer.power}`;
+
+        const showTraits = this._metaState?.unlockedFeatures.includes(UnlockableFeature.ADVENTURER_TRAITS);
+        const traitsSection = this.querySelector('#traits-section')!;
+        if (showTraits) {
+            traitsSection.classList.remove('hidden');
+            const offenseTrait = this.querySelector('#offense-trait') as HTMLElement;
+            const resilienceTrait = this.querySelector('#resilience-trait') as HTMLElement;
+            const skillTrait = this.querySelector('#skill-trait') as HTMLElement;
+
+            if (this._adventurer.traits.offense !== this._previousAdventurer.traits.offense) {
+                this._pulseElement(offenseTrait);
+            }
+            if (this._adventurer.traits.resilience !== this._previousAdventurer.traits.resilience) {
+                this._pulseElement(resilienceTrait);
+            }
+            if (this._adventurer.traits.skill !== this._previousAdventurer.traits.skill) {
+                this._pulseElement(skillTrait);
+            }
+            offenseTrait.textContent = `${this._adventurer.traits.offense}`;
+            resilienceTrait.textContent = `${this._adventurer.traits.resilience}`;
+            skillTrait.textContent = `${this._adventurer.traits.skill}`;
+        } else {
+            traitsSection.classList.add('hidden');
+        }
+
+        this.updateInventorySlot('weapon-slot', WeaponIcon(), t('adventurer_status.weapon'), this._adventurer.inventory.weapon ? `<div><p class="text-white text-sm">${this._adventurer.inventory.weapon.name}</p><p class="text-xs text-brand-text-muted">${t('adventurer_status.pwr')}: ${this._adventurer.inventory.weapon.stats.power || 0}${this._adventurer.inventory.weapon.stats.maxHp ? `, ${t('adventurer_status.hp')}: ${this._adventurer.inventory.weapon.stats.maxHp}` : ''}</p></div>` : `<p class="text-brand-text-muted italic">${t('global.none')}</p>`);
+        this.updateInventorySlot('armor-slot', ArmorIcon(), t('adventurer_status.armor'), this._adventurer.inventory.armor ? `<div><p class="text-white text-sm">${this._adventurer.inventory.armor.name}</p><p class="text-xs text-brand-text-muted">${t('adventurer_status.hp')}: ${this._adventurer.inventory.armor.stats.maxHp || 0}${this._adventurer.inventory.armor.stats.power ? `, ${t('adventurer_status.pwr')}: ${this._adventurer.inventory.armor.stats.power}` : ''}</p></div>` : `<p class="text-brand-text-muted italic">${t('global.none')}</p>`);
+        this.updateInventorySlot('buffs-slot', BuffIcon(), t('adventurer_status.buffs'), this._adventurer.activeBuffs.length > 0 ? this._adventurer.activeBuffs.map(buff => `
+            <div>
+                <p class="text-white text-sm">${buff.name} (${t('global.duration')}: ${buff.stats.duration})</p>
+                <p class="text-xs text-brand-text-muted">${Object.entries(buff.stats).filter(([stat]) => stat !== 'duration').map(([stat, value]) => `${t(`global.${stat}`)}: ${value}`).join(', ')}</p>
+            </div>
+        `).join('') : `<p class="text-brand-text-muted italic">${t('global.none')}</p>`);
+        this.updateInventorySlot('potions-slot', PotionIcon(), t('adventurer_status.potions'), this._adventurer.inventory.potions.length > 0 ? `<p class="text-white text-sm">${t('adventurer_status.potions_held', { count: this._adventurer.inventory.potions.length })}</p>` : `<p class="text-brand-text-muted italic">${t('global.none')}</p>`);
+    }
+
+    private _pulseElement(element: HTMLElement | null) {
+        if (!element) return;
+        element.classList.add('animate-pulse-once');
+        element.addEventListener('animationend', () => {
+            element.classList.remove('animate-pulse-once');
+        }, { once: true });
+    }
+
+    updateInventorySlot(slotId: string, icon: string, title: string, content: string) {
+        const slot = this.querySelector(`#${slotId}`)!;
+        // Only update if the content has changed to avoid unnecessary DOM manipulation.
+        if (slot.dataset.content !== content) {
+            slot.innerHTML = `
+                <div class="flex items-center justify-center text-brand-text-muted">${icon} <span class="ml-1">${title}</span></div>
+                <div class="inventory-content-wrapper">
+                    ${content}
+                </div>
+            `;
+            slot.dataset.content = content;
+        }
     }
 
     getFlowStateColor(flowState: FlowState): string {
