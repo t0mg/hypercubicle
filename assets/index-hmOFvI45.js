@@ -301,7 +301,7 @@
                     `:""}
                 </div>
                 <div class="absolute bottom-2 right-2 text-xs text-gray-500">
-                    v0.0.0 (build 105)
+                    v0.0.0 (build 106)
                 </div>
             </div>
         `}}customElements.define("menu-screen",et);class tt extends HTMLElement{constructor(){super(),this.rect=new DOMRect(0,0,0,0),this.isDesktop=!0,this.attachShadow({mode:"open"}),this.onclick=t=>{window.matchMedia("(pointer: coarse)").matches&&t.target===this&&this.hide()};const e=document.createElement("style");e.textContent=`

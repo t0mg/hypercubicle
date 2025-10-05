@@ -17,7 +17,7 @@
     "power": "Power",
     "duration": "Duration",
     "attack": "Attack",
-    "units":" (per mob)",
+    "units": " (per mob)",
     "bp": "BP",
     "run": "Run",
     "room": "Room",
@@ -30,16 +30,12 @@
     "initializing": "Initializing...",
     "loading_game_data": "Loading Game Data...",
     "an_error_occurred": "An Error Occurred",
-    "error_loading_items": "Failed to load items.json: {statusText}",
     "unknown_error": "An unknown error occurred while loading game data.",
     "continue": "Continue",
     "quit": "Quit",
     "quit_confirm": "Are you sure you want to return to the main menu? Your progress will be saved.",
     "confirm": "Confirm",
     "cancel": "Cancel"
-  },
-  "main": {
-    "unhandled_game_phase": "Unhandled game phase: {phase}"
   },
   "adventurer_status": {
     "title": "Adventurer #{count}",
@@ -52,11 +48,6 @@
     "pwr": "Pwr",
     "hp": "HP",
     "potions_held": "{count} held"
-  },
-  "battle_panel": {
-    "title": "Encounter",
-    "description": "Define the parameters of the next encounter.",
-    "run_encounter": "Run Encounter"
   },
   "log_panel": {
     "title": "Game Log & Debug Info",
@@ -98,7 +89,6 @@
     "adventurer_declines_offer": "Disappointed by your offers, they decide to take nothing.",
     "adventurer_accepts_offer": "They pick the {itemName}.",
     "adventurer_drinks_potion": "Sensing danger, they use the {potionName}.",
-    "adventurer_uses_buff": "Seeing a tough fight ahead, they use the {buffName}.",
     "easy_fight": "An easy fight. Too easy...",
     "worthy_challenge": "A worthy, but simple challenge.",
     "great_battle": "A great battle! They feel alive!",
@@ -116,7 +106,6 @@
   },
   "unlocks": {
     "title": "You Unlocked a New Feature",
-    "continue": "Continue",
     "workshop": {
       "title": "The Workshop",
       "description": "Between runs, you can now visit the Workshop and spend Balance Points to add new items to your deck (until the adventurer retires)."
@@ -128,18 +117,6 @@
     "hand_size_increase": {
       "title": "Hand Size Increased",
       "description": "You can now hold more cards in your hand, giving you more options."
-    },
-    "boss_fights": {
-      "title": "Boss Fights",
-      "description": "Powerful bosses will now appear at the end of certain floors. Defeat them for great rewards."
-    },
-    "custom_encounters": {
-      "title": "Custom Encounters",
-      "description": "You can now manually edit the settings for encounters, rather than relying on fully automated ones."
-    },
-    "party_constraints": {
-      "title": "Party Constraints",
-      "description": "You can now apply constraints to the adventurer's party, adding a new layer of challenge."
     }
   },
   "tooltips": {
