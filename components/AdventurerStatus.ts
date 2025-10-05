@@ -135,16 +135,16 @@ export class AdventurerStatus extends HTMLElement {
 
         const flowStateText = this.querySelector('#flow-state-text') as HTMLElement;
         if (this._adventurer.flowState !== this._previousAdventurer.flowState) {
-            this._pulseElement(flowStateText);
+          flowStateText.textContent = FlowState[this._adventurer.flowState];
+          flowStateText.className = `font-label text-sm ${this.getFlowStateColor(this._adventurer.flowState)}`;
+          this._pulseElement(flowStateText);
         }
-        flowStateText.textContent = FlowState[this._adventurer.flowState];
-        flowStateText.className = `font-label text-sm ${this.getFlowStateColor(this._adventurer.flowState)}`;
 
         const powerText = this.querySelector('#power-text') as HTMLElement;
         if (this._adventurer.power !== this._previousAdventurer.power) {
-            this._pulseElement(powerText);
+          powerText.textContent = `${this._adventurer.power}`;
+          this._pulseElement(powerText);
         }
-        powerText.textContent = `${this._adventurer.power}`;
 
         const showTraits = this._metaState?.unlockedFeatures.includes(UnlockableFeature.ADVENTURER_TRAITS);
         const traitsSection = this.querySelector('#traits-section')!;
