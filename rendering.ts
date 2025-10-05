@@ -26,53 +26,72 @@ const renderChoicePanel = (state: GameState, engine: GameEngine, type: 'item' | 
 }
 
 const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameEngine) => {
-    appElement.innerHTML = ''; // Clear existing content
+    let adventurerStatus = appElement.querySelector('adventurer-status') as AdventurerStatus;
+    let choicePanel: ChoicePanel | null = null;
+    let logPanel = appElement.querySelector('log-panel') as LogPanel;
+    let gameStats = appElement.querySelector('game-stats') as GameStats;
 
-    const mainContainer = document.createElement('div');
-    mainContainer.className = 'min-h-screen p-4 md:p-6 lg:p-8 flex flex-col items-center';
-    appElement.appendChild(mainContainer);
+    if (!adventurerStatus) {
+        appElement.innerHTML = ''; // Clear only on initial render
 
-    const gridContainer = document.createElement('div');
-    gridContainer.className = 'w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6';
-    mainContainer.appendChild(gridContainer);
+        const mainContainer = document.createElement('div');
+        mainContainer.className = 'min-h-screen p-4 md:p-6 lg:p-8 flex flex-col items-center';
+        appElement.appendChild(mainContainer);
 
-    const leftColumn = document.createElement('div');
-    leftColumn.className = 'lg:col-span-1 space-y-6';
-    gridContainer.appendChild(leftColumn);
+        const gridContainer = document.createElement('div');
+        gridContainer.className = 'w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6';
+        mainContainer.appendChild(gridContainer);
 
-    const gameStats = document.createElement('game-stats') as GameStats;
+        const leftColumn = document.createElement('div');
+        leftColumn.className = 'lg:col-span-1 space-y-6';
+        gridContainer.appendChild(leftColumn);
+
+        gameStats = document.createElement('game-stats') as GameStats;
+        leftColumn.appendChild(gameStats);
+
+        const feedbackPanel = document.createElement('feedback-panel');
+        leftColumn.appendChild(feedbackPanel);
+
+        logPanel = document.createElement('log-panel') as LogPanel;
+        leftColumn.appendChild(logPanel);
+
+        const rightColumn = document.createElement('div');
+        rightColumn.className = 'lg:col-span-2 space-y-6';
+        gridContainer.appendChild(rightColumn);
+
+        adventurerStatus = document.createElement('adventurer-status') as AdventurerStatus;
+        rightColumn.appendChild(adventurerStatus);
+
+        const gamePhasePanel = document.createElement('div');
+        gamePhasePanel.id = 'game-phase-panel';
+        gamePhasePanel.className = 'lg:col-span-3';
+        gridContainer.appendChild(gamePhasePanel);
+    }
+
+    // Update dynamic elements
+    adventurerStatus.metaState = engine.metaManager.metaState;
+    adventurerStatus.adventurer = state.adventurer;
+
     gameStats.engine = engine;
     if (engine.isWorkshopUnlocked()) {
         gameStats.setAttribute('balance-points', state.designer.balancePoints.toString());
+    } else {
+        gameStats.removeAttribute('balance-points');
     }
     gameStats.setAttribute('run', state.run.toString());
     gameStats.setAttribute('room', state.room.toString());
     gameStats.setAttribute('deck-size', state.availableDeck.length.toString());
     gameStats.setAttribute('room-deck-size', state.availableRoomDeck.length.toString());
-    leftColumn.appendChild(gameStats);
 
-    const feedbackPanel = document.createElement('feedback-panel');
+    const feedbackPanel = appElement.querySelector('feedback-panel') as HTMLElement;
     const feedbackMessage = Array.isArray(state.feedback) ? state.feedback.join(' ') : state.feedback;
     feedbackPanel.setAttribute('message', feedbackMessage);
-    leftColumn.appendChild(feedbackPanel);
 
-    const logPanel = document.createElement('log-panel') as LogPanel;
     logPanel.logger = state.logger;
     logPanel.traits = state.adventurer.traits;
-    leftColumn.appendChild(logPanel);
 
-    const rightColumn = document.createElement('div');
-    rightColumn.className = 'lg:col-span-2 space-y-6';
-    gridContainer.appendChild(rightColumn);
-
-    const adventurerStatus = document.createElement('adventurer-status') as AdventurerStatus;
-    adventurerStatus.metaState = engine.metaManager.metaState;
-    adventurerStatus.adventurer = state.adventurer;
-    rightColumn.appendChild(adventurerStatus);
-
-    const gamePhasePanel = document.createElement('div');
-    gamePhasePanel.className = 'lg:col-span-3';
-    gridContainer.appendChild(gamePhasePanel);
+    const gamePhasePanel = appElement.querySelector('#game-phase-panel') as HTMLElement;
+    gamePhasePanel.innerHTML = ''; // Clear previous phase content
 
     switch (state.phase) {
         case 'RUN_OVER': {
