@@ -134,15 +134,15 @@ export class AdventurerStatus extends HTMLElement {
         (this.querySelector('#hp-bar') as HTMLElement)!.style.width = `${healthPercentage}%`;
 
         const flowStateText = this.querySelector('#flow-state-text') as HTMLElement;
+        flowStateText.textContent = FlowState[this._adventurer.flowState];
+        flowStateText.className = `font-label text-sm ${this.getFlowStateColor(this._adventurer.flowState)}`;
         if (this._adventurer.flowState !== this._previousAdventurer.flowState) {
-          flowStateText.textContent = FlowState[this._adventurer.flowState];
-          flowStateText.className = `font-label text-sm ${this.getFlowStateColor(this._adventurer.flowState)}`;
-          this._pulseElement(flowStateText);
+            this._pulseElement(flowStateText);
         }
 
         const powerText = this.querySelector('#power-text') as HTMLElement;
+        powerText.textContent = `${this._adventurer.power}`;
         if (this._adventurer.power !== this._previousAdventurer.power) {
-          powerText.textContent = `${this._adventurer.power}`;
           this._pulseElement(powerText);
         }
 
