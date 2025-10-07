@@ -134,7 +134,8 @@ export class AdventurerStatus extends HTMLElement {
         (this.querySelector('#hp-bar') as HTMLElement)!.style.width = `${healthPercentage}%`;
 
         const flowStateText = this.querySelector('#flow-state-text') as HTMLElement;
-        flowStateText.textContent = FlowState[this._adventurer.flowState];
+        const flowStateKey = FlowState[this._adventurer.flowState];
+        flowStateText.textContent = t(`flow_states.${flowStateKey}`);
         flowStateText.className = `font-label text-sm ${this.getFlowStateColor(this._adventurer.flowState)}`;
         if (this._adventurer.flowState !== this._previousAdventurer.flowState) {
             this._pulseElement(flowStateText);
