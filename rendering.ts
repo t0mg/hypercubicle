@@ -86,7 +86,10 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
         rightColumnWrapper.appendChild(rightWindow);
         const rightTitle = document.createElement('div');
         rightTitle.className = 'title-bar';
-        rightTitle.innerHTML = `<div class="title-bar-text">${t('adventurer_status.title', {count: state.adventurers.length})}</div>`;
+        const rightTitleText = document.createElement('div');
+        rightTitleText.className = 'title-bar-text';
+        rightTitleText.textContent = t('adventurer_status.title', { count: engine.metaManager.metaState.adventurers });
+        rightTitle.appendChild(rightTitleText);
         rightWindow.appendChild(rightTitle);
         const rightBody = document.createElement('div');
         rightBody.className = 'window-body';
