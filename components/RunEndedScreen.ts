@@ -74,19 +74,18 @@ export class RunEndedScreen extends HTMLElement {
 
         if (isBored) {
             this.state = 'decision-revealed';
-            this.updateDecision();
+            this.updateDecision(false); // No animation needed
             return;
         }
 
-        // Simulate a delay for the adventurer's decision
         const decisionContainer = this.querySelector('#decision-container');
-        if(decisionContainer) {
-            decisionContainer.innerHTML = `<p>${t('run_ended_screen.adventurer_considers_fate')}...</p>`
+        if (decisionContainer) {
+            decisionContainer.innerHTML = `<p>${t('run_ended_screen.adventurer_considers_fate')}<span class="animate-dots"></span></p>`;
         }
 
         setTimeout(() => {
             this.state = 'decision-revealed';
-            this.updateDecision();
+            this.updateDecision(true);
         }, 2000);
     }
 
@@ -94,26 +93,33 @@ export class RunEndedScreen extends HTMLElement {
         const reason = this.getAttribute('reason') || t('run_ended_screen.default_reason');
 
         this.innerHTML = `
-            <div class="min-h-screen flex items-center justify-center">
-                <div class="window" style="width: 450px;">
-                    <div class="title-bar">
-                        <div class="title-bar-text">${t('run_ended_screen.run_complete')}</div>
-                    </div>
-                    <div class="window-body">
-                        <p class="text-center mb-4">${reason}</p>
-                        <div id="decision-container" class="text-center h-24 flex flex-col justify-center items-center">
-                            <!-- Decision text will be revealed here -->
-                        </div>
-                        <div id="button-container" class="flex justify-center gap-4 mt-4">
-                            <!-- Buttons will be revealed here -->
-                        </div>
-                    </div>
+            <style>
+                @keyframes fade-in-up {
+                    from { opacity: 0; transform: translateY(20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .animate-fade-in-up { opacity: 0; animation: fade-in-up 0.5s ease-out forwards; }
+                @keyframes dots {
+                    0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
+                    40% { color: initial; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
+                    60% { text-shadow: .25em 0 0 initial, .5em 0 0 rgba(0,0,0,0); }
+                    80%, 100% { text-shadow: .25em 0 0 initial, .5em 0 0 initial; }
+                }
+                .animate-dots::after { content: '...'; animation: dots 1.5s infinite; }
+            </style>
+            <div class="p-4">
+                <p class="text-center mb-4">${reason}</p>
+                <div id="decision-container" class="text-center h-24 flex flex-col justify-center items-center">
+                    <p>${t('run_ended_screen.adventurer_considers_fate')}<span class="animate-dots"></span></p>
+                </div>
+                <div id="button-container" class="flex justify-center gap-4 mt-4">
+                    <!-- Buttons will be revealed here -->
                 </div>
             </div>
         `;
     }
 
-    updateDecision() {
+    updateDecision(withAnimation: boolean) {
         const decisionContainer = this.querySelector('#decision-container');
         const buttonContainer = this.querySelector('#button-container');
 
@@ -123,25 +129,26 @@ export class RunEndedScreen extends HTMLElement {
 
         let decisionText = '';
         let buttonHTML = '';
+        const animationClass = withAnimation ? 'animate-fade-in-up' : '';
         const workshopUnlocked = this.hasAttribute('workshop-unlocked');
 
         if (this.decision === 'continue') {
             decisionText = `
-                <h3>${t('run_ended_screen.continue_quote')}</h3>
-                <p>${t('run_ended_screen.continue_decision')}</p>
+                <h3 class="${animationClass}" style="color: var(--color-stat-positive);">${t('run_ended_screen.continue_quote')}</h3>
+                <p class="${animationClass}" style="animation-delay: 0.5s;">${t('run_ended_screen.continue_decision')}</p>
             `;
             buttonHTML = `
-                <button id="continue-run-button">
+                <button id="continue-run-button" class="${animationClass}" style="animation-delay: 1.2s;">
                     ${workshopUnlocked ? t('run_ended_screen.enter_workshop') : t('run_ended_screen.start_new_run')}
                 </button>
             `;
         } else { // retire
             decisionText = `
-                <h3>${t('run_ended_screen.retire_quote')}</h3>
-                <p>${t('run_ended_screen.retire_decision', { run: this.getAttribute('run')})}</p>
+                <h3 class="${animationClass}" style="color: var(--color-stat-negative);">${t('run_ended_screen.retire_quote')}</h3>
+                <p class="${animationClass}" style="animation-delay: 0.5s;">${t('run_ended_screen.retire_decision', { run: this.getAttribute('run')})}</p>
             `;
             buttonHTML = `
-                <button id="retire-run-button">
+                <button id="retire-run-button" class="${animationClass}" style="animation-delay: 1s;">
                     ${t('run_ended_screen.recruit_new_adventurer')}
                 </button>
             `;
