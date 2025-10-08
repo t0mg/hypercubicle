@@ -45,41 +45,41 @@ export class GameStats extends HTMLElement {
 
     render() {
         this.innerHTML = `
-            <div class="bg-brand-primary p-4 pixel-corners shadow-lg flex justify-around items-center text-center">
-                <div>
-                    <button id="quit-game-btn" class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 pixel-corners transition-all transform hover:scale-105">
-                        ${t('global.quit')}
-                    </button>
+            <div class="status-bar flex items-center text-center px-2">
+                <div class="flex-1 flex justify-start">
+                    <button id="quit-game-btn">${t('global.quit')}</button>
                 </div>
-                ${this._balancePoints !== null ? `
-                <div>
-                    <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.bp')}</span>
-                    <p class="text-2xl  text-white">${this._balancePoints}</p>
+
+                <div class="flex justify-center items-center">
+                    ${this._balancePoints !== null ? `
+                    <p class="status-bar-field w-24">
+                        <span class="text-xs">${t('global.bp')}:</span>
+                        <span class="font-mono ml-1">${this._balancePoints}</span>
+                    </p>
+                    ` : ''}
+                    <p class="status-bar-field w-24">
+                        <span class="text-xs">${t('global.run')}:</span>
+                        <span class="font-mono ml-1">${this._run}</span>
+                    </p>
+                    <p class="status-bar-field w-24">
+                        <span class="text-xs">${t('global.room')}:</span>
+                        <span class="font-mono ml-1">${this._room}</span>
+                    </p>
+                    <p class="status-bar-field w-24">
+                        <span class="text-xs">${t('global.deck')}:</span>
+                        <span class="font-mono ml-1">${this._deckSize}</span>
+                    </p>
+                    <p class="status-bar-field w-24">
+                        <span class="text-xs">${t('global.rooms')}:</span>
+                        <span class="font-mono ml-1">${this._roomDeckSize}</span>
+                    </p>
                 </div>
-                ` : ''}
-                <div>
-                    <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.run')}</span>
-                    <p class="text-2xl  text-white">${this._run}</p>
+
+                <div class="flex-1 flex justify-end">
+                    ${this.engine?.isWorkshopAccessUnlocked() ? `
+                        <button id="enter-workshop-btn">${t('global.workshop')}</button>
+                    ` : ''}
                 </div>
-                <div>
-                    <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.room')}</span>
-                    <p class="text-2xl  text-white">${this._room}</p>
-                </div>
-                <div>
-                    <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.deck')}</span>
-                    <p class="text-2xl  text-white">${this._deckSize}</p>
-                </div>
-                <div>
-                    <span class="text-sm text-brand-text-muted uppercase tracking-wider">${t('global.rooms')}</span>
-                    <p class="text-2xl  text-white">${this._roomDeckSize}</p>
-                </div>
-                ${this.engine?.isWorkshopAccessUnlocked() ? `
-                <div>
-                    <button id="enter-workshop-btn" class="bg-brand-secondary text-white py-2 px-4 pixel-corners transition-all transform hover:scale-105">
-                        ${t('global.workshop')}
-                    </button>
-                </div>
-                ` : ''}
             </div>
         `;
 
@@ -88,7 +88,7 @@ export class GameStats extends HTMLElement {
         });
         this.querySelector('#quit-game-btn')?.addEventListener('click', async () => {
             if (await ConfirmModal.show(t('global.quit'), t('global.quit_confirm'))) {
-                this.engine?.quitGame(false); // Pass false to preserve the save file
+                this.engine?.quitGame(false);
             }
         });
     }

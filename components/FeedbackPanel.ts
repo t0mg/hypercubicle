@@ -22,7 +22,7 @@ export class FeedbackPanel extends HTMLElement {
 
     render() {
         this.innerHTML = `
-            <div class="bg-brand-primary/50 p-4 pixel-corners text-center italic text-brand-text-muted border border-brand-primary">
+            <div class="sunken-panel p-2 text-center italic">
                 <p>${this._message}</p>
             </div>
         `;

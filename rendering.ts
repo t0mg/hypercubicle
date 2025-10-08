@@ -35,7 +35,7 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
         appElement.innerHTML = ''; // Clear only on initial render
 
         const mainContainer = document.createElement('div');
-        mainContainer.className = 'min-h-screen p-4 md:p-6 lg:p-8 flex flex-col items-center';
+        mainContainer.className = 'w-full p-4 md:p-6 lg:p-8 flex flex-col items-center';
         appElement.appendChild(mainContainer);
 
         const gridContainer = document.createElement('div');

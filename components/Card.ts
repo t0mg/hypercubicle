@@ -1,17 +1,11 @@
 import type { LootChoice, RoomChoice } from '../types';
 import { t } from '../text';
 
-const rarityColorMap: { [key: string]: string } = {
-  Common: 'text-rarity-common',
-  Uncommon: 'text-rarity-uncommon',
-  Rare: 'text-rarity-rare',
-};
-
-const StatChange = (label: string, value: number, positive: boolean = true, units: number = 1) => {
-  const color = positive ? 'text-green-400' : 'text-red-400';
-  const sign = positive && value > 0 ? '+' : '';
+// Simplified stat display without color coding to match the XP theme.
+const StatChange = (label: string, value: number, units: number = 1) => {
+  const sign = value > 0 ? '+' : '';
   return `
-        <div class="flex justify-between text-sm ${color}">
+        <div class="flex justify-between text-sm">
             <span ${units > 1 ? 'data-tooltip-key="multiple_units"' : ''}>${label}${units > 1 ? t('global.units') : ''}</span>
             <span class="font-mono">${sign}${value}</span>
         </div>
@@ -38,11 +32,8 @@ export class Card extends HTMLElement {
   get isDisabled(): boolean { return this._isDisabled; }
 
   set isNewlyDrafted(value: boolean) {
-    if (this._isNewlyDrafted === value) return;
+    // Animations removed to match the static XP theme.
     this._isNewlyDrafted = value;
-    if (this._isNewlyDrafted) {
-      this.classList.add('animate-newly-drafted');
-    }
   }
   get isNewlyDrafted(): boolean { return this._isNewlyDrafted; }
 
@@ -57,12 +48,6 @@ export class Card extends HTMLElement {
         }));
       }
     });
-
-    this.addEventListener('animationend', (e: AnimationEvent) => {
-      if (e.animationName === 'newly-drafted-animation') {
-        this.classList.remove('animate-newly-drafted');
-      }
-    });
   }
 
   connectedCallback() {
@@ -72,30 +57,24 @@ export class Card extends HTMLElement {
   render() {
     if (!this._item) return;
 
-    const rarityColor = rarityColorMap[this._item.rarity] || 'text-gray-400';
-    const baseClasses = 'relative bg-brand-surface border pixel-corners p-4 flex flex-col justify-between transition-all duration-200 shadow-lg';
-
+    // Base classes and state management for the new XP-style card.
     let stateClasses = '';
     if (this._isDisabled) {
-      stateClasses = 'border-gray-600 opacity-50 cursor-not-allowed';
+      stateClasses = 'opacity-50 cursor-not-allowed';
     } else if (this._isSelected) {
-      stateClasses = 'border-brand-secondary scale-105 ring-2 ring-brand-secondary cursor-pointer transform';
+      // Use a simple border to indicate selection.
+      this.style.setProperty('border', '2px solid #0058e0');
+      stateClasses = 'cursor-pointer';
     } else {
-      stateClasses = 'border-brand-primary hover:border-brand-secondary cursor-pointer transform hover:scale-105';
+      this.style.removeProperty('border');
+      stateClasses = 'cursor-pointer';
     }
 
-    let stackClasses = '';
-    if (this._stackCount > 1) {
-      const outlineCount = Math.min(this._stackCount - 1, 2); // Max 2 outlines for now
-      if (outlineCount >= 1) stackClasses += ' stack-outline-1';
-      if (outlineCount >= 2) stackClasses += ' stack-outline-2';
-    }
-
-    const animationClass = this.classList.contains('animate-newly-drafted') ? ' animate-newly-drafted' : '';
-    this.className = `${baseClasses} ${stateClasses}${stackClasses}${animationClass}`;
+    this.className = `w-full ${stateClasses}`;
 
     let itemName = this._item.name;
     let statsHtml = '';
+
     if ('stats' in this._item) {
       const item = this._item as LootChoice;
       const room = this._item as RoomChoice;
@@ -120,8 +99,8 @@ export class Card extends HTMLElement {
         case 'boss':
         case 'trap':
           statsHtml = `
-            ${room.stats.attack ? StatChange(t('global.attack'), room.stats.attack, false, room.units) : ''}
-            ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp, false, room.units) : ''}
+            ${room.stats.attack ? StatChange(t('global.attack'), room.stats.attack, room.units) : ''}
+            ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp, room.units) : ''}
           `;
           if (room.units > 1) {
             itemName = t('choice_panel.multiple_enemies_title', { name: room.name, count: room.units });
@@ -135,15 +114,15 @@ export class Card extends HTMLElement {
     }
 
     this.innerHTML = `
-      <div class="flex justify-between items-baseline">
-        <p class="font-label text-sm ${rarityColor}">${this._item.type}</p>
-        <p class="text-xs uppercase tracking-wider ${rarityColor}">${this._item.rarity}</p>
-      </div>
-      <p class=" text-2xl ${rarityColor} text-left">${itemName}</p>
-      <div class="border-t border-gray-700 my-2"></div>
-      <div class="space-y-1 text-brand-text text-large">
-        ${statsHtml}
-      </div>
+      <fieldset ${this._isDisabled ? 'disabled' : ''}>
+        <legend>${this._item.type} - ${this._item.rarity}</legend>
+        <div class="p-2">
+            <p class="font-bold text-lg">${itemName}</p>
+            <div class="mt-2">
+                ${statsHtml}
+            </div>
+        </div>
+      </fieldset>
     `;
   }
 }
