@@ -1,11 +1,17 @@
 import type { LootChoice, RoomChoice } from '../types';
 import { t } from '../text';
 
-// Simplified stat display without color coding to match the XP theme.
-const StatChange = (label: string, value: number, units: number = 1) => {
-  const sign = value > 0 ? '+' : '';
+const rarityColorMap: { [key: string]: string } = {
+  Common: 'text-gray-700',
+  Uncommon: 'text-blue-700',
+  Rare: 'text-purple-700',
+};
+
+const StatChange = (label: string, value: number, positive: boolean = true, units: number = 1) => {
+  const color = positive ? 'text-green-600' : 'text-red-600';
+  const sign = positive && value > 0 ? '+' : '';
   return `
-        <div class="flex justify-between text-sm">
+        <div class="flex justify-between text-sm ${color}">
             <span ${units > 1 ? 'data-tooltip-key="multiple_units"' : ''}>${label}${units > 1 ? t('global.units') : ''}</span>
             <span class="font-mono">${sign}${value}</span>
         </div>
@@ -32,7 +38,6 @@ export class Card extends HTMLElement {
   get isDisabled(): boolean { return this._isDisabled; }
 
   set isNewlyDrafted(value: boolean) {
-    // Animations removed to match the static XP theme.
     this._isNewlyDrafted = value;
   }
   get isNewlyDrafted(): boolean { return this._isNewlyDrafted; }
@@ -57,12 +62,10 @@ export class Card extends HTMLElement {
   render() {
     if (!this._item) return;
 
-    // Base classes and state management for the new XP-style card.
     let stateClasses = '';
     if (this._isDisabled) {
       stateClasses = 'opacity-50 cursor-not-allowed';
     } else if (this._isSelected) {
-      // Use a simple border to indicate selection.
       this.style.setProperty('border', '2px solid #0058e0');
       stateClasses = 'cursor-pointer';
     } else {
@@ -84,23 +87,23 @@ export class Card extends HTMLElement {
         case 'armor':
         case 'buff':
           statsHtml = `
-            ${item.stats.hp ? StatChange(t('global.health'), item.stats.hp) : ''}
-            ${item.stats.maxHp ? StatChange(t('global.max_hp'), item.stats.maxHp) : ''}
-            ${item.stats.power ? StatChange(t('global.power'), item.stats.power) : ''}
-            ${item.stats.duration ? StatChange(t('global.duration'), item.stats.duration) : ''}
+            ${item.stats.hp ? StatChange(t('global.health'), item.stats.hp, item.stats.hp > 0) : ''}
+            ${item.stats.maxHp ? StatChange(t('global.max_hp'), item.stats.maxHp, item.stats.maxHp > 0) : ''}
+            ${item.stats.power ? StatChange(t('global.power'), item.stats.power, item.stats.power > 0) : ''}
+            ${item.stats.duration ? StatChange(t('global.duration'), item.stats.duration, item.stats.duration > 0) : ''}
           `;
           break;
         case 'healing':
           statsHtml = `
-            ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp) : ''}
+            ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp, true) : ''}
           `;
           break;
         case 'enemy':
         case 'boss':
         case 'trap':
           statsHtml = `
-            ${room.stats.attack ? StatChange(t('global.attack'), room.stats.attack, room.units) : ''}
-            ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp, room.units) : ''}
+            ${room.stats.attack ? StatChange(t('global.attack'), room.stats.attack, false, room.units) : ''}
+            ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp, false, room.units) : ''}
           `;
           if (room.units > 1) {
             itemName = t('choice_panel.multiple_enemies_title', { name: room.name, count: room.units });
@@ -113,11 +116,13 @@ export class Card extends HTMLElement {
       itemName = t('choice_panel.stacked_items_title', { name: this._item.name, count: this._stackCount });
     }
 
+    const rarityColor = rarityColorMap[this._item.rarity] || 'text-black';
+
     this.innerHTML = `
       <fieldset ${this._isDisabled ? 'disabled' : ''}>
-        <legend>${this._item.type} - ${this._item.rarity}</legend>
+        <legend class="${rarityColor}">${this._item.type} - ${this._item.rarity}</legend>
         <div class="p-2">
-            <p class="font-bold text-lg">${itemName}</p>
+            <p class="font-bold text-lg ${rarityColor}">${itemName}</p>
             <div class="mt-2">
                 ${statsHtml}
             </div>
