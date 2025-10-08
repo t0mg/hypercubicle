@@ -6,23 +6,6 @@ export default {
   ],
   theme: {
     extend: {
-      colors: {
-        'brand-bg': '#1a1a2e',
-        'brand-surface': '#16213e',
-        'brand-primary': '#0f3460',
-        'brand-secondary': '#e94560',
-        'brand-text': '#dcdcdc',
-        'brand-text-muted': '#a0a0a0',
-        'brand-interest': '#f59e0b',
-        'rarity-common': '#9ca3af',
-        'rarity-uncommon': '#c5a722ff',
-        'rarity-rare': '#b23bf6ff',
-      },
-      fontFamily: {
-        sans: ['"VT323"', 'monospace'],
-        label: ['"Silkscreen"', 'sans-serif'],
-        title: ['"Jacquard 12"', 'system-ui'],
-      },
       keyframes: {
         'fade-in': {
             '0%': { opacity: '0', transform: 'scale(0.95)' },

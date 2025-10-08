@@ -48,8 +48,8 @@ export class RunEndedScreen extends HTMLElement {
 
         const title = t('unlocks.title');
         const content = `
-            <h3>${unlockInfo.title()}</h3>
-            <p class="mb-6">${unlockInfo.description()}</p>
+            <h3 class="font-label text-white">${unlockInfo.title()}</h3>
+            <p class="text-brand-text mb-6">${unlockInfo.description()}</p>
         `;
 
         await InfoModal.showInfo(
@@ -73,47 +73,54 @@ export class RunEndedScreen extends HTMLElement {
         const isBored = reason.includes('bored') || reason.includes('apathetic');
 
         if (isBored) {
+            // If the adventurer is bored, we know the decision is to retire.
+            // No need to wait for a "reveal".
             this.state = 'decision-revealed';
-            this.updateDecision();
+            this.updateDecision(false); // No animation needed
             return;
-        }
-
-        // Simulate a delay for the adventurer's decision
-        const decisionContainer = this.querySelector('#decision-container');
-        if(decisionContainer) {
-            decisionContainer.innerHTML = `<p>${t('run_ended_screen.adventurer_considers_fate')}...</p>`
         }
 
         setTimeout(() => {
             this.state = 'decision-revealed';
-            this.updateDecision();
+            this.updateDecision(true);
         }, 2000);
     }
 
     render() {
+        const finalBP = this.getAttribute('final-bp') || 0;
         const reason = this.getAttribute('reason') || t('run_ended_screen.default_reason');
 
         this.innerHTML = `
-            <div class="min-h-screen flex items-center justify-center">
-                <div class="window" style="width: 450px;">
-                    <div class="title-bar">
-                        <div class="title-bar-text">${t('run_ended_screen.run_complete')}</div>
-                    </div>
-                    <div class="window-body">
-                        <p class="text-center mb-4">${reason}</p>
-                        <div id="decision-container" class="text-center h-24 flex flex-col justify-center items-center">
-                            <!-- Decision text will be revealed here -->
-                        </div>
-                        <div id="button-container" class="flex justify-center gap-4 mt-4">
-                            <!-- Buttons will be revealed here -->
-                        </div>
-                    </div>
+            <style>
+                @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+                .animate-fade-in { animation: fade-in 0.5s ease-out forwards; }
+                @keyframes fade-in-up {
+                    from { opacity: 0; transform: translateY(20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .animate-fade-in-up { opacity: 0; animation: fade-in-up 0.5s ease-out forwards; }
+                @keyframes dots {
+                    0%, 20% { color: rgba(255,255,255,0); text-shadow: .25em 0 0 rgba(255,255,255,0), .5em 0 0 rgba(255,255,255,0); }
+                    40% { color: white; text-shadow: .25em 0 0 rgba(255,255,255,0), .5em 0 0 rgba(255,255,255,0); }
+                    60% { text-shadow: .25em 0 0 white, .5em 0 0 rgba(255,255,255,0); }
+                    80%, 100% { text-shadow: .25em 0 0 white, .5em 0 0 white; }
+                }
+                .animate-dots::after { content: '...'; animation: dots 1.5s infinite; }
+            </style>
+            <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-secondary animate-fade-in w-full">
+                <h2 class="text-4xl font-title text-brand-secondary mb-2">${t('run_ended_screen.run_complete')}</h2>
+                <p class="text-brand-text-muted mb-4">${reason}</p>
+                <div id="decision-container" class="h-24">
+                    <p class="text-brand-text-muted text-lg animate-fade-in-up">${t('run_ended_screen.adventurer_considers_fate')}<span class="animate-dots"></span></p>
+                </div>
+                <div id="button-container" class="flex justify-center gap-4 mt-4">
+                    <!-- Buttons will be revealed here -->
                 </div>
             </div>
         `;
     }
 
-    updateDecision() {
+    updateDecision(withAnimation: boolean) {
         const decisionContainer = this.querySelector('#decision-container');
         const buttonContainer = this.querySelector('#button-container');
 
@@ -123,25 +130,34 @@ export class RunEndedScreen extends HTMLElement {
 
         let decisionText = '';
         let buttonHTML = '';
+        const animationClass = withAnimation ? 'animate-fade-in-up' : '';
         const workshopUnlocked = this.hasAttribute('workshop-unlocked');
 
         if (this.decision === 'continue') {
             decisionText = `
-                <h3>${t('run_ended_screen.continue_quote')}</h3>
-                <p>${t('run_ended_screen.continue_decision')}</p>
+                <h3 class="text-2xl text-green-400 ${animationClass}">${t('run_ended_screen.continue_quote')}</h3>
+                <p class="text-brand-text ${animationClass}" style="animation-delay: 0.5s;">${t('run_ended_screen.continue_decision')}</p>
             `;
-            buttonHTML = `
-                <button id="continue-run-button">
+            buttonHTML += `
+                <button
+                    id="continue-run-button"
+                    class="bg-green-500 text-white py-3 px-6 pixel-corners hover:bg-green-400 transition-colors transform hover:scale-105 ${animationClass}"
+                    style="animation-delay: 1.2s;"
+                >
                     ${workshopUnlocked ? t('run_ended_screen.enter_workshop') : t('run_ended_screen.start_new_run')}
                 </button>
             `;
         } else { // retire
             decisionText = `
-                <h3>${t('run_ended_screen.retire_quote')}</h3>
-                <p>${t('run_ended_screen.retire_decision', { run: this.getAttribute('run')})}</p>
+                <h3 class="text-2xl text-red-400 ${animationClass}">${t('run_ended_screen.retire_quote')}</h3>
+                <p class="text-brand-text ${animationClass}" style="animation-delay: 0.5s;">${t('run_ended_screen.retire_decision', { run: this.getAttribute('run')})}</p>
             `;
-            buttonHTML = `
-                <button id="retire-run-button">
+            buttonHTML += `
+                <button
+                    id="retire-run-button"
+                    class="bg-brand-secondary text-white py-3 px-6 pixel-corners hover:bg-red-500 transition-colors transform hover:scale-105 ${animationClass}"
+                    style="animation-delay: 1s;"
+                >
                     ${t('run_ended_screen.recruit_new_adventurer')}
                 </button>
             `;

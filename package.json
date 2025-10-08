@@ -23,8 +23,5 @@
     "vite": "^6.2.0",
     "vite-node": "^3.2.4",
     "vitest": "^3.2.4"
-  },
-  "dependencies": {
-    "xp.css": "^0.2.6"
   }
 }

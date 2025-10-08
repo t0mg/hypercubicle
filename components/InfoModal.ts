@@ -20,57 +20,48 @@ export class InfoModal<T> {
     this.resolve = resolve;
 
     const overlay = document.createElement('div');
-    overlay.dataset.testid = 'info-modal-overlay';
-    Object.assign(overlay.style, {
-      position: 'fixed',
-      top: '0',
-      left: '0',
-      right: '0',
-      bottom: '0',
-      backgroundColor: 'rgba(0, 0, 0, 0.4)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: '1000',
-    });
+    overlay.className = 'info-modal-overlay animate-fade-in';
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) {
-        const cancelButton = buttons.find((b) => typeof b.value === 'boolean' && b.value === false);
+        // Find a 'cancel' or 'close' button if it exists
+        const cancelButton = buttons.find(
+          (b) =>
+            typeof b.value === 'boolean' && b.value === false
+        );
         if (cancelButton) {
           this.dismiss(cancelButton.value);
         }
       }
     });
 
-    const windowEl = document.createElement('div');
-    this.element = windowEl;
-    windowEl.className = 'window';
-    windowEl.style.width = '450px';
-    windowEl.setAttribute('role', 'dialog');
-    windowEl.setAttribute('aria-modal', 'true');
-    windowEl.setAttribute('aria-labelledby', 'info-modal-title');
+    const modal = document.createElement('div');
+    this.element = modal;
+    modal.className = 'bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-primary animate-fade-in-up w-full max-w-3/4';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'info-modal-title');
 
-    const titleBar = document.createElement('div');
-    titleBar.className = 'title-bar';
-    const titleBarText = document.createElement('div');
-    titleBarText.id = 'info-modal-title';
-    titleBarText.className = 'title-bar-text';
-    titleBarText.textContent = title;
-    titleBar.appendChild(titleBarText);
-    windowEl.appendChild(titleBar);
-
-    const windowBody = document.createElement('div');
-    windowBody.className = 'window-body text-center p-4';
+    const titleEl = document.createElement('h2');
+    titleEl.id = 'info-modal-title';
+    titleEl.className = 'text-4xl font-title text-brand-secondary mb-3';
+    titleEl.textContent = title;
+    modal.appendChild(titleEl);
 
     const contentEl = document.createElement('div');
     contentEl.innerHTML = content;
-    windowBody.appendChild(contentEl);
+    modal.appendChild(contentEl);
 
     const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'flex justify-center gap-2 mt-4';
+    buttonContainer.className = 'text-center mt-6';
 
-    buttons.forEach((button) => {
+    buttons.forEach((button, index) => {
       const buttonEl = document.createElement('button');
+      const isPrimary = button.variant === 'primary' || (button.variant !== 'secondary' && index === 0);
+
+      const primaryClasses = 'bg-brand-primary mx-4 pixel-corners text-white py-2 px-6 rounded-lg hover:bg-brand-primary/80 transition-colors';
+      const secondaryClasses = 'bg-gray-600 mx-4 pixel-corners text-white py-2 px-6 rounded-lg hover:bg-gray-700 transition-colors';
+
+      buttonEl.className = isPrimary ? primaryClasses : secondaryClasses;
       buttonEl.textContent = button.text;
       buttonEl.addEventListener('click', () => {
         this.dismiss(button.value);
@@ -78,10 +69,9 @@ export class InfoModal<T> {
       buttonContainer.appendChild(buttonEl);
     });
 
-    windowBody.appendChild(buttonContainer);
-    windowEl.appendChild(windowBody);
+    modal.appendChild(buttonContainer);
 
-    overlay.appendChild(windowEl);
+    overlay.appendChild(modal);
     document.body.appendChild(overlay);
 
     this.handleKeydown = (event: KeyboardEvent) => {
@@ -97,7 +87,7 @@ export class InfoModal<T> {
     };
     document.addEventListener('keydown', this.handleKeydown);
 
-    const focusableElements = windowEl.querySelectorAll<HTMLElement>(
+    const focusableElements = modal.querySelectorAll<HTMLElement>(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
     );
     const firstElement = focusableElements[0];
@@ -105,7 +95,7 @@ export class InfoModal<T> {
 
     firstElement?.focus();
 
-    windowEl.addEventListener('keydown', (e) => {
+    modal.addEventListener('keydown', (e) => {
       if (e.key !== 'Tab') return;
       if (e.shiftKey) {
         if (document.activeElement === firstElement) {

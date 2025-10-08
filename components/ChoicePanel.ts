@@ -90,14 +90,19 @@ export class ChoicePanel extends HTMLElement {
         }
       }
     } else {
+      // For items, selection is based on the base item ID, due to stacking.
       const allInstancesOfBaseId = this._choices.filter(c => c.id === itemToSelect.id);
       const allInstanceIds = allInstancesOfBaseId.map(c => c.instanceId);
       const isAnySelected = allInstanceIds.some(id => this._selectedIds.includes(id));
 
       if (isAnySelected) {
+        // Deselect all instances of this item.
         this._selectedIds = this._selectedIds.filter(id => !allInstanceIds.includes(id));
       } else {
+        // Select the first instance of this item. The offer is for unique items.
         if (this._selectedIds.length < MAX_SELECTION) {
+           // We only add one instanceId to the selection, as the offer is for unique items.
+           // The original logic of preventing multiple selections of the same base item is preserved.
           this._selectedIds.push(instanceId);
         }
       }
@@ -110,7 +115,7 @@ export class ChoicePanel extends HTMLElement {
 
     const newlyDrafted = this._choices.filter(c => c.justDrafted && this._initialRender);
     if (newlyDrafted.length > 0 && this._initialRender) {
-      this._initialRender = false;
+      this._initialRender = false; // prevent re-triggering
       
       const modalContent = newlyDrafted.map(item => {
         const card = document.createElement('choice-card') as Card;
@@ -127,7 +132,7 @@ export class ChoicePanel extends HTMLElement {
         this.render();
       });
 
-      return;
+      return; // Stop rendering the main panel until modal is closed
     }
 
     const rarityOrder: { [key: string]: number } = { 'Common': 0, 'Uncommon': 1, 'Rare': 2 };
@@ -140,6 +145,7 @@ export class ChoicePanel extends HTMLElement {
       sortedChoices.sort((a, b) => {
         const typeComparison = itemTypeOrder[a.type] - itemTypeOrder[b.type];
         if (typeComparison !== 0) return typeComparison;
+
         const rarityA = rarityOrder[a.rarity] || 0;
         const rarityB = rarityOrder[b.rarity] || 0;
         return rarityA - rarityB;
@@ -148,11 +154,14 @@ export class ChoicePanel extends HTMLElement {
       sortedChoices.sort((a, b) => {
         const roomA = a as RoomChoice;
         const roomB = b as RoomChoice;
+
         const typeComparison = roomTypeOrder[roomA.type] - roomTypeOrder[roomB.type];
         if (typeComparison !== 0) return typeComparison;
+
         const hpA = roomA.stats.hp || 0;
         const hpB = roomB.stats.hp || 0;
         if (hpA !== hpB) return hpB - hpA;
+
         const attackA = roomA.stats.attack || 0;
         const attackB = roomB.stats.attack || 0;
         return attackB - attackA;
@@ -214,20 +223,22 @@ export class ChoicePanel extends HTMLElement {
     }
 
     this.innerHTML = `
-        <fieldset class="w-full">
-            <legend>${title}</legend>
-            <div class="p-2">
+            <div class="w-full">
+                <h3 class="text-xl text-center mb-4 text-white">${title}</h3>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4" id="loot-card-container">
-                    <!-- Cards will be inserted here -->
+                    <!-- Loot cards will be inserted here -->
                 </div>
                 <div class="text-center mt-6">
-                    <button id="present-offer-button" ${!canSubmit || this._disabled ? 'disabled' : ''}>
+                    <button
+                        id="present-offer-button"
+                        ${!canSubmit || this._disabled ? 'disabled' : ''}
+                        class="bg-brand-secondary text-white py-3 px-8 pixel-corners transition-all transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:scale-100"
+                    >
                         ${buttonLabel}
                     </button>
                 </div>
             </div>
-        </fieldset>
-    `;
+        `;
 
     const container = this.querySelector('#loot-card-container');
     if (container) {

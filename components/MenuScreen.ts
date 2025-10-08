@@ -52,49 +52,43 @@ export class MenuScreen extends HTMLElement {
     const metaState = this.metaManager.metaState;
     const hasSave = this.engine.hasSaveGame();
     let metaInfo = '';
-    if (hasSave) {
+    if (metaState.adventurers > 1 || !!metaState.highestRun || !!metaState.unlockedFeatures.length) {
       const adventurers = metaState.adventurers || 0;
       metaInfo = `
-        <fieldset class="mt-4 text-center">
-          <legend>Progress</legend>
-          <p>
-            ${t('menu.max_runs', { count: metaState.highestRun })} | ${t('menu.unlocked_features', { count: metaState.unlockedFeatures.length })} | ${t('menu.adventurer_count', { count: adventurers })}
-          </p>
-        </fieldset>
-      `;
+                <p class="text-lg text-gray-400 mt-4">
+                    ${t('menu.max_runs', { count: metaState.highestRun })} | ${t('menu.unlocked_features', { count: metaState.unlockedFeatures.length })} | ${t('menu.adventurer_count', { count: adventurers })}
+                </p>
+            `;
     }
 
     this.innerHTML = `
-      <div class="flex items-center justify-center p-4" style="height: 100vh;">
-        <div class="window" style="width: 400px;">
+      <div class="min-h-screen flex flex-col items-center justify-center p-4">
+        <div class="window w-full max-w-sm">
           <div class="title-bar">
             <div class="title-bar-text">${t('game_title')}</div>
           </div>
-          <div class="window-body">
-            <p class="text-center text-xl mb-4">${t('game_subtitle')}</p>
-
-            ${metaInfo}
-
-            <div class="mt-4 space-y-2 flex flex-col items-center">
+          <div class="window-body text-center">
+            <p class="text-lg mb-6">${t('game_subtitle')}</p>
+            <div data-testid="meta-info">${metaInfo}</div>
+            <div class="mt-6 space-y-3 flex flex-col items-center">
               ${hasSave ? `
-                <button id="continue-game-button" style="width: 250px;">
+                <button id="continue-game-button" class="w-full">
                   ${t('menu.continue_game')}
                 </button>
               ` : ''}
-              <button id="new-game-button" style="width: 250px;">
+              <button id="new-game-button" class="w-full">
                 ${t('menu.new_game')}
               </button>
               ${hasSave ? `
-                <button id="reset-game-button" style="width: 250px;">
+                <button id="reset-game-button" class="w-full">
                   ${t('menu.reset_save')}
                 </button>
               ` : ''}
             </div>
           </div>
-          <div class="status-bar">
-            <p class="status-bar-field">v${__APP_VERSION__}</p>
-            <p class="status-bar-field">build ${__BUILD_NUMBER__}</p>
-          </div>
+        </div>
+        <div class="absolute bottom-2 right-2 text-xs text-white text-shadow-sm">
+          v${__APP_VERSION__} (build ${__BUILD_NUMBER__})
         </div>
       </div>
     `;
