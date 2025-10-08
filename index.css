@@ -91,3 +91,8 @@ progress[value]::-webkit-progress-value {
 .title-bar {
     box-sizing: content-box;
 }
+
+/* Fix disabled button color overridden by tailwind */
+button:disabled {
+  color: revert;
+}
