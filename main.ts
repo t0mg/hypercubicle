@@ -1,3 +1,4 @@
+import "xp.css/dist/XP.css";
 import './index.css';
 import { GameEngine } from './game/engine';
 import { initLocalization, t } from './text';
