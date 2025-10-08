@@ -47,7 +47,6 @@ export class GameStats extends HTMLElement {
         this.innerHTML = `
             <div class="status-bar flex items-center text-center px-2">
                 <div class="flex-1 flex justify-start">
-                    <button id="quit-game-btn">${t('global.quit')}</button>
                 </div>
 
                 <div class="flex justify-center items-center">
@@ -85,11 +84,6 @@ export class GameStats extends HTMLElement {
 
         this.querySelector('#enter-workshop-btn')?.addEventListener('click', () => {
             this.engine?.enterWorkshop();
-        });
-        this.querySelector('#quit-game-btn')?.addEventListener('click', async () => {
-            if (await ConfirmModal.show(t('global.quit'), t('global.quit_confirm'))) {
-                this.engine?.quitGame(false);
-            }
         });
     }
 }

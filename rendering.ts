@@ -8,6 +8,7 @@ import { t } from './text';
 import { GameEngine } from './game/engine';
 import { isLootSelectionImpossible, isRoomSelectionImpossible } from './game/utils';
 import { RunEndedScreen } from './components/RunEndedScreen';
+import { ConfirmModal } from './components/ConfirmModal';
 
 
 const renderChoicePanel = (state: GameState, engine: GameEngine, type: 'item' | 'room') => {
@@ -26,9 +27,9 @@ const renderChoicePanel = (state: GameState, engine: GameEngine, type: 'item' | 
 }
 
 const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameEngine) => {
-    let adventurerStatus = appElement.querySelector('adventurer-status') as AdventurerStatus;
-    let logPanel = appElement.querySelector('log-panel') as LogPanel;
-    let gameStats = appElement.querySelector('game-stats') as GameStats;
+    let adventurerStatus: AdventurerStatus | null = appElement.querySelector('adventurer-status');
+    let logPanel: LogPanel | null = appElement.querySelector('log-panel');
+    let gameStats: GameStats | null = appElement.querySelector('game-stats');
 
     if (!adventurerStatus) {
         appElement.innerHTML = ''; // Clear only on initial render
@@ -51,8 +52,19 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
         leftColumnWrapper.appendChild(leftWindow);
         const leftTitle = document.createElement('div');
         leftTitle.className = 'title-bar';
-        leftTitle.innerHTML = `<div class="title-bar-text">System Info</div>`;
+        const leftTitleText = document.createElement('div');
+        leftTitleText.className = 'title-bar-text';
+        leftTitleText.textContent = t('game_title');
+        leftTitle.appendChild(leftTitleText);
+        const leftTitleControls = document.createElement('div');
+        leftTitleControls.className = 'title-bar-controls';
+        const closeButton = document.createElement('button');
+        closeButton.setAttribute('aria-label', 'Close');
+        closeButton.id = 'quit-game-btn';
+        leftTitleControls.appendChild(closeButton);
+        leftTitle.appendChild(leftTitleControls);
         leftWindow.appendChild(leftTitle);
+
         const leftBody = document.createElement('div');
         leftBody.className = 'window-body space-y-4';
         leftWindow.appendChild(leftBody);
@@ -74,7 +86,7 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
         rightColumnWrapper.appendChild(rightWindow);
         const rightTitle = document.createElement('div');
         rightTitle.className = 'title-bar';
-        rightTitle.innerHTML = `<div class="title-bar-text">Executive Status</div>`;
+        rightTitle.innerHTML = `<div class="title-bar-text">${t('adventurer_status.title', {count: state.adventurers.length})}</div>`;
         rightWindow.appendChild(rightTitle);
         const rightBody = document.createElement('div');
         rightBody.className = 'window-body';
@@ -93,8 +105,12 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
         gamePhaseWrapper.appendChild(gamePhaseWindow);
         const gamePhaseTitle = document.createElement('div');
         gamePhaseTitle.className = 'title-bar';
-        gamePhaseTitle.innerHTML = `<div id="game-phase-title" class="title-bar-text">Decision Point</div>`;
+        const gamePhaseTitleText = document.createElement('div');
+        gamePhaseTitleText.id = 'game-phase-title';
+        gamePhaseTitleText.className = 'title-bar-text';
+        gamePhaseTitle.appendChild(gamePhaseTitleText);
         gamePhaseWindow.appendChild(gamePhaseTitle);
+
         const gamePhasePanel = document.createElement('div');
         gamePhasePanel.id = 'game-phase-panel';
         gamePhasePanel.className = 'window-body';
@@ -124,7 +140,7 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
     logPanel.traits = state.adventurer.traits;
 
     const gamePhasePanel = appElement.querySelector('#game-phase-panel') as HTMLElement;
-    gamePhasePanel.innerHTML = '';
+    gamePhasePanel.innerHTML = ''; // Clear previous phase content
 
     const gamePhaseTitle = appElement.querySelector('#game-phase-title') as HTMLElement;
 
@@ -156,6 +172,12 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
             if (gamePhaseTitle) gamePhaseTitle.textContent = '...';
             break;
     }
+
+    appElement.querySelector('#quit-game-btn')?.addEventListener('click', async () => {
+      if (await ConfirmModal.show(t('global.quit'), t('global.quit_confirm'))) {
+          engine.quitGame(false); // Pass false to preserve the save file
+      }
+    });
 };
 
 const renderMenu = (appElement: HTMLElement, engine: GameEngine) => {

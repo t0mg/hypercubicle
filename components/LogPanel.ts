@@ -25,8 +25,18 @@ export class LogPanel extends HTMLElement {
     }
 
     private _getLogColor(level: string): string {
-        // Colors are removed to match the neutral XP theme.
-        return '';
+        switch (level) {
+            case 'DEBUG':
+                return 'text-blue-400';
+            case 'INFO':
+                return 'text-gray-400';
+            case 'WARN':
+                return 'text-yellow-400';
+            case 'ERROR':
+                return 'text-red-500';
+            default:
+                return 'text-gray-400';
+        }
     }
 
     render() {
@@ -40,12 +50,9 @@ export class LogPanel extends HTMLElement {
         ).join('');
 
         this.innerHTML = `
-            <fieldset class="w-full">
-                <legend>${t('log_panel.title')}</legend>
-                <div class="sunken-panel p-2 max-h-48 overflow-y-auto text-xs font-mono space-y-1" id="log-container">
-                    ${logHtml}
-                </div>
-            </fieldset>
+            <div class="sunken-panel p-2 max-h-48 overflow-y-auto text-xs font-mono space-y-1" id="log-container">
+                ${logHtml}
+            </div>
         `;
 
         const logContainer = this.querySelector('#log-container');
