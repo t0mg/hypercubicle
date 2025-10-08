@@ -27,7 +27,6 @@ const renderChoicePanel = (state: GameState, engine: GameEngine, type: 'item' | 
 
 const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameEngine) => {
     let adventurerStatus = appElement.querySelector('adventurer-status') as AdventurerStatus;
-    let choicePanel: ChoicePanel | null = null;
     let logPanel = appElement.querySelector('log-panel') as LogPanel;
     let gameStats = appElement.querySelector('game-stats') as GameStats;
 
@@ -35,37 +34,71 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
         appElement.innerHTML = ''; // Clear only on initial render
 
         const mainContainer = document.createElement('div');
-        mainContainer.className = 'w-full p-4 md:p-6 lg:p-8 flex flex-col items-center';
+        mainContainer.className = 'w-full p-4 md:p-6 lg:p-8';
         appElement.appendChild(mainContainer);
 
         const gridContainer = document.createElement('div');
         gridContainer.className = 'w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6';
         mainContainer.appendChild(gridContainer);
 
-        const leftColumn = document.createElement('div');
-        leftColumn.className = 'lg:col-span-1 space-y-6';
-        gridContainer.appendChild(leftColumn);
+        // --- Left Column Window ---
+        const leftColumnWrapper = document.createElement('div');
+        leftColumnWrapper.className = 'lg:col-span-1 space-y-6';
+        gridContainer.appendChild(leftColumnWrapper);
+
+        const leftWindow = document.createElement('div');
+        leftWindow.className = 'window';
+        leftColumnWrapper.appendChild(leftWindow);
+        const leftTitle = document.createElement('div');
+        leftTitle.className = 'title-bar';
+        leftTitle.innerHTML = `<div class="title-bar-text">System Info</div>`;
+        leftWindow.appendChild(leftTitle);
+        const leftBody = document.createElement('div');
+        leftBody.className = 'window-body space-y-4';
+        leftWindow.appendChild(leftBody);
 
         gameStats = document.createElement('game-stats') as GameStats;
-        leftColumn.appendChild(gameStats);
-
+        leftBody.appendChild(gameStats);
         const feedbackPanel = document.createElement('feedback-panel');
-        leftColumn.appendChild(feedbackPanel);
-
+        leftBody.appendChild(feedbackPanel);
         logPanel = document.createElement('log-panel') as LogPanel;
-        leftColumn.appendChild(logPanel);
+        leftBody.appendChild(logPanel);
 
-        const rightColumn = document.createElement('div');
-        rightColumn.className = 'lg:col-span-2 space-y-6';
-        gridContainer.appendChild(rightColumn);
+        // --- Right Column Window ---
+        const rightColumnWrapper = document.createElement('div');
+        rightColumnWrapper.className = 'lg:col-span-2 space-y-6';
+        gridContainer.appendChild(rightColumnWrapper);
+
+        const rightWindow = document.createElement('div');
+        rightWindow.className = 'window';
+        rightColumnWrapper.appendChild(rightWindow);
+        const rightTitle = document.createElement('div');
+        rightTitle.className = 'title-bar';
+        rightTitle.innerHTML = `<div class="title-bar-text">Executive Status</div>`;
+        rightWindow.appendChild(rightTitle);
+        const rightBody = document.createElement('div');
+        rightBody.className = 'window-body';
+        rightWindow.appendChild(rightBody);
 
         adventurerStatus = document.createElement('adventurer-status') as AdventurerStatus;
-        rightColumn.appendChild(adventurerStatus);
+        rightBody.appendChild(adventurerStatus);
 
+        // --- Bottom Panel Window ---
+        const gamePhaseWrapper = document.createElement('div');
+        gamePhaseWrapper.className = 'lg:col-span-3';
+        gridContainer.appendChild(gamePhaseWrapper);
+
+        const gamePhaseWindow = document.createElement('div');
+        gamePhaseWindow.className = 'window';
+        gamePhaseWrapper.appendChild(gamePhaseWindow);
+        const gamePhaseTitle = document.createElement('div');
+        gamePhaseTitle.className = 'title-bar';
+        gamePhaseTitle.innerHTML = `<div id="game-phase-title" class="title-bar-text">Decision Point</div>`;
+        gamePhaseWindow.appendChild(gamePhaseTitle);
         const gamePhasePanel = document.createElement('div');
         gamePhasePanel.id = 'game-phase-panel';
-        gamePhasePanel.className = 'lg:col-span-3';
-        gridContainer.appendChild(gamePhasePanel);
+        gamePhasePanel.className = 'window-body';
+        gamePhaseWindow.appendChild(gamePhasePanel);
     }
 
     // Update dynamic elements
@@ -91,10 +124,13 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
     logPanel.traits = state.adventurer.traits;
 
     const gamePhasePanel = appElement.querySelector('#game-phase-panel') as HTMLElement;
-    gamePhasePanel.innerHTML = ''; // Clear previous phase content
+    gamePhasePanel.innerHTML = '';
+
+    const gamePhaseTitle = appElement.querySelector('#game-phase-title') as HTMLElement;
 
     switch (state.phase) {
         case 'RUN_OVER': {
+            if (gamePhaseTitle) gamePhaseTitle.textContent = t('run_ended_screen.run_complete');
             const runEndedEl = document.createElement('run-ended-screen') as RunEndedScreen;
             runEndedEl.setAttribute('final-bp', state.designer.balancePoints.toString());
             runEndedEl.setAttribute('reason', state.runEnded.reason);
@@ -109,13 +145,15 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
             break;
         }
         case 'DESIGNER_CHOOSING_LOOT':
+            if (gamePhaseTitle) gamePhaseTitle.textContent = t('choice_panel.title');
             gamePhasePanel.appendChild(renderChoicePanel(state, engine, 'item'));
             break;
         case 'DESIGNER_CHOOSING_ROOM':
+            if (gamePhaseTitle) gamePhaseTitle.textContent = t('choice_panel.title_room');
             gamePhasePanel.appendChild(renderChoicePanel(state, engine, 'room'));
             break;
         default:
-            // Don't render anything for unhandled phases, let it be blank.
+            if (gamePhaseTitle) gamePhaseTitle.textContent = '...';
             break;
     }
 };
