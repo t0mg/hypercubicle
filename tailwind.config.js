@@ -18,11 +18,6 @@ export default {
         'rarity-uncommon': '#c5a722ff',
         'rarity-rare': '#b23bf6ff',
       },
-      fontFamily: {
-        sans: ['"VT323"', 'monospace'],
-        label: ['"Silkscreen"', 'sans-serif'],
-        title: ['"Jacquard 12"', 'system-ui'],
-      },
       keyframes: {
         'fade-in': {
             '0%': { opacity: '0', transform: 'scale(0.95)' },
