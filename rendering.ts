@@ -39,12 +39,12 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
         appElement.appendChild(mainContainer);
 
         const gridContainer = document.createElement('div');
-        gridContainer.className = 'w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6';
+        gridContainer.className = 'w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-6';
         mainContainer.appendChild(gridContainer);
 
         // --- Left Column Window ---
         const leftColumnWrapper = document.createElement('div');
-        leftColumnWrapper.className = 'lg:col-span-1 space-y-6';
+        leftColumnWrapper.className = 'lg:col-span-3 space-y-6';
         gridContainer.appendChild(leftColumnWrapper);
 
         const leftWindow = document.createElement('div');
@@ -100,7 +100,7 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
 
         // --- Bottom Panel Window ---
         const gamePhaseWrapper = document.createElement('div');
-        gamePhaseWrapper.className = 'lg:col-span-3';
+        gamePhaseWrapper.className = 'lg:col-span-5';
         gridContainer.appendChild(gamePhaseWrapper);
 
         const gamePhaseWindow = document.createElement('div');

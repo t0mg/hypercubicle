@@ -45,40 +45,29 @@ export class GameStats extends HTMLElement {
 
     render() {
         this.innerHTML = `
-            <div class="status-bar flex items-center text-center px-2">
-                <div class="flex-1 flex justify-start">
-                </div>
+            <div class="status-bar">
 
-                <div class="flex justify-center items-center">
-                    ${this._balancePoints !== null ? `
-                    <p class="status-bar-field w-24">
-                        <span class="text-xs">${t('global.bp')}:</span>
-                        <span class="font-mono ml-1">${this._balancePoints}</span>
-                    </p>
-                    ` : ''}
-                    <p class="status-bar-field w-24">
-                        <span class="text-xs">${t('global.run')}:</span>
-                        <span class="font-mono ml-1">${this._run}</span>
-                    </p>
-                    <p class="status-bar-field w-24">
-                        <span class="text-xs">${t('global.room')}:</span>
-                        <span class="font-mono ml-1">${this._room}</span>
-                    </p>
-                    <p class="status-bar-field w-24">
-                        <span class="text-xs">${t('global.deck')}:</span>
-                        <span class="font-mono ml-1">${this._deckSize}</span>
-                    </p>
-                    <p class="status-bar-field w-24">
-                        <span class="text-xs">${t('global.rooms')}:</span>
-                        <span class="font-mono ml-1">${this._roomDeckSize}</span>
-                    </p>
-                </div>
+                ${this._balancePoints !== null ? `
+                <p class="status-bar-field">
+                    <span class="text-xs">${t('global.bp')}: ${this._balancePoints}</span>
+                </p>
+                ` : ''}
+                <p class="status-bar-field">
+                    <span class="text-xs">${t('global.run')}: ${this._run}</span>
+                </p>
+                <p class="status-bar-field">
+                    <span class="text-xs">${t('global.room')}: ${this._room}</span>
+                </p>
+                <p class="status-bar-field">
+                    <span class="text-xs">${t('global.deck')}: ${this._deckSize}</span>
+                </p>
+                <p class="status-bar-field">
+                    <span class="text-xs">${t('global.rooms')}: ${this._roomDeckSize}</span>
+                </p>
 
-                <div class="flex-1 flex justify-end">
-                    ${this.engine?.isWorkshopAccessUnlocked() ? `
-                        <button id="enter-workshop-btn">${t('global.workshop')}</button>
-                    ` : ''}
-                </div>
+                ${this.engine?.isWorkshopAccessUnlocked() ? `
+                    <button id="enter-workshop-btn">${t('global.workshop')}</button>
+                ` : ''}
             </div>
         `;
 
