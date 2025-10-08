@@ -81,3 +81,13 @@
 .stack-outline-2::after {
   transform: translate(8px, -8px);
 }
+
+/* Add transition to progress bars */
+progress[value]::-webkit-progress-value {
+    transition: width 0.5s ease-out;
+}
+
+/* Fix box-sizing for title-bar overridden by tailwind */
+.title-bar {
+    box-sizing: content-box;
+}
