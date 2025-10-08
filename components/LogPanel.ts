@@ -29,13 +29,13 @@ export class LogPanel extends HTMLElement {
             case 'DEBUG':
                 return 'text-blue-400';
             case 'INFO':
-                return 'text-gray-400';
+                return 'text-black';
             case 'WARN':
-                return 'text-yellow-400';
+                return 'text-yellow-500';
             case 'ERROR':
                 return 'text-red-500';
             default:
-                return 'text-gray-400';
+                return 'text-black';
         }
     }
 
