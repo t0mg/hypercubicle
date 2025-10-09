@@ -1,7 +1,7 @@
 [
     {
         "id": "room_1",
-        "name": "Cubicle Farm of Lethargic Staff",
+        "name": "Goblin Field",
         "type": "enemy",
         "rarity": "Common",
         "cost": null,
@@ -14,7 +14,7 @@
     },
     {
       "id": "room_1b",
-      "name": "Team of Disgruntled Interns",
+      "name": "Goblin Den",
       "type": "enemy",
       "rarity": "Common",
       "cost": null,
@@ -27,7 +27,7 @@
     },
     {
         "id": "room_2",
-        "name": "Malfunctioning Paper Shredder",
+        "name": "Spike Trap",
         "type": "trap",
         "rarity": "Common",
         "cost": null,
@@ -37,7 +37,7 @@
     },
     {
         "id": "room_3",
-        "name": "Water Cooler Gossip Session",
+        "name": "Fountain of Health",
         "type": "healing",
         "rarity": "Uncommon",
         "cost": null,
@@ -47,7 +47,7 @@
     },
     {
         "id": "room_4",
-        "name": "HR Compliance Fortress",
+        "name": "Orc Stronghold",
         "type": "enemy",
         "rarity": "Uncommon",
         "cost": null,
@@ -60,7 +60,7 @@
     },
       {
         "id": "room_troll",
-        "name": "Meeting with the Legal Department",
+        "name": "Troll Bridge",
         "type": "enemy",
         "rarity": "Uncommon",
         "cost": null,
@@ -73,7 +73,7 @@
     },
     {
         "id": "room_5",
-        "name": "The Quarterly Audit",
+        "name": "Dragon's Lair",
         "type": "boss",
         "rarity": "Rare",
         "cost": 300,
@@ -84,7 +84,7 @@
     },
     {
         "id": "room_6",
-        "name": "Surprise Downsizing",
+        "name": "Death Pit",
         "type": "trap",
         "rarity": "Rare",
         "cost": 200,
