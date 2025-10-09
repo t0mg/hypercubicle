@@ -66,57 +66,54 @@ export class AdventurerStatus extends HTMLElement {
         const showTraits = this._metaState?.unlockedFeatures.includes(UnlockableFeature.ADVENTURER_TRAITS);
 
         this.innerHTML = `
-            <fieldset>
-                <legend id="adventurer-title">${t('adventurer_status.title', { count: adventurerNumber })}</legend>
-                <div class="flex gap-2">
-                    <div class="flex-grow space-y-1">
-                        <div data-tooltip-key="adventurer_health">
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center">${HealthIcon()} <span>${t('global.health')}</span></div>
-                                <span id="hp-text" class="font-mono text-sm"></span>
-                            </div>
-                            <progress id="hp-bar" max="100" value="100" class="w-full"></progress>
+            <div class="flex gap-2">
+                <div class="flex-grow space-y-2">
+                    <div data-tooltip-key="adventurer_health">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">${HealthIcon()} <span>${t('global.health')}</span></div>
+                            <span id="hp-text" class="font-mono text-sm"></span>
                         </div>
-                        <div data-tooltip-key="adventurer_flow_state">
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center">${InterestIcon()} <span>${t('adventurer_status.flow_state')}</span></div>
-                                <span id="flow-state-text" class="font-mono text-sm"></span>
-                            </div>
-                        </div>
+                        <progress id="hp-bar" max="100" value="100" class="w-full"></progress>
                     </div>
-                    <div class="sunken-panel p-2 flex flex-col items-center justify-center" data-tooltip-key="adventurer_power">
-                        <div class="flex items-center">${PowerIcon()} <span class="ml-1">${t('global.power')}</span></div>
-                        <span id="power-text" class="font-mono text-lg"></span>
+                    <div data-tooltip-key="adventurer_flow_state">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">${InterestIcon()} <span>${t('adventurer_status.flow_state')}</span></div>
+                            <span id="flow-state-text" class="font-mono text-sm"></span>
+                        </div>
                     </div>
                 </div>
+                <div class="sunken-panel p-2 flex flex-col items-center justify-center" data-tooltip-key="adventurer_power">
+                    <div class="flex items-center">${PowerIcon()} <span class="ml-1">${t('global.power')}</span></div>
+                    <span id="power-text" class="font-mono text-lg"></span>
+                </div>
+            </div>
 
-                <fieldset id="traits-section" class="${showTraits ? '' : 'hidden'} mt-2">
-                    <legend>${t('adventurer_status.traits', {defaultValue: 'Traits'})}</legend>
-                    <div class="flex justify-around text-center">
-                        <div>
-                            <span class="block text-xs">${t('log_panel.offense')}</span>
-                            <span id="offense-trait" class="font-mono"></span>
-                        </div>
-                        <div>
-                            <span class="block text-xs">${t('log_panel.resilience')}</span>
-                            <span id="resilience-trait" class="font-mono"></span>
-                        </div>
-                        <div>
-                            <span class="block text-xs">${t('log_panel.skill')}</span>
-                            <span id="skill-trait" class="font-mono"></span>
-                        </div>
+            <fieldset id="traits-section" class="${showTraits ? '' : 'hidden'} mt-2">
+                <legend>${t('adventurer_status.traits', {defaultValue: 'Traits'})}</legend>
+                <div class="flex justify-around text-center">
+                    <div>
+                        <span class="block text-xs">${t('log_panel.offense')}</span>
+                        <span id="offense-trait" class="font-mono"></span>
                     </div>
-                </fieldset>
+                    <div>
+                        <span class="block text-xs">${t('log_panel.resilience')}</span>
+                        <span id="resilience-trait" class="font-mono"></span>
+                    </div>
+                    <div>
+                        <span class="block text-xs">${t('log_panel.skill')}</span>
+                        <span id="skill-trait" class="font-mono"></span>
+                    </div>
+                </div>
+            </fieldset>
 
-                <fieldset class="mt-2">
-                    <legend>${t('adventurer_status.inventory')}</legend>
-                    <div class="grid grid-cols-4 gap-1 text-center">
-                        <div id="weapon-slot" class="sunken-panel p-1"></div>
-                        <div id="armor-slot" class="sunken-panel p-1"></div>
-                        <div id="buffs-slot" class="sunken-panel p-1"></div>
-                        <div id="potions-slot" class="sunken-panel p-1"></div>
-                    </div>
-                </fieldset>
+            <fieldset class="mt-2">
+                <legend>${t('adventurer_status.inventory')}</legend>
+                <div class="grid grid-cols-4 gap-1 text-center">
+                    <div id="weapon-slot" class="sunken-panel p-1"></div>
+                    <div id="armor-slot" class="sunken-panel p-1"></div>
+                    <div id="buffs-slot" class="sunken-panel p-1"></div>
+                    <div id="potions-slot" class="sunken-panel p-1"></div>
+                </div>
             </fieldset>
         `;
         this._hasRendered = true;
@@ -189,7 +186,7 @@ export class AdventurerStatus extends HTMLElement {
     }
 
     updateInventorySlot(slotId: string, icon: string, title: string, content: string) {
-        const slot = this.querySelector(`#${slotId}`)!;
+        const slot = this.querySelector(`#${slotId}`) as HTMLElement;
         if (slot.dataset.content !== content) {
             slot.innerHTML = `
                 <div class="flex items-center justify-center text-xs">${icon} <span class="ml-1">${title}</span></div>
@@ -202,8 +199,22 @@ export class AdventurerStatus extends HTMLElement {
     }
 
     getFlowStateColor(flowState: FlowState): string {
-        // Theme handles colors, but we could add styles here if needed.
-        return '';
+        switch (flowState) {
+            case FlowState.Boredom:
+            case FlowState.Apathy:
+                return 'text-red-500';
+            case FlowState.Anxiety:
+            case FlowState.Worry:
+                return 'text-orange-500';
+            case FlowState.Arousal:
+            case FlowState.Control:
+            case FlowState.Relaxation:
+                return 'text-blue';
+            case FlowState.Flow:
+                return 'text-yellow-500 animate-pulse';
+            default:
+                return 'text-black';
+        }
     }
 }
 

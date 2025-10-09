@@ -214,19 +214,16 @@ export class ChoicePanel extends HTMLElement {
     }
 
     this.innerHTML = `
-        <fieldset class="w-full">
-            <legend>${title}</legend>
-            <div class="p-2">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4" id="loot-card-container">
-                    <!-- Cards will be inserted here -->
-                </div>
-                <div class="text-center mt-6">
-                    <button id="present-offer-button" ${!canSubmit || this._disabled ? 'disabled' : ''}>
-                        ${buttonLabel}
-                    </button>
-                </div>
+        <div class="p-2">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4" id="loot-card-container">
+                <!-- Cards will be inserted here -->
             </div>
-        </fieldset>
+            <div class="text-center mt-6">
+                <button id="present-offer-button" ${!canSubmit || this._disabled ? 'disabled' : ''}>
+                    ${buttonLabel}
+                </button>
+            </div>
+        </div>
     `;
 
     const container = this.querySelector('#loot-card-container');

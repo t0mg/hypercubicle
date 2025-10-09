@@ -140,7 +140,7 @@ export class Card extends HTMLElement {
       <fieldset ${this._isDisabled ? 'disabled' : ''}>
         <legend class="${rarityColor}">${this._item.type} - ${this._item.rarity}</legend>
         <div class="p-2">
-            <p class="font-bold text-lg ${rarityColor}">${itemName}</p>
+            <p class="font-bold text-sm ${rarityColor}">${itemName}</p>
             <div class="mt-2">
                 ${statsHtml}
             </div>

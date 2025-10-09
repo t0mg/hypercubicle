@@ -2,6 +2,7 @@
 export default {
   content: [
     "./index.html",
+    "./main-game.html",
     "./{components,game,locales,types}/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
@@ -14,9 +15,9 @@ export default {
         'brand-text': '#dcdcdc',
         'brand-text-muted': '#a0a0a0',
         'brand-interest': '#f59e0b',
-        'rarity-common': '#9ca3af',
-        'rarity-uncommon': '#c5a722ff',
-        'rarity-rare': '#b23bf6ff',
+        'rarity-common': '#474545ff',
+        'rarity-uncommon': '#9e8100ff',
+        'rarity-rare': '#8d1dceff',
       },
       keyframes: {
         'fade-in': {

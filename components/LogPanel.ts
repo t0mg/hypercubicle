@@ -29,13 +29,13 @@ export class LogPanel extends HTMLElement {
             case 'DEBUG':
                 return 'text-blue-400';
             case 'INFO':
-                return 'text-black';
+                return '';
             case 'WARN':
                 return 'text-yellow-500';
             case 'ERROR':
                 return 'text-red-500';
             default:
-                return 'text-black';
+                return '';
         }
     }
 
@@ -46,13 +46,13 @@ export class LogPanel extends HTMLElement {
         }
 
         const logHtml = this._logger.entries.map((log: LogEntry, index) =>
-            `<p class="whitespace-pre-wrap ${this._getLogColor(log.level)}">[${index.toString().padStart(3, '0')}] ${log.message}</p>`
+            `<^p class="${this._getLogColor(log.level)}">[${index.toString().padStart(3, '0')}] ${log.message}</p>`
         ).join('');
 
         this.innerHTML = `
-            <div class="sunken-panel p-2 max-h-48 overflow-y-auto text-xs font-mono space-y-1" id="log-container">
+            <pre class="m-2 mt-6 max-h-48 overflow-y-auto space-y-1" id="log-container">
                 ${logHtml}
-            </div>
+            </pre>
         `;
 
         const logContainer = this.querySelector('#log-container');

@@ -9,7 +9,7 @@ import { GameEngine } from './game/engine';
 import { isLootSelectionImpossible, isRoomSelectionImpossible } from './game/utils';
 import { RunEndedScreen } from './components/RunEndedScreen';
 import { ConfirmModal } from './components/ConfirmModal';
-
+import mainGameTemplate from './main-game.html?raw';
 
 const renderChoicePanel = (state: GameState, engine: GameEngine, type: 'item' | 'room') => {
     const choicePanel = document.createElement('choice-panel') as ChoicePanel;
@@ -27,98 +27,25 @@ const renderChoicePanel = (state: GameState, engine: GameEngine, type: 'item' | 
 }
 
 const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameEngine) => {
-    let adventurerStatus: AdventurerStatus | null = appElement.querySelector('adventurer-status');
-    let logPanel: LogPanel | null = appElement.querySelector('log-panel');
-    let gameStats: GameStats | null = appElement.querySelector('game-stats');
+    // If the main game UI isn't rendered yet, render it from the template
+    if (!appElement.querySelector('adventurer-status')) {
+        appElement.innerHTML = mainGameTemplate;
 
-    if (!adventurerStatus) {
-        appElement.innerHTML = ''; // Clear only on initial render
+        // Set static text content after the template is loaded
+        const leftTitleText = appElement.querySelector('#game-title');
+        if (leftTitleText) leftTitleText.textContent = t('game_title');
 
-        const mainContainer = document.createElement('div');
-        mainContainer.className = 'w-full p-4 md:p-6 lg:p-8';
-        appElement.appendChild(mainContainer);
-
-        const gridContainer = document.createElement('div');
-        gridContainer.className = 'w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-6';
-        mainContainer.appendChild(gridContainer);
-
-        // --- Left Column Window ---
-        const leftColumnWrapper = document.createElement('div');
-        leftColumnWrapper.className = 'lg:col-span-3 space-y-6';
-        gridContainer.appendChild(leftColumnWrapper);
-
-        const leftWindow = document.createElement('div');
-        leftWindow.className = 'window';
-        leftColumnWrapper.appendChild(leftWindow);
-        const leftTitle = document.createElement('div');
-        leftTitle.className = 'title-bar';
-        const leftTitleText = document.createElement('div');
-        leftTitleText.className = 'title-bar-text';
-        leftTitleText.textContent = t('game_title');
-        leftTitle.appendChild(leftTitleText);
-        const leftTitleControls = document.createElement('div');
-        leftTitleControls.className = 'title-bar-controls';
-        const closeButton = document.createElement('button');
-        closeButton.setAttribute('aria-label', 'Close');
-        closeButton.id = 'quit-game-btn';
-        leftTitleControls.appendChild(closeButton);
-        leftTitle.appendChild(leftTitleControls);
-        leftWindow.appendChild(leftTitle);
-
-        const leftBody = document.createElement('div');
-        leftBody.className = 'window-body space-y-4';
-        leftWindow.appendChild(leftBody);
-
-        gameStats = document.createElement('game-stats') as GameStats;
-        leftBody.appendChild(gameStats);
-        const feedbackPanel = document.createElement('feedback-panel');
-        leftBody.appendChild(feedbackPanel);
-        logPanel = document.createElement('log-panel') as LogPanel;
-        leftBody.appendChild(logPanel);
-
-        // --- Right Column Window ---
-        const rightColumnWrapper = document.createElement('div');
-        rightColumnWrapper.className = 'lg:col-span-2 space-y-6';
-        gridContainer.appendChild(rightColumnWrapper);
-
-        const rightWindow = document.createElement('div');
-        rightWindow.className = 'window';
-        rightColumnWrapper.appendChild(rightWindow);
-        const rightTitle = document.createElement('div');
-        rightTitle.className = 'title-bar';
-        const rightTitleText = document.createElement('div');
-        rightTitleText.className = 'title-bar-text';
-        rightTitleText.textContent = t('adventurer_status.title', { count: engine.metaManager.metaState.adventurers });
-        rightTitle.appendChild(rightTitleText);
-        rightWindow.appendChild(rightTitle);
-        const rightBody = document.createElement('div');
-        rightBody.className = 'window-body';
-        rightWindow.appendChild(rightBody);
-
-        adventurerStatus = document.createElement('adventurer-status') as AdventurerStatus;
-        rightBody.appendChild(adventurerStatus);
-
-        // --- Bottom Panel Window ---
-        const gamePhaseWrapper = document.createElement('div');
-        gamePhaseWrapper.className = 'lg:col-span-5';
-        gridContainer.appendChild(gamePhaseWrapper);
-
-        const gamePhaseWindow = document.createElement('div');
-        gamePhaseWindow.className = 'window';
-        gamePhaseWrapper.appendChild(gamePhaseWindow);
-        const gamePhaseTitle = document.createElement('div');
-        gamePhaseTitle.className = 'title-bar';
-        const gamePhaseTitleText = document.createElement('div');
-        gamePhaseTitleText.id = 'game-phase-title';
-        gamePhaseTitleText.className = 'title-bar-text';
-        gamePhaseTitle.appendChild(gamePhaseTitleText);
-        gamePhaseWindow.appendChild(gamePhaseTitle);
-
-        const gamePhasePanel = document.createElement('div');
-        gamePhasePanel.id = 'game-phase-panel';
-        gamePhasePanel.className = 'window-body';
-        gamePhaseWindow.appendChild(gamePhasePanel);
+        const rightTitleText = appElement.querySelector('#adventurer-status-title');
+        if (rightTitleText) rightTitleText.textContent = t('adventurer_status.title', { count: engine.metaManager.metaState.adventurers });
     }
+
+    // Now, query for the elements and update them
+    const adventurerStatus = appElement.querySelector('adventurer-status') as AdventurerStatus;
+    const logPanel = appElement.querySelector('log-panel') as LogPanel;
+    const gameStats = appElement.querySelector('game-stats') as GameStats;
+    const feedbackPanel = appElement.querySelector('feedback-panel') as HTMLElement;
+    const gamePhasePanel = appElement.querySelector('#game-phase-panel') as HTMLElement;
+    const gamePhaseTitle = appElement.querySelector('#game-phase-title') as HTMLElement;
 
     // Update dynamic elements
     adventurerStatus.metaState = engine.metaManager.metaState;
@@ -135,17 +62,13 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
     gameStats.setAttribute('deck-size', state.availableDeck.length.toString());
     gameStats.setAttribute('room-deck-size', state.availableRoomDeck.length.toString());
 
-    const feedbackPanel = appElement.querySelector('feedback-panel') as HTMLElement;
     const feedbackMessage = Array.isArray(state.feedback) ? state.feedback.join(' ') : state.feedback;
     feedbackPanel.setAttribute('message', feedbackMessage);
 
     logPanel.logger = state.logger;
     logPanel.traits = state.adventurer.traits;
 
-    const gamePhasePanel = appElement.querySelector('#game-phase-panel') as HTMLElement;
     gamePhasePanel.innerHTML = ''; // Clear previous phase content
-
-    const gamePhaseTitle = appElement.querySelector('#game-phase-title') as HTMLElement;
 
     switch (state.phase) {
         case 'RUN_OVER': {
@@ -177,9 +100,9 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
     }
 
     appElement.querySelector('#quit-game-btn')?.addEventListener('click', async () => {
-      if (await ConfirmModal.show(t('global.quit'), t('global.quit_confirm'))) {
-          engine.quitGame(false); // Pass false to preserve the save file
-      }
+        if (await ConfirmModal.show(t('global.quit'), t('global.quit_confirm'))) {
+            engine.quitGame(false); // Pass false to preserve the save file
+        }
     });
 };
 
