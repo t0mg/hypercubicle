@@ -96,3 +96,12 @@ progress[value]::-webkit-progress-value {
 button:disabled {
   color: revert;
 }
+
+log-panel pre p {
+  margin: 0;
+  line-height: 1rem;
+}
+
+.window-body log-panel pre {
+  margin: 8px -5px -8px
+}
