@@ -1,7 +1,7 @@
 [
     {
         "id": "loot_1",
-        "name": "Standard Issue Stapler",
+        "name": "Sword of Minor Wounding",
         "type": "Weapon",
         "rarity": "Common",
         "stats": { "power": 2 },
@@ -9,7 +9,7 @@
     },
     {
         "id": "loot_2",
-        "name": "Lukewarm Office Coffee",
+        "name": "Healing Potion",
         "type": "Potion",
         "rarity": "Common",
         "stats": { "hp": 20 },
@@ -17,7 +17,7 @@
     },
     {
         "id": "loot_3",
-        "name": "Polyester Power Tie",
+        "name": "Leather Vambraces",
         "type": "Armor",
         "rarity": "Common",
         "stats": { "maxHp": 10 },
@@ -25,7 +25,7 @@
     },
     {
         "id": "loot_4",
-        "name": "Unsharpened Pencil",
+        "name": "Slightly Pointy Stick",
         "type": "Weapon",
         "rarity": "Common",
         "stats": { "power": 1 },
@@ -33,7 +33,7 @@
     },
     {
         "id": "loot_5",
-        "name": "Roll of Scotch Tape",
+        "name": "Crude Bandages",
         "type": "Potion",
         "rarity": "Common",
         "stats": { "hp": 15 },
@@ -41,7 +41,7 @@
     },
     {
         "id": "loot_6",
-        "name": "Motivational Poster",
+        "name": "Amulet of Synergy",
         "type": "Armor",
         "rarity": "Uncommon",
         "stats": { "power": 1, "maxHp": 15 },
@@ -49,7 +49,7 @@
     },
     {
         "id": "loot_7",
-        "name": "The Aggressive Mullet Haircut",
+        "name": "Berserker's Axe",
         "type": "Weapon",
         "rarity": "Uncommon",
         "stats": { "power": 6, "maxHp": -10 },
@@ -57,7 +57,7 @@
     },
     {
         "id": "loot_8",
-        "name": "Espresso Shot",
+        "name": "Elixir of Vitality",
         "type": "Potion",
         "rarity": "Uncommon",
         "stats": { "hp": 50 },
@@ -65,7 +65,7 @@
     },
     {
         "id": "loot_9",
-        "name": "Heavy Duty Clipboard",
+        "name": "Steel Broadsword",
         "type": "Weapon",
         "rarity": "Uncommon",
         "stats": { "power": 4 },
@@ -73,7 +73,7 @@
     },
     {
         "id": "loot_10",
-        "name": "Cubicle Wall",
+        "name": "Ring of Protection",
         "type": "Armor",
         "rarity": "Uncommon",
         "stats": { "maxHp": 20 },
@@ -81,7 +81,7 @@
     },
     {
         "id": "loot_11",
-        "name": "Ergonomic Chair (Oversized Model)",
+        "name": "Obsidian Plate",
         "type": "Armor",
         "rarity": "Rare",
         "stats": { "maxHp": 50, "power": -2 },
@@ -89,7 +89,7 @@
     },
     {
         "id": "loot_12",
-        "name": "Executive Presentation Pointer (Laser)",
+        "name": "Vorpal Blade",
         "type": "Weapon",
         "rarity": "Rare",
         "stats": { "power": 10 },
@@ -97,7 +97,7 @@
     },
     {
         "id": "loot_13",
-        "name": "Unexpected Stock Option Vesting",
+        "name": "Phoenix Down",
         "type": "Potion",
         "rarity": "Rare",
         "stats": { "hp": 150 },
@@ -105,7 +105,7 @@
     },
     {
         "id": "loot_14",
-        "name": "Shoulder Pads",
+        "name": "Girdle of Giant Strength",
         "type": "Armor",
         "rarity": "Rare",
         "stats": { "power": 3, "maxHp": 25 },
@@ -113,7 +113,7 @@
     },
     {
         "id": "loot_15",
-        "name": "'Employee of the Month' Plaque",
+        "name": "Archangel's Halo",
         "type": "Armor",
         "rarity": "Rare",
         "stats": { "maxHp": 30, "power": 3 },
@@ -121,7 +121,7 @@
     },
     {
         "id": "loot_16",
-        "name": "Aggressive Sales Strategy",
+        "name": "Berserker Potion",
         "type": "Buff",
         "rarity": "Rare",
         "stats": { "power": 20, "maxHp": -50, "duration": 5 },
@@ -129,7 +129,7 @@
     },
     {
         "id": "buff_heal",
-        "name": "Box of Donuts",
+        "name": "Brittle Healing Amulet",
         "type": "Buff",
         "rarity": "Uncommon",
         "stats": { "power": 0, "maxHp": 30, "hp": 30, "duration": 3 },
