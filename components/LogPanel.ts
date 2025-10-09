@@ -46,7 +46,7 @@ export class LogPanel extends HTMLElement {
         }
 
         const logHtml = this._logger.entries.map((log: LogEntry, index) =>
-            `<^p class="${this._getLogColor(log.level)}">[${index.toString().padStart(3, '0')}] ${log.message}</p>`
+            `<p class="${this._getLogColor(log.level)}">[${index.toString().padStart(3, '0')}] ${log.message}</p>`
         ).join('');
 
         this.innerHTML = `
