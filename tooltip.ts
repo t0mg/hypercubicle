@@ -58,11 +58,6 @@ class TooltipManager {
         this.desktopTooltipActive = false;
     }
 
-    public handleMouseMove(event: MouseEvent) {
-        if (this.desktopTooltipActive) {
-            this.tooltipBox.updatePosition(event.clientX, event.clientY);
-        }
-    }
 
     public handleClick(event: MouseEvent) {
         const target = event.target as HTMLElement;
