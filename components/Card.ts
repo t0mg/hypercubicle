@@ -1,14 +1,15 @@
-import type { LootChoice, RoomChoice } from '../types';
+import type { LootChoice, RoomChoice, Rarity } from '../types';
 import { t } from '../text';
 
-const rarityColorMap: { [key: string]: string } = {
-  Common: 'text-rarity-common',
-  Uncommon: 'text-rarity-uncommon',
-  Rare: 'text-rarity-rare',
+const rarityColorMap: Record<Rarity, string> = {
+  ['common']: 'text-rarity-common',
+  ['uncommon']: 'text-rarity-uncommon',
+  ['rare']: 'text-rarity-rare',
+  ['legendary']: 'text-rarity-legendary',
 };
 
 const StatChange = (label: string, value: number, positive: boolean = true, units: number = 1) => {
-  const color = positive ? 'text-green-400' : 'text-red-400';
+  const color = positive ? 'text-green-600' : 'text-red-400';
   const sign = positive && value > 0 ? '+' : '';
   return `
         <div class="flex justify-between text-sm ${color}">
@@ -100,10 +101,12 @@ export class Card extends HTMLElement {
 
 
     let stateClasses = '';
-    if (this._isDisabled) {
-      stateClasses = 'opacity-50 cursor-not-allowed';
-    } else {
-      stateClasses = 'cursor-pointer';
+    if (this._isSelectable) {
+      if (this._isDisabled) {
+        stateClasses = 'opacity-50 cursor-not-allowed';
+      } else {
+        stateClasses = 'cursor-pointer';
+      }
     }
 
     const animationClass = this.classList.contains('animate-newly-drafted') ? ' animate-newly-drafted' : '';
@@ -114,11 +117,11 @@ export class Card extends HTMLElement {
     if ('stats' in this._item) {
       const item = this._item as LootChoice;
       const room = this._item as RoomChoice;
-      switch (this._item.type.toLowerCase()) {
-        case 'weapon':
-        case 'potion':
-        case 'armor':
-        case 'buff':
+      switch (this._item.type) {
+        case 'item_weapon':
+        case 'item_potion':
+        case 'item_armor':
+        case 'item_buff':
           statsHtml = `
             ${item.stats.hp ? StatChange(t('global.health'), item.stats.hp, item.stats.hp > 0) : ''}
             ${item.stats.maxHp ? StatChange(t('global.max_hp'), item.stats.maxHp, item.stats.maxHp > 0) : ''}
@@ -126,14 +129,14 @@ export class Card extends HTMLElement {
             ${item.stats.duration ? StatChange(t('global.duration'), item.stats.duration, true) : ''}
           `;
           break;
-        case 'healing':
+        case 'room_healing':
           statsHtml = `
             ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp, true) : ''}
           `;
           break;
-        case 'enemy':
-        case 'boss':
-        case 'trap':
+        case 'room_enemy':
+        case 'room_boss':
+        case 'room_trap':
           statsHtml = `
             ${room.stats.attack ? StatChange(t('global.attack'), room.stats.attack, false, room.units) : ''}
             ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp, false, room.units) : ''}
@@ -149,11 +152,11 @@ export class Card extends HTMLElement {
       itemName = t('choice_panel.stacked_items_title', { name: this._item.name, count: this._stackCount });
     }
 
-    const fieldsetBorderClass = this._isSelected ? 'border-yellow-300' : '';
+    const fieldsetBorderClass = this._isSelected ? 'selected' : '';
 
     this.innerHTML = `
-      <fieldset class="font-sans ${fieldsetBorderClass}" ${this._isDisabled ? 'disabled' : ''}>
-        <legend class="${rarityColor}">${this._item.type} - ${this._item.rarity}</legend>
+      <fieldset class="font-sans ${fieldsetBorderClass} flex flex-grow items-center" ${this._isDisabled ? 'disabled' : ''}>
+        <legend class="${rarityColor}">${t('card_types.' + this._item.type)} - ${t('rarity.' + this._item.rarity)}</legend>
         <div class="p-2">
             <p class="font-bold text-sm ${rarityColor}">${itemName}</p>
             <div class="mt-2">

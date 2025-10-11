@@ -14,58 +14,58 @@ const PotionIcon = () => `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5
 const BuffIcon = () => `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M200-160q-25.54 0-36.31-22.81-10.77-22.81 5.08-42.57L400-506.15V-760h-55.38q-8.5 0-14.25-5.76t-5.75-14.27q0-8.51 5.75-14.24t14.25-5.73h270.76q8.5 0 14.25 5.76t5.75 14.27q0 8.51-5.75 14.24T615.38-760H560v253.85l231.23 280.77q15.85 19.76 5.08 42.57T760-160H200Zm80-80h400L544-400H416L280-240Zm-80 40h560L520-492v-268h-80v268L200-200Zm280-280Z"/></svg>`;
 
 export class AdventurerStatus extends HTMLElement {
-    private _adventurer: Adventurer | null = null;
-    private _previousAdventurer: Adventurer | null = null;
-    private _metaState: MetaState | null = null;
-    private _hasRendered: boolean = false;
+  private _adventurer: Adventurer | null = null;
+  private _previousAdventurer: Adventurer | null = null;
+  private _metaState: MetaState | null = null;
+  private _hasRendered: boolean = false;
 
-    set adventurer(value: Adventurer) {
-        if (this._adventurer) {
-            this._previousAdventurer = JSON.parse(JSON.stringify(this._adventurer));
-        } else {
-            this._previousAdventurer = value;
-        }
-        this._adventurer = value;
-        this.render();
+  set adventurer(value: Adventurer) {
+    if (this._adventurer) {
+      this._previousAdventurer = JSON.parse(JSON.stringify(this._adventurer));
+    } else {
+      this._previousAdventurer = value;
+    }
+    this._adventurer = value;
+    this.render();
+  }
+
+  set metaState(value: MetaState) {
+    this._metaState = value;
+    this.render();
+  }
+
+  get adventurer(): Adventurer {
+    return this._adventurer!;
+  }
+
+  constructor() {
+    super();
+  }
+
+  connectedCallback() {
+    this.render();
+  }
+
+  render() {
+    if (!this._adventurer) {
+      this.innerHTML = '';
+      this._hasRendered = false;
+      return;
     }
 
-    set metaState(value: MetaState) {
-        this._metaState = value;
-        this.render();
+    if (!this._hasRendered) {
+      this.initialRender();
     }
+    this.update();
+  }
 
-    get adventurer(): Adventurer {
-        return this._adventurer!;
-    }
+  initialRender() {
+    if (!this._adventurer) return;
 
-    constructor() {
-        super();
-    }
+    const adventurerNumber = this._metaState?.adventurers || 1;
+    const showTraits = this._metaState?.unlockedFeatures.includes(UnlockableFeature.ADVENTURER_TRAITS);
 
-    connectedCallback() {
-        this.render();
-    }
-
-    render() {
-        if (!this._adventurer) {
-            this.innerHTML = '';
-            this._hasRendered = false;
-            return;
-        }
-
-        if (!this._hasRendered) {
-            this.initialRender();
-        }
-        this.update();
-    }
-
-    initialRender() {
-        if (!this._adventurer) return;
-
-        const adventurerNumber = this._metaState?.adventurers || 1;
-        const showTraits = this._metaState?.unlockedFeatures.includes(UnlockableFeature.ADVENTURER_TRAITS);
-
-        this.innerHTML = `
+    this.innerHTML = `
             <fieldset class="mt-2" data-tooltip-key="adventurer_flow_state">
               <legend>${t('adventurer_status.flow_state')}</legend>
               <div id="flow-state-text" class="font-mono text-xl text-center"></div>
@@ -87,7 +87,7 @@ export class AdventurerStatus extends HTMLElement {
             </div>
 
             <fieldset id="traits-section" class="${showTraits ? '' : 'hidden'} mt-2">
-                <legend>${t('adventurer_status.traits', {defaultValue: 'Traits'})}</legend>
+                <legend>${t('adventurer_status.traits', { defaultValue: 'Traits' })}</legend>
                 <div class="flex justify-around text-center">
                     <div>
                         <span class="block text-xs">${t('log_panel.offense')}</span>
@@ -114,106 +114,106 @@ export class AdventurerStatus extends HTMLElement {
                 </div>
             </fieldset>
         `;
-        this._hasRendered = true;
+    this._hasRendered = true;
+  }
+
+  update() {
+    if (!this._adventurer || !this._previousAdventurer) return;
+
+    const displayHp = Math.max(0, this._adventurer.hp);
+    const healthPercentage = (displayHp / this._adventurer.maxHp) * 100;
+
+    this.querySelector('#hp-text')!.textContent = `${displayHp} / ${this._adventurer.maxHp}`;
+    (this.querySelector('#hp-bar') as HTMLProgressElement)!.value = healthPercentage;
+
+    const flowStateText = this.querySelector('#flow-state-text') as HTMLElement;
+    const flowStateKey = FlowState[this._adventurer.flowState];
+    flowStateText.textContent = t(`flow_states.${flowStateKey}`);
+    flowStateText.className = `font-mono text-xl text-center ${this.getFlowStateColor(this._adventurer.flowState)}`;
+    if (this._adventurer.flowState !== this._previousAdventurer.flowState) {
+      this._pulseElement(flowStateText);
     }
 
-    update() {
-        if (!this._adventurer || !this._previousAdventurer) return;
+    const powerText = this.querySelector('#power-text') as HTMLElement;
+    powerText.textContent = `${this._adventurer.power}`;
+    if (this._adventurer.power !== this._previousAdventurer.power) {
+      this._pulseElement(powerText);
+    }
 
-        const displayHp = Math.max(0, this._adventurer.hp);
-        const healthPercentage = (displayHp / this._adventurer.maxHp) * 100;
+    const showTraits = this._metaState?.unlockedFeatures.includes(UnlockableFeature.ADVENTURER_TRAITS);
+    const traitsSection = this.querySelector('#traits-section')!;
+    if (showTraits) {
+      traitsSection.classList.remove('hidden');
+      const offenseTrait = this.querySelector('#offense-trait') as HTMLElement;
+      const resilienceTrait = this.querySelector('#resilience-trait') as HTMLElement;
+      const skillTrait = this.querySelector('#skill-trait') as HTMLElement;
 
-        this.querySelector('#hp-text')!.textContent = `${displayHp} / ${this._adventurer.maxHp}`;
-        (this.querySelector('#hp-bar') as HTMLProgressElement)!.value = healthPercentage;
+      if (this._adventurer.traits.offense !== this._previousAdventurer.traits.offense) {
+        this._pulseElement(offenseTrait);
+      }
+      if (this._adventurer.traits.resilience !== this._previousAdventurer.traits.resilience) {
+        this._pulseElement(resilienceTrait);
+      }
+      if (this._adventurer.traits.skill !== this._previousAdventurer.traits.skill) {
+        this._pulseElement(skillTrait);
+      }
+      offenseTrait.textContent = `${this._adventurer.traits.offense}`;
+      resilienceTrait.textContent = `${this._adventurer.traits.resilience}`;
+      skillTrait.textContent = `${this._adventurer.traits.skill}`;
+    } else {
+      traitsSection.classList.add('hidden');
+    }
 
-        const flowStateText = this.querySelector('#flow-state-text') as HTMLElement;
-        const flowStateKey = FlowState[this._adventurer.flowState];
-        flowStateText.textContent = t(`flow_states.${flowStateKey}`);
-        flowStateText.className = `font-mono text-xl text-center ${this.getFlowStateColor(this._adventurer.flowState)}`;
-        if (this._adventurer.flowState !== this._previousAdventurer.flowState) {
-            this._pulseElement(flowStateText);
-        }
-
-        const powerText = this.querySelector('#power-text') as HTMLElement;
-        powerText.textContent = `${this._adventurer.power}`;
-        if (this._adventurer.power !== this._previousAdventurer.power) {
-          this._pulseElement(powerText);
-        }
-
-        const showTraits = this._metaState?.unlockedFeatures.includes(UnlockableFeature.ADVENTURER_TRAITS);
-        const traitsSection = this.querySelector('#traits-section')!;
-        if (showTraits) {
-            traitsSection.classList.remove('hidden');
-            const offenseTrait = this.querySelector('#offense-trait') as HTMLElement;
-            const resilienceTrait = this.querySelector('#resilience-trait') as HTMLElement;
-            const skillTrait = this.querySelector('#skill-trait') as HTMLElement;
-
-            if (this._adventurer.traits.offense !== this._previousAdventurer.traits.offense) {
-                this._pulseElement(offenseTrait);
-            }
-            if (this._adventurer.traits.resilience !== this._previousAdventurer.traits.resilience) {
-                this._pulseElement(resilienceTrait);
-            }
-            if (this._adventurer.traits.skill !== this._previousAdventurer.traits.skill) {
-                this._pulseElement(skillTrait);
-            }
-            offenseTrait.textContent = `${this._adventurer.traits.offense}`;
-            resilienceTrait.textContent = `${this._adventurer.traits.resilience}`;
-            skillTrait.textContent = `${this._adventurer.traits.skill}`;
-        } else {
-            traitsSection.classList.add('hidden');
-        }
-
-        this.updateInventorySlot('weapon-slot', WeaponIcon(), t('adventurer_status.weapon'), this._adventurer.inventory.weapon ? `<div><p class="text-sm">${this._adventurer.inventory.weapon.name}</p><p class="text-xs">${t('adventurer_status.pwr')}: ${this._adventurer.inventory.weapon.stats.power || 0}${this._adventurer.inventory.weapon.stats.maxHp ? `, ${t('adventurer_status.hp')}: ${this._adventurer.inventory.weapon.stats.maxHp}` : ''}</p></div>` : `<p class="italic text-xs">${t('global.none')}</p>`);
-        this.updateInventorySlot('armor-slot', ArmorIcon(), t('adventurer_status.armor'), this._adventurer.inventory.armor ? `<div><p class="text-sm">${this._adventurer.inventory.armor.name}</p><p class="text-xs">${t('adventurer_status.hp')}: ${this._adventurer.inventory.armor.stats.maxHp || 0}${this._adventurer.inventory.armor.stats.power ? `, ${t('adventurer_status.pwr')}: ${this._adventurer.inventory.armor.stats.power}` : ''}</p></div>` : `<p class="italic text-xs">${t('global.none')}</p>`);
-        this.updateInventorySlot('buffs-slot', BuffIcon(), t('adventurer_status.buffs'), this._adventurer.activeBuffs.length > 0 ? this._adventurer.activeBuffs.map(buff => `
+    this.updateInventorySlot('weapon-slot', WeaponIcon(), t('adventurer_status.weapon'), this._adventurer.inventory.weapon ? `<div><p class="text-sm">${this._adventurer.inventory.weapon.name}</p><p class="text-xs">${t('adventurer_status.pwr')}: ${this._adventurer.inventory.weapon.stats.power || 0}${this._adventurer.inventory.weapon.stats.maxHp ? `, ${t('adventurer_status.hp')}: ${this._adventurer.inventory.weapon.stats.maxHp}` : ''}</p></div>` : `<p class="italic text-xs">${t('global.none')}</p>`);
+    this.updateInventorySlot('armor-slot', ArmorIcon(), t('adventurer_status.armor'), this._adventurer.inventory.armor ? `<div><p class="text-sm">${this._adventurer.inventory.armor.name}</p><p class="text-xs">${t('adventurer_status.hp')}: ${this._adventurer.inventory.armor.stats.maxHp || 0}${this._adventurer.inventory.armor.stats.power ? `, ${t('adventurer_status.pwr')}: ${this._adventurer.inventory.armor.stats.power}` : ''}</p></div>` : `<p class="italic text-xs">${t('global.none')}</p>`);
+    this.updateInventorySlot('buffs-slot', BuffIcon(), t('adventurer_status.buffs'), this._adventurer.activeBuffs.length > 0 ? this._adventurer.activeBuffs.map(buff => `
             <div class="text-xs">
                 <p>${buff.name} (${t('global.duration')}: ${buff.stats.duration})</p>
                 <p>${Object.entries(buff.stats).filter(([stat]) => stat !== 'duration').map(([stat, value]) => `${t(`global.${stat}`)}: ${value}`).join(', ')}</p>
             </div>
         `).join('') : `<p class="italic text-xs">${t('global.none')}</p>`);
-        this.updateInventorySlot('potions-slot', PotionIcon(), t('adventurer_status.potions'), this._adventurer.inventory.potions.length > 0 ? `<p class="text-sm">${t('adventurer_status.potions_held', { count: this._adventurer.inventory.potions.length })}</p>` : `<p class="italic text-xs">${t('global.none')}</p>`);
-    }
+    this.updateInventorySlot('potions-slot', PotionIcon(), t('adventurer_status.potions'), this._adventurer.inventory.potions.length > 0 ? `<p class="text-sm">${t('adventurer_status.potions_held', { count: this._adventurer.inventory.potions.length })}</p>` : `<p class="italic text-xs">${t('global.none')}</p>`);
+  }
 
-    private _pulseElement(element: HTMLElement | null) {
-        if (!element) return;
-        element.classList.add('animate-pulse-once');
-        element.addEventListener('animationend', () => {
-            element.classList.remove('animate-pulse-once');
-        }, { once: true });
-    }
+  private _pulseElement(element: HTMLElement | null) {
+    if (!element) return;
+    element.classList.add('animate-pulse-once');
+    element.addEventListener('animationend', () => {
+      element.classList.remove('animate-pulse-once');
+    }, { once: true });
+  }
 
-    updateInventorySlot(slotId: string, icon: string, title: string, content: string) {
-        const slot = this.querySelector(`#${slotId}`) as HTMLElement;
-        if (slot.dataset.content !== content) {
-            slot.innerHTML = `
+  updateInventorySlot(slotId: string, icon: string, title: string, content: string) {
+    const slot = this.querySelector(`#${slotId}`) as HTMLElement;
+    if (slot.dataset.content !== content) {
+      slot.innerHTML = `
                 <div class="flex items-center justify-center text-xs">${icon} <span class="ml-1">${title}</span></div>
                 <div class="inventory-content-wrapper mt-1">
                     ${content}
                 </div>
             `;
-            slot.dataset.content = content;
-        }
+      slot.dataset.content = content;
     }
+  }
 
-    getFlowStateColor(flowState: FlowState): string {
-        switch (flowState) {
-            case FlowState.Boredom:
-            case FlowState.Apathy:
-                return 'text-red-500';
-            case FlowState.Anxiety:
-            case FlowState.Worry:
-                return 'text-orange-500';
-            case FlowState.Arousal:
-            case FlowState.Control:
-            case FlowState.Relaxation:
-                return 'text-blue';
-            case FlowState.Flow:
-                return 'text-yellow-500 animate-pulse';
-            default:
-                return 'text-black';
-        }
+  getFlowStateColor(flowState: FlowState): string {
+    switch (flowState) {
+      case FlowState.Boredom:
+      case FlowState.Apathy:
+        return 'text-red-500';
+      case FlowState.Anxiety:
+      case FlowState.Worry:
+        return 'text-orange-500';
+      case FlowState.Arousal:
+      case FlowState.Control:
+      case FlowState.Relaxation:
+        return 'text-blue';
+      case FlowState.Flow:
+        return 'text-yellow-500 animate-pulse';
+      default:
+        return 'text-black';
     }
+  }
 }
 
 customElements.define('adventurer-status', AdventurerStatus);

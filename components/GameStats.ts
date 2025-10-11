@@ -3,48 +3,48 @@ import { GameEngine } from '../game/engine';
 import { ConfirmModal } from './ConfirmModal';
 
 export class GameStats extends HTMLElement {
-    private _balancePoints: number | null = null;
-    private _run: number = 0;
-    private _room: number = 0;
-    private _deckSize: number = 0;
-    private _roomDeckSize: number = 0;
-    public engine?: GameEngine;
+  private _balancePoints: number | null = null;
+  private _run: number = 0;
+  private _room: number = 0;
+  private _deckSize: number = 0;
+  private _roomDeckSize: number = 0;
+  public engine?: GameEngine;
 
-    constructor() {
-        super();
+  constructor() {
+    super();
+  }
+
+  static get observedAttributes() {
+    return ['balance-points', 'run', 'room', 'deck-size', 'room-deck-size'];
+  }
+
+  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+    switch (name) {
+      case 'balance-points':
+        this._balancePoints = Number(newValue);
+        break;
+      case 'run':
+        this._run = Number(newValue);
+        break;
+      case 'room':
+        this._room = Number(newValue);
+        break;
+      case 'deck-size':
+        this._deckSize = Number(newValue);
+        break;
+      case 'room-deck-size':
+        this._roomDeckSize = Number(newValue);
+        break;
     }
+    this.render();
+  }
 
-    static get observedAttributes() {
-        return ['balance-points', 'run', 'room', 'deck-size', 'room-deck-size'];
-    }
+  connectedCallback() {
+    this.render();
+  }
 
-    attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-        switch (name) {
-            case 'balance-points':
-                this._balancePoints = Number(newValue);
-                break;
-            case 'run':
-                this._run = Number(newValue);
-                break;
-            case 'room':
-                this._room = Number(newValue);
-                break;
-            case 'deck-size':
-                this._deckSize = Number(newValue);
-                break;
-            case 'room-deck-size':
-                this._roomDeckSize = Number(newValue);
-                break;
-        }
-        this.render();
-    }
-
-    connectedCallback() {
-        this.render();
-    }
-
-    render() {
-        this.innerHTML = `
+  render() {
+    this.innerHTML = `
             <div class="status-bar">
 
                 ${this._balancePoints !== null ? `
@@ -71,10 +71,10 @@ export class GameStats extends HTMLElement {
             </div>
         `;
 
-        this.querySelector('#enter-workshop-btn')?.addEventListener('click', () => {
-            this.engine?.enterWorkshop();
-        });
-    }
+    this.querySelector('#enter-workshop-btn')?.addEventListener('click', () => {
+      this.engine?.enterWorkshop();
+    });
+  }
 }
 
 customElements.define('game-stats', GameStats);

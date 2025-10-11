@@ -1,95 +1,95 @@
 [
-    {
-        "id": "room_1",
-        "name": "Cubicle Farm of Lethargic Staff",
-        "type": "enemy",
-        "rarity": "Common",
-        "cost": null,
-        "stats": {
-            "attack": 5,
-            "hp": 10,
-            "minUnits": 1,
-            "maxUnits": 3
-        }
-    },
-    {
-      "id": "room_1b",
-      "name": "Team of Disgruntled Interns",
-      "type": "enemy",
-      "rarity": "Common",
-      "cost": null,
-      "stats": {
-          "attack": 4,
-          "hp": 8,
-          "minUnits": 5,
-          "maxUnits": 10
-      }
-    },
-    {
-        "id": "room_2",
-        "name": "Malfunctioning Paper Shredder",
-        "type": "trap",
-        "rarity": "Common",
-        "cost": null,
-        "stats": {
-            "attack": 15
-        }
-    },
-    {
-        "id": "room_3",
-        "name": "Water Cooler Gossip Session",
-        "type": "healing",
-        "rarity": "Uncommon",
-        "cost": null,
-        "stats": {
-            "hp": 25
-        }
-    },
-    {
-        "id": "room_4",
-        "name": "HR Compliance Fortress",
-        "type": "enemy",
-        "rarity": "Uncommon",
-        "cost": null,
-        "stats": {
-            "attack": 10,
-            "hp": 25,
-            "minUnits": 2,
-            "maxUnits": 4
-        }
-    },
-      {
-        "id": "room_troll",
-        "name": "Meeting with the Legal Department",
-        "type": "enemy",
-        "rarity": "Uncommon",
-        "cost": null,
-        "stats": {
-            "attack": 15,
-            "hp": 35,
-            "minUnits": 1,
-            "maxUnits": 2
-        }
-    },
-    {
-        "id": "room_5",
-        "name": "The Quarterly Audit",
-        "type": "boss",
-        "rarity": "Rare",
-        "cost": 300,
-        "stats": {
-            "attack": 25,
-            "hp": 100
-        }
-    },
-    {
-        "id": "room_6",
-        "name": "Surprise Downsizing",
-        "type": "trap",
-        "rarity": "Rare",
-        "cost": 200,
-        "stats": {
-            "attack": 999
-        }
+  {
+    "id": "enemy_easy_lethargic_staff",
+    "name": "Cubicle Farm of Lethargic Staff",
+    "type": "room_enemy",
+    "rarity": "common",
+    "cost": null,
+    "stats": {
+      "attack": 5,
+      "hp": 10,
+      "minUnits": 1,
+      "maxUnits": 3
     }
+  },
+  {
+    "id": "enemy_easy_disgruntled_interns",
+    "name": "Team of Disgruntled Interns",
+    "type": "room_enemy",
+    "rarity": "common",
+    "cost": null,
+    "stats": {
+      "attack": 4,
+      "hp": 8,
+      "minUnits": 5,
+      "maxUnits": 10
+    }
+  },
+  {
+    "id": "trap_medium_paper_shredder",
+    "name": "Malfunctioning Paper Shredder",
+    "type": "room_trap",
+    "rarity": "common",
+    "cost": null,
+    "stats": {
+      "attack": 15
+    }
+  },
+  {
+    "id": "healing_medium_water_cooler",
+    "name": "Water Cooler Gossip Session",
+    "type": "room_healing",
+    "rarity": "uncommon",
+    "cost": null,
+    "stats": {
+      "hp": 25
+    }
+  },
+  {
+    "id": "enemy_hard_hr_fortress",
+    "name": "HR Compliance Fortress",
+    "type": "room_enemy",
+    "rarity": "uncommon",
+    "cost": null,
+    "stats": {
+      "attack": 10,
+      "hp": 25,
+      "minUnits": 2,
+      "maxUnits": 4
+    }
+  },
+  {
+    "id": "enemy_hard_legal_department",
+    "name": "Meeting with the Legal Department",
+    "type": "room_enemy",
+    "rarity": "uncommon",
+    "cost": null,
+    "stats": {
+      "attack": 15,
+      "hp": 35,
+      "minUnits": 1,
+      "maxUnits": 2
+    }
+  },
+  {
+    "id": "boss_final_quarterly_audit",
+    "name": "The Quarterly Audit",
+    "type": "room_boss",
+    "rarity": "rare",
+    "cost": 300,
+    "stats": {
+      "attack": 25,
+      "hp": 100
+    }
+  },
+  {
+    "id": "trap_lethal_downsizing",
+    "name": "Surprise Downsizing",
+    "type": "room_trap",
+    "rarity": "rare",
+    "cost": 200,
+    "stats": {
+      "attack": 999
+    }
+  }
 ]

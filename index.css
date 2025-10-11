@@ -45,32 +45,44 @@
 }
 
 @keyframes pulse-once {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(2);
-    }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(2);
+  }
 }
 
 .animate-pulse-once {
-    animation: pulse-once 3s ease-in-out;
+  animation: pulse-once 3s ease-in-out;
 }
 
 /* Add transition to progress bars */
 progress[value]::-webkit-progress-value {
-    transition: width 0.5s ease-out;
+  transition: width 0.5s ease-out;
 }
 
 /* Fix box-sizing for title-bar overridden by tailwind */
 .title-bar {
-    box-sizing: content-box;
+  box-sizing: content-box;
 }
 
 /* Fix disabled button color overridden by tailwind */
 button:disabled {
   color: revert;
 }
+
+fieldset.selected {
+  border-color: #0051ef;
+}
+
+.cards-container choice-card {
+  display: flex;
+  flex-direction: column;
+} 
 
 log-panel pre p {
   margin: 0;

@@ -29,10 +29,11 @@ if (!appElement) {
   throw new Error("Could not find app element to mount to");
 }
 
+const dataLoader = new DataLoaderFetch();
+await initLocalization(dataLoader);
 const storage = new LocalStorage();
 const metaManager = new MetaManager(storage);
 const gameSaver = new GameSaver(storage);
-const dataLoader = new DataLoaderFetch();
 const engine = new GameEngine(metaManager, dataLoader, gameSaver);
 
 engine.on('state-change', (newState) => {
@@ -56,9 +57,6 @@ engine.on('state-change', (newState) => {
 });
 
 async function main() {
-  await initLocalization(dataLoader);
-  await engine.init();
-
   // Initial render for loading state
   appElement.innerHTML = `<div>${t('global.initializing')}</div>`;
 
@@ -66,6 +64,7 @@ async function main() {
   document.body.addEventListener('mouseover', (e) => tooltipManager.handleMouseEnter(e));
   document.body.addEventListener('click', (e) => tooltipManager.handleClick(e));
 
+  await engine.init();
   engine.showMenu();
 }
 
