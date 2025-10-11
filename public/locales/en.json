@@ -96,8 +96,6 @@
     "worthy_challenge": "A productive, but simple meeting.",
     "great_battle": "A productive negotiation! Quarterly results look excellent!",
     "too_close_for_comfort": "That was a close call. Almost needed to call HR.",
-    "new_adventurer": "A new Executive enters the office!",
-    "adventurer_returns": "The Executive returns for another Work Day!",
     "adventurer_fell": "The Executive suffered a fatal burnout on Floor {room} of Work Day {run}.",
     "adventurer_bored": "The Executive became lethargic on Floor {room} of Work Day {run}, and quit.",
     "adventurer_apathy": "The Executive started quiet quitting on Floor {room} of Work Day {run}, and left the company.",
@@ -149,5 +147,49 @@
     "Anxiety": "Imminent Burnout",
     "Boredom": "Lethargy",
     "Apathy": "Quiet Quitting"
+  },
+  "rarity": {
+    "rarity_common": "Common",
+    "rarity_uncommon": "Uncommon",
+    "rarity_rare": "Rare"
+  },
+  "item_type": {
+    "item_type_weapon": "Weapon",
+    "item_type_potion": "Potion",
+    "item_type_armor": "Armor",
+    "item_type_buff": "Buff"
+  },
+  "room_type": {
+    "room_type_enemy": "Hostile Department",
+    "room_type_trap": "Office Hazard",
+    "room_type_healing": "Break Room",
+    "room_type_boss": "Department Head"
+  },
+  "log_messages": {
+    "info_adventurer_declines_offer": "Disappointed by your offers, they decide to take nothing.",
+    "info_adventurer_accepts_offer": "They requisitioned the {itemName}.",
+    "info_adventurer_drinks_potion": "Sensing a threat to productivity, they urgently consumed the {potionName}.",
+    "info_easy_fight": "An easy meeting. Too trivial for synergy...",
+    "info_worthy_challenge": "A productive, but simple meeting.",
+    "info_great_battle": "A productive negotiation! Quarterly results look excellent!",
+    "info_too_close_for_comfort": "That was a close call. Almost needed to call HR.",
+    "info_new_adventurer": "A new Executive enters the office!",
+    "info_adventurer_returns": "The Executive returns for another Work Day!",
+    "info_adventurer_fell": "The Executive suffered a fatal burnout on Floor {room} of Work Day {run}.",
+    "info_adventurer_bored": "The Executive became lethargic on Floor {room} of Work Day {run}, and quit.",
+    "info_adventurer_apathy": "The Executive started quiet quitting on Floor {room} of Work Day {run}, and left the company.",
+    "info_empty_hand": "The Executive waits for your decision, unaware that the budget has been frozen.",
+    "info_welcome_to_workshop": "Welcome back. Spend your Expense Funds wisely.",
+    "info_healing_room": "The Executive found the {name} and recovered {healing} stamina.",
+    "info_trap_room": "The Executive ran into the {name} and lost {damage} stamina.",
+    "info_no_more_rooms": "The Executive reached the end of the floor plan (without a performance review).",
+    "info_encounter_enemy": "The Executive encounters hostile department member {current}/{total}.",
+    "info_enemy_defeated": "A hostile department member has been synergized with.",
+    "info_entering_workshop": "The Executive is entering the workshop.",
+    "info_workshop_not_unlocked": "The workshop is not unlocked yet. Starting a new run.",
+    "info_adventurer_decision": "The Executive decided to {decision}.",
+    "info_flow_state_changed": "The Executive's state of mind changed from {from} to {to}.",
+    "info_repetitive_choice": "The Executive feels a sense of repetitiveness from seeing {name} again.",
+    "info_deja_vu": "The Executive feels a sense of deja vu upon entering {name}."
   }
 }

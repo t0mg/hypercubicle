@@ -1,9 +1,9 @@
 [
     {
-        "id": "room_1",
+        "id": "enemy_easy_lethargic_staff",
         "name": "Cubicle Farm of Lethargic Staff",
-        "type": "enemy",
-        "rarity": "Common",
+        "type": "room_type_enemy",
+        "rarity": "rarity_common",
         "cost": null,
         "stats": {
             "attack": 5,
@@ -13,10 +13,10 @@
         }
     },
     {
-      "id": "room_1b",
+      "id": "enemy_easy_disgruntled_interns",
       "name": "Team of Disgruntled Interns",
-      "type": "enemy",
-      "rarity": "Common",
+      "type": "room_type_enemy",
+      "rarity": "rarity_common",
       "cost": null,
       "stats": {
           "attack": 4,
@@ -26,30 +26,30 @@
       }
     },
     {
-        "id": "room_2",
+        "id": "trap_medium_paper_shredder",
         "name": "Malfunctioning Paper Shredder",
-        "type": "trap",
-        "rarity": "Common",
+        "type": "room_type_trap",
+        "rarity": "rarity_common",
         "cost": null,
         "stats": {
             "attack": 15
         }
     },
     {
-        "id": "room_3",
+        "id": "healing_medium_water_cooler",
         "name": "Water Cooler Gossip Session",
-        "type": "healing",
-        "rarity": "Uncommon",
+        "type": "room_type_healing",
+        "rarity": "rarity_uncommon",
         "cost": null,
         "stats": {
             "hp": 25
         }
     },
     {
-        "id": "room_4",
+        "id": "enemy_hard_hr_fortress",
         "name": "HR Compliance Fortress",
-        "type": "enemy",
-        "rarity": "Uncommon",
+        "type": "room_type_enemy",
+        "rarity": "rarity_uncommon",
         "cost": null,
         "stats": {
             "attack": 10,
@@ -59,10 +59,10 @@
         }
     },
       {
-        "id": "room_troll",
+        "id": "enemy_hard_legal_department",
         "name": "Meeting with the Legal Department",
-        "type": "enemy",
-        "rarity": "Uncommon",
+        "type": "room_type_enemy",
+        "rarity": "rarity_uncommon",
         "cost": null,
         "stats": {
             "attack": 15,
@@ -72,10 +72,10 @@
         }
     },
     {
-        "id": "room_5",
+        "id": "boss_final_quarterly_audit",
         "name": "The Quarterly Audit",
-        "type": "boss",
-        "rarity": "Rare",
+        "type": "room_type_boss",
+        "rarity": "rarity_rare",
         "cost": 300,
         "stats": {
             "attack": 25,
@@ -83,10 +83,10 @@
         }
     },
     {
-        "id": "room_6",
+        "id": "trap_lethal_downsizing",
         "name": "Surprise Downsizing",
-        "type": "trap",
-        "rarity": "Rare",
+        "type": "room_type_trap",
+        "rarity": "rarity_rare",
         "cost": 200,
         "stats": {
             "attack": 999

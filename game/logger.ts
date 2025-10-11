@@ -1,3 +1,5 @@
+import { t } from '../text';
+
 export type LogLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR';
 
 export interface LogEntry {
@@ -18,7 +20,8 @@ export class Logger {
         this.listeners.push(listener);
     }
 
-    public log(message: string, level: LogLevel = 'INFO', data?: any): void {
+    public log(key: string, level: LogLevel = 'INFO', data?: any): void {
+        const message = t(`log_messages.${key}`, data);
         const entry = { message, level, timestamp: Date.now(), data };
         if (!this.muted) {
             this.entries.push(entry);
@@ -30,19 +33,24 @@ export class Logger {
     }
 
     public debug(message: string): void {
-        this.log(message, 'DEBUG');
+        // Debug messages are not localized
+        const entry = { message, level: 'DEBUG', timestamp: Date.now() };
+        if (!this.muted) {
+            this.entries.push(entry);
+        }
+        this.listeners.forEach(listener => listener(entry));
     }
 
-    public info(message: string): void {
-        this.log(message, 'INFO');
+    public info(key: string, data?: any): void {
+        this.log(key, 'INFO', data);
     }
 
-    public warn(message: string): void {
-        this.log(message, 'WARN');
+    public warn(key: string, data?: any): void {
+        this.log(key, 'WARN', data);
     }
 
-    public error(message: string): void {
-        this.log(message, 'ERROR');
+    public error(key: string, data?: any): void {
+        this.log(key, 'ERROR', data);
     }
 
     public toJSON(): { entries: LogEntry[] } {

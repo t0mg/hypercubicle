@@ -78,7 +78,10 @@ export class GameEngine {
     const initialHp = adventurer.hp;
 
     for (let i = 0; i < encounter.enemyCount; i++) {
-        this.gameState?.logger.info(`Adventurer encounters enemy ${i + 1}/${encounter.enemyCount}.`);
+        this.gameState?.logger.info('info_encounter_enemy', {
+          current: i + 1,
+          total: encounter.enemyCount,
+        });
 
         let currentEnemyHp = encounter.enemyHp;
         while (currentEnemyHp > 0 && adventurer.hp > 0) {
@@ -89,7 +92,7 @@ export class GameEngine {
                     const healedAmount = potionToUse.stats.hp || 0;
                     adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healedAmount);
                     feedback.push(t('game_engine.adventurer_drinks_potion', { potionName: potionToUse.name }));
-                    this.gameState?.logger.info(`Adventurer used ${potionToUse.name} and recovered ${healedAmount} HP.`);
+                    this.gameState?.logger.info('info_adventurer_drinks_potion', { potionName: potionToUse.name });
                 }
             } else {
                 // Adventurer's turn
@@ -106,7 +109,7 @@ export class GameEngine {
             }
 
             if (currentEnemyHp <= 0) {
-                this.gameState?.logger.info(`Enemy defeated.`);
+                this.gameState?.logger.info('info_enemy_defeated');
                 enemiesDefeated++;
                 break;
             }
@@ -163,7 +166,7 @@ export class GameEngine {
     const roomHand = roomRunDeck.slice(0, handSize);
     const availableRoomDeck = roomRunDeck.slice(handSize);
 
-    logger.info(`--- Starting New Adventurer (Run 1) ---`);
+    logger.info('info_new_adventurer');
 
     this.gameState = {
       phase: 'DESIGNER_CHOOSING_ROOM',
@@ -221,7 +224,7 @@ export class GameEngine {
     resetAdventurer.challengeHistory = [...this.gameState.adventurer.challengeHistory];
     resetAdventurer.flowState = this.gameState.adventurer.flowState;
 
-    this.gameState.logger.info(`--- Starting Run ${nextRun} ---`);
+    this.gameState.logger.info('info_adventurer_returns');
     this.gameState.logger.debug(`Unlocked features: ${[...this.metaManager.acls].join(', ')}`);
     this.gameState = {
       ...this.gameState,
@@ -338,7 +341,7 @@ export class GameEngine {
           const healing = chosenRoom.stats.hp || 0;
           adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healing);
           feedback.push(t('game_engine.healing_room', { name: chosenRoom.name, healing: healing }));
-          this.gameState.logger.info(t('game_engine.healing_room', { name: chosenRoom.name, healing: healing }));
+          this.gameState.logger.info('info_healing_room', { name: chosenRoom.name, healing: healing });
           break;
 
         case 'trap':
@@ -346,7 +349,7 @@ export class GameEngine {
           adventurer.hp -= damage;
           processTrap(adventurer);
           feedback.push(t('game_engine.trap_room', { name: chosenRoom.name, damage: damage }));
-          this.gameState.logger.info(t('game_engine.trap_room', { name: chosenRoom.name, damage: damage }));
+          this.gameState.logger.info('info_trap_room', { name: chosenRoom.name, damage: damage });
           break;
       }
 
@@ -442,10 +445,10 @@ export class GameEngine {
 
   public enterWorkshop = () => {
     if (!this.gameState) return;
-    this.gameState.logger.info(`Entering workshop.`);
+    this.gameState.logger.info('info_entering_workshop');
 
     if (!this.metaManager.acls.has(UnlockableFeature.WORKSHOP)) {
-        this.gameState.logger.info(`Workshop not unlocked, starting new run.`);
+        this.gameState.logger.info('info_workshop_not_unlocked');
         this.startNewRun();
         return;
     }
@@ -584,7 +587,7 @@ export class GameEngine {
 
   public handleEndOfRun(decision: 'continue' | 'retire') {
     if (!this.gameState) return;
-    this.gameState.logger.info(`Adventurer decided to ${decision}.`);
+    this.gameState.logger.info('info_adventurer_decision', { decision });
 
     if (decision === 'retire') {
       this.quitGame(true); // Clear save on retire, only meta progression is kept.

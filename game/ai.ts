@@ -100,7 +100,7 @@ export function processLootChoice(adventurer: Adventurer, choice: LootChoice | n
         const repetitionCount = adventurer.lootHistory.filter(id => id === choice.id).length;
         if (repetitionCount > 2) {
             adventurer.modifyChallenge(adventurer.challenge - REPETITION_PENALTY);
-            adventurer.logger.info(`Adventurer feels a sense of repetitiveness from seeing ${choice.name} again.`);
+            adventurer.logger.info('info_repetitive_choice', { name: choice.name });
         }
 
         const score = scoreItem(adventurer, choice);
@@ -128,7 +128,7 @@ export function processRoomEntry(adventurer: Adventurer, chosenRoom: RoomChoice)
     const repetitionCount = adventurer.roomHistory.filter(id => id === chosenRoom.id).length;
     if (repetitionCount > 2) {
         adventurer.modifyChallenge(adventurer.challenge - REPETITION_PENALTY);
-        adventurer.logger.info(`Adventurer feels a sense of deja vu upon entering ${chosenRoom.name}.`);
+        adventurer.logger.info('info_deja_vu', { name: chosenRoom.name });
     }
 
     let challengeModifier = 0;
