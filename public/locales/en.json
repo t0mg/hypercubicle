@@ -37,6 +37,9 @@
     "confirm": "Confirm",
     "cancel": "Cancel"
   },
+  "card": {
+    "select": "select"
+  },
   "adventurer_status": {
     "title": "Executive #{count}",
     "flow_state": "Engagement Level",

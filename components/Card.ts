@@ -24,12 +24,16 @@ export class Card extends HTMLElement {
   private _isDisabled: boolean = false;
   private _isNewlyDrafted: boolean = false;
   private _stackCount: number = 1;
+  private _isSelectable: boolean = true;
 
   set item(value: LootChoice | RoomChoice) { this._item = value; this.render(); }
   get item(): LootChoice | RoomChoice { return this._item!; }
 
   set stackCount(value: number) { this._stackCount = value; this.render(); }
   get stackCount(): number { return this._stackCount; }
+
+  set isSelectable(value: boolean) { this._isSelectable = value; this.render(); }
+  get isSelectable(): boolean { return this._isSelectable; }
 
   set isSelected(value: boolean) { this._isSelected = value; this.render(); }
   get isSelected(): boolean { return this._isSelected; }
@@ -48,8 +52,26 @@ export class Card extends HTMLElement {
 
   constructor() {
     super();
-    this.addEventListener('click', () => {
-      if (!this._isDisabled && this._item) {
+    this.addEventListener('click', (e) => {
+      if (!this._isSelectable) return;
+      // If the click is on the checkbox or its label, let the default action proceed.
+      // Otherwise, toggle the checkbox.
+      const target = e.target as HTMLElement;
+      if (target.tagName !== 'INPUT' && target.tagName !== 'LABEL') {
+        const checkbox = this.querySelector('input[type="checkbox"]') as HTMLInputElement;
+        if (checkbox && !checkbox.disabled) {
+          checkbox.checked = !checkbox.checked;
+          // Manually trigger the change event
+          checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }
+    });
+
+
+    this.addEventListener('change', (e) => {
+      if (!this._isSelectable) return;
+      const target = e.target as HTMLInputElement;
+      if (target.type === 'checkbox' && !this._isDisabled && this._item) {
         this.dispatchEvent(new CustomEvent('card-select', {
           bubbles: true,
           composed: true,
@@ -74,27 +96,18 @@ export class Card extends HTMLElement {
 
     const rarityColor = rarityColorMap[this._item.rarity] || 'text-gray-400';
     const baseClasses = 'relative transition-all duration-200';
+    const checkboxId = `card-checkbox-${this._item.instanceId}`;
+
 
     let stateClasses = '';
     if (this._isDisabled) {
       stateClasses = 'opacity-50 cursor-not-allowed';
-    } else if (this._isSelected) {
-      stateClasses = 'scale-105 ring-2 ring-brand-secondary cursor-pointer transform';
-      this.style.setProperty('border', '2px solid #0058e0');
     } else {
-      stateClasses = 'hover:scale-105 cursor-pointer transform';
-      this.style.removeProperty('border');
-    }
-
-    let stackClasses = '';
-    if (this._stackCount > 1) {
-      const outlineCount = Math.min(this._stackCount - 1, 2); // Max 2 outlines for now
-      if (outlineCount >= 1) stackClasses += ' stack-outline-1';
-      if (outlineCount >= 2) stackClasses += ' stack-outline-2';
+      stateClasses = 'cursor-pointer';
     }
 
     const animationClass = this.classList.contains('animate-newly-drafted') ? ' animate-newly-drafted' : '';
-    this.className = `${baseClasses} ${stateClasses}${stackClasses}${animationClass}`;
+    this.className = `${baseClasses} ${stateClasses} ${animationClass}`;
 
     let itemName = this._item.name;
     let statsHtml = '';
@@ -136,14 +149,22 @@ export class Card extends HTMLElement {
       itemName = t('choice_panel.stacked_items_title', { name: this._item.name, count: this._stackCount });
     }
 
+    const fieldsetBorderClass = this._isSelected ? 'border-yellow-300' : '';
+
     this.innerHTML = `
-      <fieldset ${this._isDisabled ? 'disabled' : ''}>
+      <fieldset class="font-sans ${fieldsetBorderClass}" ${this._isDisabled ? 'disabled' : ''}>
         <legend class="${rarityColor}">${this._item.type} - ${this._item.rarity}</legend>
         <div class="p-2">
             <p class="font-bold text-sm ${rarityColor}">${itemName}</p>
             <div class="mt-2">
                 ${statsHtml}
             </div>
+            ${this._isSelectable ? `
+            <div class="mt-4 flex items-center">
+              <input type="checkbox" id="${checkboxId}" ${this._isSelected ? 'checked' : ''} ${this._isDisabled ? 'disabled' : ''}>
+              <label for="${checkboxId}" class="ml-2 text-sm">${t('card.select')}</label>
+            </div>
+            ` : ''}
         </div>
       </fieldset>
     `;
