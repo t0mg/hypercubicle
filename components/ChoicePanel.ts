@@ -121,7 +121,7 @@ export class ChoicePanel extends HTMLElement {
 
       InfoModal.show(
         t('choice_panel.new_items_title'),
-        `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${modalContent}</div>`,
+        `<div class="grid grid-cols-1 md:grid-cols-3 gap-4 cards-container">${modalContent}</div>`,
         [{ text: t('global.continue'), value: undefined }]
       ).then(() => {
         this._choices.forEach(c => c.justDrafted = false);

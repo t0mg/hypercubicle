@@ -9,7 +9,7 @@ const rarityColorMap: Record<Rarity, string> = {
 };
 
 const StatChange = (label: string, value: number, positive: boolean = true, units: number = 1) => {
-  const color = positive ? 'text-green-400' : 'text-red-400';
+  const color = positive ? 'text-green-600' : 'text-red-400';
   const sign = positive && value > 0 ? '+' : '';
   return `
         <div class="flex justify-between text-sm ${color}">
@@ -101,10 +101,12 @@ export class Card extends HTMLElement {
 
 
     let stateClasses = '';
-    if (this._isDisabled) {
-      stateClasses = 'opacity-50 cursor-not-allowed';
-    } else {
-      stateClasses = 'cursor-pointer';
+    if (this._isSelectable) {
+      if (this._isDisabled) {
+        stateClasses = 'opacity-50 cursor-not-allowed';
+      } else {
+        stateClasses = 'cursor-pointer';
+      }
     }
 
     const animationClass = this.classList.contains('animate-newly-drafted') ? ' animate-newly-drafted' : '';
@@ -150,10 +152,10 @@ export class Card extends HTMLElement {
       itemName = t('choice_panel.stacked_items_title', { name: this._item.name, count: this._stackCount });
     }
 
-    const fieldsetBorderClass = this._isSelected ? 'border-yellow-300' : '';
+    const fieldsetBorderClass = this._isSelected ? 'selected' : '';
 
     this.innerHTML = `
-      <fieldset class="font-sans ${fieldsetBorderClass}" ${this._isDisabled ? 'disabled' : ''}>
+      <fieldset class="font-sans ${fieldsetBorderClass} flex flex-grow items-center" ${this._isDisabled ? 'disabled' : ''}>
         <legend class="${rarityColor}">${t('card_types.' + this._item.type)} - ${t('rarity.' + this._item.rarity)}</legend>
         <div class="p-2">
             <p class="font-bold text-sm ${rarityColor}">${itemName}</p>

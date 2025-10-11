@@ -45,7 +45,7 @@ export class InfoModal<T> {
     const windowEl = document.createElement('div');
     this.element = windowEl;
     windowEl.className = 'window';
-    windowEl.style.width = '450px';
+    windowEl.style.width = 'min(90vw, 800px)';
     windowEl.setAttribute('role', 'dialog');
     windowEl.setAttribute('aria-modal', 'true');
     windowEl.setAttribute('aria-labelledby', 'info-modal-title');

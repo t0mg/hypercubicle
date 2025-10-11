@@ -38,7 +38,7 @@
     "cancel": "Cancel"
   },
   "card": {
-    "select": "select"
+    "select": "Activate"
   },
   "adventurer_status": {
     "title": "Executive #{count}",
@@ -78,7 +78,7 @@
     "begin_encounter": "Begin Encounter",
     "multiple_enemies_title": "{name} ({count} members)",
     "stacked_items_title": "{name} (x{count})",
-    "new_items_title": "Newly requisitioned:",
+    "new_items_title": "Newly requisitioned",
     "continue_without_loot": "Continue without offering new assets",
     "roll_credits": "No more floors. Time for the after-work party."
   },

@@ -75,6 +75,15 @@ button:disabled {
   color: revert;
 }
 
+fieldset.selected {
+  border-color: #0051ef;
+}
+
+.cards-container choice-card {
+  display: flex;
+  flex-direction: column;
+} 
+
 log-panel pre p {
   margin: 0;
   line-height: 1rem;
