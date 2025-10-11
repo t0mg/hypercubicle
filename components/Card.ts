@@ -1,6 +1,6 @@
 import type { LootChoice, RoomChoice, Rarity } from '../types';
 import { t } from '../text';
- 
+
 const rarityColorMap: Record<Rarity, string> = {
   ['common']: 'text-rarity-common',
   ['uncommon']: 'text-rarity-uncommon',

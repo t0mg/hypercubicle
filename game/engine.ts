@@ -18,13 +18,13 @@ import { generateLootDeck, generateRoomDeck, shuffleArray } from './utils';
 import { UnlockableFeature } from './unlocks';
 import { t } from '../text';
 import {
-    getAdventurerLootChoice,
-    getAdventurerBattleChoice,
-    processLootChoice,
-    processRoomEntry,
-    processTrap,
-    processBattleTurn,
-    processBattleOutcome
+  getAdventurerLootChoice,
+  getAdventurerBattleChoice,
+  processLootChoice,
+  processRoomEntry,
+  processTrap,
+  processBattleTurn,
+  processBattleOutcome
 } from './ai';
 import { rng } from './random';
 
@@ -37,7 +37,7 @@ export class GameEngine {
 
   private _allItems: LootChoice[] = [];
   private _allRooms: RoomChoice[] = [];
-  private _listeners: { [key:string]: GameEngineListener[] } = {};
+  private _listeners: { [key: string]: GameEngineListener[] } = {};
   public metaManager: MetaManager;
   private dataLoader: DataLoader;
   private gameSaver: GameSaver;
@@ -78,60 +78,60 @@ export class GameEngine {
     const initialHp = adventurer.hp;
 
     for (let i = 0; i < encounter.enemyCount; i++) {
-        this.gameState?.logger.info('info_encounter_enemy', {
-          current: i + 1,
-          total: encounter.enemyCount,
-        });
+      this.gameState?.logger.info('info_encounter_enemy', {
+        current: i + 1,
+        total: encounter.enemyCount,
+      });
 
-        let currentEnemyHp = encounter.enemyHp;
-        while (currentEnemyHp > 0 && adventurer.hp > 0) {
-            const battleAction = getAdventurerBattleChoice(adventurer, encounter);
-            if (battleAction === 'use_potion') {
-                const potionToUse = adventurer.inventory.potions.shift();
-                if (potionToUse) {
-                    const healedAmount = potionToUse.stats.hp || 0;
-                    adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healedAmount);
-                    feedback.push(t('game_engine.adventurer_drinks_potion', { potionName: potionToUse.name }));
-                    this.gameState?.logger.info('info_adventurer_drinks_potion', { potionName: potionToUse.name });
-                }
-            } else {
-                // Adventurer's turn
-                const adventurerHitChance = Math.min(0.95, 0.75 + (adventurer.traits.skill / 500) + (adventurer.traits.offense / 1000));
-                if (rng.nextFloat() < adventurerHitChance) {
-                    const damageDealt = adventurer.power;
-                    currentEnemyHp -= damageDealt;
-                    this.gameState?.logger.debug(`Adventurer hits for ${damageDealt} damage.`);
-                    processBattleTurn(adventurer, 'hit');
-                } else {
-                    this.gameState?.logger.debug(`Adventurer misses.`);
-                    processBattleTurn(adventurer, 'miss');
-                }
-            }
-
-            if (currentEnemyHp <= 0) {
-                this.gameState?.logger.info('info_enemy_defeated');
-                enemiesDefeated++;
-                break;
-            }
-
-            // Enemy's turn
-            const enemyHitChance = Math.max(0.4, 0.75 - (adventurer.traits.skill / 500) - ((100 - adventurer.traits.offense) / 1000));
-            if (rng.nextFloat() < enemyHitChance) {
-                const armor = (adventurer.inventory.armor?.stats.maxHp || 0) / 10;
-                const damageTaken = Math.max(1, encounter.enemyPower - armor);
-                totalDamageTaken += damageTaken;
-                adventurer.hp -= damageTaken;
-                this.gameState?.logger.debug(`Enemy hits for ${damageTaken} damage.`);
-                processBattleTurn(adventurer, 'take_damage');
-            } else {
-                this.gameState?.logger.debug(`Enemy misses.`);
-            }
+      let currentEnemyHp = encounter.enemyHp;
+      while (currentEnemyHp > 0 && adventurer.hp > 0) {
+        const battleAction = getAdventurerBattleChoice(adventurer, encounter);
+        if (battleAction === 'use_potion') {
+          const potionToUse = adventurer.inventory.potions.shift();
+          if (potionToUse) {
+            const healedAmount = potionToUse.stats.hp || 0;
+            adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healedAmount);
+            feedback.push(t('game_engine.adventurer_drinks_potion', { potionName: potionToUse.name }));
+            this.gameState?.logger.info('info_adventurer_drinks_potion', { potionName: potionToUse.name });
+          }
+        } else {
+          // Adventurer's turn
+          const adventurerHitChance = Math.min(0.95, 0.75 + (adventurer.traits.skill / 500) + (adventurer.traits.offense / 1000));
+          if (rng.nextFloat() < adventurerHitChance) {
+            const damageDealt = adventurer.power;
+            currentEnemyHp -= damageDealt;
+            this.gameState?.logger.debug(`Adventurer hits for ${damageDealt} damage.`);
+            processBattleTurn(adventurer, 'hit');
+          } else {
+            this.gameState?.logger.debug(`Adventurer misses.`);
+            processBattleTurn(adventurer, 'miss');
+          }
         }
 
-        if (adventurer.hp <= 0) {
-            this.gameState?.logger.warn(`Adventurer has been defeated.`);
-            break;
+        if (currentEnemyHp <= 0) {
+          this.gameState?.logger.info('info_enemy_defeated');
+          enemiesDefeated++;
+          break;
         }
+
+        // Enemy's turn
+        const enemyHitChance = Math.max(0.4, 0.75 - (adventurer.traits.skill / 500) - ((100 - adventurer.traits.offense) / 1000));
+        if (rng.nextFloat() < enemyHitChance) {
+          const armor = (adventurer.inventory.armor?.stats.maxHp || 0) / 10;
+          const damageTaken = Math.max(1, encounter.enemyPower - armor);
+          totalDamageTaken += damageTaken;
+          adventurer.hp -= damageTaken;
+          this.gameState?.logger.debug(`Enemy hits for ${damageTaken} damage.`);
+          processBattleTurn(adventurer, 'take_damage');
+        } else {
+          this.gameState?.logger.debug(`Enemy misses.`);
+        }
+      }
+
+      if (adventurer.hp <= 0) {
+        this.gameState?.logger.warn(`Adventurer has been defeated.`);
+        break;
+      }
     }
 
     const hpLost = initialHp - adventurer.hp;
@@ -251,63 +251,63 @@ export class GameEngine {
     const offeredLoot = this.gameState.hand.filter(item => offeredIds.includes(item.instanceId));
     this.gameState.offeredLoot = offeredLoot;
 
-      const adventurer = this.gameState.adventurer;
-      const { choice, reason: feedback } = getAdventurerLootChoice(adventurer, this.gameState.offeredLoot, this.gameState.logger);
+    const adventurer = this.gameState.adventurer;
+    const { choice, reason: feedback } = getAdventurerLootChoice(adventurer, this.gameState.offeredLoot, this.gameState.logger);
 
-      processLootChoice(adventurer, choice, this.gameState.offeredLoot);
+    processLootChoice(adventurer, choice, this.gameState.offeredLoot);
 
-      if (choice) {
-          this.gameState.logger.log('Item chosen by adventurer', 'INFO', { event: 'item_chosen', item: choice });
+    if (choice) {
+      this.gameState.logger.log('Item chosen by adventurer', 'INFO', { event: 'item_chosen', item: choice });
+    }
+
+    // --- Hand and Deck Update Logic ---
+    let currentHand = this.gameState.hand;
+    let currentDeck = this.gameState.availableDeck;
+
+    // Clear justDrafted flag from existing cards
+    currentHand.forEach(c => c.justDrafted = false);
+
+    // Remove offered items from hand
+    let newHand = currentHand.filter(item => !offeredIds.includes(item.instanceId));
+
+    // Replenish hand from deck
+    const numToDraw = this.gameState.handSize - newHand.length;
+    const drawnCards = currentDeck.slice(0, numToDraw);
+
+    // Mark new cards
+    drawnCards.forEach(c => {
+      c.draftedRoom = this.gameState!.room;
+      c.justDrafted = true;
+    });
+
+    const newDeck = currentDeck.slice(numToDraw);
+    newHand.push(...drawnCards);
+    // --- End Hand and Deck Update ---
+
+    if (choice) {
+      if (choice.type === 'item_potion') {
+        adventurer.addPotion(choice);
+      } else if (choice.type === 'item_buff') {
+        adventurer.applyBuff(choice);
+      } else {
+        adventurer.equip(choice);
       }
+    }
 
-      // --- Hand and Deck Update Logic ---
-      let currentHand = this.gameState.hand;
-      let currentDeck = this.gameState.availableDeck;
+    const newRoom = this.gameState.room + 1;
+    const newBalancePoints = this.gameState.designer.balancePoints + this._getBpPerRoom();
 
-      // Clear justDrafted flag from existing cards
-      currentHand.forEach(c => c.justDrafted = false);
-
-      // Remove offered items from hand
-      let newHand = currentHand.filter(item => !offeredIds.includes(item.instanceId));
-
-      // Replenish hand from deck
-      const numToDraw = this.gameState.handSize - newHand.length;
-      const drawnCards = currentDeck.slice(0, numToDraw);
-
-      // Mark new cards
-      drawnCards.forEach(c => {
-        c.draftedRoom = this.gameState!.room;
-        c.justDrafted = true;
-      });
-
-      const newDeck = currentDeck.slice(numToDraw);
-      newHand.push(...drawnCards);
-      // --- End Hand and Deck Update ---
-
-      if (choice) {
-        if (choice.type === 'item_potion') {
-            adventurer.addPotion(choice);
-        } else if (choice.type === 'item_buff') {
-            adventurer.applyBuff(choice);
-        } else {
-            adventurer.equip(choice);
-        }
-      }
-
-      const newRoom = this.gameState.room + 1;
-      const newBalancePoints = this.gameState.designer.balancePoints + this._getBpPerRoom();
-
-      this.gameState = {
-        ...this.gameState,
-        phase: 'DESIGNER_CHOOSING_ROOM',
-        adventurer: adventurer,
-        feedback: feedback,
-        availableDeck: newDeck,
-        hand: newHand,
-        room: newRoom,
-        designer: { balancePoints: newBalancePoints },
-      };
-      this._emit('state-change', this.gameState);
+    this.gameState = {
+      ...this.gameState,
+      phase: 'DESIGNER_CHOOSING_ROOM',
+      adventurer: adventurer,
+      feedback: feedback,
+      availableDeck: newDeck,
+      hand: newHand,
+      room: newRoom,
+      designer: { balancePoints: newBalancePoints },
+    };
+    this._emit('state-change', this.gameState);
   }
 
   public runEncounter = (roomChoices: RoomChoice[]) => {
@@ -315,109 +315,109 @@ export class GameEngine {
 
     this.gameState.offeredRooms = roomChoices;
 
-      let adventurer = this.gameState.adventurer;
-      let feedback: string[] = [];
+    let adventurer = this.gameState.adventurer;
+    let feedback: string[] = [];
 
-      const chosenRoomIndex = rng.nextInt(0, this.gameState.offeredRooms.length - 1);
-      const chosenRoom = this.gameState.offeredRooms[chosenRoomIndex];
+    const chosenRoomIndex = rng.nextInt(0, this.gameState.offeredRooms.length - 1);
+    const chosenRoom = this.gameState.offeredRooms[chosenRoomIndex];
 
-      adventurer.roomHistory.push(chosenRoom.id);
-      processRoomEntry(adventurer, chosenRoom);
+    adventurer.roomHistory.push(chosenRoom.id);
+    processRoomEntry(adventurer, chosenRoom);
 
-      this.gameState.logger.log(`--- Encountering Room: ${chosenRoom.name} ---`, 'INFO', { event: 'room_encountered', room: chosenRoom });
+    this.gameState.logger.log(`--- Encountering Room: ${chosenRoom.name} ---`, 'INFO', { event: 'room_encountered', room: chosenRoom });
 
-      switch (chosenRoom.type) {
-        case 'room_enemy':
-        case 'room_boss':
-          const encounter: Encounter = {
-            enemyCount: chosenRoom.units ?? 1,
-            enemyPower: chosenRoom.stats.attack || 5,
-            enemyHp: chosenRoom.stats.hp || 10,
-          };
-          const battleResult = this._simulateEncounter(adventurer, this.gameState.room, encounter);
-          adventurer = battleResult.newAdventurer;
-          feedback = battleResult.feedback;
-          break;
-
-        case 'room_healing':
-          const healing = chosenRoom.stats.hp || 0;
-          adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healing);
-          feedback.push(t('game_engine.healing_room', { name: chosenRoom.name, healing: healing }));
-          this.gameState.logger.info('info_healing_room', { name: chosenRoom.name, healing: healing });
-          break;
-
-        case 'room_trap':
-          const damage = chosenRoom.stats.attack || 0;
-          adventurer.hp -= damage;
-          processTrap(adventurer);
-          feedback.push(t('game_engine.trap_room', { name: chosenRoom.name, damage: damage }));
-          this.gameState.logger.info('info_trap_room', { name: chosenRoom.name, damage: damage });
-          break;
-      }
-
-      adventurer.updateBuffs();
-      this.gameState.designer.balancePoints += this._getBpPerRoom();
-
-      // --- Room Hand and Deck Update Logic ---
-      let currentRoomHand = this.gameState.roomHand;
-      let currentRoomDeck = this.gameState.availableRoomDeck;
-
-      currentRoomHand.forEach(c => c.justDrafted = false);
-
-      const offeredRoomIds = this.gameState.offeredRooms.map(r => r.instanceId);
-      let newRoomHand = currentRoomHand.filter(room => !offeredRoomIds.includes(room.instanceId));
-
-      const numToDraw = this.gameState.handSize - newRoomHand.length;
-      const drawnCards = currentRoomDeck.slice(0, numToDraw);
-
-      drawnCards.forEach(c => {
-          c.draftedRoom = this.gameState!.room;
-          c.justDrafted = true;
-      });
-
-      const newRoomDeck = currentRoomDeck.slice(numToDraw);
-      newRoomHand.push(...drawnCards);
-      // --- End Room Hand and Deck Update ---
-
-      this.gameState.adventurer = adventurer;
-
-      if (adventurer.hp <= 0) {
-        this._endRun(t('game_engine.adventurer_fell', { room: this.gameState.room, run: this.gameState.run }));
-        return;
-      }
-      if (adventurer.boredomCounter > 2) {
-        const reason = adventurer.flowState === FlowState.Boredom
-          ? t('game_engine.adventurer_bored', { room: this.gameState.room, run: this.gameState.run })
-          : t('game_engine.adventurer_apathy', { room: this.gameState.room, run: this.gameState.run });
-        this._endRun(reason);
-        return;
-      }
-
-      if (this.gameState.hand && this.gameState.hand.length === 0) {
-        this.gameState.logger.warn("Your hand is empty! The adventurer must press on without new items.");
-        feedback.push(t('game_engine.empty_hand'));
-        this.gameState = {
-          ...this.gameState,
-          phase: 'DESIGNER_CHOOSING_ROOM',
-          room: this.gameState.room + 1,
-          designer: { balancePoints: this.gameState.designer.balancePoints + this._getBpPerRoom() },
-          feedback: feedback,
-          encounter: undefined,
-          roomHand: newRoomHand,
-          availableRoomDeck: newRoomDeck,
+    switch (chosenRoom.type) {
+      case 'room_enemy':
+      case 'room_boss':
+        const encounter: Encounter = {
+          enemyCount: chosenRoom.units ?? 1,
+          enemyPower: chosenRoom.stats.attack || 5,
+          enemyHp: chosenRoom.stats.hp || 10,
         };
-      } else {
-        this.gameState = {
-          ...this.gameState,
-          phase: 'DESIGNER_CHOOSING_LOOT',
-          feedback: feedback,
-          encounter: undefined,
-          roomHand: newRoomHand,
-          availableRoomDeck: newRoomDeck,
-        };
-      }
+        const battleResult = this._simulateEncounter(adventurer, this.gameState.room, encounter);
+        adventurer = battleResult.newAdventurer;
+        feedback = battleResult.feedback;
+        break;
 
-      this._emit('state-change', this.gameState);
+      case 'room_healing':
+        const healing = chosenRoom.stats.hp || 0;
+        adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healing);
+        feedback.push(t('game_engine.healing_room', { name: chosenRoom.name, healing: healing }));
+        this.gameState.logger.info('info_healing_room', { name: chosenRoom.name, healing: healing });
+        break;
+
+      case 'room_trap':
+        const damage = chosenRoom.stats.attack || 0;
+        adventurer.hp -= damage;
+        processTrap(adventurer);
+        feedback.push(t('game_engine.trap_room', { name: chosenRoom.name, damage: damage }));
+        this.gameState.logger.info('info_trap_room', { name: chosenRoom.name, damage: damage });
+        break;
+    }
+
+    adventurer.updateBuffs();
+    this.gameState.designer.balancePoints += this._getBpPerRoom();
+
+    // --- Room Hand and Deck Update Logic ---
+    let currentRoomHand = this.gameState.roomHand;
+    let currentRoomDeck = this.gameState.availableRoomDeck;
+
+    currentRoomHand.forEach(c => c.justDrafted = false);
+
+    const offeredRoomIds = this.gameState.offeredRooms.map(r => r.instanceId);
+    let newRoomHand = currentRoomHand.filter(room => !offeredRoomIds.includes(room.instanceId));
+
+    const numToDraw = this.gameState.handSize - newRoomHand.length;
+    const drawnCards = currentRoomDeck.slice(0, numToDraw);
+
+    drawnCards.forEach(c => {
+      c.draftedRoom = this.gameState!.room;
+      c.justDrafted = true;
+    });
+
+    const newRoomDeck = currentRoomDeck.slice(numToDraw);
+    newRoomHand.push(...drawnCards);
+    // --- End Room Hand and Deck Update ---
+
+    this.gameState.adventurer = adventurer;
+
+    if (adventurer.hp <= 0) {
+      this._endRun(t('game_engine.adventurer_fell', { room: this.gameState.room, run: this.gameState.run }));
+      return;
+    }
+    if (adventurer.boredomCounter > 2) {
+      const reason = adventurer.flowState === FlowState.Boredom
+        ? t('game_engine.adventurer_bored', { room: this.gameState.room, run: this.gameState.run })
+        : t('game_engine.adventurer_apathy', { room: this.gameState.room, run: this.gameState.run });
+      this._endRun(reason);
+      return;
+    }
+
+    if (this.gameState.hand && this.gameState.hand.length === 0) {
+      this.gameState.logger.warn("Your hand is empty! The adventurer must press on without new items.");
+      feedback.push(t('game_engine.empty_hand'));
+      this.gameState = {
+        ...this.gameState,
+        phase: 'DESIGNER_CHOOSING_ROOM',
+        room: this.gameState.room + 1,
+        designer: { balancePoints: this.gameState.designer.balancePoints + this._getBpPerRoom() },
+        feedback: feedback,
+        encounter: undefined,
+        roomHand: newRoomHand,
+        availableRoomDeck: newRoomDeck,
+      };
+    } else {
+      this.gameState = {
+        ...this.gameState,
+        phase: 'DESIGNER_CHOOSING_LOOT',
+        feedback: feedback,
+        encounter: undefined,
+        roomHand: newRoomHand,
+        availableRoomDeck: newRoomDeck,
+      };
+    }
+
+    this._emit('state-change', this.gameState);
   }
 
   public forceEndRun = () => {
@@ -450,9 +450,9 @@ export class GameEngine {
     this.gameState.logger.info('info_entering_workshop');
 
     if (!this.metaManager.acls.has(UnlockableFeature.WORKSHOP)) {
-        this.gameState.logger.info('info_workshop_not_unlocked');
-        this.startNewRun();
-        return;
+      this.gameState.logger.info('info_workshop_not_unlocked');
+      this.startNewRun();
+      return;
     }
 
     const nextRun = this.gameState.run + 1;
@@ -461,8 +461,8 @@ export class GameEngine {
       .filter(item => !this.gameState!.unlockedDeck.includes(item.id));
 
     const shopRooms = this._allRooms
-        .filter(room => room.cost !== null)
-        .filter(room => !this.gameState!.unlockedRoomDeck.includes(room.id));
+      .filter(room => room.cost !== null)
+      .filter(room => !this.gameState!.unlockedRoomDeck.includes(room.id));
 
     const allShopItems = [...shopItems, ...shopRooms];
 
@@ -480,8 +480,8 @@ export class GameEngine {
   }
 
   public exitWorkshop = () => {
-      if (!this.gameState) return;
-      this.startNewRun();
+    if (!this.gameState) return;
+    this.startNewRun();
   }
 
   public purchaseItem = (itemId: string) => {
@@ -499,15 +499,15 @@ export class GameEngine {
     let newAvailableRoomDeck = this.gameState.availableRoomDeck;
 
     if (item) {
-        newUnlockedDeck = [...this.gameState.unlockedDeck, itemId];
-        if (this.isWorkshopAccessUnlocked()) {
-            newAvailableDeck = [item, ...this.gameState.availableDeck];
-        }
+      newUnlockedDeck = [...this.gameState.unlockedDeck, itemId];
+      if (this.isWorkshopAccessUnlocked()) {
+        newAvailableDeck = [item, ...this.gameState.availableDeck];
+      }
     } else if (room) {
-        newUnlockedRoomDeck = [...this.gameState.unlockedRoomDeck, itemId];
-        if (this.isWorkshopAccessUnlocked()) {
-            newAvailableRoomDeck = [room, ...this.gameState.availableRoomDeck];
-        }
+      newUnlockedRoomDeck = [...this.gameState.unlockedRoomDeck, itemId];
+      if (this.isWorkshopAccessUnlocked()) {
+        newAvailableRoomDeck = [room, ...this.gameState.availableRoomDeck];
+      }
     }
 
     const newBalancePoints = this.gameState.designer.balancePoints - itemToBuy.cost;
@@ -539,39 +539,39 @@ export class GameEngine {
     if (flowState === FlowState.Flow) {
       return 'continue';
     }
-    
+
     // Base retire chance: 55%
     let retireChance = 0.55;
 
     switch (flowState) {
-        case FlowState.Anxiety:
-            // High challenge, low skill. High retire chance, but resilient adventurers might push through.
-            retireChance += 0.25 - (resilience / 400);
-            break;
-        case FlowState.Arousal:
-            // High challenge, medium skill. Exciting, but risky. Offensive adventurers might enjoy the risk.
-            retireChance -= 0.1 - (offense / 1000);
-            break;
-        case FlowState.Worry:
-            // Medium challenge, low skill. Cautious state.
-            retireChance += 0.2;
-            break;
-        case FlowState.Control:
-            // Medium challenge, high skill. Confident, but might get cocky or decide they've proven enough.
-            retireChance -= 0.15;
-            break;
-        case FlowState.Relaxation:
-            // Low challenge, high skill. Content, good chance of retiring.
-            retireChance += 0.1;
-            break;
-        case FlowState.Boredom:
-            // Low challenge, medium skill. Very high chance of retiring.
-            retireChance += 0.3;
-            break;
-        case FlowState.Apathy:
-            // Low challenge, low skill. Almost guaranteed to retire.
-            retireChance += 0.4;
-            break;
+      case FlowState.Anxiety:
+        // High challenge, low skill. High retire chance, but resilient adventurers might push through.
+        retireChance += 0.25 - (resilience / 400);
+        break;
+      case FlowState.Arousal:
+        // High challenge, medium skill. Exciting, but risky. Offensive adventurers might enjoy the risk.
+        retireChance -= 0.1 - (offense / 1000);
+        break;
+      case FlowState.Worry:
+        // Medium challenge, low skill. Cautious state.
+        retireChance += 0.2;
+        break;
+      case FlowState.Control:
+        // Medium challenge, high skill. Confident, but might get cocky or decide they've proven enough.
+        retireChance -= 0.15;
+        break;
+      case FlowState.Relaxation:
+        // Low challenge, high skill. Content, good chance of retiring.
+        retireChance += 0.1;
+        break;
+      case FlowState.Boredom:
+        // Low challenge, medium skill. Very high chance of retiring.
+        retireChance += 0.3;
+        break;
+      case FlowState.Apathy:
+        // Low challenge, low skill. Almost guaranteed to retire.
+        retireChance += 0.4;
+        break;
     }
 
     // Experience makes adventurers slightly less likely to retire
@@ -581,9 +581,9 @@ export class GameEngine {
     retireChance = Math.max(0.05, Math.min(0.95, retireChance));
 
     if (rng.nextFloat() < retireChance) {
-        return 'retire';
+      return 'retire';
     } else {
-        return 'continue';
+      return 'continue';
     }
   }
 

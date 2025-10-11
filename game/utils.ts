@@ -95,21 +95,21 @@ export const isLootSelectionImpossible = (state: GameState): boolean => {
 
 import { FlowState } from '../types';
 
-export function getFlowState(skill: number, challenge:number): FlowState {
-    // Normalize skill and challenge to be within 0-100 range
-    const normSkill = Math.max(0, Math.min(100, skill));
-    const normChallenge = Math.max(0, Math.min(100, challenge));
+export function getFlowState(skill: number, challenge: number): FlowState {
+  // Normalize skill and challenge to be within 0-100 range
+  const normSkill = Math.max(0, Math.min(100, skill));
+  const normChallenge = Math.max(0, Math.min(100, challenge));
 
-    if (normChallenge > 66) {
-        if (normSkill < 33) return FlowState.Anxiety;
-        if (normSkill < 87) return FlowState.Arousal;
-        return FlowState.Flow;
-    } else if (normChallenge > 33) {
-        if (normSkill < 33) return FlowState.Worry;
-        if (normSkill < 67) return FlowState.Apathy;
-        return FlowState.Control;
-    } else {
-        if (normSkill < 67) return FlowState.Boredom;
-        return FlowState.Relaxation;
-    }
+  if (normChallenge > 66) {
+    if (normSkill < 33) return FlowState.Anxiety;
+    if (normSkill < 87) return FlowState.Arousal;
+    return FlowState.Flow;
+  } else if (normChallenge > 33) {
+    if (normSkill < 33) return FlowState.Worry;
+    if (normSkill < 67) return FlowState.Apathy;
+    return FlowState.Control;
+  } else {
+    if (normSkill < 67) return FlowState.Boredom;
+    return FlowState.Relaxation;
+  }
 }

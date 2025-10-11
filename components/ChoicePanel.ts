@@ -111,7 +111,7 @@ export class ChoicePanel extends HTMLElement {
     const newlyDrafted = this._choices.filter(c => c.justDrafted && this._initialRender);
     if (newlyDrafted.length > 0 && this._initialRender) {
       this._initialRender = false;
-      
+
       const modalContent = newlyDrafted.map(item => {
         const card = document.createElement('choice-card') as Card;
         card.item = item;

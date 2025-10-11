@@ -1,42 +1,42 @@
 <div class="w-full p-4 md:p-6 lg:p-8">
-    <div class="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <!-- Left Column Window -->
-        <div class="lg:col-span-3 space-y-6">
-            <div class="window">
-                <div class="title-bar">
-                    <div id="game-title" class="title-bar-text"></div>
-                    <div class="title-bar-controls">
-                        <button aria-label="Close" id="quit-game-btn"></button>
-                    </div>
-                </div>
-                <div class="window-body space-y-4">
-                    <game-stats></game-stats>
-                    <log-panel></log-panel>
-                </div>
-            </div>
+  <div class="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-6">
+    <!-- Left Column Window -->
+    <div class="lg:col-span-3 space-y-6">
+      <div class="window">
+        <div class="title-bar">
+          <div id="game-title" class="title-bar-text"></div>
+          <div class="title-bar-controls">
+            <button aria-label="Close" id="quit-game-btn"></button>
+          </div>
         </div>
-
-        <!-- Right Column Window -->
-        <div class="lg:col-span-2 space-y-6">
-            <div class="window">
-                <div class="title-bar">
-                    <div id="adventurer-status-title" class="title-bar-text"></div>
-                </div>
-                <div class="window-body">
-                    <adventurer-status></adventurer-status>
-                </div>
-                <feedback-panel></feedback-panel>
-            </div>
+        <div class="window-body space-y-4">
+          <game-stats></game-stats>
+          <log-panel></log-panel>
         </div>
-
-        <!-- Bottom Panel Window -->
-        <div class="lg:col-span-5">
-            <div class="window">
-                <div class="title-bar">
-                    <div id="game-phase-title" class="title-bar-text"></div>
-                </div>
-                <div id="game-phase-panel" class="window-body"></div>
-            </div>
-        </div>
+      </div>
     </div>
+
+    <!-- Right Column Window -->
+    <div class="lg:col-span-2 space-y-6">
+      <div class="window">
+        <div class="title-bar">
+          <div id="adventurer-status-title" class="title-bar-text"></div>
+        </div>
+        <div class="window-body">
+          <adventurer-status></adventurer-status>
+        </div>
+        <feedback-panel></feedback-panel>
+      </div>
+    </div>
+
+    <!-- Bottom Panel Window -->
+    <div class="lg:col-span-5">
+      <div class="window">
+        <div class="title-bar">
+          <div id="game-phase-title" class="title-bar-text"></div>
+        </div>
+        <div id="game-phase-panel" class="window-body"></div>
+      </div>
+    </div>
+  </div>
 </div>

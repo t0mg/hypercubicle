@@ -41,12 +41,12 @@ export class Metrics {
       const itemName = entry.data.item.name;
       this.itemUsage.set(itemName, (this.itemUsage.get(itemName) || 0) + 1);
     } else if (entry.data?.event === 'item_purchased') {
-        const itemName = entry.data.item.name;
-        this.purchases.set(itemName, (this.purchases.get(itemName) || 0) + 1);
+      const itemName = entry.data.item.name;
+      this.purchases.set(itemName, (this.purchases.get(itemName) || 0) + 1);
     } else if (entry.data?.event === 'run_end') {
-        this.totalBP += entry.data.bp;
+      this.totalBP += entry.data.bp;
     } else if (entry.data?.event === 'flow_state_changed') {
-        this.recordFlowState(entry.data.flowState);
+      this.recordFlowState(entry.data.flowState);
     }
   };
 
@@ -57,7 +57,7 @@ export class Metrics {
   }
 
   public incrementRuns() {
-      this.runs++;
+    this.runs++;
   }
 
   private _printSortedMap(title: string, map: Map<string, number>): void {
