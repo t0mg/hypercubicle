@@ -27,8 +27,8 @@ export class TooltipBox extends HTMLElement {
                 right: 20px;
                 z-index: 2000;
                 pointer-events: none;
-                --x-px: 8px;
-                --y-px: 4px;
+                --x-px: 16px;
+                --y-px: 8px;
                 --b-px: 1px;
                 --bg-color: #ffffe1;
                 --border-color: #000;
@@ -76,10 +76,6 @@ export class TooltipBox extends HTMLElement {
                 z-index: 1;
             }
 
-            .close-button {
-                display: none;
-            }
-
             h3 {
                 margin-top: 0;
                 font-weight: bold;
@@ -90,9 +86,6 @@ export class TooltipBox extends HTMLElement {
             /* Mobile styles */
             @media (pointer: coarse) {
                 :host {
-                    --bg-color: #1a202c;
-                    --border-color: #4a5568;
-                    --text-color: #cbd5e0;
                     max-width: none;
                     font-family: inherit;
                     font-size: 1.125rem;
@@ -124,20 +117,6 @@ export class TooltipBox extends HTMLElement {
                     display: none;
                 }
 
-                .close-button {
-                    display: block;
-                    position: absolute;
-                    top: 1rem;
-                    right: 1rem;
-                    font-size: 2.5rem;
-                    color: var(--text-color);
-                    cursor: pointer;
-                    background: none;
-                    border: none;
-                    line-height: 1;
-                    z-index: 10;
-                }
-
                 h3 {
                     font-size: 1.5rem;
                     text-align: center;
@@ -151,12 +130,6 @@ export class TooltipBox extends HTMLElement {
     this.titleElement = document.createElement('h3');
     this.bodyElement = document.createElement('div');
 
-    this.closeButton = document.createElement('button');
-    this.closeButton.className = 'close-button';
-    this.closeButton.innerHTML = '&times;';
-    this.closeButton.onclick = () => this.hide();
-
-    this.contentContainer.appendChild(this.closeButton);
     this.contentContainer.appendChild(this.titleElement);
     this.contentContainer.appendChild(this.bodyElement);
 

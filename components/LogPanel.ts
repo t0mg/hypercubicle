@@ -50,7 +50,7 @@ export class LogPanel extends HTMLElement {
         ).join('');
 
         this.innerHTML = `
-            <pre class="m-2 mt-6 max-h-48 overflow-y-auto space-y-1" id="log-container">
+            <pre class="m-2 mt-6 max-h-[100px] md:max-h-[280px] overflow-y-auto space-y-1" id="log-container">
                 ${logHtml}
             </pre>
         `;

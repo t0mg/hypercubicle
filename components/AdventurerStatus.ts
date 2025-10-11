@@ -66,6 +66,10 @@ export class AdventurerStatus extends HTMLElement {
         const showTraits = this._metaState?.unlockedFeatures.includes(UnlockableFeature.ADVENTURER_TRAITS);
 
         this.innerHTML = `
+            <fieldset class="mt-2" data-tooltip-key="adventurer_flow_state">
+              <legend>${t('adventurer_status.flow_state')}</legend>
+              <div id="flow-state-text" class="font-mono text-xl text-center"></div>
+            </fieldset>
             <div class="flex gap-2">
                 <div class="flex-grow space-y-2">
                     <div data-tooltip-key="adventurer_health">
@@ -74,12 +78,6 @@ export class AdventurerStatus extends HTMLElement {
                             <span id="hp-text" class="font-mono text-sm"></span>
                         </div>
                         <progress id="hp-bar" max="100" value="100" class="w-full"></progress>
-                    </div>
-                    <div data-tooltip-key="adventurer_flow_state">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center">${InterestIcon()} <span>${t('adventurer_status.flow_state')}</span></div>
-                            <span id="flow-state-text" class="font-mono text-sm"></span>
-                        </div>
                     </div>
                 </div>
                 <div class="sunken-panel p-2 flex flex-col items-center justify-center" data-tooltip-key="adventurer_power">
@@ -131,7 +129,7 @@ export class AdventurerStatus extends HTMLElement {
         const flowStateText = this.querySelector('#flow-state-text') as HTMLElement;
         const flowStateKey = FlowState[this._adventurer.flowState];
         flowStateText.textContent = t(`flow_states.${flowStateKey}`);
-        flowStateText.className = `font-mono text-sm ${this.getFlowStateColor(this._adventurer.flowState)}`;
+        flowStateText.className = `font-mono text-xl text-center ${this.getFlowStateColor(this._adventurer.flowState)}`;
         if (this._adventurer.flowState !== this._previousAdventurer.flowState) {
             this._pulseElement(flowStateText);
         }
