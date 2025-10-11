@@ -115,6 +115,7 @@ export class ChoicePanel extends HTMLElement {
       const modalContent = newlyDrafted.map(item => {
         const card = document.createElement('choice-card') as Card;
         card.item = item;
+        card.isSelectable = false;
         return card.outerHTML;
       }).join('');
 
