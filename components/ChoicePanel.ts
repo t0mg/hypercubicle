@@ -76,12 +76,12 @@ export class ChoicePanel extends HTMLElement {
     const isSelected = this._selectedIds.includes(instanceId);
 
     if (this._deckType === 'room') {
-      const isBoss = itemToSelect.type === 'boss';
+      const isBoss = itemToSelect.type === 'room_boss';
       if (isSelected) {
         this._selectedIds = this._selectedIds.filter(id => id !== instanceId);
       } else {
         const selectedItems = this._choices.filter(c => this._selectedIds.includes(c.instanceId));
-        const hasBoss = selectedItems.some(c => c.type === 'boss');
+        const hasBoss = selectedItems.some(c => c.type === 'room_boss');
 
         if (isBoss && this._selectedIds.length === 0) {
           this._selectedIds.push(instanceId);
@@ -201,7 +201,7 @@ export class ChoicePanel extends HTMLElement {
       canSubmit = true;
     } else if (isRoomSelection) {
       const selectedItems = this._choices.filter(c => this._selectedIds.includes(c.instanceId));
-      const hasBoss = selectedItems.some(c => c.type === 'boss');
+      const hasBoss = selectedItems.some(c => c.type === 'room_boss');
       if (hasBoss) {
         canSubmit = this._selectedIds.length === 1;
         buttonLabel = `${buttonText} (1/1)`;
@@ -242,12 +242,12 @@ export class ChoicePanel extends HTMLElement {
           isDisabled = true;
         } else if (isRoomSelection) {
           const selectedItems = this._choices.filter(c => this._selectedIds.includes(c.instanceId));
-          const hasBoss = selectedItems.some(c => c.type === 'boss');
+          const hasBoss = selectedItems.some(c => c.type === 'room_boss');
           if (card.isSelected) {
             isDisabled = false;
           } else if (hasBoss) {
             isDisabled = true;
-          } else if (item.type === 'boss' && selectedItems.length > 0) {
+          } else if (item.type === 'room_boss' && selectedItems.length > 0) {
             isDisabled = true;
           } else if (selectedItems.length >= 3) {
             isDisabled = true;

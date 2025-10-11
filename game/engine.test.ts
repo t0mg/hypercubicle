@@ -14,8 +14,8 @@ import { DataLoaderFileSystem } from '../tools/data-loader-file-system';
 
 // Mock the items data
 const mockItems: LootChoice[] = Array.from({ length: 30 }, (_, i) => {
-    const rarity = i < 18 ? 'Common' : i < 27 ? 'Uncommon' : 'Rare';
-    const type = i % 3 === 0 ? 'Weapon' : i % 3 === 1 ? 'Armor' : 'Potion';
+    const rarity = i < 18 ? 'common' : i < 27 ? 'uncommon' : 'rare';
+    const type = i % 3 === 0 ? 'item_weapon' : i % 3 === 1 ? 'item_armor' : 'item_potion';
     const cost = i < 5 ? null : rng.nextInt(20, 120); // First 5 items are free
     return {
         id: `loot_${i + 1}`,
@@ -24,16 +24,16 @@ const mockItems: LootChoice[] = Array.from({ length: 30 }, (_, i) => {
         type: type,
         rarity: rarity,
         cost: cost,
-        stats: type === 'Weapon' ? { power: 5 + i } : type === 'Armor' ? { maxHp: 10 + i } : { hp: 20 + i },
+        stats: type === 'item_weapon' ? { power: 5 + i } : type === 'item_armor' ? { maxHp: 10 + i } : { hp: 20 + i },
     };
 });
 
 const mockRooms: RoomChoice[] = [
-    { id: 'room_1', instanceId: 'r1', name: 'Test Room', type: 'enemy', rarity: 'Common', cost: null, stats: { attack: 5, hp: 10, minUnits: 1, maxUnits: 1 } },
-    { id: 'room_2', instanceId: 'r2', name: 'Test Boss Room', type: 'boss', rarity: 'Rare', cost: 100, stats: { attack: 10, hp: 50 } },
-    { id: 'room_3', instanceId: 'r3', name: 'Healing Fountain', type: 'healing', rarity: 'Uncommon', cost: null, stats: { hp: 20 } },
-    { id: 'room_4', instanceId: 'r4', name: 'Trap Room', type: 'trap', rarity: 'Common', cost: null, stats: { attack: 15 } },
-    { id: 'room_5', instanceId: 'r5', name: 'Harmless Room', type: 'enemy', rarity: 'Common', cost: null, units: 0, stats: { attack: 0, hp: 10 } },
+    { id: 'room_1', instanceId: 'r1', name: 'Test Room', type: 'room_enemy', rarity: 'common', cost: null, stats: { attack: 5, hp: 10, minUnits: 1, maxUnits: 1 } },
+    { id: 'room_2', instanceId: 'r2', name: 'Test Boss Room', type: 'room_boss', rarity: 'rare', cost: 100, stats: { attack: 10, hp: 50 } },
+    { id: 'room_3', instanceId: 'r3', name: 'Healing Fountain', type: 'room_healing', rarity: 'uncommon', cost: null, stats: { hp: 20 } },
+    { id: 'room_4', instanceId: 'r4', name: 'Trap Room', type: 'room_trap', rarity: 'common', cost: null, stats: { attack: 15 } },
+    { id: 'room_5', instanceId: 'r5', name: 'Harmless Room', type: 'room_enemy', rarity: 'common', cost: null, units: 0, stats: { attack: 0, hp: 10 } },
 ];
 
 describe('GameEngine', () => {
@@ -115,7 +115,7 @@ describe('GameEngine', () => {
         const initialHp = engine.gameState!.adventurer.hp;
 
         // Find a damaging room in the hand to ensure the test is deterministic
-        const damagingRoom = engine.gameState!.roomHand.find(r => r.type === 'enemy' || r.type === 'trap' || r.type === 'boss');
+        const damagingRoom = engine.gameState!.roomHand.find(r => r.type === 'room_enemy' || r.type === 'room_trap' || r.type === 'room_boss');
         expect(damagingRoom).toBeDefined();
         const initialRoomHand = [...engine.gameState!.roomHand];
         const offeredRooms = [damagingRoom!];
@@ -134,7 +134,7 @@ describe('GameEngine', () => {
         vi.useFakeTimers();
         engine.gameState!.adventurer.traits = { offense: 90, resilience: 10, skill: 0 }; // High offense, low resilience
         engine.gameState!.phase = 'DESIGNER_CHOOSING_ROOM';
-        const room = { ...mockRooms.find(r => r.type === 'trap')!, stats: { attack: 1000 } };
+        const room = { ...mockRooms.find(r => r.type === 'room_trap')!, stats: { attack: 1000 } };
 
         engine.runEncounter([room]);
         await vi.runAllTimersAsync();
@@ -149,7 +149,7 @@ describe('GameEngine', () => {
         vi.useFakeTimers();
 
         const buffItem: LootChoice = {
-            id: 'buff_1', instanceId: 'b_1', name: 'Test Buff', type: 'Buff', rarity: 'Rare', cost: 100,
+            id: 'buff_1', instanceId: 'b_1', name: 'Test Buff', type: 'item_buff', rarity: 'rare', cost: 100,
             stats: { power: 10, maxHp: -20, duration: 2 },
         };
         (engine as any)._allItems.push(buffItem);
@@ -229,7 +229,7 @@ describe('GameEngine', () => {
             engine.gameState!.designer.balancePoints = 100;
 
             // Manually set shop items for deterministic test and add it to the engine's items
-            const itemToBuy: LootChoice = { id: 'buyable_item', instanceId: 'bi_1', name: 'Test Buyable', type: 'Weapon', rarity: 'Uncommon', cost: 75, stats: { power: 15 } };
+            const itemToBuy: LootChoice = { id: 'buyable_item', instanceId: 'bi_1', name: 'Test Buyable', type: 'item_weapon', rarity: 'uncommon', cost: 75, stats: { power: 15 } };
             (engine as any)._allItems.push(itemToBuy); // Inject item
             engine.gameState!.shopItems = [itemToBuy];
 
@@ -320,7 +320,7 @@ describe('GameEngine', () => {
 
             engine.gameState!.run = 1;
             engine.gameState!.designer.balancePoints = 100;
-            const itemToBuy: LootChoice = { id: 'buyable_item_2', instanceId: 'bi_2', name: 'Test Buyable 2', type: 'Weapon', rarity: 'Uncommon', cost: 75, stats: { power: 15 } };
+            const itemToBuy: LootChoice = { id: 'buyable_item_2', instanceId: 'bi_2', name: 'Test Buyable 2', type: 'item_weapon', rarity: 'uncommon', cost: 75, stats: { power: 15 } };
             (engine as any)._allItems.push(itemToBuy);
             engine.gameState!.shopItems = [itemToBuy];
 
@@ -349,7 +349,7 @@ describe('GameEngine', () => {
 
     it('should not attack in the same turn a potion is used', () => {
         const adventurer = engine.gameState!.adventurer;
-        const potion: LootChoice = { id: 'p_1', instanceId: 'p_1', name: 'Test Potion', type: 'Potion', rarity: 'Common', cost: 10, stats: { hp: 50 } };
+        const potion: LootChoice = { id: 'p_1', instanceId: 'p_1', name: 'Test Potion', type: 'item_potion', rarity: 'common', cost: 10, stats: { hp: 50 } };
         adventurer.inventory.potions.push(potion);
         adventurer.hp = 10; // Low HP to trigger potion use
 

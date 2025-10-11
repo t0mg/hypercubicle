@@ -32,7 +32,7 @@ const ShopItemCard = (item: LootChoice | RoomChoice, canAfford: boolean) => {
 
     let statsHtml = '';
     if ('stats' in item) {
-        if (item.type === 'Weapon' || item.type === 'Armor' || item.type === 'Potion') {
+        if (item.type === 'item_weapon' || item.type === 'item_armor' || item.type === 'item_potion') {
             const loot = item as LootChoice;
             statsHtml = `
                 ${loot.stats.hp ? StatChange(t('global.health'), loot.stats.hp) : ''}
@@ -42,25 +42,25 @@ const ShopItemCard = (item: LootChoice | RoomChoice, canAfford: boolean) => {
         } else {
             const room = item as RoomChoice;
             switch (room.type) {
-                case 'enemy':
+                case 'room_enemy':
                     statsHtml = `
                         ${room.stats.attack ? StatChange(t('global.attack'), room.stats.attack, false) : ''}
                         ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp, false) : ''}
                         ${room.stats.minUnits && room.stats.maxUnits ? StatRange(t('global.units'), room.stats.minUnits, room.stats.maxUnits) : ''}
                     `;
                     break;
-                case 'boss':
+                case 'room_boss':
                     statsHtml = `
                         ${room.stats.attack ? StatChange(t('global.attack'), room.stats.attack, false) : ''}
                         ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp, false) : ''}
                     `;
                     break;
-                case 'healing':
+                case 'room_healing':
                     statsHtml = `
                         ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp) : ''}
                     `;
                     break;
-                case 'trap':
+                case 'room_trap':
                     statsHtml = `
                         ${room.stats.attack ? StatChange(t('global.attack'), room.stats.attack, false) : ''}
                     `;

@@ -50,7 +50,8 @@
     "buffs": "Directives",
     "pwr": "Prod",
     "hp": "Stam",
-    "potions_held": "{count} available"
+    "potions_held": "{count} available",
+    "traits": "Traits"
   },
   "log_panel": {
     "title": "Performance Review & Debug Info",
@@ -89,6 +90,7 @@
     "begin_next_run": "Begin Next Work Day"
   },
   "game_engine": {
+    "new_adventurer": "A new Executive hire starts their day at office!",
     "adventurer_declines_offer": "Disappointed by your offers, they decide to take nothing.",
     "adventurer_accepts_offer": "They requisitioned the {itemName}.",
     "adventurer_drinks_potion": "Sensing a threat to productivity, they urgently consumed the {potionName}.",
@@ -149,21 +151,19 @@
     "Apathy": "Quiet Quitting"
   },
   "rarity": {
-    "rarity_common": "Common",
-    "rarity_uncommon": "Uncommon",
-    "rarity_rare": "Rare"
+    "common": "Common",
+    "uncommon": "Uncommon",
+    "rare": "Rare"
   },
-  "item_type": {
-    "item_type_weapon": "Weapon",
-    "item_type_potion": "Potion",
-    "item_type_armor": "Armor",
-    "item_type_buff": "Buff"
-  },
-  "room_type": {
-    "room_type_enemy": "Hostile Department",
-    "room_type_trap": "Office Hazard",
-    "room_type_healing": "Break Room",
-    "room_type_boss": "Department Head"
+  "card_types": {
+    "item_weapon": "Weapon",
+    "item_potion": "Potion",
+    "item_armor": "Armor",
+    "item_buff": "Buff",
+    "room_enemy": "Hostile Department",
+    "room_trap": "Office Hazard",
+    "room_healing": "Break Room",
+    "room_boss": "Department Head"
   },
   "log_messages": {
     "info_adventurer_declines_offer": "Disappointed by your offers, they decide to take nothing.",

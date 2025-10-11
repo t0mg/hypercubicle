@@ -28,12 +28,14 @@ import { UnlockableFeature } from './game/unlocks';
 
 export type { Adventurer };
 
+export type Rarity = 'common' | 'uncommon' | 'rare' | 'legendary';
+
 export interface LootChoice {
     id: string;
     instanceId: string;
     name: string;
-    rarity: string;
-    type: 'Weapon' | 'Armor' | 'Potion' | 'Buff';
+    rarity: Rarity;
+    type: 'item_weapon' | 'item_armor' | 'item_potion' | 'item_buff';
     stats: {
         hp?: number; // For potions
         power?: number; // For equipment
@@ -49,8 +51,8 @@ export interface RoomChoice {
     id: string,
     instanceId: string;
     name: string;
-    type: 'enemy' | 'boss' | 'healing' | 'trap';
-    rarity: string;
+    type: 'room_enemy' | 'room_boss' | 'room_healing' | 'room_trap';
+    rarity: Rarity;
     cost: number | null;
     stats: {
         attack?: number;

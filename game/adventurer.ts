@@ -74,16 +74,16 @@ export class Adventurer {
     }
 
     public equip(item: LootChoice): void {
-        if (item.type === 'Weapon') {
+        if (item.type === 'item_weapon') {
             this.inventory.weapon = item;
-        } else if (item.type === 'Armor') {
+        } else if (item.type === 'item_armor') {
             this.inventory.armor = item;
         }
         this.recalculateStats();
     }
 
     public addPotion(item: LootChoice): void {
-        if (item.type === 'Potion') {
+        if (item.type === 'item_potion') {
             this.inventory.potions.push(item);
         }
     }

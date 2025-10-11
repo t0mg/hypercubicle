@@ -28,7 +28,7 @@ describe('MenuScreen', () => {
     saver = new GameSaver(storage);
     appElement = document.createElement('div');
     document.body.appendChild(appElement);
-    engine = new GameEngine(metaManager, dataLoader, saver, appElement);
+    engine = new GameEngine(metaManager, dataLoader, saver);
     await engine.init();
 
     menuScreen = new MenuScreen();

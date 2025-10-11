@@ -191,6 +191,8 @@ export class GameEngine {
       shopReturnPhase: null,
     };
     this.gameState.logger.debug(`Unlocked features: ${[...this.metaManager.acls].join(', ')}`);
+    this.gameState.logger.debug(`Deck size: ${runDeck.length}, Hand size: ${handSize}, Room Deck size: ${roomRunDeck.length}, Room Hand size: ${roomHand.length}`);
+
     this._emit('state-change', this.gameState);
   }
 
@@ -283,9 +285,9 @@ export class GameEngine {
       // --- End Hand and Deck Update ---
 
       if (choice) {
-        if (choice.type === 'Potion') {
+        if (choice.type === 'item_potion') {
             adventurer.addPotion(choice);
-        } else if (choice.type === 'Buff') {
+        } else if (choice.type === 'item_buff') {
             adventurer.applyBuff(choice);
         } else {
             adventurer.equip(choice);
@@ -325,8 +327,8 @@ export class GameEngine {
       this.gameState.logger.log(`--- Encountering Room: ${chosenRoom.name} ---`, 'INFO', { event: 'room_encountered', room: chosenRoom });
 
       switch (chosenRoom.type) {
-        case 'enemy':
-        case 'boss':
+        case 'room_enemy':
+        case 'room_boss':
           const encounter: Encounter = {
             enemyCount: chosenRoom.units ?? 1,
             enemyPower: chosenRoom.stats.attack || 5,
@@ -337,14 +339,14 @@ export class GameEngine {
           feedback = battleResult.feedback;
           break;
 
-        case 'healing':
+        case 'room_healing':
           const healing = chosenRoom.stats.hp || 0;
           adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healing);
           feedback.push(t('game_engine.healing_room', { name: chosenRoom.name, healing: healing }));
           this.gameState.logger.info('info_healing_room', { name: chosenRoom.name, healing: healing });
           break;
 
-        case 'trap':
+        case 'room_trap':
           const damage = chosenRoom.stats.attack || 0;
           adventurer.hp -= damage;
           processTrap(adventurer);

@@ -2,8 +2,8 @@
     {
         "id": "enemy_easy_lethargic_staff",
         "name": "Cubicle Farm of Lethargic Staff",
-        "type": "room_type_enemy",
-        "rarity": "rarity_common",
+        "type": "room_enemy",
+        "rarity": "common",
         "cost": null,
         "stats": {
             "attack": 5,
@@ -15,8 +15,8 @@
     {
       "id": "enemy_easy_disgruntled_interns",
       "name": "Team of Disgruntled Interns",
-      "type": "room_type_enemy",
-      "rarity": "rarity_common",
+      "type": "room_enemy",
+      "rarity": "common",
       "cost": null,
       "stats": {
           "attack": 4,
@@ -28,8 +28,8 @@
     {
         "id": "trap_medium_paper_shredder",
         "name": "Malfunctioning Paper Shredder",
-        "type": "room_type_trap",
-        "rarity": "rarity_common",
+        "type": "room_trap",
+        "rarity": "common",
         "cost": null,
         "stats": {
             "attack": 15
@@ -38,8 +38,8 @@
     {
         "id": "healing_medium_water_cooler",
         "name": "Water Cooler Gossip Session",
-        "type": "room_type_healing",
-        "rarity": "rarity_uncommon",
+        "type": "room_healing",
+        "rarity": "uncommon",
         "cost": null,
         "stats": {
             "hp": 25
@@ -48,8 +48,8 @@
     {
         "id": "enemy_hard_hr_fortress",
         "name": "HR Compliance Fortress",
-        "type": "room_type_enemy",
-        "rarity": "rarity_uncommon",
+        "type": "room_enemy",
+        "rarity": "uncommon",
         "cost": null,
         "stats": {
             "attack": 10,
@@ -61,8 +61,8 @@
       {
         "id": "enemy_hard_legal_department",
         "name": "Meeting with the Legal Department",
-        "type": "room_type_enemy",
-        "rarity": "rarity_uncommon",
+        "type": "room_enemy",
+        "rarity": "uncommon",
         "cost": null,
         "stats": {
             "attack": 15,
@@ -74,8 +74,8 @@
     {
         "id": "boss_final_quarterly_audit",
         "name": "The Quarterly Audit",
-        "type": "room_type_boss",
-        "rarity": "rarity_rare",
+        "type": "room_boss",
+        "rarity": "rare",
         "cost": 300,
         "stats": {
             "attack": 25,
@@ -85,8 +85,8 @@
     {
         "id": "trap_lethal_downsizing",
         "name": "Surprise Downsizing",
-        "type": "room_type_trap",
-        "rarity": "rarity_rare",
+        "type": "room_trap",
+        "rarity": "rare",
         "cost": 200,
         "stats": {
             "attack": 999

@@ -11,12 +11,12 @@ const REPETITION_PENALTY = 10;
 
 function scoreItem(adventurer: Adventurer, item: LootChoice): number {
     const { traits, inventory, hp, maxHp } = adventurer;
-    let score = (item.rarity === 'Uncommon' ? 2 : item.rarity === 'Rare' ? 3 : 1) * 5;
+    let score = (item.rarity === 'uncommon' ? 2 : item.rarity === 'rare' ? 3 : 1) * 5;
     const currentWeaponPower = inventory.weapon?.stats.power || 0;
     const currentArmorHp = inventory.armor?.stats.maxHp || 0;
 
     switch (item.type) {
-        case 'Weapon':
+        case 'item_weapon':
             const powerDelta = (item.stats.power || 0) - currentWeaponPower;
             if (powerDelta <= 0 && item.id !== inventory.weapon?.id) return -1;
             score += powerDelta * (traits.offense / 10);
@@ -24,7 +24,7 @@ function scoreItem(adventurer: Adventurer, item: LootChoice): number {
             const drawback = item.stats.maxHp || 0;
             if (drawback < 0) score += drawback * (100 - traits.resilience) / 20;
             break;
-        case 'Armor':
+        case 'item_armor':
             const hpDelta = (item.stats.maxHp || 0) - currentArmorHp;
             if (hpDelta <= 0 && item.id !== inventory.armor?.id) return -1;
             score += hpDelta * (100 - traits.offense) / 10;
@@ -34,7 +34,7 @@ function scoreItem(adventurer: Adventurer, item: LootChoice): number {
             const armorDrawback = item.stats.power || 0;
             if (armorDrawback < 0) score += armorDrawback * (traits.resilience / 10);
             break;
-        case 'Potion':
+        case 'item_potion':
             const healthRatio = hp / maxHp;
             score += 10 * (100 - traits.resilience) / 100;
             if (healthRatio < 0.7) score += 20 * (1 - healthRatio);
@@ -133,10 +133,10 @@ export function processRoomEntry(adventurer: Adventurer, chosenRoom: RoomChoice)
 
     let challengeModifier = 0;
     switch(chosenRoom.type) {
-        case 'enemy': challengeModifier = 5; break;
-        case 'boss': challengeModifier = 15; break;
-        case 'trap': challengeModifier = 10; break;
-        case 'healing': challengeModifier = -15; break;
+        case 'room_enemy': challengeModifier = 5; break;
+        case 'room_boss': challengeModifier = 15; break;
+        case 'room_trap': challengeModifier = 10; break;
+        case 'room_healing': challengeModifier = -15; break;
     }
     adventurer.modifyChallenge(adventurer.challenge + challengeModifier);
     adventurer.updateFlowState();

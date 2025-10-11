@@ -1,10 +1,11 @@
-import type { LootChoice, RoomChoice } from '../types';
+import type { LootChoice, RoomChoice, Rarity } from '../types';
 import { t } from '../text';
-
-const rarityColorMap: { [key: string]: string } = {
-  [t('rarity.rarity_common')]: 'text-rarity-common',
-  [t('rarity.rarity_uncommon')]: 'text-rarity-uncommon',
-  [t('rarity.rarity_rare')]: 'text-rarity-rare',
+ 
+const rarityColorMap: Record<Rarity, string> = {
+  ['common']: 'text-rarity-common',
+  ['uncommon']: 'text-rarity-uncommon',
+  ['rare']: 'text-rarity-rare',
+  ['legendary']: 'text-rarity-legendary',
 };
 
 const StatChange = (label: string, value: number, positive: boolean = true, units: number = 1) => {
@@ -94,7 +95,7 @@ export class Card extends HTMLElement {
   render() {
     if (!this._item) return;
 
-    const rarityColor = rarityColorMap[t(this._item.rarity)] || 'text-gray-400';
+    const rarityColor = rarityColorMap[this._item.rarity] || 'text-gray-400';
     const baseClasses = 'relative transition-all duration-200';
     const checkboxId = `card-checkbox-${this._item.instanceId}`;
 
@@ -115,10 +116,10 @@ export class Card extends HTMLElement {
       const item = this._item as LootChoice;
       const room = this._item as RoomChoice;
       switch (this._item.type) {
-        case 'item_type_weapon':
-        case 'item_type_potion':
-        case 'item_type_armor':
-        case 'item_type_buff':
+        case 'item_weapon':
+        case 'item_potion':
+        case 'item_armor':
+        case 'item_buff':
           statsHtml = `
             ${item.stats.hp ? StatChange(t('global.health'), item.stats.hp, item.stats.hp > 0) : ''}
             ${item.stats.maxHp ? StatChange(t('global.max_hp'), item.stats.maxHp, item.stats.maxHp > 0) : ''}
@@ -126,14 +127,14 @@ export class Card extends HTMLElement {
             ${item.stats.duration ? StatChange(t('global.duration'), item.stats.duration, true) : ''}
           `;
           break;
-        case 'room_type_healing':
+        case 'room_healing':
           statsHtml = `
             ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp, true) : ''}
           `;
           break;
-        case 'room_type_enemy':
-        case 'room_type_boss':
-        case 'room_type_trap':
+        case 'room_enemy':
+        case 'room_boss':
+        case 'room_trap':
           statsHtml = `
             ${room.stats.attack ? StatChange(t('global.attack'), room.stats.attack, false, room.units) : ''}
             ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp, false, room.units) : ''}
@@ -153,7 +154,7 @@ export class Card extends HTMLElement {
 
     this.innerHTML = `
       <fieldset class="font-sans ${fieldsetBorderClass}" ${this._isDisabled ? 'disabled' : ''}>
-        <legend class="${rarityColor}">${t(this._item.type)} - ${t(this._item.rarity)}</legend>
+        <legend class="${rarityColor}">${t('card_types.' + this._item.type)} - ${t('rarity.' + this._item.rarity)}</legend>
         <div class="p-2">
             <p class="font-bold text-sm ${rarityColor}">${itemName}</p>
             <div class="mt-2">

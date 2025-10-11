@@ -1,4 +1,4 @@
-import { LootChoice, RoomChoice, GameState } from "../types";
+import { LootChoice, RoomChoice, GameState, Rarity } from "../types";
 import { rng } from './random';
 
 export const generateId = (baseId: string) => `${baseId}_${rng.nextFloat().toString(36).substr(2, 9)}`;
@@ -26,17 +26,17 @@ const generateDeck = <T extends { id: string; cost: number | null, rarity: strin
   const deck: T[] = [];
 
   // Compute how many common, uncommon and rare items we want in the deck based on deck size
-  const rarityDistribution: Record<string, number> = { 'Common': 0.6, 'Uncommon': 0.3, 'Rare': 0.1 };
-  const rarityCounts: Record<string, number> = { 'Common': 0, 'Uncommon': 0, 'Rare': 0 };
+  const rarityDistribution: Record<Rarity, number> = { 'common': 0.6, 'uncommon': 0.3, 'rare': 0.1, 'legendary': 0 };
+  const rarityCounts: Record<Rarity, number> = { 'common': 0, 'uncommon': 0, 'rare': 0, 'legendary': 0 };
 
-  const distributionTarget: Record<string, number> = { 'Common': 0, 'Uncommon': 0, 'Rare': 0 };
+  const distributionTarget: Record<Rarity, number> = { 'common': 0, 'uncommon': 0, 'rare': 0, 'legendary': 0 };
   Object.keys(rarityDistribution).forEach(rarity => {
     distributionTarget[rarity] = Math.floor(deckSize * rarityDistribution[rarity]);
   });
   // Adjust for rounding errors
   let totalAssigned = Object.values(distributionTarget).reduce((a, b) => a + b, 0);
   while (totalAssigned < deckSize) {
-    distributionTarget['Common'] += 1; // Add to common by default
+    distributionTarget['common'] += 1; // Add to common by default
     totalAssigned += 1;
   }
 
@@ -59,7 +59,7 @@ const generateDeck = <T extends { id: string; cost: number | null, rarity: strin
   });
 
   // Backfill with common items if deck is not full
-  const commonCandidates = unlockedItems.filter(item => item.rarity === 'Common');
+  const commonCandidates = unlockedItems.filter(item => item.rarity === 'common');
   while (deck.length < deckSize && commonCandidates.length > 0) {
     const randomIndex = rng.nextInt(0, commonCandidates.length - 1);
     const item = commonCandidates[randomIndex];
@@ -76,7 +76,7 @@ export const generateLootDeck = (unlockedIds: string[], allItems: LootChoice[], 
 export const generateRoomDeck = (unlockedIds: string[], allItems: RoomChoice[], deckSize: number): RoomChoice[] => {
   const deck = generateDeck(unlockedIds, allItems, deckSize, (item) => {
     const room = { ...item, instanceId: generateId(item.id) } as RoomChoice;
-    if (room.type === 'enemy' && room.stats.minUnits && room.stats.maxUnits) {
+    if (room.type === 'room_enemy' && room.stats.minUnits && room.stats.maxUnits) {
       room.units = getRandomInt(room.stats.minUnits, room.stats.maxUnits);
     }
     return room;
@@ -85,7 +85,7 @@ export const generateRoomDeck = (unlockedIds: string[], allItems: RoomChoice[], 
 }
 
 export const isRoomSelectionImpossible = (state: GameState): boolean => {
-  return state.roomHand.length < 3 && !state.roomHand.some((room: RoomChoice) => room.type === 'boss');
+  return state.roomHand.length < 3 && !state.roomHand.some((room: RoomChoice) => room.type === 'room_boss');
 }
 
 export const isLootSelectionImpossible = (state: GameState): boolean => {

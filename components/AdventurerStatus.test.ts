@@ -1,7 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AdventurerStatus } from './AdventurerStatus';
-import { Adventurer, FlowState } from '../types';
+import { FlowState } from '../types';
+import { Adventurer } from '../game/adventurer';
 import { MetaState } from '../game/meta';
+import { Logger } from '../game/logger';
 
 // Mock t function
 vi.mock('../text', () => ({
@@ -18,18 +20,11 @@ describe('AdventurerStatus', () => {
         if (!customElements.get('adventurer-status')) {
             customElements.define('adventurer-status', AdventurerStatus);
         }
+        const logger = new Logger();
 
-        adventurer = {
-            id: 'adv1',
-            name: 'Test Adventurer',
-            hp: 80,
-            maxHp: 100,
-            power: 10,
-            flowState: FlowState.Control,
-            traits: { offense: 5, resilience: 5, skill: 5, experience: 0 },
-            inventory: { weapon: null, armor: null, potions: [] },
-            activeBuffs: [],
-        };
+        adventurer = new Adventurer({ offense: 5, resilience: 5, skill: 5 }, logger);
+        adventurer.hp = 80;
+        adventurer.flowState = FlowState.Control;
 
         metaState = {
             adventurers: 1,
@@ -50,7 +45,7 @@ describe('AdventurerStatus', () => {
         expect(healthBar1).not.toBeNull();
 
         // Update health
-        const updatedAdventurer = { ...adventurer, hp: 50 };
+        const updatedAdventurer = { ...adventurer, hp: 50 } as Adventurer;
         element.adventurer = updatedAdventurer;
 
         const healthBar2 = element.querySelector('#hp-bar');
