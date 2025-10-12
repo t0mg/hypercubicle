@@ -13,6 +13,7 @@ export default defineConfig(({ mode }) => {
     },
     test: {
       environment: 'jsdom',
+      include: ['**/*.test.ts'],
     },
     server: {
       watch: {
