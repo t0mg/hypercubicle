@@ -74,7 +74,7 @@
   "choice_panel": {
     "title": "Present Corporate Assets for the Executive to Choose From",
     "present_offer": "Present Offer",
-    "title_room": "Choose Three Floors or One Department Head",
+    "title_room": "Choose Three Rooms or One Department Head",
     "begin_encounter": "Begin Encounter",
     "multiple_enemies_title": "{name} ({count} members)",
     "stacked_items_title": "{name} (x{count})",
@@ -124,7 +124,6 @@
     }
   },
   "tooltips": {
-    "adventurer_health": {
     "adventurer_health": {
       "title": "Executive's Stamina",
       "body": "This is the executive's current stamina. If it reaches <b>zero</b>, they suffer a burnout and the Work Day ends."
