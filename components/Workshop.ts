@@ -31,7 +31,7 @@ export class Workshop extends HTMLElement {
 
   async render() {
     this.innerHTML = `
-      <div class="window" style="width: 800px">
+      <div class="window" style="max-w-800">
         <div class="title-bar">
           <div class="title-bar-text">${t('workshop.title')}</div>
         </div>
