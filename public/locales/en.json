@@ -192,7 +192,7 @@
     "info_repetitive_choice": "The Executive feels a sense of repetitiveness from seeing {name} again.",
     "info_deja_vu": "The Executive feels a sense of deja vu upon entering {name}."
   },
-  "items": {
+  "items_and_rooms": {
     "weapon_common_1": "Standard Issue Stapler",
     "potion_common_1": "Lukewarm Office Coffee",
     "armor_common_1": "Polyester Power Tie",
@@ -209,9 +209,7 @@
     "armor_rare_2": "Shoulder Pads",
     "armor_rare_3": "'Employee of the Month' Plaque",
     "buff_rare_1": "Aggressive Sales Strategy",
-    "buff_uncommon_1": "Box of Donuts"
-  },
-  "rooms": {
+    "buff_uncommon_1": "Box of Donuts",
     "enemy_group_low": "Cubicle Farm of Lethargic Staff",
     "enemy_group_medium": "Team of Disgruntled Interns",
     "trap_medium": "Malfunctioning Paper Shredder",

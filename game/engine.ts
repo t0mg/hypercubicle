@@ -91,8 +91,8 @@ export class GameEngine {
           if (potionToUse) {
             const healedAmount = potionToUse.stats.hp || 0;
             adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healedAmount);
-            feedback.push(t('game_engine.adventurer_drinks_potion', { potionName: potionToUse.name }));
-            this.gameState?.logger.info('info_adventurer_drinks_potion', { potionName: potionToUse.name });
+            feedback.push(t('game_engine.adventurer_drinks_potion', { potionName: t('items_and_rooms.' + potionToUse.id) }));
+            this.gameState?.logger.info('info_adventurer_drinks_potion', { potionName: t('items_and_rooms.' + potionToUse.id) });
           }
         } else {
           // Adventurer's turn
@@ -324,7 +324,7 @@ export class GameEngine {
     adventurer.roomHistory.push(chosenRoom.id);
     processRoomEntry(adventurer, chosenRoom);
 
-    this.gameState.logger.log(`--- Encountering Room: ${chosenRoom.name} ---`, 'INFO', { event: 'room_encountered', room: chosenRoom });
+    this.gameState.logger.log(`--- Encountering Room: ${t('items_and_rooms.' + chosenRoom.id)} ---`, 'INFO', { event: 'room_encountered', room: chosenRoom });
 
     switch (chosenRoom.type) {
       case 'room_enemy':
@@ -342,16 +342,16 @@ export class GameEngine {
       case 'room_healing':
         const healing = chosenRoom.stats.hp || 0;
         adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healing);
-        feedback.push(t('game_engine.healing_room', { name: chosenRoom.name, healing: healing }));
-        this.gameState.logger.info('info_healing_room', { name: chosenRoom.name, healing: healing });
+        feedback.push(t('game_engine.healing_room', { name: t('items_and_rooms.' + chosenRoom.id), healing: healing }));
+        this.gameState.logger.info('info_healing_room', { name: t('items_and_rooms.' + chosenRoom.id), healing: healing });
         break;
 
       case 'room_trap':
         const damage = chosenRoom.stats.attack || 0;
         adventurer.hp -= damage;
         processTrap(adventurer);
-        feedback.push(t('game_engine.trap_room', { name: chosenRoom.name, damage: damage }));
-        this.gameState.logger.info('info_trap_room', { name: chosenRoom.name, damage: damage });
+        feedback.push(t('game_engine.trap_room', { name: t('items_and_rooms.' + chosenRoom.id), damage: damage }));
+        this.gameState.logger.info('info_trap_room', { name: t('items_and_rooms.' + chosenRoom.id), damage: damage });
         break;
     }
 
@@ -513,7 +513,7 @@ export class GameEngine {
     const newBalancePoints = this.gameState.designer.balancePoints - itemToBuy.cost;
     const newShopItems = this.gameState.shopItems.filter(i => i.id !== itemId);
 
-    this.gameState.logger.log(`Purchased ${itemToBuy.name}.`, 'INFO', { event: 'item_purchased', item: itemToBuy });
+    this.gameState.logger.log(`Purchased ${t('items_and_rooms.' + itemToBuy.id)}.`, 'INFO', { event: 'item_purchased', item: itemToBuy });
     this.gameState = {
       ...this.gameState,
       designer: { balancePoints: newBalancePoints },

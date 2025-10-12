@@ -112,7 +112,7 @@ export class Card extends HTMLElement {
     const animationClass = this.classList.contains('animate-newly-drafted') ? ' animate-newly-drafted' : '';
     this.className = `${baseClasses} ${stateClasses} ${animationClass}`;
 
-    let itemName = this._item.name;
+    let itemName = t('items_and_rooms.' + this._item.id);
     let statsHtml = '';
     if ('stats' in this._item) {
       const item = this._item as LootChoice;
@@ -142,14 +142,14 @@ export class Card extends HTMLElement {
             ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp, false, room.units) : ''}
           `;
           if (room.units > 1) {
-            itemName = t('choice_panel.multiple_enemies_title', { name: room.name, count: room.units });
+            itemName = t('choice_panel.multiple_enemies_title', { name: itemName, count: room.units });
           }
           break;
       }
     }
 
     if (this._stackCount > 1) {
-      itemName = t('choice_panel.stacked_items_title', { name: this._item.name, count: this._stackCount });
+      itemName = t('choice_panel.stacked_items_title', { name: itemName, count: this._stackCount });
     }
 
     const fieldsetBorderClass = this._isSelected ? 'selected' : '';
