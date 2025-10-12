@@ -31,7 +31,7 @@ export class Workshop extends HTMLElement {
 
   async render() {
     this.innerHTML = `
-      <div class="window" style="max-w-800">
+      <div class="window max-w-800">
         <div class="title-bar">
           <div class="title-bar-text">${t('workshop.title')}</div>
         </div>
@@ -41,7 +41,7 @@ export class Workshop extends HTMLElement {
             ${t('workshop.balance_points')}<span class="text-amber-400">${this._balancePoints}</span>
           </p>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 my-8" id="item-cards">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-8" id="item-cards">
             ${this._items.length === 0 ? `<p class="text-center text-brand--muted col-span-full">${t('workshop.no_new_items')}</p>` : ''}
           </div>
 
