@@ -225,7 +225,7 @@
             </div>
         </div>
     `;const d=this.querySelector("#loot-card-container");d&&l.forEach(f=>{const h=document.createElement("choice-card");h.item=f,"stackCount"in f&&(h.stackCount=f.stackCount),h.isSelected=this._selectedIds.includes(f.instanceId);let p=this._disabled;if(this._offerImpossible)p=!0;else if(r){const g=this._choices.filter(v=>this._selectedIds.includes(v.instanceId)),_=g.some(v=>v.type==="room_boss");h.isSelected?p=!1:(_||f.type==="room_boss"&&g.length>0||g.length>=3)&&(p=!0)}else{const g=new Map(this._choices.map(S=>[S.instanceId,S.id])),_=this._selectedIds.map(S=>g.get(S));p=!h.isSelected&&_.includes(f.id)||this._disabled}h.isDisabled=p,h.isNewlyDrafted=f.justDrafted&&this._initialRender||!1,d.appendChild(h)}),setTimeout(()=>{this._initialRender=!1},0)}}customElements.define("choice-panel",We);class Ke extends HTMLElement{constructor(){super(),this._items=[],this._balancePoints=0,this.engine=null,this.addEventListener("click",e=>{const t=e.target,s=t.dataset.itemId;s&&this.engine&&this.engine.purchaseItem(s),t.id==="start-run-button"&&this.engine&&this.engine.startNewRun()})}set items(e){this._items=e,this.render()}set balancePoints(e){this._balancePoints=e,this.render()}connectedCallback(){this.render()}async render(){this.innerHTML=`
-      <div class="window" style="max-w-800">
+      <div class="window max-w-800">
         <div class="title-bar">
           <div class="title-bar-text">${o("workshop.title")}</div>
         </div>
@@ -235,7 +235,7 @@
             ${o("workshop.balance_points")}<span class="text-amber-400">${this._balancePoints}</span>
           </p>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 my-8" id="item-cards">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-8" id="item-cards">
             ${this._items.length===0?`<p class="text-center text-brand--muted col-span-full">${o("workshop.no_new_items")}</p>`:""}
           </div>
 
@@ -281,7 +281,7 @@
         </div>
         <div class="status-bar">
           <p class="status-bar-field">v0.0.0</p>
-          <p class="status-bar-field">build 117</p>
+          <p class="status-bar-field">build 118</p>
         </div>
       </div>
     `}}customElements.define("menu-screen",Ze);class Je extends HTMLElement{constructor(){super(),this.isDesktop=!0,this.attachShadow({mode:"open"}),this.onclick=t=>{window.matchMedia("(pointer: coarse)").matches&&t.target===this&&this.hide()};const e=document.createElement("style");e.textContent=`
