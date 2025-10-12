@@ -70,7 +70,8 @@ export class GameSaver {
   private _deserialize(data: SerializableGameState): GameState {
     const { adventurer: adventurerData, logger: loggerData, ...restOfState } = data;
 
-    const logger = Logger.fromJSON(loggerData); // Need a static fromJSON method
+    const logger = Logger.getInstance();
+    logger.loadEntries(loggerData.entries);
     const adventurer = Adventurer.fromJSON(adventurerData, logger); // Need a static fromJSON method
 
     // Exclude 'version' from restOfState before returning

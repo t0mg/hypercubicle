@@ -20,7 +20,7 @@ export class Adventurer {
   public lootHistory: string[];
   public boredomCounter: number;
 
-  constructor(traits: AdventurerTraits, logger: Logger) {
+  constructor(traits: AdventurerTraits) {
     this.hp = BASE_ADVENTURER_STATS.hp;
     this.maxHp = BASE_ADVENTURER_STATS.maxHp;
     this.power = BASE_ADVENTURER_STATS.power;
@@ -30,7 +30,7 @@ export class Adventurer {
     this.traits = traits;
     this.inventory = { weapon: null, armor: null, potions: [] };
     this.activeBuffs = [];
-    this.logger = logger;
+    this.logger = Logger.getInstance();
     this.roomHistory = [];
     this.lootHistory = [];
     this.boredomCounter = 0;
@@ -151,7 +151,7 @@ export class Adventurer {
 
   public static fromJSON(data: any, logger: Logger): Adventurer {
     const traits = data.traits;
-    const adventurer = new Adventurer(traits, logger);
+    const adventurer = new Adventurer(traits);
 
     adventurer.hp = data.hp;
     adventurer.maxHp = data.maxHp;

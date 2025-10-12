@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, beforeAll, afterEach } from 'vitest';
 import { GameEngine } from './engine';
 import { Adventurer } from './adventurer';
+import { Logger } from './logger';
 import * as constants from './constants';
 import { initLocalization, t } from '../text';
 import { MetaManager } from './meta';
@@ -58,6 +59,7 @@ describe('GameEngine', () => {
     metaManager = new MetaManager(storage);
     saver = new GameSaver(storage);
     engine = new GameEngine(metaManager, dataLoader, saver);
+    Logger.getInstance().loadEntries([]);
     await engine.init();
     engine.startNewGame();
   });
