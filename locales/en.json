@@ -1,6 +1,6 @@
 {
   "game_title": "Rogue Steward",
-  "game_subtitle": "Keep your adventurer running.",
+  "game_subtitle": "Curate the Office, Avoid the Burnout.",
   "menu": {
     "new_game": "New Game",
     "continue_game": "Continue",
@@ -37,17 +37,21 @@
     "confirm": "Confirm",
     "cancel": "Cancel"
   },
+  "card": {
+    "select": "Activate"
+  },
   "adventurer_status": {
-    "title": "Adventurer #{count}",
-    "flow_state": "Mindstate",
-    "inventory": "Inventory",
-    "weapon": "Weapon",
-    "armor": "Armor",
-    "potions": "Potions",
-    "buffs": "Buffs",
-    "pwr": "Pwr",
-    "hp": "HP",
-    "potions_held": "{count} held"
+    "title": "Executive #{count}",
+    "flow_state": "Engagement Level",
+    "inventory": "Briefcase",
+    "weapon": "Work Tool",
+    "armor": "Office Attire",
+    "potions": "Perks",
+    "buffs": "Directives",
+    "pwr": "Prod",
+    "hp": "Stam",
+    "potions_held": "{count} available",
+    "traits": "Traits"
   },
   "log_panel": {
     "title": "Game Log & Debug Info",
@@ -74,9 +78,9 @@
     "begin_encounter": "Begin Encounter",
     "multiple_enemies_title": "{name} ({count} mobs)",
     "stacked_items_title": "{name} (x{count})",
-    "new_items_title": "Newly drawn:",
-    "continue_without_loot": "Continue without offering loot",
-    "roll_credits": "No more rooms. Roll credits"
+    "new_items_title": "Newly requisitioned",
+    "continue_without_loot": "Continue without offering new assets",
+    "roll_credits": "No more floors. Time for the after-work party."
   },
   "workshop": {
     "title": "The Workshop",
@@ -86,23 +90,23 @@
     "begin_next_run": "Begin Next Run"
   },
   "game_engine": {
+    "new_adventurer": "A new Executive hire starts their day at office!",
+    "adventurer_returns": "The Executive returns for another Work Day!",
     "adventurer_declines_offer": "Disappointed by your offers, they decide to take nothing.",
-    "adventurer_accepts_offer": "They pick the {itemName}.",
-    "adventurer_drinks_potion": "Sensing danger, they use the {potionName}.",
-    "easy_fight": "An easy fight. Too easy...",
-    "worthy_challenge": "A worthy, but simple challenge.",
-    "great_battle": "A great battle! They feel alive!",
-    "too_close_for_comfort": "That was far too close for comfort.",
-    "new_adventurer": "A new adventurer enters the dungeon!",
-    "adventurer_returns": "The adventurer returns for another run!",
-    "adventurer_fell": "The adventurer fell on room {room} of run {run}.",
-    "adventurer_bored": "The adventurer grew bored on room {room} of run {run}, and quit.",
-    "adventurer_apathy": "The adventurer became apathetic on room {room} of run {run}, and quit.",
-    "empty_hand": "The adventurer waits for your decision, unaware that you have nothing left to offer.",
-    "welcome_to_workshop": "Welcome back. Spend your Balance Points wisely.",
-    "healing_room": "The adventurer found the {name} and recovered {healing} health.",
-    "trap_room": "The adventurer fell for the {name} and lost {damage} health.",
-    "no_more_rooms": "The adventurer reached the end of the dungeon (without fighting a boss)."
+    "adventurer_accepts_offer": "They requisitioned the {itemName}.",
+    "adventurer_drinks_potion": "Sensing a threat to productivity, they urgently consumed the {potionName}.",
+    "easy_fight": "An easy meeting. Too trivial for synergy...",
+    "worthy_challenge": "A productive, but simple meeting.",
+    "great_battle": "A productive negotiation! Quarterly results look excellent!",
+    "too_close_for_comfort": "That was a close call. Almost needed to call HR.",
+    "adventurer_fell": "The Executive suffered a fatal burnout on Floor {room} of Work Day {run}.",
+    "adventurer_bored": "The Executive became lethargic on Floor {room} of Work Day {run}, and quit.",
+    "adventurer_apathy": "The Executive started quiet quitting on Floor {room} of Work Day {run}, and left the company.",
+    "empty_hand": "The Executive waits for your decision, unaware that the budget has been frozen.",
+    "welcome_to_workshop": "Welcome back. Spend your Expense Funds wisely.",
+    "healing_room": "The Executive found the {name} and recovered {healing} stamina.",
+    "trap_room": "The Executive ran into the {name} and lost {damage} stamina.",
+    "no_more_rooms": "The Executive reached the end of the floor plan (without a performance review)."
   },
   "unlocks": {
     "title": "You Unlocked a New Feature",
@@ -136,5 +140,90 @@
       "title": "Mobs",
       "body": "Stats apply to eaxh individual mob in this room."
     }
+  },
+  "flow_states": {
+    "Flow": "Optimal Synergy",
+    "Control": "Deep Focus",
+    "Arousal": "Hyper-Focus (Deadline)",
+    "Relaxation": "Cruise Control",
+    "Worry": "Deadline Pressure",
+    "Anxiety": "Imminent Burnout",
+    "Boredom": "Lethargy",
+    "Apathy": "Quiet Quitting"
+  },
+  "rarity": {
+    "common": "Common",
+    "uncommon": "Uncommon",
+    "rare": "Rare"
+  },
+  "card_types": {
+    "item_weapon": "Weapon",
+    "item_potion": "Potion",
+    "item_armor": "Armor",
+    "item_buff": "Buff",
+    "room_enemy": "Hostile Department",
+    "room_trap": "Office Hazard",
+    "room_healing": "Break Room",
+    "room_boss": "Department Head"
+  },
+  "log_messages": {
+    "info_adventurer_declines_offer": "Disappointed by your offers, they decide to take nothing.",
+    "info_adventurer_accepts_offer": "They requisitioned the {itemName}.",
+    "info_adventurer_drinks_potion": "Sensing a threat to productivity, they urgently consumed the {potionName}.",
+    "info_easy_fight": "An easy meeting. Too trivial for synergy...",
+    "info_worthy_challenge": "A productive, but simple meeting.",
+    "info_great_battle": "A productive negotiation! Quarterly results look excellent!",
+    "info_too_close_for_comfort": "That was a close call. Almost needed to call HR.",
+    "info_new_adventurer": "A new Executive enters the office!",
+    "info_adventurer_returns": "The Executive returns for another Work Day!",
+    "info_adventurer_fell": "The Executive suffered a fatal burnout on Floor {room} of Work Day {run}.",
+    "info_adventurer_bored": "The Executive became lethargic on Floor {room} of Work Day {run}, and quit.",
+    "info_adventurer_apathy": "The Executive started quiet quitting on Floor {room} of Work Day {run}, and left the company.",
+    "info_empty_hand": "The Executive waits for your decision, unaware that the budget has been frozen.",
+    "info_welcome_to_workshop": "Welcome back. Spend your Expense Funds wisely.",
+    "info_healing_room": "The Executive found the {name} and recovered {healing} stamina.",
+    "info_trap_room": "The Executive ran into the {name} and lost {damage} stamina.",
+    "info_no_more_rooms": "The Executive reached the end of the floor plan (without a performance review).",
+    "info_encounter": "The Executive encounters the {name}.",
+    "info_encounter_enemy": "The Executive encounters hostile department member {current}/{total}.",
+    "info_adventurer_defeated": "The Executive has been defeated.",
+    "info_enemy_defeated": "A hostile department member has been synergized with.",
+    "info_entering_workshop": "The Executive is entering the workshop.",
+    "info_workshop_not_unlocked": "The workshop is not unlocked yet. Starting a new run.",
+    "info_adventurer_decision": "The Executive decided to {decision}.",
+    "info_flow_state_changed": "The Executive's state of mind changed from {from} to {to}.",
+    "info_repetitive_choice": "The Executive feels a sense of repetitiveness from seeing {name} again.",
+    "info_deja_vu": "The Executive feels a sense of deja vu upon entering {name}.",
+    "info_item_chosen": "The Executive chose the {item}.",
+    "info_item_purchased": "Purchased {item}.",
+    "info_game_over": "WORK DAY OVER: {reason}",
+    "warn_empty_hand": "The Executive was hoping for new assets, but the budget is frozen."
+  },
+  "items_and_rooms": {
+    "weapon_common_1": "Standard Issue Stapler",
+    "potion_common_1": "Lukewarm Office Coffee",
+    "armor_common_1": "Polyester Power Tie",
+    "weapon_common_2": "Unsharpened Pencil",
+    "potion_common_2": "Roll of Scotch Tape",
+    "armor_uncommon_1": "Motivational Poster",
+    "weapon_uncommon_1": "The Aggressive Mullet Haircut",
+    "potion_uncommon_1": "Espresso Shot",
+    "weapon_uncommon_2": "Heavy Duty Clipboard",
+    "armor_uncommon_2": "Cubicle Wall",
+    "armor_rare_1": "Ergonomic Chair (Oversized Model)",
+    "weapon_rare_1": "Executive Presentation Pointer (Laser)",
+    "potion_rare_1": "Unexpected Stock Option Vesting",
+    "armor_rare_2": "Shoulder Pads",
+    "armor_rare_3": "'Employee of the Month' Plaque",
+    "buff_rare_1": "Aggressive Sales Strategy",
+    "buff_uncommon_1": "Box of Donuts",
+    "enemy_group_low": "Cubicle Farm of Lethargic Staff",
+    "enemy_group_medium": "Team of Disgruntled Interns",
+    "trap_medium": "Malfunctioning Paper Shredder",
+    "healing_medium": "Water Cooler Gossip Session",
+    "enemy_group_high": "HR Compliance Fortress",
+    "enemy_single_high": "Meeting with the Legal Department",
+    "boss_final": "The Quarterly Audit",
+    "trap_lethal": "Surprise Downsizing"
   }
 }
