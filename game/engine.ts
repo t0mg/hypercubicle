@@ -152,8 +152,9 @@ export class GameEngine {
       resilience: rng.nextInt(10, 90),
       skill: 0,
     };
-    const logger = new Logger();
-    const newAdventurer = new Adventurer(newTraits, logger);
+    const logger = Logger.getInstance();
+    logger.loadEntries([]);
+    const newAdventurer = new Adventurer(newTraits);
 
     const unlockedDeck = initialUnlocked?.items || this._allItems.filter(item => item.cost === null).map(item => item.id);
     const runDeck = generateLootDeck(unlockedDeck, this._allItems, DECK_SIZE);
@@ -221,7 +222,7 @@ export class GameEngine {
     const roomHand = roomRunDeck.slice(0, handSize);
     const availableRoomDeck = roomRunDeck.slice(handSize);
 
-    const resetAdventurer = new Adventurer(this.gameState.adventurer.traits, this.gameState.logger);
+    const resetAdventurer = new Adventurer(this.gameState.adventurer.traits);
     resetAdventurer.skill = this.gameState.adventurer.skill;
     resetAdventurer.challengeHistory = [...this.gameState.adventurer.challengeHistory];
     resetAdventurer.flowState = this.gameState.adventurer.flowState;
@@ -622,8 +623,8 @@ export class GameEngine {
       resilience: rng.nextInt(10, 90),
       skill: 0,
     };
-    const logger = new Logger();
-    const newAdventurer = new Adventurer(newTraits, logger);
+    const logger = Logger.getInstance();
+    const newAdventurer = new Adventurer(newTraits);
     return {
       phase: 'MENU',
       designer: { balancePoints: 0 },

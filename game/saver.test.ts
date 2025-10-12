@@ -13,8 +13,9 @@ describe('GameSaver', () => {
   beforeEach(() => {
     storage = new MemoryStorage();
     saver = new GameSaver(storage);
-    const logger = new Logger();
-    const adventurer = new Adventurer({ offense: 50, resilience: 50, skill: 10 }, logger);
+    const logger = Logger.getInstance();
+    logger.loadEntries([]);
+    const adventurer = new Adventurer({ offense: 50, resilience: 50, skill: 10 });
 
     // Create a complex game state to test serialization
     gameState = {

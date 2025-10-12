@@ -12,9 +12,22 @@ export interface LogEntry {
 type LogListener = (entry: LogEntry) => void;
 
 export class Logger {
+  private static instance: Logger;
+
   public entries: LogEntry[] = [];
   private listeners: LogListener[] = [];
   public muted: boolean = false;
+
+  private constructor() {
+    // private constructor
+  }
+
+  public static getInstance(): Logger {
+    if (!Logger.instance) {
+      Logger.instance = new Logger();
+    }
+    return Logger.instance;
+  }
 
   public on(listener: LogListener): void {
     this.listeners.push(listener);
@@ -59,9 +72,13 @@ export class Logger {
     };
   }
 
+  public loadEntries(entries: LogEntry[]): void {
+    this.entries = entries || [];
+  }
+
   public static fromJSON(data: { entries: LogEntry[] }): Logger {
-    const logger = new Logger();
-    logger.entries = data.entries || [];
+    const logger = Logger.getInstance();
+    logger.loadEntries(data.entries);
     return logger;
   }
 }
