@@ -1,6 +1,7 @@
 import { AdventurerTraits, AdventurerInventory, LootChoice, FlowState } from '../types';
 import { Logger } from './logger';
 import { getFlowState } from './utils';
+import { t } from '../text':
 
 const BASE_ADVENTURER_STATS = { hp: 100, maxHp: 100, power: 5 };
 const CHALLENGE_HISTORY_MAX_LENGTH = 3;
@@ -68,7 +69,7 @@ export class Adventurer {
     const oldFlowState = this.flowState;
     this.flowState = getFlowState(this.skill, this.challenge);
     if (oldFlowState !== this.flowState) {
-      this.logger.info('info_flow_state_changed', { from: FlowState[oldFlowState], to: FlowState[this.flowState] });
+      this.logger.info('info_flow_state_changed', { from: t('flow_states.' + FlowState[oldFlowState]), to: t('flow_states.' + FlowState[this.flowState]) });
     }
   }
 
