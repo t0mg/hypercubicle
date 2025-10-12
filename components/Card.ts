@@ -19,6 +19,11 @@ const StatChange = (label: string, value: number, positive: boolean = true, unit
     `;
 };
 
+interface PurchaseInfo {
+  cost: number;
+  canAfford: boolean;
+}
+
 export class Card extends HTMLElement {
   private _item: LootChoice | RoomChoice | null = null;
   private _isSelected: boolean = false;
@@ -26,6 +31,7 @@ export class Card extends HTMLElement {
   private _isNewlyDrafted: boolean = false;
   private _stackCount: number = 1;
   private _isSelectable: boolean = true;
+  private _purchaseInfo: PurchaseInfo | null = null;
 
   set item(value: LootChoice | RoomChoice) { this._item = value; this.render(); }
   get item(): LootChoice | RoomChoice { return this._item!; }
@@ -35,6 +41,9 @@ export class Card extends HTMLElement {
 
   set isSelectable(value: boolean) { this._isSelectable = value; this.render(); }
   get isSelectable(): boolean { return this._isSelectable; }
+
+  set purchaseInfo(value: PurchaseInfo | null) { this._purchaseInfo = value; this.render(); }
+  get purchaseInfo(): PurchaseInfo | null { return this._purchaseInfo; }
 
   set isSelected(value: boolean) { this._isSelected = value; this.render(); }
   get isSelected(): boolean { return this._isSelected; }
@@ -56,9 +65,9 @@ export class Card extends HTMLElement {
     this.addEventListener('click', (e) => {
       if (!this._isSelectable) return;
       // If the click is on the checkbox or its label, let the default action proceed.
-      // Otherwise, toggle the checkbox.
+      // Otherwise, if we are not in purchase mode, toggle the checkbox.
       const target = e.target as HTMLElement;
-      if (target.tagName !== 'INPUT' && target.tagName !== 'LABEL') {
+      if (target.tagName !== 'INPUT' && target.tagName !== 'LABEL' && !this._purchaseInfo) {
         const checkbox = this.querySelector('input[type="checkbox"]') as HTMLInputElement;
         if (checkbox && !checkbox.disabled) {
           checkbox.checked = !checkbox.checked;
@@ -162,10 +171,21 @@ export class Card extends HTMLElement {
             <div class="mt-2">
                 ${statsHtml}
             </div>
-            ${this._isSelectable ? `
+            ${this._isSelectable && !this._purchaseInfo ? `
             <div class="mt-4 flex items-center">
               <input type="checkbox" id="${checkboxId}" ${this._isSelected ? 'checked' : ''} ${this._isDisabled ? 'disabled' : ''}>
               <label for="${checkboxId}" class="ml-2 text-sm">${t('card.select')}</label>
+            </div>
+            ` : ''}
+            ${this._purchaseInfo ? `
+            <div class="mt-4 text-center">
+                <button
+                    data-item-id="${this._item.id}"
+                    ${!this._purchaseInfo.canAfford ? 'disabled' : ''}
+                    class="w-full"
+                >
+                    ${t('global.buy')} (${this._purchaseInfo.cost} ${t('global.bp')})
+                </button>
             </div>
             ` : ''}
         </div>
