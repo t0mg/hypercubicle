@@ -69,7 +69,6 @@ export class Adventurer {
     this.flowState = getFlowState(this.skill, this.challenge);
     if (oldFlowState !== this.flowState) {
       this.logger.info('info_flow_state_changed', { from: FlowState[oldFlowState], to: FlowState[this.flowState] });
-      this.logger.log(`Flow state changed to ${FlowState[this.flowState]}`, 'INFO', { event: 'flow_state_changed', flowState: FlowState[this.flowState] });
     }
   }
 

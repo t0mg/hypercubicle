@@ -91,6 +91,7 @@
   },
   "game_engine": {
     "new_adventurer": "A new Executive hire starts their day at office!",
+    "adventurer_returns": "The Executive returns for another Work Day!",
     "adventurer_declines_offer": "Disappointed by your offers, they decide to take nothing.",
     "adventurer_accepts_offer": "They requisitioned the {itemName}.",
     "adventurer_drinks_potion": "Sensing a threat to productivity, they urgently consumed the {potionName}.",
@@ -183,14 +184,20 @@
     "info_healing_room": "The Executive found the {name} and recovered {healing} stamina.",
     "info_trap_room": "The Executive ran into the {name} and lost {damage} stamina.",
     "info_no_more_rooms": "The Executive reached the end of the floor plan (without a performance review).",
+    "info_encounter": "The Executive encounters the {name}.",
     "info_encounter_enemy": "The Executive encounters hostile department member {current}/{total}.",
+    "info_adventurer_defeated": "The Executive has been defeated.",
     "info_enemy_defeated": "A hostile department member has been synergized with.",
     "info_entering_workshop": "The Executive is entering the workshop.",
     "info_workshop_not_unlocked": "The workshop is not unlocked yet. Starting a new run.",
     "info_adventurer_decision": "The Executive decided to {decision}.",
     "info_flow_state_changed": "The Executive's state of mind changed from {from} to {to}.",
     "info_repetitive_choice": "The Executive feels a sense of repetitiveness from seeing {name} again.",
-    "info_deja_vu": "The Executive feels a sense of deja vu upon entering {name}."
+    "info_deja_vu": "The Executive feels a sense of deja vu upon entering {name}.",
+    "info_item_chosen": "The Executive chose the {item}.",
+    "info_item_purchased": "Purchased {item}.",
+    "info_game_over": "WORK DAY OVER: {reason}",
+    "warn_empty_hand": "The Executive was hoping for new assets, but the budget is frozen."
   },
   "items_and_rooms": {
     "weapon_common_1": "Standard Issue Stapler",

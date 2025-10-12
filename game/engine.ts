@@ -71,7 +71,7 @@ export class GameEngine {
   }
 
   private _simulateEncounter(adventurer: Adventurer, room: number, encounter: Encounter): { newAdventurer: Adventurer; feedback: string[]; totalDamageTaken: number; } {
-    this.gameState?.logger.log(`--- Encounter: Room ${room} ---`, 'INFO', { event: 'battle_started', encounter: encounter });
+    this.gameState?.logger.debug(`--- Encounter: Room ${room} - ${encounter.enemyCount} enemies (Power: ${encounter.enemyPower}, HP: ${encounter.enemyHp}) ---`);
     const feedback: string[] = [];
     let totalDamageTaken = 0;
     let enemiesDefeated = 0;
@@ -129,7 +129,7 @@ export class GameEngine {
       }
 
       if (adventurer.hp <= 0) {
-        this.gameState?.logger.warn(`Adventurer has been defeated.`);
+        this.gameState?.logger.warn(`info_adventurer_defeated`);
         break;
       }
     }
@@ -257,7 +257,7 @@ export class GameEngine {
     processLootChoice(adventurer, choice, this.gameState.offeredLoot);
 
     if (choice) {
-      this.gameState.logger.log('Item chosen by adventurer', 'INFO', { event: 'item_chosen', item: choice });
+      this.gameState.logger.info('info_item_chosen', { item: t('items_and_rooms.' + choice.id )});
     }
 
     // --- Hand and Deck Update Logic ---
@@ -324,7 +324,7 @@ export class GameEngine {
     adventurer.roomHistory.push(chosenRoom.id);
     processRoomEntry(adventurer, chosenRoom);
 
-    this.gameState.logger.log(`--- Encountering Room: ${t('items_and_rooms.' + chosenRoom.id)} ---`, 'INFO', { event: 'room_encountered', room: chosenRoom });
+    this.gameState.logger.info('info_encounter', { name: t('items_and_rooms.' + chosenRoom.id) });
 
     switch (chosenRoom.type) {
       case 'room_enemy':
@@ -394,7 +394,7 @@ export class GameEngine {
     }
 
     if (this.gameState.hand && this.gameState.hand.length === 0) {
-      this.gameState.logger.warn("Your hand is empty! The adventurer must press on without new items.");
+      this.gameState.logger.warn("warn_empty_hand");
       feedback.push(t('game_engine.empty_hand'));
       this.gameState = {
         ...this.gameState,
@@ -431,8 +431,8 @@ export class GameEngine {
     if (!this.gameState) return;
     this.metaManager.updateRun(this.gameState.run);
     const newlyUnlocked = this.metaManager.checkForUnlocks(this.gameState.run);
-    this.gameState.logger.log(`Run ended with ${this.gameState.designer.balancePoints} BP.`, 'INFO', { event: 'run_end', bp: this.gameState.designer.balancePoints });
-    this.gameState.logger.error(`GAME OVER: ${reason}`);
+    this.gameState.logger.debug(`Run ended with ${this.gameState.designer.balancePoints} BP.`);
+    this.gameState.logger.error(`info_game_over`, {reason});
 
     const decision = this._getAdventurerEndRunDecision();
 
@@ -513,7 +513,7 @@ export class GameEngine {
     const newBalancePoints = this.gameState.designer.balancePoints - itemToBuy.cost;
     const newShopItems = this.gameState.shopItems.filter(i => i.id !== itemId);
 
-    this.gameState.logger.log(`Purchased ${t('items_and_rooms.' + itemToBuy.id)}.`, 'INFO', { event: 'item_purchased', item: itemToBuy });
+    this.gameState.logger.info(`info_item_purchased`, { item: t('items_and_rooms.' + itemToBuy.id) });
     this.gameState = {
       ...this.gameState,
       designer: { balancePoints: newBalancePoints },

@@ -21,7 +21,6 @@ export class Logger {
   }
 
   public log(key: string, level: LogLevel = 'INFO', data?: any): void {
-    console.log("Logging:", key, level, data);
     const message = t(`log_messages.${key}`, data);
     const entry = { message, level, timestamp: Date.now(), data };
     if (!this.muted) {
