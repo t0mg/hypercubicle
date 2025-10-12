@@ -33,7 +33,6 @@ export type Rarity = 'common' | 'uncommon' | 'rare' | 'legendary';
 export interface LootChoice {
   id: string;
   instanceId: string;
-  name: string;
   rarity: Rarity;
   type: 'item_weapon' | 'item_armor' | 'item_potion' | 'item_buff';
   stats: {
@@ -50,7 +49,6 @@ export interface LootChoice {
 export interface RoomChoice {
   id: string,
   instanceId: string;
-  name: string;
   type: 'room_enemy' | 'room_boss' | 'room_healing' | 'room_trap';
   rarity: Rarity;
   cost: number | null;

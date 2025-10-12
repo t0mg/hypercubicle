@@ -1,7 +1,6 @@
 [
   {
-    "id": "enemy_easy_lethargic_staff",
-    "name": "Cubicle Farm of Lethargic Staff",
+    "id": "enemy_group_low",
     "type": "room_enemy",
     "rarity": "common",
     "cost": null,
@@ -13,8 +12,7 @@
     }
   },
   {
-    "id": "enemy_easy_disgruntled_interns",
-    "name": "Team of Disgruntled Interns",
+    "id": "enemy_group_medium",
     "type": "room_enemy",
     "rarity": "common",
     "cost": null,
@@ -26,8 +24,7 @@
     }
   },
   {
-    "id": "trap_medium_paper_shredder",
-    "name": "Malfunctioning Paper Shredder",
+    "id": "trap_medium",
     "type": "room_trap",
     "rarity": "common",
     "cost": null,
@@ -36,8 +33,7 @@
     }
   },
   {
-    "id": "healing_medium_water_cooler",
-    "name": "Water Cooler Gossip Session",
+    "id": "healing_medium",
     "type": "room_healing",
     "rarity": "uncommon",
     "cost": null,
@@ -46,8 +42,7 @@
     }
   },
   {
-    "id": "enemy_hard_hr_fortress",
-    "name": "HR Compliance Fortress",
+    "id": "enemy_group_high",
     "type": "room_enemy",
     "rarity": "uncommon",
     "cost": null,
@@ -59,8 +54,7 @@
     }
   },
   {
-    "id": "enemy_hard_legal_department",
-    "name": "Meeting with the Legal Department",
+    "id": "enemy_single_high",
     "type": "room_enemy",
     "rarity": "uncommon",
     "cost": null,
@@ -72,8 +66,7 @@
     }
   },
   {
-    "id": "boss_final_quarterly_audit",
-    "name": "The Quarterly Audit",
+    "id": "boss_final",
     "type": "room_boss",
     "rarity": "rare",
     "cost": 300,
@@ -83,8 +76,7 @@
     }
   },
   {
-    "id": "trap_lethal_downsizing",
-    "name": "Surprise Downsizing",
+    "id": "trap_lethal",
     "type": "room_trap",
     "rarity": "rare",
     "cost": 200,
