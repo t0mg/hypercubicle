@@ -2,33 +2,33 @@
   "game_title": "Rogue Steward",
   "game_subtitle": "Curate the Office, Avoid the Burnout.",
   "menu": {
-    "new_game": "New Game",
+    "new_game": "New Hire",
     "continue_game": "Continue",
-    "reset_save": "Reset Save",
-    "new_game_confirm": "Starting a new Game creates a new Adventurer, retiring the current one. Only unlocked features are preserved. Are you sure?",
-    "reset_save_confirm": "This will permanently delete all your progress, including unlocked features and adventurer history. Are you absolutely sure?",
-    "adventurer_count": "Adventurers (Games): {count}",
-    "max_runs": "Best adventurer: {count} runs",
-    "unlocked_features": "Unlocked Features: {count}"
+    "reset_save": "Liquidate Company",
+    "new_game_confirm": "Starting a new hire retires the current Executive. Only unlocked Perks are preserved. Are you sure?",
+    "reset_save_confirm": "This will permanently delete all your progress, including unlocked Perks and Executive performance history. Are you absolutely sure?",
+    "adventurer_count": "Executives hired: {count}",
+    "max_runs": "Best executive: {count} days",
+    "unlocked_features": "Unlocked Perks: {count}"
   },
   "global": {
-    "health": "Health",
-    "max_hp": "Max HP",
-    "power": "Power",
+    "health": "Stamina",
+    "max_hp": "Max Stamina",
+    "power": "Productivity",
     "duration": "Duration",
-    "attack": "Attack",
+    "attack": "Complexity",
     "units": " (per mob)",
-    "bp": "BP",
-    "run": "Run",
+    "bp": "Exp. Funds",
+    "run": "Day",
     "room": "Room",
     "deck": "Loot deck",
     "rooms": "Rooms deck",
-    "workshop": "Workshop",
+    "workshop": "Corporate Supply Closet",
     "none": "None",
-    "buy": "Buy",
+    "buy": "Requisition",
     "loading": "Loading...",
-    "initializing": "Initializing...",
-    "loading_game_data": "Loading Game Data...",
+    "initializing": "Sipping Coffee...",
+    "loading_game_data": "Loading Synergies...",
     "an_error_occurred": "An Error Occurred",
     "unknown_error": "An unknown error occurred while loading game data.",
     "continue": "Continue",
@@ -44,50 +44,50 @@
     "title": "Executive #{count}",
     "flow_state": "Engagement Level",
     "inventory": "Briefcase",
-    "weapon": "Work Tool",
-    "armor": "Office Attire",
-    "potions": "Perks",
+    "weapon": "Tool",
+    "armor": "Attire",
+    "potions": "Snacks",
     "buffs": "Directives",
-    "pwr": "Prod",
-    "hp": "Stam",
+    "pwr": "Prod.",
+    "hp": "Stam.",
     "potions_held": "{count} available",
     "traits": "Traits"
   },
   "log_panel": {
-    "title": "Game Log & Debug Info",
-    "offense": "OFFENSE",
-    "resilience": "RESILIENCE",
-    "skill": "SKILL"
+    "title": "Performance Review & Audit Trail",
+    "offense": "PRODUCTIVITY",
+    "resilience": "TENACITY",
+    "skill": "EXPERIENCE"
   },
   "run_ended_screen": {
-    "run_complete": "The Adventurer's run is over.",
-    "default_reason": "The run has ended.",
-    "adventurer_considers_fate": "The adventurer considers their fate",
-    "continue_quote": "\"I will go on.\"",
-    "continue_decision": "Congratulations, they want more!",
-    "enter_workshop": "Enter Workshop",
-    "retire_quote": "\"I have seen enough.\"",
-    "retire_decision": "They lost motivation, and retire after {run} runs.",
-    "recruit_new_adventurer": "Recruit Next Adventurer",
-    "start_new_run": "Start New Run"
+    "run_complete": "The Executive's Work Day is over.",
+    "default_reason": "The fiscal period has ended.",
+    "adventurer_considers_fate": "The Executive considers their career trajectory",
+    "continue_quote": "\"I can still leverage my assets.\"",
+    "continue_decision": "Paradigm shifted! They're ready for another day!",
+    "enter_workshop": "Visit Supply Closet",
+    "retire_quote": "\"I'm cashing out my 401k.\"",
+    "retire_decision": "They lost motivation, and filed their resignation after {run} Work Days.",
+    "recruit_new_adventurer": "Hire Next Executive",
+    "start_new_run": "Start New Work Day"
   },
   "choice_panel": {
-    "title": "Present Rewards for the Adventurer to Choose From",
+    "title": "Present Corporate Assets for the Executive to Choose From",
     "present_offer": "Present Offer",
-    "title_room": "Choose Three Rooms or One Boss",
+    "title_room": "Choose Three Floors or One Department Head",
     "begin_encounter": "Begin Encounter",
-    "multiple_enemies_title": "{name} ({count} mobs)",
+    "multiple_enemies_title": "{name} ({count} members)",
     "stacked_items_title": "{name} (x{count})",
-    "new_items_title": "Newly requisitioned",
+    "new_items_title": "Newly requisitioned:",
     "continue_without_loot": "Continue without offering new assets",
     "roll_credits": "No more floors. Time for the after-work party."
   },
   "workshop": {
-    "title": "The Workshop",
-    "description": "Spend Balance Points to add more items to your deck.",
-    "balance_points": "Balance Points: ",
-    "no_new_items": "No new items available for purchase this time.",
-    "begin_next_run": "Begin Next Run"
+    "title": "The Corporate Supply Closet",
+    "description": "Spend Expense Account Funds to add more assets to your inventory catalog.",
+    "balance_points": "Expense Funds: ",
+    "no_new_items": "No new assets available for requisition this time.",
+    "begin_next_run": "Begin Next Work Day"
   },
   "game_engine": {
     "new_adventurer": "A new Executive hire starts their day at office!",
@@ -109,58 +109,60 @@
     "no_more_rooms": "The Executive reached the end of the floor plan (without a performance review)."
   },
   "unlocks": {
-    "title": "You Unlocked a New Feature",
+    "title": "You Unlocked a New Perk",
     "workshop": {
-      "title": "The Workshop",
-      "description": "Between runs, you can now visit the Workshop and spend Balance Points to add new items to your deck (until the adventurer retires)."
+      "title": "The Corporate Supply Closet",
+      "description": "Between Work Days, you can now visit the Supply Closet and spend Expense Funds to add new assets to your inventory catalog (until the Executive resigns)."
     },
     "room_deck_size_increase": {
-      "title": "Room Deck Size Increased",
-      "description": "The number of rooms in your deck has been increased to 36."
+      "title": "Office Expansion Approved",
+      "description": "The number of rooms in your building has been increased to 36."
     },
     "hand_size_increase": {
-      "title": "Hand Size Increased",
-      "description": "You can now hold more cards in your hand, giving you more options."
+      "title": "Rolodex Upgrade",
+      "description": "You can now hold more assets in your hand, giving you more strategic options."
     }
   },
   "tooltips": {
     "adventurer_health": {
-      "title": "Adventurer's Health",
-      "body": "This is the adventurer's current health. If it reaches <b>zero</b>, the run ends."
+    "adventurer_health": {
+      "title": "Executive's Stamina",
+      "body": "This is the executive's current stamina. If it reaches <b>zero</b>, they suffer a burnout and the Work Day ends."
     },
     "adventurer_power": {
-      "title": "Adventurer's Power",
-      "body": "This is the adventurer's power level. It affects how much damage they deal in combat.<ul><li>Higher power is better</li><li>Can be increased by items</li></ul>"
+      "title": "Executive's Productivity",
+      "body": "This is the executive's productivity level. It affects how effectively they handle encounters.<ul><li>Higher productivity is better</li><li>Can be increased by corporate assets</li></ul>"
     },
     "adventurer_flow_state": {
-      "title": "Mindstate",
-      "body": "The adventurer's mental state. This is affected by the difficulty of encounters. <br/><br/>If they get too <b>bored</b> or too <b>anxious</b>, they might quit."
+      "title": "Engagement Level",
+      "body": "The executive's mental state. This is affected by the difficulty of their tasks. <br/><br/>If they experience too much <b>Lethargy</b> or <b>Imminent Burnout</b>, they might quit."
     },
     "multiple_units": {
-      "title": "Mobs",
-      "body": "Stats apply to eaxh individual mob in this room."
+      "title": "Team Members",
+      "body": "Stats apply to each individual member in this department."
     }
   },
   "flow_states": {
-    "Flow": "Optimal Synergy",
+    "Flow": "Flow",
     "Control": "Deep Focus",
-    "Arousal": "Hyper-Focus (Deadline)",
-    "Relaxation": "Cruise Control",
+    "Arousal": "Uncomfortable Excitement",
+    "Relaxation": "Thoughtfulness",
     "Worry": "Deadline Pressure",
     "Anxiety": "Imminent Burnout",
     "Boredom": "Lethargy",
     "Apathy": "Quiet Quitting"
   },
   "rarity": {
-    "common": "Common",
-    "uncommon": "Uncommon",
-    "rare": "Rare"
+    "common": "Standard",
+    "uncommon": "Elite",
+    "rare": "Platinium",
+    "legendary": "Classified"
   },
   "card_types": {
-    "item_weapon": "Weapon",
-    "item_potion": "Potion",
-    "item_armor": "Armor",
-    "item_buff": "Buff",
+    "item_weapon": "Tool",
+    "item_potion": "Snack",
+    "item_armor": "Attire",
+    "item_buff": "Directive",
     "room_enemy": "Hostile Department",
     "room_trap": "Office Hazard",
     "room_healing": "Break Room",
