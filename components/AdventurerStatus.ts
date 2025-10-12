@@ -164,11 +164,11 @@ export class AdventurerStatus extends HTMLElement {
       traitsSection.classList.add('hidden');
     }
 
-    this.updateInventorySlot('weapon-slot', WeaponIcon(), t('adventurer_status.weapon'), this._adventurer.inventory.weapon ? `<div><p class="text-sm">${this._adventurer.inventory.weapon.name}</p><p class="text-xs">${t('adventurer_status.pwr')}: ${this._adventurer.inventory.weapon.stats.power || 0}${this._adventurer.inventory.weapon.stats.maxHp ? `, ${t('adventurer_status.hp')}: ${this._adventurer.inventory.weapon.stats.maxHp}` : ''}</p></div>` : `<p class="italic text-xs">${t('global.none')}</p>`);
-    this.updateInventorySlot('armor-slot', ArmorIcon(), t('adventurer_status.armor'), this._adventurer.inventory.armor ? `<div><p class="text-sm">${this._adventurer.inventory.armor.name}</p><p class="text-xs">${t('adventurer_status.hp')}: ${this._adventurer.inventory.armor.stats.maxHp || 0}${this._adventurer.inventory.armor.stats.power ? `, ${t('adventurer_status.pwr')}: ${this._adventurer.inventory.armor.stats.power}` : ''}</p></div>` : `<p class="italic text-xs">${t('global.none')}</p>`);
+    this.updateInventorySlot('weapon-slot', WeaponIcon(), t('adventurer_status.weapon'), this._adventurer.inventory.weapon ? `<div><p class="text-sm">${t('items_and_rooms.' + this._adventurer.inventory.weapon.id)}</p><p class="text-xs">${t('adventurer_status.pwr')}: ${this._adventurer.inventory.weapon.stats.power || 0}${this._adventurer.inventory.weapon.stats.maxHp ? `, ${t('adventurer_status.hp')}: ${this._adventurer.inventory.weapon.stats.maxHp}` : ''}</p></div>` : `<p class="italic text-xs">${t('global.none')}</p>`);
+    this.updateInventorySlot('armor-slot', ArmorIcon(), t('adventurer_status.armor'), this._adventurer.inventory.armor ? `<div><p class="text-sm">${t('items_and_rooms.' + this._adventurer.inventory.armor.id)}</p><p class="text-xs">${t('adventurer_status.hp')}: ${this._adventurer.inventory.armor.stats.maxHp || 0}${this._adventurer.inventory.armor.stats.power ? `, ${t('adventurer_status.pwr')}: ${this._adventurer.inventory.armor.stats.power}` : ''}</p></div>` : `<p class="italic text-xs">${t('global.none')}</p>`);
     this.updateInventorySlot('buffs-slot', BuffIcon(), t('adventurer_status.buffs'), this._adventurer.activeBuffs.length > 0 ? this._adventurer.activeBuffs.map(buff => `
             <div class="text-xs">
-                <p>${buff.name} (${t('global.duration')}: ${buff.stats.duration})</p>
+                <p>${t('items_and_rooms.' + buff.id)} (${t('global.duration')}: ${buff.stats.duration})</p>
                 <p>${Object.entries(buff.stats).filter(([stat]) => stat !== 'duration').map(([stat, value]) => `${t(`global.${stat}`)}: ${value}`).join(', ')}</p>
             </div>
         `).join('') : `<p class="italic text-xs">${t('global.none')}</p>`);

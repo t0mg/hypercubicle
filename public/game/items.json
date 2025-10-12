@@ -1,135 +1,118 @@
 [
   {
-      "id": "weapon_stapler",
-      "name": "Standard Issue Stapler",
+      "id": "weapon_common_1",
       "type": "item_weapon",
       "rarity": "common",
       "stats": { "power": 2 },
       "cost": null
   },
   {
-      "id": "potion_coffee",
-      "name": "Lukewarm Office Coffee",
+      "id": "potion_common_1",
       "type": "item_potion",
       "rarity": "common",
       "stats": { "hp": 20 },
       "cost": null
   },
   {
-      "id": "armor_tie",
-      "name": "Polyester Power Tie",
+      "id": "armor_common_1",
       "type": "item_armor",
       "rarity": "common",
       "stats": { "maxHp": 10 },
       "cost": null
   },
   {
-      "id": "weapon_pencil",
-      "name": "Unsharpened Pencil",
+      "id": "weapon_common_2",
       "type": "item_weapon",
       "rarity": "common",
       "stats": { "power": 1 },
       "cost": null
   },
   {
-      "id": "potion_tape",
-      "name": "Roll of Scotch Tape",
+      "id": "potion_common_2",
       "type": "item_potion",
       "rarity": "common",
       "stats": { "hp": 15 },
       "cost": null
   },
   {
-      "id": "armor_poster",
-      "name": "Motivational Poster",
+      "id": "armor_uncommon_1",
       "type": "item_armor",
       "rarity": "uncommon",
       "stats": { "power": 1, "maxHp": 15 },
       "cost": 150
   },
   {
-      "id": "weapon_mullet",
-      "name": "The Aggressive Mullet Haircut",
+      "id": "weapon_uncommon_1",
       "type": "item_weapon",
       "rarity": "uncommon",
       "stats": { "power": 6, "maxHp": -10 },
       "cost": 150
   },
   {
-      "id": "potion_espresso",
-      "name": "Espresso Shot",
+      "id": "potion_uncommon_1",
       "type": "item_potion",
       "rarity": "uncommon",
       "stats": { "hp": 50 },
       "cost": 120
   },
   {
-      "id": "weapon_clipboard",
-      "name": "Heavy Duty Clipboard",
+      "id": "weapon_uncommon_2",
       "type": "item_weapon",
       "rarity": "uncommon",
       "stats": { "power": 4 },
       "cost": 140
   },
   {
-      "id": "armor_cubicle_wall",
-      "name": "Cubicle Wall",
+      "id": "armor_uncommon_2",
       "type": "item_armor",
       "rarity": "uncommon",
       "stats": { "maxHp": 20 },
       "cost": 120
   },
   {
-      "id": "armor_chair",
-      "name": "Ergonomic Chair (Oversized Model)",
+      "id": "armor_rare_1",
       "type": "item_armor",
       "rarity": "rare",
       "stats": { "maxHp": 50, "power": -2 },
       "cost": 300
   },
   {
-      "id": "weapon_laser_pointer",
-      "name": "Executive Presentation Pointer (Laser)",
+      "id": "weapon_rare_1",
       "type": "item_weapon",
       "rarity": "rare",
       "stats": { "power": 10 },
       "cost": 350
   },
   {
-      "id": "potion_stock_options",
-      "name": "Unexpected Stock Option Vesting",
+      "id": "potion_rare_1",
       "type": "item_potion",
       "rarity": "rare",
       "stats": { "hp": 150 },
       "cost": 250
   },
   {
-      "id": "armor_shoulder_pads",
-      "name": "Shoulder Pads",
+      "id": "armor_rare_2",
       "type": "item_armor",
       "rarity": "rare",
       "stats": { "power": 3, "maxHp": 25 },
       "cost": 320
   },
   {
-      "id": "armor_plaque",
-      "name": "'Employee of the Month' Plaque",
+      "id": "armor_rare_3",
       "type": "item_armor",
       "rarity": "rare",
       "stats": { "maxHp": 30, "power": 3 },
       "cost": 320
   },
   {
-      "id": "buff_sales_strategy",
-      "name": "Aggressive Sales Strategy",
+      "id": "buff_rare_1",
       "type": "item_buff",
       "rarity": "rare",
       "stats": { "power": 20, "maxHp": -50, "duration": 5 },
       "cost": 200
   },
   {
-      "id": "buff_donuts",
-      "name": "Box of Donuts",
+      "id": "buff_uncommon_1",
       "type": "item_buff",
       "rarity": "uncommon",
       "stats": { "power": 0, "maxHp": 30, "hp": 30, "duration": 3 },

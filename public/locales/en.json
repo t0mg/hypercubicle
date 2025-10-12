@@ -191,5 +191,32 @@
     "info_flow_state_changed": "The Executive's state of mind changed from {from} to {to}.",
     "info_repetitive_choice": "The Executive feels a sense of repetitiveness from seeing {name} again.",
     "info_deja_vu": "The Executive feels a sense of deja vu upon entering {name}."
+  },
+  "items_and_rooms": {
+    "weapon_common_1": "Standard Issue Stapler",
+    "potion_common_1": "Lukewarm Office Coffee",
+    "armor_common_1": "Polyester Power Tie",
+    "weapon_common_2": "Unsharpened Pencil",
+    "potion_common_2": "Roll of Scotch Tape",
+    "armor_uncommon_1": "Motivational Poster",
+    "weapon_uncommon_1": "The Aggressive Mullet Haircut",
+    "potion_uncommon_1": "Espresso Shot",
+    "weapon_uncommon_2": "Heavy Duty Clipboard",
+    "armor_uncommon_2": "Cubicle Wall",
+    "armor_rare_1": "Ergonomic Chair (Oversized Model)",
+    "weapon_rare_1": "Executive Presentation Pointer (Laser)",
+    "potion_rare_1": "Unexpected Stock Option Vesting",
+    "armor_rare_2": "Shoulder Pads",
+    "armor_rare_3": "'Employee of the Month' Plaque",
+    "buff_rare_1": "Aggressive Sales Strategy",
+    "buff_uncommon_1": "Box of Donuts",
+    "enemy_group_low": "Cubicle Farm of Lethargic Staff",
+    "enemy_group_medium": "Team of Disgruntled Interns",
+    "trap_medium": "Malfunctioning Paper Shredder",
+    "healing_medium": "Water Cooler Gossip Session",
+    "enemy_group_high": "HR Compliance Fortress",
+    "enemy_single_high": "Meeting with the Legal Department",
+    "boss_final": "The Quarterly Audit",
+    "trap_lethal": "Surprise Downsizing"
   }
 }

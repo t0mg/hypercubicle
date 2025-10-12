@@ -29,11 +29,11 @@ const mockItems: LootChoice[] = Array.from({ length: 30 }, (_, i) => {
 });
 
 const mockRooms: RoomChoice[] = [
-  { id: 'room_1', instanceId: 'r1', name: 'Test Room', type: 'room_enemy', rarity: 'common', cost: null, stats: { attack: 5, hp: 10, minUnits: 1, maxUnits: 1 } },
-  { id: 'room_2', instanceId: 'r2', name: 'Test Boss Room', type: 'room_boss', rarity: 'rare', cost: 100, stats: { attack: 10, hp: 50 } },
-  { id: 'room_3', instanceId: 'r3', name: 'Healing Fountain', type: 'room_healing', rarity: 'uncommon', cost: null, stats: { hp: 20 } },
-  { id: 'room_4', instanceId: 'r4', name: 'Trap Room', type: 'room_trap', rarity: 'common', cost: null, stats: { attack: 15 } },
-  { id: 'room_5', instanceId: 'r5', name: 'Harmless Room', type: 'room_enemy', rarity: 'common', cost: null, units: 0, stats: { attack: 0, hp: 10 } },
+  { id: 'room_1', instanceId: 'r1', type: 'room_enemy', rarity: 'common', cost: null, stats: { attack: 5, hp: 10, minUnits: 1, maxUnits: 1 } },
+  { id: 'room_2', instanceId: 'r2', type: 'room_boss', rarity: 'rare', cost: 100, stats: { attack: 10, hp: 50 } },
+  { id: 'room_3', instanceId: 'r3', type: 'room_healing', rarity: 'uncommon', cost: null, stats: { hp: 20 } },
+  { id: 'room_4', instanceId: 'r4', type: 'room_trap', rarity: 'common', cost: null, stats: { attack: 15 } },
+  { id: 'room_5', instanceId: 'r5', type: 'room_enemy', rarity: 'common', cost: null, units: 0, stats: { attack: 0, hp: 10 } },
 ];
 
 describe('GameEngine', () => {
@@ -149,7 +149,7 @@ describe('GameEngine', () => {
     vi.useFakeTimers();
 
     const buffItem: LootChoice = {
-      id: 'buff_1', instanceId: 'b_1', name: 'Test Buff', type: 'item_buff', rarity: 'rare', cost: 100,
+      id: 'buff_1', instanceId: 'b_1', type: 'item_buff', rarity: 'rare', cost: 100,
       stats: { power: 10, maxHp: -20, duration: 2 },
     };
     (engine as any)._allItems.push(buffItem);
@@ -174,7 +174,7 @@ describe('GameEngine', () => {
     expect(engine.gameState!.adventurer.maxHp).toBe(80);
     expect(engine.gameState!.adventurer.hp).toBe(64);
 
-    const harmlessRoom = mockRooms.find(r => r.name === 'Harmless Room')!;
+    const harmlessRoom = mockRooms.find(r => r.id === 'room_5')!;
 
     // --- Run Encounter 1 (buff duration ticks down) ---
     // phase is now DESIGNER_CHOOSING_ROOM
@@ -229,7 +229,7 @@ describe('GameEngine', () => {
       engine.gameState!.designer.balancePoints = 100;
 
       // Manually set shop items for deterministic test and add it to the engine's items
-      const itemToBuy: LootChoice = { id: 'buyable_item', instanceId: 'bi_1', name: 'Test Buyable', type: 'item_weapon', rarity: 'uncommon', cost: 75, stats: { power: 15 } };
+      const itemToBuy: LootChoice = { id: 'buyable_item', instanceId: 'bi_1', type: 'item_weapon', rarity: 'uncommon', cost: 75, stats: { power: 15 } };
       (engine as any)._allItems.push(itemToBuy); // Inject item
       engine.gameState!.shopItems = [itemToBuy];
 
@@ -320,7 +320,7 @@ describe('GameEngine', () => {
 
       engine.gameState!.run = 1;
       engine.gameState!.designer.balancePoints = 100;
-      const itemToBuy: LootChoice = { id: 'buyable_item_2', instanceId: 'bi_2', name: 'Test Buyable 2', type: 'item_weapon', rarity: 'uncommon', cost: 75, stats: { power: 15 } };
+      const itemToBuy: LootChoice = { id: 'buyable_item_2', instanceId: 'bi_2', type: 'item_weapon', rarity: 'uncommon', cost: 75, stats: { power: 15 } };
       (engine as any)._allItems.push(itemToBuy);
       engine.gameState!.shopItems = [itemToBuy];
 
@@ -349,7 +349,7 @@ describe('GameEngine', () => {
 
   it('should not attack in the same turn a potion is used', () => {
     const adventurer = engine.gameState!.adventurer;
-    const potion: LootChoice = { id: 'p_1', instanceId: 'p_1', name: 'Test Potion', type: 'item_potion', rarity: 'common', cost: 10, stats: { hp: 50 } };
+    const potion: LootChoice = { id: 'p_1', instanceId: 'p_1', type: 'item_potion', rarity: 'common', cost: 10, stats: { hp: 50 } };
     adventurer.inventory.potions.push(potion);
     adventurer.hp = 10; // Low HP to trigger potion use
 

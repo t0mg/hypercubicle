@@ -58,8 +58,8 @@ export function getAdventurerLootChoice(adventurer: Adventurer, offeredLoot: Loo
   }
 
   const choice = scoredLoot[0].item;
-  logger.debug(`Adventurer chooses: ${choice.name} (Score: ${scoredLoot[0].score.toFixed(1)})`);
-  const reason: string = t('game_engine.adventurer_accepts_offer', { itemName: choice.name });
+  logger.debug(`Adventurer chooses: ${t('items_and_rooms.' + choice.id)} (Score: ${scoredLoot[0].score.toFixed(1)})`);
+  const reason: string = t('game_engine.adventurer_accepts_offer', { itemName: t('items_and_rooms.' + choice.id) });
   return { choice, reason };
 }
 
@@ -100,7 +100,7 @@ export function processLootChoice(adventurer: Adventurer, choice: LootChoice | n
     const repetitionCount = adventurer.lootHistory.filter(id => id === choice.id).length;
     if (repetitionCount > 2) {
       adventurer.modifyChallenge(adventurer.challenge - REPETITION_PENALTY);
-      adventurer.logger.info('info_repetitive_choice', { name: choice.name });
+      adventurer.logger.info('info_repetitive_choice', { name: t('items_and_rooms.' + choice.id) });
     }
 
     const score = scoreItem(adventurer, choice);
@@ -128,7 +128,7 @@ export function processRoomEntry(adventurer: Adventurer, chosenRoom: RoomChoice)
   const repetitionCount = adventurer.roomHistory.filter(id => id === chosenRoom.id).length;
   if (repetitionCount > 2) {
     adventurer.modifyChallenge(adventurer.challenge - REPETITION_PENALTY);
-    adventurer.logger.info('info_deja_vu', { name: chosenRoom.name });
+    adventurer.logger.info('info_deja_vu', { name: t('items_and_rooms.' + chosenRoom.id) });
   }
 
   let challengeModifier = 0;

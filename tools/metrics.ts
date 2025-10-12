@@ -1,5 +1,6 @@
 import { LogEntry } from '../game/logger';
 import { MetaState } from '../game/meta';
+import { t } from '../text';
 
 export class Metrics {
   private runs: number = 0;
@@ -31,17 +32,17 @@ export class Metrics {
 
   public handleLogEntry = (entry: LogEntry): void => {
     if (entry.data?.event === 'room_encountered') {
-      const roomName = entry.data.room.name;
+      const roomName = t('items_and_rooms.' + entry.data.room.id);
       this.roomUsage.set(roomName, (this.roomUsage.get(roomName) || 0) + 1);
       if (entry.data.room.type === 'enemy' || entry.data.room.type === 'boss') {
         this.battles++;
         this.monsters += entry.data.room.units || 1;
       }
     } else if (entry.data?.event === 'item_chosen') {
-      const itemName = entry.data.item.name;
+      const itemName = t('items_and_rooms.' + entry.data.item.id);
       this.itemUsage.set(itemName, (this.itemUsage.get(itemName) || 0) + 1);
     } else if (entry.data?.event === 'item_purchased') {
-      const itemName = entry.data.item.name;
+      const itemName = t('items_and_rooms.' + entry.data.item.id);
       this.purchases.set(itemName, (this.purchases.get(itemName) || 0) + 1);
     } else if (entry.data?.event === 'run_end') {
       this.totalBP += entry.data.bp;

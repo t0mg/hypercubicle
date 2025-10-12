@@ -73,7 +73,7 @@ const ShopItemCard = (item: LootChoice | RoomChoice, canAfford: boolean) => {
         <div class="bg-brand-surface border border-brand-primary rounded-lg p-4 flex flex-col justify-between shadow-lg animate-fade-in">
             <div>
                 <div class="flex justify-between items-baseline">
-                    <p class="text-lg ${rarityColor}">${item.name}</p>
+                    <p class="text-lg ${rarityColor}">${t('items_and_rooms.' + item.id)}</p>
                     <p class="text-xs text-brand-text-muted font-mono">${item.type}</p>
                 </div>
                 <p class="text-xs uppercase tracking-wider mb-3 ${rarityColor}">${item.rarity}</p>
