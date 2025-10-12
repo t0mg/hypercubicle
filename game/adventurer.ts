@@ -1,7 +1,7 @@
 import { AdventurerTraits, AdventurerInventory, LootChoice, FlowState } from '../types';
 import { Logger } from './logger';
 import { getFlowState } from './utils';
-import { t } from '../text':
+import { t } from '../text';
 
 const BASE_ADVENTURER_STATS = { hp: 100, maxHp: 100, power: 5 };
 const CHALLENGE_HISTORY_MAX_LENGTH = 3;
