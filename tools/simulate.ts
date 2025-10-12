@@ -4,6 +4,7 @@ import { rng } from '../game/random';
 import { LootChoice, RoomChoice, GameState, FlowState } from '../types';
 import { initLocalization } from '../text';
 import { MemoryStorage } from '../game/storage';
+import { Logger } from '../game/logger';
 import { GameSaver } from '../game/saver';
 import { UnlockableFeature } from '../game/unlocks';
 import { DataLoaderFileSystem } from './data-loader-file-system';
@@ -62,16 +63,11 @@ class Simulation {
     await this.engine.init();
     console.log('Simulation started.');
 
-    const metrics = new Metrics();
+    const logger = Logger.getInstance();
+    logger.muted = !this.isVerbose;
 
-    const attachLogger = () => {
-      if (this.engine.gameState) {
-        this.engine.gameState.logger.on(metrics.handleLogEntry);
-        if (!this.isVerbose) {
-          this.engine.gameState.logger.muted = true;
-        }
-      }
-    }
+    const metrics = new Metrics();
+    logger.on(metrics.handleLogEntry);
 
     const initialUnlocked = {
       items: (this.engine as any)._allItems.filter((item: LootChoice) => item.cost === null).map((item: LootChoice) => item.id),
@@ -81,7 +77,6 @@ class Simulation {
     this.metaManager.metaState.unlockedFeatures.push(UnlockableFeature.WORKSHOP);
 
     this.engine.startNewGame(initialUnlocked);
-    attachLogger();
 
     let totalRunCount = 0;
     while (totalRunCount < runs) {
@@ -126,10 +121,8 @@ class Simulation {
           this.engine.purchaseItem(choice);
         }
         this.engine.exitWorkshop(); // This will start a new run
-        attachLogger();
       } else if (this.engine.gameState.phase === 'MENU') {
         this.engine.startNewGame(initialUnlocked);
-        attachLogger();
       }
     }
     metrics.setMeta(this.metaManager.metaState);

@@ -1,6 +1,4 @@
-
-
-import { DataLoader } from "../types";
+import { DataLoader } from "./types";
 
 let translations: any = {};
 
@@ -38,8 +36,6 @@ export function t(key: string, replacements: Record<string, string | number> = {
 
   return text;
 }
-
-
 
 export async function initLocalization(dataLoader: DataLoader): Promise<void> {
   const lang = getLanguage();

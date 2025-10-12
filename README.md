@@ -105,3 +105,11 @@ To run the project locally, you need to have Node.js and npm installed.
     ```
 
 This will start a Vite development server and open the application in your default browser.
+
+## Credits
+
+Styling curtesy of [XP.css ](https://botoxparty.github.io/XP.css)
+
+"Bliss" inspired background image was is custom made from these sources
+- https://www.pexels.com/photo/grass-hill-under-a-clear-blue-sky-16452613/
+- https://www.pexels.com/photo/blue-skies-53594/

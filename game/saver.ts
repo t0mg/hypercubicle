@@ -5,7 +5,7 @@ import { Logger } from './logger';
 const SAVE_GAME_KEY = 'rogue-steward-savegame';
 
 // A version number to handle future migrations if the save format changes.
-const SAVE_VERSION = '1.0.0';
+const SAVE_VERSION = '1.0.1';
 
 interface SerializableGameState {
   version: string;
@@ -70,11 +70,14 @@ export class GameSaver {
   private _deserialize(data: SerializableGameState): GameState {
     const { adventurer: adventurerData, logger: loggerData, ...restOfState } = data;
 
-    const logger = Logger.fromJSON(loggerData); // Need a static fromJSON method
+    const logger = Logger.getInstance();
+    logger.loadEntries(loggerData.entries);
     const adventurer = Adventurer.fromJSON(adventurerData, logger); // Need a static fromJSON method
 
+    // Exclude 'version' from restOfState before returning
+    const { version, ...gameStateRest } = restOfState;
     return {
-      ...restOfState,
+      ...gameStateRest,
       adventurer,
       logger,
     } as GameState;

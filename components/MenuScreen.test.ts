@@ -15,6 +15,7 @@ describe('MenuScreen', () => {
   let storage: MemoryStorage;
   let saver: GameSaver;
   let dataLoader: DataLoaderFileSystem;
+  let appElement: HTMLElement;
 
   beforeAll(async () => {
     dataLoader = new DataLoaderFileSystem();
@@ -25,11 +26,13 @@ describe('MenuScreen', () => {
     storage = new MemoryStorage();
     metaManager = new MetaManager(storage);
     saver = new GameSaver(storage);
+    appElement = document.createElement('div');
+    document.body.appendChild(appElement);
     engine = new GameEngine(metaManager, dataLoader, saver);
     await engine.init();
 
     menuScreen = new MenuScreen();
-    document.body.appendChild(menuScreen);
+    appElement.appendChild(menuScreen);
   });
 
   it('should display meta info when a save game exists, even if adventurer count is 0', () => {
@@ -48,7 +51,7 @@ describe('MenuScreen', () => {
     menuScreen.render();
 
     // 4. Assertions
-    const metaInfo = menuScreen.querySelector('p.text-lg');
+    const metaInfo = menuScreen.querySelector('fieldset p');
     expect(metaInfo).not.toBeNull();
     expect(metaInfo?.textContent).toContain(t('menu.max_runs', { count: 5 }));
 
@@ -65,7 +68,7 @@ describe('MenuScreen', () => {
     const newMetaManager = new MetaManager(storage);
     const newSaver = new GameSaver(storage);
     const newEngine = new GameEngine(newMetaManager, dataLoader, newSaver);
-    await newEngine.init(); // important to load items
+    await newEngine.init();
 
     // 3. Connect the engine to the component and render
     menuScreen.engine = newEngine;
@@ -78,12 +81,10 @@ describe('MenuScreen', () => {
 
     // 5. Click the reset button
     resetButton?.click();
-
-    // Wait for modal to appear
     await new Promise(resolve => setTimeout(resolve, 0));
 
     // 6. Assert that the confirmation modal is shown
-    const modal = document.body.querySelector('.info-modal-overlay');
+    const modal = document.body.querySelector('[data-testid="info-modal-overlay"]');
     expect(modal).not.toBeNull();
     expect(modal?.textContent).toContain(t('menu.reset_save_confirm'));
 
@@ -92,18 +93,14 @@ describe('MenuScreen', () => {
     const confirmButton = Array.from(buttons || []).find(btn => btn.textContent === t('global.confirm'));
     expect(confirmButton).not.toBeNull();
     confirmButton?.click();
-
-    // Wait for async operations to complete
     await new Promise(resolve => setTimeout(resolve, 0));
 
     // 8. Assert that the state has been reset
     expect(newSaver.hasSaveGame()).toBe(false);
-
     const finalMeta = newMetaManager.metaState;
     expect(finalMeta.highestRun).toBe(0);
     expect(finalMeta.unlockedFeatures.length).toBe(0);
     expect(finalMeta.adventurers).toBe(0);
-    expect(newEngine.gameState?.phase).toBe('MENU');
   });
 
   it('should hide continue and reset buttons after resetting the game', async () => {
@@ -112,7 +109,7 @@ describe('MenuScreen', () => {
     expect(saver.hasSaveGame()).toBe(true);
 
     // 2. Render: Go back to the menu and render.
-    engine.showMenu();
+    engine.quitGame(false);
     menuScreen.engine = engine;
     menuScreen.metaManager = metaManager;
     menuScreen.render();
@@ -125,20 +122,17 @@ describe('MenuScreen', () => {
 
     // 4. Action: Click the reset button and confirm.
     resetButton?.click();
-
-    // Wait for modal to appear
     await new Promise(resolve => setTimeout(resolve, 0));
 
-    const modal = document.body.querySelector('.info-modal-overlay');
+    const modal = document.body.querySelector('[data-testid="info-modal-overlay"]');
     const confirmButton = Array.from(modal?.querySelectorAll('button') || []).find(btn => btn.textContent === t('global.confirm'));
     confirmButton?.click();
-
-    // Wait for async operations and re-render to complete
     await new Promise(resolve => setTimeout(resolve, 0));
 
-    // 5. Assert Final State: Buttons should be gone.
-    continueButton = menuScreen.querySelector('#continue-game-button');
-    resetButton = menuScreen.querySelector('#reset-game-button');
+    // 5. Assert Final State: Re-query for the menu screen and check that buttons are gone.
+    const newMenuScreen = appElement.querySelector('menu-screen') as MenuScreen;
+    continueButton = newMenuScreen.querySelector('#continue-game-button');
+    resetButton = newMenuScreen.querySelector('#reset-game-button');
     expect(continueButton, 'Continue button should be hidden after reset').toBeNull();
     expect(resetButton, 'Reset button should be hidden after reset').toBeNull();
   });

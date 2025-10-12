@@ -1,14 +1,15 @@
-import type { LootChoice, RoomChoice } from '../types';
+import type { LootChoice, RoomChoice, Rarity } from '../types';
 import { t } from '../text';
 
-const rarityColorMap: { [key: string]: string } = {
-  Common: 'text-rarity-common',
-  Uncommon: 'text-rarity-uncommon',
-  Rare: 'text-rarity-rare',
+const rarityColorMap: Record<Rarity, string> = {
+  ['common']: 'text-rarity-common',
+  ['uncommon']: 'text-rarity-uncommon',
+  ['rare']: 'text-rarity-rare',
+  ['legendary']: 'text-rarity-legendary',
 };
 
 const StatChange = (label: string, value: number, positive: boolean = true, units: number = 1) => {
-  const color = positive ? 'text-green-400' : 'text-red-400';
+  const color = positive ? 'text-green-600' : 'text-red-400';
   const sign = positive && value > 0 ? '+' : '';
   return `
         <div class="flex justify-between text-sm ${color}">
@@ -24,12 +25,16 @@ export class Card extends HTMLElement {
   private _isDisabled: boolean = false;
   private _isNewlyDrafted: boolean = false;
   private _stackCount: number = 1;
+  private _isSelectable: boolean = true;
 
   set item(value: LootChoice | RoomChoice) { this._item = value; this.render(); }
   get item(): LootChoice | RoomChoice { return this._item!; }
 
   set stackCount(value: number) { this._stackCount = value; this.render(); }
   get stackCount(): number { return this._stackCount; }
+
+  set isSelectable(value: boolean) { this._isSelectable = value; this.render(); }
+  get isSelectable(): boolean { return this._isSelectable; }
 
   set isSelected(value: boolean) { this._isSelected = value; this.render(); }
   get isSelected(): boolean { return this._isSelected; }
@@ -48,8 +53,26 @@ export class Card extends HTMLElement {
 
   constructor() {
     super();
-    this.addEventListener('click', () => {
-      if (!this._isDisabled && this._item) {
+    this.addEventListener('click', (e) => {
+      if (!this._isSelectable) return;
+      // If the click is on the checkbox or its label, let the default action proceed.
+      // Otherwise, toggle the checkbox.
+      const target = e.target as HTMLElement;
+      if (target.tagName !== 'INPUT' && target.tagName !== 'LABEL') {
+        const checkbox = this.querySelector('input[type="checkbox"]') as HTMLInputElement;
+        if (checkbox && !checkbox.disabled) {
+          checkbox.checked = !checkbox.checked;
+          // Manually trigger the change event
+          checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }
+    });
+
+
+    this.addEventListener('change', (e) => {
+      if (!this._isSelectable) return;
+      const target = e.target as HTMLInputElement;
+      if (target.type === 'checkbox' && !this._isDisabled && this._item) {
         this.dispatchEvent(new CustomEvent('card-select', {
           bubbles: true,
           composed: true,
@@ -73,77 +96,80 @@ export class Card extends HTMLElement {
     if (!this._item) return;
 
     const rarityColor = rarityColorMap[this._item.rarity] || 'text-gray-400';
-    const baseClasses = 'relative bg-brand-surface border pixel-corners p-4 flex flex-col justify-between transition-all duration-200 shadow-lg';
+    const baseClasses = 'relative transition-all duration-200';
+    const checkboxId = `card-checkbox-${this._item.instanceId}`;
+
 
     let stateClasses = '';
-    if (this._isDisabled) {
-      stateClasses = 'border-gray-600 opacity-50 cursor-not-allowed';
-    } else if (this._isSelected) {
-      stateClasses = 'border-brand-secondary scale-105 ring-2 ring-brand-secondary cursor-pointer transform';
-    } else {
-      stateClasses = 'border-brand-primary hover:border-brand-secondary cursor-pointer transform hover:scale-105';
-    }
-
-    let stackClasses = '';
-    if (this._stackCount > 1) {
-      const outlineCount = Math.min(this._stackCount - 1, 2); // Max 2 outlines for now
-      if (outlineCount >= 1) stackClasses += ' stack-outline-1';
-      if (outlineCount >= 2) stackClasses += ' stack-outline-2';
+    if (this._isSelectable) {
+      if (this._isDisabled) {
+        stateClasses = 'opacity-50 cursor-not-allowed';
+      } else {
+        stateClasses = 'cursor-pointer';
+      }
     }
 
     const animationClass = this.classList.contains('animate-newly-drafted') ? ' animate-newly-drafted' : '';
-    this.className = `${baseClasses} ${stateClasses}${stackClasses}${animationClass}`;
+    this.className = `${baseClasses} ${stateClasses} ${animationClass}`;
 
-    let itemName = this._item.name;
+    let itemName = t('items_and_rooms.' + this._item.id);
     let statsHtml = '';
     if ('stats' in this._item) {
       const item = this._item as LootChoice;
       const room = this._item as RoomChoice;
-      switch (this._item.type.toLowerCase()) {
-        case 'weapon':
-        case 'potion':
-        case 'armor':
-        case 'buff':
+      switch (this._item.type) {
+        case 'item_weapon':
+        case 'item_potion':
+        case 'item_armor':
+        case 'item_buff':
           statsHtml = `
-            ${item.stats.hp ? StatChange(t('global.health'), item.stats.hp) : ''}
-            ${item.stats.maxHp ? StatChange(t('global.max_hp'), item.stats.maxHp) : ''}
-            ${item.stats.power ? StatChange(t('global.power'), item.stats.power) : ''}
-            ${item.stats.duration ? StatChange(t('global.duration'), item.stats.duration) : ''}
+            ${item.stats.hp ? StatChange(t('global.health'), item.stats.hp, item.stats.hp > 0) : ''}
+            ${item.stats.maxHp ? StatChange(t('global.max_hp'), item.stats.maxHp, item.stats.maxHp > 0) : ''}
+            ${item.stats.power ? StatChange(t('global.power'), item.stats.power, item.stats.power > 0) : ''}
+            ${item.stats.duration ? StatChange(t('global.duration'), item.stats.duration, true) : ''}
           `;
           break;
-        case 'healing':
+        case 'room_healing':
           statsHtml = `
-            ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp) : ''}
+            ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp, true) : ''}
           `;
           break;
-        case 'enemy':
-        case 'boss':
-        case 'trap':
+        case 'room_enemy':
+        case 'room_boss':
+        case 'room_trap':
           statsHtml = `
             ${room.stats.attack ? StatChange(t('global.attack'), room.stats.attack, false, room.units) : ''}
             ${room.stats.hp ? StatChange(t('global.health'), room.stats.hp, false, room.units) : ''}
           `;
           if (room.units > 1) {
-            itemName = t('choice_panel.multiple_enemies_title', { name: room.name, count: room.units });
+            itemName = t('choice_panel.multiple_enemies_title', { name: itemName, count: room.units });
           }
           break;
       }
     }
 
     if (this._stackCount > 1) {
-      itemName = t('choice_panel.stacked_items_title', { name: this._item.name, count: this._stackCount });
+      itemName = t('choice_panel.stacked_items_title', { name: itemName, count: this._stackCount });
     }
 
+    const fieldsetBorderClass = this._isSelected ? 'selected' : '';
+
     this.innerHTML = `
-      <div class="flex justify-between items-baseline">
-        <p class="font-label text-sm ${rarityColor}">${this._item.type}</p>
-        <p class="text-xs uppercase tracking-wider ${rarityColor}">${this._item.rarity}</p>      
-      </div>
-      <p class=" text-2xl ${rarityColor} text-left">${itemName}</p>
-      <div class="border-t border-gray-700 my-2"></div>
-      <div class="space-y-1 text-brand-text text-large">
-        ${statsHtml}
-      </div>
+      <fieldset class="font-sans ${fieldsetBorderClass} flex flex-grow items-center" ${this._isDisabled ? 'disabled' : ''}>
+        <legend class="${rarityColor}">${t('card_types.' + this._item.type)} - ${t('rarity.' + this._item.rarity)}</legend>
+        <div class="p-2">
+            <p class="font-bold text-sm ${rarityColor}">${itemName}</p>
+            <div class="mt-2">
+                ${statsHtml}
+            </div>
+            ${this._isSelectable ? `
+            <div class="mt-4 flex items-center">
+              <input type="checkbox" id="${checkboxId}" ${this._isSelected ? 'checked' : ''} ${this._isDisabled ? 'disabled' : ''}>
+              <label for="${checkboxId}" class="ml-2 text-sm">${t('card.select')}</label>
+            </div>
+            ` : ''}
+        </div>
+      </fieldset>
     `;
   }
 }

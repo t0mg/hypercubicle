@@ -1,138 +1,121 @@
 [
-    {
-        "id": "loot_1",
-        "name": "Sword of Minor Wounding",
-        "type": "Weapon",
-        "rarity": "Common",
-        "stats": { "power": 2 },
-        "cost": null
-    },
-    {
-        "id": "loot_2",
-        "name": "Healing Potion",
-        "type": "Potion",
-        "rarity": "Common",
-        "stats": { "hp": 20 },
-        "cost": null
-    },
-    {
-        "id": "loot_3",
-        "name": "Leather Vambraces",
-        "type": "Armor",
-        "rarity": "Common",
-        "stats": { "maxHp": 10 },
-        "cost": null
-    },
-    {
-        "id": "loot_4",
-        "name": "Slightly Pointy Stick",
-        "type": "Weapon",
-        "rarity": "Common",
-        "stats": { "power": 1 },
-        "cost": null
-    },
-    {
-        "id": "loot_5",
-        "name": "Crude Bandages",
-        "type": "Potion",
-        "rarity": "Common",
-        "stats": { "hp": 15 },
-        "cost": null
-    },
-    {
-        "id": "loot_6",
-        "name": "Amulet of Synergy",
-        "type": "Armor",
-        "rarity": "Uncommon",
-        "stats": { "power": 1, "maxHp": 15 },
-        "cost": 150
-    },
-    {
-        "id": "loot_7",
-        "name": "Berserker's Axe",
-        "type": "Weapon",
-        "rarity": "Uncommon",
-        "stats": { "power": 6, "maxHp": -10 },
-        "cost": 150
-    },
-    {
-        "id": "loot_8",
-        "name": "Elixir of Vitality",
-        "type": "Potion",
-        "rarity": "Uncommon",
-        "stats": { "hp": 50 },
-        "cost": 120
-    },
-    {
-        "id": "loot_9",
-        "name": "Steel Broadsword",
-        "type": "Weapon",
-        "rarity": "Uncommon",
-        "stats": { "power": 4 },
-        "cost": 140
-    },
-    {
-        "id": "loot_10",
-        "name": "Ring of Protection",
-        "type": "Armor",
-        "rarity": "Uncommon",
-        "stats": { "maxHp": 20 },
-        "cost": 120
-    },
-    {
-        "id": "loot_11",
-        "name": "Obsidian Plate",
-        "type": "Armor",
-        "rarity": "Rare",
-        "stats": { "maxHp": 50, "power": -2 },
-        "cost": 300
-    },
-    {
-        "id": "loot_12",
-        "name": "Vorpal Blade",
-        "type": "Weapon",
-        "rarity": "Rare",
-        "stats": { "power": 10 },
-        "cost": 350
-    },
-    {
-        "id": "loot_13",
-        "name": "Phoenix Down",
-        "type": "Potion",
-        "rarity": "Rare",
-        "stats": { "hp": 150 },
-        "cost": 250
-    },
-    {
-        "id": "loot_14",
-        "name": "Girdle of Giant Strength",
-        "type": "Armor",
-        "rarity": "Rare",
-        "stats": { "power": 3, "maxHp": 25 },
-        "cost": 320
-    },
-    {
-        "id": "loot_15",
-        "name": "Archangel's Halo",
-        "type": "Armor",
-        "rarity": "Rare",
-        "stats": { "maxHp": 30, "power": 3 },
-        "cost": 320
-    },
-    {
-        "id": "loot_16",
-        "name": "Berserker Potion",
-        "type": "Buff",
-        "rarity": "Rare",
-        "stats": { "power": 20, "maxHp": -50, "duration": 5 },
-        "cost": 200
-    },
-    {
-        "id": "buff_heal",
-        "name": "Brittle Healing Amulet",
-        "type": "Buff",
-        "rarity": "Uncommon",
-        "stats": { "power": 0, "maxHp": 30, "hp": 30, "duration": 3 },
-        "cost": 100
-    }
+  {
+      "id": "weapon_common_1",
+      "type": "item_weapon",
+      "rarity": "common",
+      "stats": { "power": 2 },
+      "cost": null
+  },
+  {
+      "id": "potion_common_1",
+      "type": "item_potion",
+      "rarity": "common",
+      "stats": { "hp": 20 },
+      "cost": null
+  },
+  {
+      "id": "armor_common_1",
+      "type": "item_armor",
+      "rarity": "common",
+      "stats": { "maxHp": 10 },
+      "cost": null
+  },
+  {
+      "id": "weapon_common_2",
+      "type": "item_weapon",
+      "rarity": "common",
+      "stats": { "power": 1 },
+      "cost": null
+  },
+  {
+      "id": "potion_common_2",
+      "type": "item_potion",
+      "rarity": "common",
+      "stats": { "hp": 15 },
+      "cost": null
+  },
+  {
+      "id": "armor_uncommon_1",
+      "type": "item_armor",
+      "rarity": "uncommon",
+      "stats": { "power": 1, "maxHp": 15 },
+      "cost": 150
+  },
+  {
+      "id": "weapon_uncommon_1",
+      "type": "item_weapon",
+      "rarity": "uncommon",
+      "stats": { "power": 6, "maxHp": -10 },
+      "cost": 150
+  },
+  {
+      "id": "potion_uncommon_1",
+      "type": "item_potion",
+      "rarity": "uncommon",
+      "stats": { "hp": 50 },
+      "cost": 120
+  },
+  {
+      "id": "weapon_uncommon_2",
+      "type": "item_weapon",
+      "rarity": "uncommon",
+      "stats": { "power": 4 },
+      "cost": 140
+  },
+  {
+      "id": "armor_uncommon_2",
+      "type": "item_armor",
+      "rarity": "uncommon",
+      "stats": { "maxHp": 20 },
+      "cost": 120
+  },
+  {
+      "id": "armor_rare_1",
+      "type": "item_armor",
+      "rarity": "rare",
+      "stats": { "maxHp": 50, "power": -2 },
+      "cost": 300
+  },
+  {
+      "id": "weapon_rare_1",
+      "type": "item_weapon",
+      "rarity": "rare",
+      "stats": { "power": 10 },
+      "cost": 350
+  },
+  {
+      "id": "potion_rare_1",
+      "type": "item_potion",
+      "rarity": "rare",
+      "stats": { "hp": 150 },
+      "cost": 250
+  },
+  {
+      "id": "armor_rare_2",
+      "type": "item_armor",
+      "rarity": "rare",
+      "stats": { "power": 3, "maxHp": 25 },
+      "cost": 320
+  },
+  {
+      "id": "armor_rare_3",
+      "type": "item_armor",
+      "rarity": "rare",
+      "stats": { "maxHp": 30, "power": 3 },
+      "cost": 320
+  },
+  {
+      "id": "buff_rare_1",
+      "type": "item_buff",
+      "rarity": "rare",
+      "stats": { "power": 20, "maxHp": -50, "duration": 5 },
+      "cost": 200
+  },
+  {
+      "id": "buff_uncommon_1",
+      "type": "item_buff",
+      "rarity": "uncommon",
+      "stats": { "power": 0, "maxHp": 30, "hp": 30, "duration": 3 },
+      "cost": 100
+  }
 ]

@@ -5,7 +5,6 @@ export class TooltipBox extends HTMLElement {
   private bodyElement: HTMLElement;
   private closeButton: HTMLElement;
   private contentContainer: HTMLElement;
-  private rect: DOMRect = new DOMRect(0, 0, 0, 0);
   private isDesktop: boolean = true;
 
   constructor() {
@@ -20,24 +19,23 @@ export class TooltipBox extends HTMLElement {
 
     const style = document.createElement('style');
     style.textContent = `
-            .pixel-corners {
-              clip-path: polygon(0 5px, 5px 5px, 5px 0, calc(100% - 5px) 0, calc(100% - 5px) 5px, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 5px calc(100% - 5px), 0 calc(100% - 5px));
-            }
-
             /* Default desktop styles */
             :host {
                 display: none;
                 position: fixed;
-                left: 0;
-                top: 0;
+                top: 20px;
+                right: 20px;
                 z-index: 2000;
                 pointer-events: none;
-                background-color: #1a202c;
-                border: 1px solid #4a5568;
+                --x-px: 16px;
+                --y-px: 8px;
+                --b-px: 1px;
+                --bg-color: #ffffe1;
+                --border-color: #000;
+                --text-color: #000;
                 max-width: 350px;
-                font-size: 1.125rem;
-                color: #cbd5e0;
-                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                font-family: 'Pixelated MS Sans Serif', sans-serif;
+                font-size: 11px;
             }
 
             :host(.show) {
@@ -46,21 +44,54 @@ export class TooltipBox extends HTMLElement {
 
             .content-container {
                 position: relative;
-                padding: 1.5rem;
+                padding: var(--y-px) var(--x-px);
+                background-color: var(--bg-color);
+                border: var(--b-px) solid var(--border-color);
+                color: var(--text-color);
+                border-radius: 15px;
             }
 
-            .close-button {
-                display: none;
+            .content-container::after {
+                content: '';
+                position: absolute;
+                width: 0;
+                height: 0;
+                border-style: solid;
+                border-width: 10px 10px 0 10px;
+                border-color: var(--border-color) transparent transparent transparent;
+                bottom: -10px;
+                left: calc(50% - 10px);
+            }
+
+            .content-container::before {
+                content: '';
+                position: absolute;
+                width: 0;
+                height: 0;
+                border-style: solid;
+                border-width: 10px 10px 0 10px;
+                border-color: var(--bg-color) transparent transparent transparent;
+                bottom: calc(-10px + var(--b-px));
+                left: calc(50% - 10px);
+                z-index: 1;
             }
 
             h3 {
                 margin-top: 0;
                 font-weight: bold;
                 margin-bottom: 8px;
+                font-size: 13px;
             }
 
             /* Mobile styles */
             @media (pointer: coarse) {
+                :host {
+                    max-width: none;
+                    font-family: inherit;
+                    font-size: 1.125rem;
+                    filter: none;
+                }
+
                 :host(.show) {
                     display: flex;
                     align-items: center;
@@ -71,34 +102,19 @@ export class TooltipBox extends HTMLElement {
                     height: 100%;
                     background-color: rgba(0, 0, 0, 0.7);
                     pointer-events: auto;
-                    max-width: none; /* Override desktop max-width */
                 }
 
                 .content-container {
-                    background-color: #1a202c;
-                    border: 1px solid #4a5568;
                     padding: 1.5rem;
                     max-width: 90vw;
                     max-height: 90vh;
                     overflow-y: auto;
                     position: relative;
-                    color: #cbd5e0;
-                    font-size: 1.125rem;
                     margin: 1rem;
                 }
 
-                .close-button {
-                    display: block;
-                    position: absolute;
-                    top: 1rem;
-                    right: 1rem;
-                    font-size: 2.5rem;
-                    color: #cbd5e0;
-                    cursor: pointer;
-                    background: none;
-                    border: none;
-                    line-height: 1;
-                    z-index: 10;
+                .content-container::after, .content-container::before {
+                    display: none;
                 }
 
                 h3 {
@@ -114,12 +130,6 @@ export class TooltipBox extends HTMLElement {
     this.titleElement = document.createElement('h3');
     this.bodyElement = document.createElement('div');
 
-    this.closeButton = document.createElement('button');
-    this.closeButton.className = 'close-button';
-    this.closeButton.innerHTML = '&times;';
-    this.closeButton.onclick = () => this.hide();
-
-    this.contentContainer.appendChild(this.closeButton);
     this.contentContainer.appendChild(this.titleElement);
     this.contentContainer.appendChild(this.bodyElement);
 
@@ -127,53 +137,15 @@ export class TooltipBox extends HTMLElement {
     this.shadowRoot!.appendChild(this.contentContainer);
   }
 
-  connectedCallback() {
-    // Apply pixel-corners class after the element is in the DOM.
-    if (window.matchMedia('(pointer: coarse)').matches) {
-      this.contentContainer.classList.add('pixel-corners');
-    } else {
-      this.classList.add('pixel-corners');
-    }
-  }
-
   show(content: { title: string, body: string }, x: number, y: number) {
     this.titleElement.textContent = content.title;
     this.bodyElement.innerHTML = content.body;
     this.isDesktop = !window.matchMedia('(pointer: coarse)').matches;
-    if (this.isDesktop) {
-      this.style.opacity = '0';
-      this.classList.add('show');
-      this.rect = this.contentContainer.getBoundingClientRect();
-      this.updatePosition(x, y);
-      this.style.opacity = '';
-    } else {
-      this.style.transform = '';
-      this.classList.add('show');
-    }
+    this.classList.add('show');
   }
 
   hide() {
     this.classList.remove('show');
-  }
-
-  updatePosition(x: number, y: number) {
-    // This should only affect desktop tooltips, as mobile is not positioned this way.
-    if (!this.isDesktop) return;
-    const offset = 15;
-    let left = x + offset;
-    let top = y + offset;
-
-    // If tooltip would overflow to the right, position it to the left of the cursor
-    if (left + offset + this.rect.width > window.innerWidth) {
-      left = x - this.rect.width - offset;
-      if (left < 0) left = 0; // Prevent negative position
-    }
-    // If tooltip would overflow to the bottom, position it above the cursor
-    if (top + offset + this.rect.height > window.innerHeight) {
-      top = y - this.rect.height - offset;
-      if (top < 0) top = 0; // Prevent negative position
-    }
-    this.style.transform = `translate3d(${left}px, ${top}px, 0)`;
   }
 }
 

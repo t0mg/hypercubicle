@@ -61,7 +61,7 @@ export class MetaManager {
         if (typeof parsed.highestRun === 'number' && Array.isArray(parsed.unlockedFeatures)) {
           // For backwards compatibility
           if (typeof parsed.adventurers !== 'number') {
-              parsed.adventurers = 1;
+            parsed.adventurers = 1;
           }
           return parsed;
         }

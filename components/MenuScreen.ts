@@ -52,40 +52,50 @@ export class MenuScreen extends HTMLElement {
     const metaState = this.metaManager.metaState;
     const hasSave = this.engine.hasSaveGame();
     let metaInfo = '';
-    if (metaState.adventurers > 1 || !!metaState.highestRun || !!metaState.unlockedFeatures.length) {
+    if (hasSave) {
       const adventurers = metaState.adventurers || 0;
       metaInfo = `
-                <p class="text-lg text-gray-400 mt-4">
-                    ${t('menu.max_runs', { count: metaState.highestRun })} | ${t('menu.unlocked_features', { count: metaState.unlockedFeatures.length })} | ${t('menu.adventurer_count', { count: adventurers })}
-                </p>
-            `;
+        <fieldset class="mt-4 text-center">
+          <legend>Progress</legend>
+          <p>
+            ${t('menu.max_runs', { count: metaState.highestRun })} | ${t('menu.unlocked_features', { count: metaState.unlockedFeatures.length })} | ${t('menu.adventurer_count', { count: adventurers })}
+          </p>
+        </fieldset>
+      `;
     }
 
     this.innerHTML = `
-            <div class="relative min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4 text-center">
-                <h1 class="text-8xl text-red-500 font-title mb-2">${t('game_title')}</h1>
-                <p class="text-2xl text-gray-300 mb-8">${t('game_subtitle')}</p>
-                ${metaInfo}
-                <div class="mt-8 space-y-4">
-                        ${hasSave ? `
-                        <button id="continue-game-button" class="bg-red-500 hover:bg-red-600 text-white py-3 px-6 pixel-corners min-w-[250px] transition-colors">
-                            ${t('menu.continue_game')}
-                        </button>
-                    ` : ''}
-                    <button id="new-game-button" class="${!hasSave ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-800 hover:bg-gray-600'} text-700 text-white py-3 px-6 pixel-corners min-w-[250px] transition-colors">
-                        ${t('menu.new_game')}
-                    </button>
-                    ${hasSave ? `
-                        <button id="reset-game-button" class="bg-gray-800 hover:bg-gray-700 text-gray-400 py-3 px-6 pixel-corners min-w-[250px] transition-colors">
-                            ${t('menu.reset_save')}
-                        </button>
-                    ` : ''}
-                </div>
-                <div class="absolute bottom-2 right-2 text-xs text-gray-500">
-                    v${__APP_VERSION__} (build ${__BUILD_NUMBER__})
-                </div>
-            </div>
-        `;
+      <div class="window" style="width: 400px;">
+        <div class="title-bar">
+          <div class="title-bar-text">${t('game_title')}</div>
+        </div>
+        <div class="window-body">
+          <p class="text-center text-xl mb-4">${t('game_subtitle')}</p>
+
+          ${metaInfo}
+
+          <div class="mt-4 space-y-2 flex flex-col items-center">
+            ${hasSave ? `
+              <button id="continue-game-button" style="width: 250px;">
+                ${t('menu.continue_game')}
+              </button>
+            ` : ''}
+            <button id="new-game-button" style="width: 250px;">
+              ${t('menu.new_game')}
+            </button>
+            ${hasSave ? `
+              <button id="reset-game-button" style="width: 250px;">
+                ${t('menu.reset_save')}
+              </button>
+            ` : ''}
+          </div>
+        </div>
+        <div class="status-bar">
+          <p class="status-bar-field">v${__APP_VERSION__}</p>
+          <p class="status-bar-field">build ${__BUILD_NUMBER__}</p>
+        </div>
+      </div>
+    `;
   }
 }
 
