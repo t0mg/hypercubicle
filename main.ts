@@ -29,20 +29,24 @@ if (!appElement) {
   throw new Error("Could not find app element to mount to");
 }
 
-const dataLoader = new DataLoaderFetch();
-await initLocalization(dataLoader);
-const storage = new LocalStorage();
-const metaManager = new MetaManager(storage);
-const gameSaver = new GameSaver(storage);
-const engine = new GameEngine(metaManager, dataLoader, gameSaver);
+async function main() {
+  // Initial render for loading state. Can't use t() yet.
+  appElement.innerHTML = `<div>Initializing...</div>`;
 
-engine.on('state-change', (newState) => {
-  if (engine.isLoading) {
-    appElement.innerHTML = `<div>${t('global.loading_game_data')}</div>`;
-    return;
-  }
-  if (engine.error) {
-    appElement.innerHTML = `
+  const dataLoader = new DataLoaderFetch();
+  await initLocalization(dataLoader);
+  const storage = new LocalStorage();
+  const metaManager = new MetaManager(storage);
+  const gameSaver = new GameSaver(storage);
+  const engine = new GameEngine(metaManager, dataLoader, gameSaver);
+
+  engine.on('state-change', (newState) => {
+    if (engine.isLoading) {
+      appElement.innerHTML = `<div>${t('global.loading_game_data')}</div>`;
+      return;
+    }
+    if (engine.error) {
+      appElement.innerHTML = `
                 <div class="min-h-screen flex items-center justify-center p-4">
                     <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-secondary">
                          <h2 class="text-2xl text-brand-secondary mb-4">${t('global.an_error_occurred')}</h2>
@@ -50,13 +54,12 @@ engine.on('state-change', (newState) => {
                     </div>
                 </div>
             `;
-    return;
-  }
-  render(appElement, newState, engine);
-  initializeTooltipIcons();
-});
+      return;
+    }
+    render(appElement, newState, engine);
+    initializeTooltipIcons();
+  });
 
-async function main() {
   // Initial render for loading state
   appElement.innerHTML = `<div>${t('global.initializing')}</div>`;
 
@@ -68,4 +71,16 @@ async function main() {
   engine.showMenu();
 }
 
-main();
+main().catch(err => {
+  console.error(err);
+  if (appElement) {
+    appElement.innerHTML = `
+      <div class="min-h-screen flex items-center justify-center p-4">
+          <div class="bg-brand-surface p-8 rounded-xl shadow-2xl text-center border border-brand-secondary">
+               <h2 class="text-2xl text-brand-secondary mb-4">A critical error occurred</h2>
+               <p class="text-brand-text">${err.message}</p>
+          </div>
+      </div>
+    `;
+  }
+});
