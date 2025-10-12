@@ -154,12 +154,12 @@ export class AdventurerStatus extends HTMLElement {
       if (this._adventurer.traits.resilience !== this._previousAdventurer.traits.resilience) {
         this._pulseElement(resilienceTrait);
       }
-      if (this._adventurer.traits.skill !== this._previousAdventurer.traits.skill) {
+      if (this._adventurer.skill !== this._previousAdventurer.skill) {
         this._pulseElement(skillTrait);
       }
       offenseTrait.textContent = `${this._adventurer.traits.offense}`;
       resilienceTrait.textContent = `${this._adventurer.traits.resilience}`;
-      skillTrait.textContent = `${this._adventurer.traits.skill}`;
+      skillTrait.textContent = `${this._adventurer.skill}`;
     } else {
       traitsSection.classList.add('hidden');
     }
