@@ -93,6 +93,7 @@ export class GameEngine {
     const feedback: string[] = [];
     const adventurerClone = Adventurer.fromJSON(adventurer.toJSON());
 
+    this.gameState?.logger.info('info_encounter', { name: adventurerClone.firstName, roomName: t('items_and_rooms.' + room.id) });
     processRoomEntry(adventurerClone, room);
 
     log.push({
@@ -114,6 +115,11 @@ export class GameEngine {
 
         for (let i = 0; i < encounter.enemyCount; i++) {
           let currentEnemyHp = encounter.enemyHp;
+          this.gameState?.logger.info('info_encounter_enemy', {
+            name: adventurerClone.firstName,
+            current: i + 1,
+            total: encounter.enemyCount,
+          });
           const enemySnapshot = {
             currentHp: currentEnemyHp,
             maxHp: encounter.enemyHp,
@@ -136,6 +142,7 @@ export class GameEngine {
               if (potionToUse) {
                 const healedAmount = potionToUse.stats.hp || 0;
                 adventurerClone.hp = Math.min(adventurerClone.maxHp, adventurerClone.hp + healedAmount);
+                this.gameState?.logger.info('info_adventurer_drinks_potion', { name: adventurerClone.firstName, potionName: t('items_and_rooms.' + potionToUse.id) });
                 feedback.push(t('game_engine.adventurer_drinks_potion', { potionName: t('items_and_rooms.' + potionToUse.id) }));
                 log.push({
                   messageKey: 'info_adventurer_drinks_potion',
@@ -149,7 +156,17 @@ export class GameEngine {
               if (rng.nextFloat() < adventurerHitChance) {
                 const damageDealt = adventurerClone.power;
                 currentEnemyHp -= damageDealt;
+                this.gameState?.logger.debug(`Adventurer hits for ${damageDealt} damage.`);
+                const oldFlowState = adventurerClone.flowState;
                 processBattleTurn(adventurerClone, 'hit');
+                if (oldFlowState !== adventurerClone.flowState) {
+                  log.push({
+                    messageKey: 'info_flow_state_changed',
+                    replacements: { from: t(`flow_states.${FlowState[oldFlowState].toLowerCase()}`), to: t(`flow_states.${FlowState[adventurerClone.flowState].toLowerCase()}`) },
+                    adventurer: this._createAdventurerSnapshot(adventurerClone),
+                    enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
+                  });
+                }
                 log.push({
                   messageKey: 'info_adventurer_hit',
                   replacements: { damage: damageDealt },
@@ -157,7 +174,17 @@ export class GameEngine {
                   enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
                 });
               } else {
+                this.gameState?.logger.debug(`Adventurer misses.`);
+                const oldFlowState = adventurerClone.flowState;
                 processBattleTurn(adventurerClone, 'miss');
+                if (oldFlowState !== adventurerClone.flowState) {
+                  log.push({
+                    messageKey: 'info_flow_state_changed',
+                    replacements: { from: t(`flow_states.${FlowState[oldFlowState].toLowerCase()}`), to: t(`flow_states.${FlowState[adventurerClone.flowState].toLowerCase()}`) },
+                    adventurer: this._createAdventurerSnapshot(adventurerClone),
+                    enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
+                  });
+                }
                 log.push({
                   messageKey: 'info_adventurer_miss',
                   adventurer: this._createAdventurerSnapshot(adventurerClone),
@@ -167,6 +194,7 @@ export class GameEngine {
             }
 
             if (currentEnemyHp <= 0) {
+              this.gameState?.logger.info('info_enemy_defeated');
               enemiesDefeated++;
               log.push({
                 messageKey: 'info_enemy_defeated',
@@ -181,7 +209,17 @@ export class GameEngine {
               const armor = (adventurerClone.inventory.armor?.stats.maxHp || 0) / 10;
               const damageTaken = Math.max(1, encounter.enemyPower - armor);
               adventurerClone.hp -= damageTaken;
+              this.gameState?.logger.debug(`Enemy hits for ${damageTaken} damage.`);
+              const oldFlowState = adventurerClone.flowState;
               processBattleTurn(adventurerClone, 'take_damage');
+              if (oldFlowState !== adventurerClone.flowState) {
+                log.push({
+                  messageKey: 'info_flow_state_changed',
+                  replacements: { from: t(`flow_states.${FlowState[oldFlowState].toLowerCase()}`), to: t(`flow_states.${FlowState[adventurerClone.flowState].toLowerCase()}`) },
+                  adventurer: this._createAdventurerSnapshot(adventurerClone),
+                  enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
+                });
+              }
               log.push({
                 messageKey: 'info_enemy_hit',
                 replacements: { damage: damageTaken },
@@ -189,6 +227,7 @@ export class GameEngine {
                 enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
               });
             } else {
+              this.gameState?.logger.debug(`Enemy misses.`);
               log.push({
                 messageKey: 'info_enemy_miss',
                 adventurer: this._createAdventurerSnapshot(adventurerClone),
@@ -198,6 +237,7 @@ export class GameEngine {
           }
 
           if (adventurerClone.hp <= 0) {
+            this.gameState?.logger.warn(`info_adventurer_defeated`);
             log.push({
               messageKey: 'info_adventurer_defeated',
               adventurer: this._createAdventurerSnapshot(adventurerClone),
@@ -208,6 +248,7 @@ export class GameEngine {
         }
         const hpLost = initialHp - adventurerClone.hp;
         const hpLostRatio = hpLost / adventurerClone.maxHp;
+        this.gameState?.logger.debug(`hpLost: ${hpLost}, hpLostRatio: ${hpLostRatio.toFixed(2)}`);
         const battleFeedback = processBattleOutcome(adventurerClone, hpLostRatio, enemiesDefeated, encounter.enemyCount);
         feedback.push(battleFeedback);
         break;
@@ -215,6 +256,7 @@ export class GameEngine {
       case 'room_healing': {
         const healing = room.stats.hp || 0;
         adventurerClone.hp = Math.min(adventurerClone.maxHp, adventurerClone.hp + healing);
+        this.gameState?.logger.info('info_healing_room', { name: adventurerClone.firstName, healingRoomName: t('items_and_rooms.' + room.id), healing: healing });
         feedback.push(t('game_engine.healing_room', { name: t('items_and_rooms.' + room.id), healing: healing }));
         log.push({
           messageKey: 'info_healing_room',
@@ -227,6 +269,7 @@ export class GameEngine {
         const damage = room.stats.attack || 0;
         adventurerClone.hp -= damage;
         processTrap(adventurerClone);
+        this.gameState?.logger.info('info_trap_room', { name: adventurerClone.firstName, trapName: t('items_and_rooms.' + room.id), damage: damage });
         feedback.push(t('game_engine.trap_room', { name: t('items_and_rooms.' + room.id), damage: damage }));
         log.push({
           messageKey: 'info_trap_room',
