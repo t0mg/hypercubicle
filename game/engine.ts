@@ -1,4 +1,4 @@
-import type { GamePhase, GameState, LootChoice, AdventurerTraits, Encounter, RoomChoice, DataLoader } from '../types';
+import type { GamePhase, GameState, LootChoice, AdventurerTraits, Encounter, RoomChoice, DataLoader, EncounterPayload, EncounterLog, EncounterEvent, AdventurerSnapshot } from '../types';
 import { FlowState } from '../types';
 import { Adventurer } from './adventurer';
 import { Logger } from './logger';
@@ -28,7 +28,11 @@ import {
 } from './ai';
 import { rng } from './random';
 
-type GameEngineListener = (state: GameState | null) => void;
+interface GameEvents {
+  'state-change': (state: GameState | null) => void;
+  'error': (state: GameState | null) => void;
+  'show-encounter': (payload: EncounterPayload) => void;
+}
 
 export class GameEngine {
   public gameState: GameState | null = null;
@@ -38,7 +42,7 @@ export class GameEngine {
   private _allItems: LootChoice[] = [];
   private _allRooms: RoomChoice[] = [];
   private _allNames: { firstNames: string[], lastNames: string[] } = { firstNames: [], lastNames: [] };
-  private _listeners: { [key: string]: GameEngineListener[] } = {};
+  private _listeners: { [K in keyof GameEvents]?: GameEvents[K][] } = {};
   public metaManager: MetaManager;
   private dataLoader: DataLoader;
   private gameSaver: GameSaver;
@@ -54,96 +58,185 @@ export class GameEngine {
   };
 
   // --- EVENT EMITTER ---
-  public on(eventName: 'state-change' | 'error', listener: GameEngineListener): void {
+  public on<K extends keyof GameEvents>(eventName: K, listener: GameEvents[K]): void {
     if (!this._listeners[eventName]) {
       this._listeners[eventName] = [];
     }
-    this._listeners[eventName].push(listener);
+    this._listeners[eventName]!.push(listener);
   }
 
-  private _emit(eventName: 'state-change' | 'error', data: GameState | null): void {
+  private _emit<K extends keyof GameEvents>(eventName: K, ...args: Parameters<GameEvents[K]>): void {
     if (eventName === 'state-change') {
       this.saveGame();
     }
     const listeners = this._listeners[eventName];
     if (listeners) {
-      listeners.forEach(listener => listener(data));
+      listeners.forEach(listener => (listener as any)(...args));
     }
   }
 
-  private _simulateEncounter(adventurer: Adventurer, room: number, encounter: Encounter): { newAdventurer: Adventurer; feedback: string[]; totalDamageTaken: number; } {
-    this.gameState?.logger.debug(`--- Encounter: Room ${room} - ${encounter.enemyCount} enemies (Power: ${encounter.enemyPower}, HP: ${encounter.enemyHp}) ---`);
+  private _createAdventurerSnapshot(adventurer: Adventurer): AdventurerSnapshot {
+    return {
+      hp: adventurer.hp,
+      maxHp: adventurer.maxHp,
+      power: adventurer.power,
+      flowState: adventurer.flowState,
+      inventory: JSON.parse(JSON.stringify(adventurer.inventory)),
+    };
+  }
+
+  private _generateEncounterLog(
+    adventurer: Adventurer,
+    room: RoomChoice
+  ): { log: EncounterLog; finalAdventurer: Adventurer; feedback: string[] } {
+    const log: EncounterLog = [];
     const feedback: string[] = [];
-    let totalDamageTaken = 0;
-    let enemiesDefeated = 0;
-    const initialHp = adventurer.hp;
+    const adventurerClone = Adventurer.fromJSON(adventurer.toJSON());
 
-    for (let i = 0; i < encounter.enemyCount; i++) {
-      this.gameState?.logger.info('info_encounter_enemy', {
-        name: adventurer.firstName,
-        current: i + 1,
-        total: encounter.enemyCount,
-      });
+    processRoomEntry(adventurerClone, room);
 
-      let currentEnemyHp = encounter.enemyHp;
-      while (currentEnemyHp > 0 && adventurer.hp > 0) {
-        const battleAction = getAdventurerBattleChoice(adventurer, encounter);
-        if (battleAction === 'use_potion') {
-          const potionToUse = adventurer.inventory.potions.shift();
-          if (potionToUse) {
-            const healedAmount = potionToUse.stats.hp || 0;
-            adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healedAmount);
-            feedback.push(t('game_engine.adventurer_drinks_potion', { potionName: t('items_and_rooms.' + potionToUse.id) }));
-            this.gameState?.logger.info('info_adventurer_drinks_potion', { name: adventurer.firstName, potionName: t('items_and_rooms.' + potionToUse.id) });
+    log.push({
+      messageKey: 'info_encounter',
+      replacements: { name: adventurerClone.firstName, roomName: t('items_and_rooms.' + room.id) },
+      adventurer: this._createAdventurerSnapshot(adventurerClone),
+    });
+
+    switch (room.type) {
+      case 'room_enemy':
+      case 'room_boss': {
+        const encounter: Encounter = {
+          enemyCount: room.units ?? 1,
+          enemyPower: room.stats.attack || 5,
+          enemyHp: room.stats.hp || 10,
+        };
+        let enemiesDefeated = 0;
+        const initialHp = adventurerClone.hp;
+
+        for (let i = 0; i < encounter.enemyCount; i++) {
+          let currentEnemyHp = encounter.enemyHp;
+          const enemySnapshot = {
+            currentHp: currentEnemyHp,
+            maxHp: encounter.enemyHp,
+            power: encounter.enemyPower,
+            name: t('items_and_rooms.' + room.id),
+            count: i + 1,
+            total: encounter.enemyCount,
+          };
+          log.push({
+            messageKey: 'info_encounter_enemy',
+            replacements: { name: adventurerClone.firstName, current: i + 1, total: encounter.enemyCount },
+            adventurer: this._createAdventurerSnapshot(adventurerClone),
+            enemy: enemySnapshot,
+          });
+
+          while (currentEnemyHp > 0 && adventurerClone.hp > 0) {
+            const battleAction = getAdventurerBattleChoice(adventurerClone, encounter);
+            if (battleAction === 'use_potion') {
+              const potionToUse = adventurerClone.inventory.potions.shift();
+              if (potionToUse) {
+                const healedAmount = potionToUse.stats.hp || 0;
+                adventurerClone.hp = Math.min(adventurerClone.maxHp, adventurerClone.hp + healedAmount);
+                feedback.push(t('game_engine.adventurer_drinks_potion', { potionName: t('items_and_rooms.' + potionToUse.id) }));
+                log.push({
+                  messageKey: 'info_adventurer_drinks_potion',
+                  replacements: { name: adventurerClone.firstName, potionName: t('items_and_rooms.' + potionToUse.id) },
+                  adventurer: this._createAdventurerSnapshot(adventurerClone),
+                  enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
+                });
+              }
+            } else {
+              const adventurerHitChance = Math.min(0.95, 0.75 + (adventurerClone.traits.skill / 500) + (adventurerClone.traits.offense / 1000));
+              if (rng.nextFloat() < adventurerHitChance) {
+                const damageDealt = adventurerClone.power;
+                currentEnemyHp -= damageDealt;
+                processBattleTurn(adventurerClone, 'hit');
+                log.push({
+                  messageKey: 'info_adventurer_hit',
+                  replacements: { damage: damageDealt },
+                  adventurer: this._createAdventurerSnapshot(adventurerClone),
+                  enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
+                });
+              } else {
+                processBattleTurn(adventurerClone, 'miss');
+                log.push({
+                  messageKey: 'info_adventurer_miss',
+                  adventurer: this._createAdventurerSnapshot(adventurerClone),
+                  enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
+                });
+              }
+            }
+
+            if (currentEnemyHp <= 0) {
+              enemiesDefeated++;
+              log.push({
+                messageKey: 'info_enemy_defeated',
+                adventurer: this._createAdventurerSnapshot(adventurerClone),
+                enemy: { ...enemySnapshot, currentHp: 0 },
+              });
+              break;
+            }
+
+            const enemyHitChance = Math.max(0.4, 0.75 - (adventurerClone.traits.skill / 500) - ((100 - adventurerClone.traits.offense) / 1000));
+            if (rng.nextFloat() < enemyHitChance) {
+              const armor = (adventurerClone.inventory.armor?.stats.maxHp || 0) / 10;
+              const damageTaken = Math.max(1, encounter.enemyPower - armor);
+              adventurerClone.hp -= damageTaken;
+              processBattleTurn(adventurerClone, 'take_damage');
+              log.push({
+                messageKey: 'info_enemy_hit',
+                replacements: { damage: damageTaken },
+                adventurer: this._createAdventurerSnapshot(adventurerClone),
+                enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
+              });
+            } else {
+              log.push({
+                messageKey: 'info_enemy_miss',
+                adventurer: this._createAdventurerSnapshot(adventurerClone),
+                enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
+              });
+            }
           }
-        } else {
-          // Adventurer's turn
-          const adventurerHitChance = Math.min(0.95, 0.75 + (adventurer.traits.skill / 500) + (adventurer.traits.offense / 1000));
-          if (rng.nextFloat() < adventurerHitChance) {
-            const damageDealt = adventurer.power;
-            currentEnemyHp -= damageDealt;
-            this.gameState?.logger.debug(`Adventurer hits for ${damageDealt} damage.`);
-            processBattleTurn(adventurer, 'hit');
-          } else {
-            this.gameState?.logger.debug(`Adventurer misses.`);
-            processBattleTurn(adventurer, 'miss');
+
+          if (adventurerClone.hp <= 0) {
+            log.push({
+              messageKey: 'info_adventurer_defeated',
+              adventurer: this._createAdventurerSnapshot(adventurerClone),
+              enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
+            });
+            break;
           }
         }
-
-        if (currentEnemyHp <= 0) {
-          this.gameState?.logger.info('info_enemy_defeated');
-          enemiesDefeated++;
-          break;
-        }
-
-        // Enemy's turn
-        const enemyHitChance = Math.max(0.4, 0.75 - (adventurer.traits.skill / 500) - ((100 - adventurer.traits.offense) / 1000));
-        if (rng.nextFloat() < enemyHitChance) {
-          const armor = (adventurer.inventory.armor?.stats.maxHp || 0) / 10;
-          const damageTaken = Math.max(1, encounter.enemyPower - armor);
-          totalDamageTaken += damageTaken;
-          adventurer.hp -= damageTaken;
-          this.gameState?.logger.debug(`Enemy hits for ${damageTaken} damage.`);
-          processBattleTurn(adventurer, 'take_damage');
-        } else {
-          this.gameState?.logger.debug(`Enemy misses.`);
-        }
+        const hpLost = initialHp - adventurerClone.hp;
+        const hpLostRatio = hpLost / adventurerClone.maxHp;
+        const battleFeedback = processBattleOutcome(adventurerClone, hpLostRatio, enemiesDefeated, encounter.enemyCount);
+        feedback.push(battleFeedback);
+        break;
       }
-
-      if (adventurer.hp <= 0) {
-        this.gameState?.logger.warn(`info_adventurer_defeated`);
+      case 'room_healing': {
+        const healing = room.stats.hp || 0;
+        adventurerClone.hp = Math.min(adventurerClone.maxHp, adventurerClone.hp + healing);
+        feedback.push(t('game_engine.healing_room', { name: t('items_and_rooms.' + room.id), healing: healing }));
+        log.push({
+          messageKey: 'info_healing_room',
+          replacements: { name: adventurerClone.firstName, healingRoomName: t('items_and_rooms.' + room.id), healing: healing },
+          adventurer: this._createAdventurerSnapshot(adventurerClone),
+        });
+        break;
+      }
+      case 'room_trap': {
+        const damage = room.stats.attack || 0;
+        adventurerClone.hp -= damage;
+        processTrap(adventurerClone);
+        feedback.push(t('game_engine.trap_room', { name: t('items_and_rooms.' + room.id), damage: damage }));
+        log.push({
+          messageKey: 'info_trap_room',
+          replacements: { name: adventurerClone.firstName, trapName: t('items_and_rooms.' + room.id), damage: damage },
+          adventurer: this._createAdventurerSnapshot(adventurerClone),
+        });
         break;
       }
     }
-
-    const hpLost = initialHp - adventurer.hp;
-    const hpLostRatio = hpLost / adventurer.maxHp;
-    this.gameState?.logger.debug(`hpLost: ${hpLost}, hpLostRatio: ${hpLostRatio.toFixed(2)}`);
-
-    const battleFeedback = processBattleOutcome(adventurer, hpLostRatio, enemiesDefeated, encounter.enemyCount);
-    feedback.push(battleFeedback);
-
-    return { newAdventurer: adventurer, feedback, totalDamageTaken };
+    return { log, finalAdventurer: adventurerClone, feedback };
   }
 
   // --- PUBLIC ACTIONS ---
@@ -320,47 +413,38 @@ export class GameEngine {
     if (!this.gameState || this.gameState.phase !== 'DESIGNER_CHOOSING_ROOM') return;
 
     this.gameState.offeredRooms = roomChoices;
-
-    let adventurer = this.gameState.adventurer;
-    let feedback: string[] = [];
-
     const chosenRoomIndex = rng.nextInt(0, this.gameState.offeredRooms.length - 1);
     const chosenRoom = this.gameState.offeredRooms[chosenRoomIndex];
 
-    adventurer.roomHistory.push(chosenRoom.id);
-    processRoomEntry(adventurer, chosenRoom);
+    const { log, finalAdventurer, feedback } = this._generateEncounterLog(
+      this.gameState.adventurer,
+      chosenRoom
+    );
 
-    this.gameState.logger.info('info_encounter', { name: adventurer.firstName, roomName: t('items_and_rooms.' + chosenRoom.id) });
+    const payload: EncounterPayload = {
+      room: chosenRoom,
+      log,
+      finalAdventurer,
+      feedback,
+    };
 
-    switch (chosenRoom.type) {
-      case 'room_enemy':
-      case 'room_boss':
-        const encounter: Encounter = {
-          enemyCount: chosenRoom.units ?? 1,
-          enemyPower: chosenRoom.stats.attack || 5,
-          enemyHp: chosenRoom.stats.hp || 10,
-        };
-        const battleResult = this._simulateEncounter(adventurer, this.gameState.room, encounter);
-        adventurer = battleResult.newAdventurer;
-        feedback = battleResult.feedback;
-        break;
+    this.gameState = {
+      ...this.gameState,
+      phase: 'AWAITING_ENCOUNTER_RESULT',
+    };
+    this._emit('state-change', this.gameState);
+    this._emit('show-encounter', payload);
+  }
 
-      case 'room_healing':
-        const healing = chosenRoom.stats.hp || 0;
-        adventurer.hp = Math.min(adventurer.maxHp, adventurer.hp + healing);
-        feedback.push(t('game_engine.healing_room', { name: t('items_and_rooms.' + chosenRoom.id), healing: healing }));
-        this.gameState.logger.info('info_healing_room', { name: adventurer.firstName, healingRoomName: t('items_and_rooms.' + chosenRoom.id), healing: healing });
-        break;
+  public continueEncounter = (payload: EncounterPayload) => {
+    if (!this.gameState || this.gameState.phase !== 'AWAITING_ENCOUNTER_RESULT') return;
+    this._postEncounterUpdate(payload.finalAdventurer, payload.feedback);
+  }
 
-      case 'room_trap':
-        const damage = chosenRoom.stats.attack || 0;
-        adventurer.hp -= damage;
-        processTrap(adventurer);
-        feedback.push(t('game_engine.trap_room', { name: t('items_and_rooms.' + chosenRoom.id), damage: damage }));
-        this.gameState.logger.info('info_trap_room', { name: adventurer.firstName, trapName: t('items_and_rooms.' + chosenRoom.id), damage: damage });
-        break;
-    }
+  private _postEncounterUpdate = (finalAdventurer: Adventurer, feedback: string[]) => {
+    if (!this.gameState) return;
 
+    let adventurer = finalAdventurer;
     adventurer.updateBuffs();
     this.gameState.designer.balancePoints += this._getBpPerRoom();
 
@@ -422,7 +506,6 @@ export class GameEngine {
         availableRoomDeck: newRoomDeck,
       };
     }
-
     this._emit('state-change', this.gameState);
   }
 
