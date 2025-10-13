@@ -35,7 +35,9 @@
     "quit": "Quit",
     "quit_confirm": "Are you sure you want to return to the main menu? Your progress will be saved.",
     "confirm": "Confirm",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "skip": "Skip",
+    "adventurer": "Adventurer"
   },
   "card": {
     "select": "Activate"
@@ -142,14 +144,14 @@
     }
   },
   "flow_states": {
-    "Flow": "Flow",
-    "Control": "Deep Focus",
-    "Arousal": "Uncomfortable Excitement",
-    "Relaxation": "Thoughtfulness",
-    "Worry": "Deadline Pressure",
-    "Anxiety": "Imminent Burnout",
-    "Boredom": "Lethargy",
-    "Apathy": "Quiet Quitting"
+    "flow": "Flow",
+    "control": "Deep Focus",
+    "arousal": "Uncomfortable Excitement",
+    "relaxation": "Thoughtfulness",
+    "worry": "Deadline Pressure",
+    "anxiety": "Imminent Burnout",
+    "boredom": "Lethargy",
+    "apathy": "Quiet Quitting"
   },
   "rarity": {
     "common": "Standard",
@@ -170,7 +172,7 @@
   "log_messages": {
     "info_adventurer_declines_offer": "Disappointed by your offers, {name} decides to take nothing.",
     "info_adventurer_accepts_offer": "{name} requisitioned the {itemName}.",
-    "info_adventurer_drinks_potion": "Sensing a threat to productivity, {name} urgently consumed the {potionName}.",
+    "info_adventurer_drinks_potion": "{name} drinks a {potionName}.",
     "info_easy_fight": "An easy meeting. Too trivial for synergy...",
     "info_worthy_challenge": "A productive, but simple meeting.",
     "info_great_battle": "A productive negotiation! Quarterly results look excellent!",
@@ -198,7 +200,11 @@
     "info_item_chosen": "{name} chose the {item}.",
     "info_item_purchased": "Purchased {item}.",
     "info_game_over": "WORK DAY OVER: {reason}",
-    "warn_empty_hand": "The Executive was hoping for new assets, but the budget is frozen."
+    "warn_empty_hand": "The Executive was hoping for new assets, but the budget is frozen.",
+    "info_adventurer_hit": "The adventurer hits for {damage} damage.",
+    "info_adventurer_miss": "The adventurer misses.",
+    "info_enemy_hit": "The enemy hits for {damage} damage.",
+    "info_enemy_miss": "The enemy misses."
   },
   "items_and_rooms": {
     "weapon_common_1": "Standard Issue Stapler",
