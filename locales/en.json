@@ -41,7 +41,7 @@
     "select": "Activate"
   },
   "adventurer_status": {
-    "title": "Executive {name} (#{id})",
+    "title": "Executive {name} (Corporate Id #{id})",
     "flow_state": "Engagement Level",
     "inventory": "Briefcase",
     "weapon": "Tool",
