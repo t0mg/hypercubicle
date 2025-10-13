@@ -4,60 +4,33 @@ import { EncounterPayload } from '../types';
 const ROOM_CHOICE_VIEW_DELAY = 1500;
 const BATTLE_EVENT_DELAY = 800;
 
-export class EncounterModal {
-  private element: HTMLDivElement;
-  private onDismiss: (result: { skipped: boolean }) => void;
-  private payload: EncounterPayload;
+export class EncounterModal extends HTMLElement {
+  private onDismiss: (result: { skipped: boolean }) => void = () => { };
+  private payload: EncounterPayload | null = null;
   private currentEventIndex = 0;
   private battleTimeout: number | undefined;
 
-  private constructor(
-    payload: EncounterPayload,
-    onDismiss: (result: { skipped: boolean }) => void
-  ) {
-    this.onDismiss = onDismiss;
-    this.payload = payload;
+  constructor() {
+    super();
+  }
 
-    const overlay = document.createElement('div');
-    Object.assign(overlay.style, {
-      position: 'fixed',
-      top: '0',
-      left: '0',
-      right: '0',
-      bottom: '0',
-      backgroundColor: 'rgba(0, 0, 0, 0.4)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: '1000',
-    });
+  connectedCallback() {
+    if (!this.payload) return;
 
-    const windowEl = document.createElement('div');
-    this.element = windowEl;
-    windowEl.className = 'window';
-    windowEl.style.width = 'min(95vw, 600px)';
-    windowEl.setAttribute('role', 'dialog');
-    windowEl.setAttribute('aria-modal', 'true');
-    windowEl.setAttribute('aria-labelledby', 'encounter-modal-title');
+    this.innerHTML = `
+      <div id="encounter-overlay" class="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+        <div class="window" style="width: min(95vw, 600px);" role="dialog" aria-modal="true" aria-labelledby="encounter-modal-title">
+          <div class="title-bar">
+            <div class="title-bar-text" id="encounter-modal-title">${t('items_and_rooms.' + this.payload.room.id)}</div>
+          </div>
+          <div class="window-body p-2">
+            ${this.renderInitialView()}
+          </div>
+        </div>
+      </div>
+    `;
 
-    const titleBar = document.createElement('div');
-    titleBar.className = 'title-bar';
-    const titleBarText = document.createElement('div');
-    titleBarText.id = 'encounter-modal-title';
-    titleBarText.className = 'title-bar-text';
-    titleBar.appendChild(titleBarText);
-    windowEl.appendChild(titleBar);
-
-    const windowBody = document.createElement('div');
-    windowBody.className = 'window-body p-2';
-    windowBody.innerHTML = this.renderInitialView();
-
-    windowEl.appendChild(windowBody);
-    overlay.appendChild(windowEl);
-    document.body.appendChild(overlay);
-
-    titleBarText.textContent = t('items_and_rooms.' + payload.room.id);
-    this.element.querySelector('#skip-button')!.addEventListener('click', () => {
+    this.querySelector('#skip-button')!.addEventListener('click', () => {
       this.dismiss(true);
     });
 
@@ -65,6 +38,7 @@ export class EncounterModal {
   }
 
   private start() {
+    if (!this.payload) return;
     if (this.payload.room.type === 'room_healing' || this.payload.room.type === 'room_trap') {
       this.renderRoomChoiceView();
     } else {
@@ -92,9 +66,10 @@ export class EncounterModal {
   }
 
   private renderRoomChoiceView() {
-    const roomChoiceContainer = this.element.querySelector<HTMLDivElement>('#room-choice-container')!;
-    const eventMessage = this.element.querySelector<HTMLParagraphElement>('#event-message')!;
-    const skipButton = this.element.querySelector<HTMLButtonElement>('#skip-button')!;
+    if (!this.payload) return;
+    const roomChoiceContainer = this.querySelector<HTMLDivElement>('#room-choice-container')!;
+    const eventMessage = this.querySelector<HTMLParagraphElement>('#event-message')!;
+    const skipButton = this.querySelector<HTMLButtonElement>('#skip-button')!;
 
     roomChoiceContainer.classList.remove('hidden');
     const firstEvent = this.payload.log[0];
@@ -104,27 +79,25 @@ export class EncounterModal {
     if (secondEvent) {
       setTimeout(() => {
         eventMessage.textContent = t(secondEvent.messageKey, secondEvent.replacements);
-        skipButton.textContent = t('global.continue');
-        setTimeout(() => this.dismiss(false), ROOM_CHOICE_VIEW_DELAY);
       }, ROOM_CHOICE_VIEW_DELAY);
-    } else {
-      skipButton.textContent = t('global.continue');
-      setTimeout(() => this.dismiss(false), ROOM_CHOICE_VIEW_DELAY);
     }
+    skipButton.textContent = t('global.continue');
+    skipButton.onclick = () => this.dismiss(false);
   }
 
   private renderBattleView() {
-    this.element.querySelector<HTMLDivElement>('#adventurer-status-container')!.classList.remove('hidden');
-    this.element.querySelector<HTMLDivElement>('#enemy-status-container')!.classList.remove('hidden');
-    this.element.querySelector<HTMLDivElement>('#progress-container')!.classList.remove('hidden');
-    this.element.querySelector<HTMLButtonElement>('#skip-button')!.textContent = t('global.skip');
+    this.querySelector<HTMLDivElement>('#adventurer-status-container')!.classList.remove('hidden');
+    this.querySelector<HTMLDivElement>('#enemy-status-container')!.classList.remove('hidden');
+    this.querySelector<HTMLDivElement>('#progress-container')!.classList.remove('hidden');
+    this.querySelector<HTMLButtonElement>('#skip-button')!.textContent = t('global.skip');
 
     this.renderNextBattleEvent();
   }
 
   private renderNextBattleEvent() {
-    if (this.currentEventIndex >= this.payload.log.length) {
-      this.element.querySelector<HTMLButtonElement>('#skip-button')!.textContent = t('global.continue');
+    if (!this.payload || this.currentEventIndex >= this.payload.log.length) {
+      this.querySelector<HTMLButtonElement>('#skip-button')!.textContent = t('global.continue');
+      this.querySelector('#skip-button')!.addEventListener('click', () => this.dismiss(false));
       return;
     }
 
@@ -133,9 +106,9 @@ export class EncounterModal {
     if (event.enemy) {
       this.renderEnemyStatus(event.enemy);
     } else {
-      this.element.querySelector<HTMLDivElement>('#enemy-status-container')!.innerHTML = '';
+      this.querySelector<HTMLDivElement>('#enemy-status-container')!.innerHTML = '';
     }
-    this.element.querySelector<HTMLParagraphElement>('#event-message')!.textContent = t(event.messageKey, event.replacements);
+    this.querySelector<HTMLParagraphElement>('#event-message')!.textContent = t(event.messageKey, event.replacements);
     this.updateProgressBar();
 
     this.currentEventIndex++;
@@ -143,44 +116,45 @@ export class EncounterModal {
   }
 
   private renderAdventurerStatus(adventurer: import('../types').AdventurerSnapshot) {
-    this.element.querySelector<HTMLDivElement>('#adventurer-status-container')!.innerHTML = `
-      <div class="font-bold">${t('global.adventurer')}</div>
-      <div>HP: ${adventurer.hp} / ${adventurer.maxHp}</div>
-      <div>Power: ${adventurer.power}</div>
+    const flowStateKey = `flow_states.${Object.values(import('../types').FlowState)[adventurer.flowState].toLowerCase()}`;
+    this.querySelector<HTMLDivElement>('#adventurer-status-container')!.innerHTML = `
+      <div class="status-bar">
+        <p class="status-bar-field font-bold">${t('global.adventurer')}</p>
+        <p class="status-bar-field">HP: ${adventurer.hp} / ${adventurer.maxHp}</p>
+        <p class.status-bar-field">Power: ${adventurer.power}</p>
+        <p class="status-bar-field">${t(flowStateKey)}</p>
+      </div>
     `;
   }
 
   private renderEnemyStatus(enemy: import('../types').EnemySnapshot) {
-    this.element.querySelector<HTMLDivElement>('#enemy-status-container')!.innerHTML = `
-      <div class.font-bold">${enemy.name} (${enemy.count}/${enemy.total})</div>
+    this.querySelector<HTMLDivElement>('#enemy-status-container')!.innerHTML = `
+      <div class="font-bold">${t(enemy.name)} (${enemy.count}/${enemy.total})</div>
       <div>HP: ${enemy.currentHp} / ${enemy.maxHp}</div>
       <div>Power: ${enemy.power}</div>
     `;
   }
 
   private updateProgressBar() {
+    if (!this.payload) return;
     const progress = (this.currentEventIndex + 1) / this.payload.log.length;
-    this.element.querySelector<HTMLDivElement>('#progress-indicator')!.style.width = `${progress * 100}%`;
+    this.querySelector<HTMLDivElement>('#progress-indicator')!.style.width = `${progress * 100}%`;
   }
 
   private dismiss(skipped: boolean) {
     clearTimeout(this.battleTimeout);
-    this.element.parentElement!.remove();
+    this.remove();
     this.onDismiss({ skipped });
   }
 
   public static show(payload: EncounterPayload): Promise<{ skipped: boolean }> {
     return new Promise((resolve) => {
-      new EncounterModal(payload, resolve);
+      const modal = document.createElement('encounter-modal') as EncounterModal;
+      modal.payload = payload;
+      modal.onDismiss = resolve;
+      document.body.appendChild(modal);
     });
   }
 }
 
-customElements.define(
-  'encounter-modal',
-  class extends HTMLElement {
-    constructor() {
-      super();
-    }
-  }
-);
+customElements.define('encounter-modal', EncounterModal);
