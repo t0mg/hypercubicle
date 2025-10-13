@@ -20,6 +20,7 @@ import './components/ChoicePanel.ts';
 import './components/Workshop.ts';
 import './components/MenuScreen.ts';
 import './components/TooltipBox.ts';
+import './components/EncounterModal.ts';
 
 import { tooltipManager } from './tooltip';
 
@@ -58,6 +59,12 @@ async function main() {
     }
     render(appElement, newState, engine);
     initializeTooltipIcons();
+  });
+
+  engine.on('show-encounter', async (payload) => {
+    const { EncounterModal } = await import('./components/EncounterModal');
+    await EncounterModal.show(payload);
+    engine.continueEncounter(payload);
   });
 
   // Initial render for loading state

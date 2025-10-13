@@ -70,6 +70,7 @@ export type GamePhase =
   | 'LOADING'
   | 'DESIGNER_CHOOSING_LOOT'
   | 'DESIGNER_CHOOSING_ROOM'
+  | 'AWAITING_ENCOUNTER_RESULT'
   | 'RUN_OVER'
   | 'SHOP'
   | 'UNLOCK_SCREEN';
@@ -78,6 +79,39 @@ export interface Encounter {
   enemyCount: number;
   enemyPower: number;
   enemyHp: number;
+}
+
+export interface AdventurerSnapshot {
+  hp: number;
+  maxHp: number;
+  power: number;
+  flowState: FlowState;
+  inventory: AdventurerInventory;
+}
+
+export interface EnemySnapshot {
+  currentHp: number;
+  maxHp: number;
+  power: number;
+  name: string;
+  count: number;
+  total: number;
+}
+
+export interface EncounterEvent {
+  messageKey: string;
+  replacements?: { [key: string]: string | number };
+  adventurer: AdventurerSnapshot;
+  enemy?: EnemySnapshot;
+}
+
+export type EncounterLog = EncounterEvent[];
+
+export interface EncounterPayload {
+  room: RoomChoice;
+  log: EncounterLog;
+  finalAdventurer: Adventurer;
+  feedback: string[];
 }
 
 export interface GameState {
