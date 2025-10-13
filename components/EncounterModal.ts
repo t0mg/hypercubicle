@@ -39,11 +39,7 @@ export class EncounterModal extends HTMLElement {
 
   private start() {
     if (!this.payload) return;
-    if (this.payload.room.type === 'room_healing' || this.payload.room.type === 'room_trap') {
-      this.renderRoomChoiceView();
-    } else {
-      this.renderBattleView();
-    }
+    this.renderRoomChoiceView();
   }
 
   private renderInitialView(): string {
@@ -75,14 +71,18 @@ export class EncounterModal extends HTMLElement {
     const firstEvent = this.payload.log[0];
     eventMessage.textContent = t(firstEvent.messageKey, firstEvent.replacements);
 
-    const secondEvent = this.payload.log[1];
-    if (secondEvent) {
-      setTimeout(() => {
-        eventMessage.textContent = t(secondEvent.messageKey, secondEvent.replacements);
-      }, ROOM_CHOICE_VIEW_DELAY);
-    }
     skipButton.textContent = t('global.continue');
-    skipButton.onclick = () => this.dismiss(false);
+    skipButton.onclick = () => {
+      if (this.payload?.room.type === 'room_healing' || this.payload?.room.type === 'room_trap') {
+        const secondEvent = this.payload.log[1];
+        if (secondEvent) {
+          eventMessage.textContent = t(secondEvent.messageKey, secondEvent.replacements);
+        }
+        skipButton.onclick = () => this.dismiss(false);
+      } else {
+        this.renderBattleView();
+      }
+    };
   }
 
   private renderBattleView() {
@@ -121,7 +121,7 @@ export class EncounterModal extends HTMLElement {
       <div class="status-bar">
         <p class="status-bar-field font-bold">${t('global.adventurer')}</p>
         <p class="status-bar-field">HP: ${adventurer.hp} / ${adventurer.maxHp}</p>
-        <p class.status-bar-field">Power: ${adventurer.power}</p>
+        <p class="status-bar-field">Power: ${adventurer.power}</p>
         <p class="status-bar-field">${t(flowStateKey)}</p>
       </div>
     `;
