@@ -20,8 +20,10 @@ export class Adventurer {
   public roomHistory: string[];
   public lootHistory: string[];
   public boredomCounter: number;
+  public firstName: string;
+  public lastName: string;
 
-  constructor(traits: AdventurerTraits) {
+  constructor(traits: AdventurerTraits, names?: { firstNames: string[], lastNames: string[] }) {
     this.hp = BASE_ADVENTURER_STATS.hp;
     this.maxHp = BASE_ADVENTURER_STATS.maxHp;
     this.power = BASE_ADVENTURER_STATS.power;
@@ -35,6 +37,8 @@ export class Adventurer {
     this.roomHistory = [];
     this.lootHistory = [];
     this.boredomCounter = 0;
+    this.firstName = names ? names.firstNames[Math.floor(Math.random() * names.firstNames.length)] : 'Testy';
+    this.lastName = names ? names.lastNames[Math.floor(Math.random() * names.lastNames.length)] : 'McTest';
   }
 
   public get challenge(): number {
@@ -147,6 +151,8 @@ export class Adventurer {
       roomHistory: this.roomHistory,
       lootHistory: this.lootHistory,
       boredomCounter: this.boredomCounter,
+      firstName: this.firstName,
+      lastName: this.lastName,
     };
   }
 
@@ -165,6 +171,8 @@ export class Adventurer {
     adventurer.roomHistory = data.roomHistory;
     adventurer.lootHistory = data.lootHistory;
     adventurer.boredomCounter = data.boredomCounter;
+    adventurer.firstName = data.firstName;
+    adventurer.lastName = data.lastName;
 
     return adventurer;
   }
