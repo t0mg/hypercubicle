@@ -28,16 +28,16 @@ describe('Logger', () => {
   });
 
   it('should create a log entry', () => {
-    logger.info('info_new_adventurer');
+    logger.info('info_new_adventurer', { fullName: 'Testy McTest', id: '1' });
     expect(logger.entries.length).toBe(1);
     const entry = logger.entries[0];
     expect(entry.level).toBe('INFO');
-    expect(entry.message).toBe('A new Executive enters the office!');
+    expect(entry.message).toBe('Testy McTest (Exec. #1) enters the office!');
   });
 
   it('should handle all log levels', () => {
-    logger.info('info_new_adventurer');
-    logger.warn('warn_empty_hand');
+    logger.info('info_new_adventurer', { fullName: 'Testy McTest', id: '1' });
+    logger.warn('warn_empty_hand', { name: 'Testy' });
     logger.error('info_game_over', { reason: 'test' });
     logger.debug('debug message');
 
@@ -51,31 +51,31 @@ describe('Logger', () => {
   it('should call listeners with the new entry', () => {
     const listener = vi.fn();
     logger.on(listener);
-    logger.info('info_new_adventurer');
+    logger.info('info_new_adventurer', { fullName: 'Testy McTest', id: '1' });
     expect(listener).toHaveBeenCalledOnce();
     const entry = listener.mock.calls[0][0] as LogEntry;
-    expect(entry.message).toBe('A new Executive enters the office!');
+    expect(entry.message).toBe('Testy McTest (Exec. #1) enters the office!');
   });
 
   it('should serialize and deserialize correctly', () => {
-    logger.info('info_new_adventurer');
+    logger.info('info_new_adventurer', { fullName: 'Testy McTest', id: '1' });
     const json = logger.toJSON();
     const newLogger = Logger.fromJSON(json);
     expect(newLogger.entries.length).toBe(1);
-    expect(newLogger.entries[0].message).toBe('A new Executive enters the office!');
+    expect(newLogger.entries[0].message).toBe('Testy McTest (Exec. #1) enters the office!');
   });
 
   it('should log combat events', () => {
-    logger.info('info_encounter_enemy', { current: 1, total: 1 });
+    logger.info('info_encounter_enemy', { name: 'Testy', current: 1, total: 1 });
     logger.info('info_enemy_defeated');
     expect(logger.entries.length).toBe(2);
-    expect(logger.entries[0].message).toBe('The Executive encounters hostile department member 1/1.');
+    expect(logger.entries[0].message).toBe('Testy encounters hostile department member 1/1.');
     expect(logger.entries[1].message).toBe('A hostile department member has been synergized with.');
   });
 
   it('should log adventurer decisions', () => {
-    logger.info('info_adventurer_decision', { decision: 'continue' });
+    logger.info('info_adventurer_decision', { name: 'Testy', decision: 'continue' });
     expect(logger.entries.length).toBe(1);
-    expect(logger.entries[0].message).toBe('The Executive decided to continue.');
+    expect(logger.entries[0].message).toBe('Testy decided to continue.');
   });
 });
