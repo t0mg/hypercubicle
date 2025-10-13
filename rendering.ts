@@ -36,7 +36,7 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
     if (leftTitleText) leftTitleText.textContent = t('game_title');
 
     const rightTitleText = appElement.querySelector('#adventurer-status-title');
-    if (rightTitleText) rightTitleText.textContent = t('adventurer_status.title', { count: engine.metaManager.metaState.adventurers });
+    if (rightTitleText) rightTitleText.textContent = t('adventurer_status.title', { name: state.adventurer.firstName + " " + state.adventurer.lastName, id: engine.metaManager.metaState.adventurers });
   }
 
   // Now, query for the elements and update them
