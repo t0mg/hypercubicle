@@ -66,9 +66,6 @@ export class AdventurerStatus extends HTMLElement {
     const showTraits = this._metaState?.unlockedFeatures.includes(UnlockableFeature.ADVENTURER_TRAITS);
 
     this.innerHTML = `
-            <fieldset>
-                <legend class="text-lg">${this._adventurer.firstName} ${this._adventurer.lastName} (Exec. #${adventurerNumber})</legend>
-            </fieldset>
             <fieldset class="mt-2" data-tooltip-key="adventurer_flow_state">
               <legend>${t('adventurer_status.flow_state')}</legend>
               <div id="flow-state-text" class="font-mono text-xl text-center"></div>
