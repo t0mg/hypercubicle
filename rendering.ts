@@ -37,6 +37,12 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
 
     const rightTitleText = appElement.querySelector('#adventurer-status-title');
     if (rightTitleText) rightTitleText.textContent = t('adventurer_status.title', { count: engine.metaManager.metaState.adventurers });
+
+    appElement.querySelector('#quit-game-btn')?.addEventListener('click', async () => {
+      if (await ConfirmModal.show(t('global.quit'), t('global.quit_confirm'))) {
+        engine.quitGame(false); // Pass false to preserve the save file
+      }
+    });
   }
 
   // Now, query for the elements and update them
@@ -98,12 +104,6 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
       if (gamePhaseTitle) gamePhaseTitle.textContent = '...';
       break;
   }
-
-  appElement.querySelector('#quit-game-btn')?.addEventListener('click', async () => {
-    if (await ConfirmModal.show(t('global.quit'), t('global.quit_confirm'))) {
-      engine.quitGame(false); // Pass false to preserve the save file
-    }
-  });
 };
 
 const renderMenu = (appElement: HTMLElement, engine: GameEngine) => {
