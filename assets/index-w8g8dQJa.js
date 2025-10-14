@@ -281,7 +281,7 @@
         </div>
         <div class="status-bar">
           <p class="status-bar-field">v0.0.0</p>
-          <p class="status-bar-field">build 132</p>
+          <p class="status-bar-field">build 133</p>
         </div>
       </div>
     `}}customElements.define("menu-screen",at);class ot extends HTMLElement{constructor(){super(),this.isDesktop=!0,this.attachShadow({mode:"open"}),this.onclick=t=>{window.matchMedia("(pointer: coarse)").matches&&t.target===this&&this.hide()};const e=document.createElement("style");e.textContent=`
@@ -399,10 +399,9 @@
           </div>
         </div>
       </div>
-    `,this.querySelector("#skip-button").addEventListener("click",()=>{this.dismiss(!0)}),this.start())}start(){this.payload&&this.renderRoomChoiceView()}renderInitialView(){return`
+    `,this.querySelector("#skip-button").addEventListener("click",()=>{this.dismiss(!0)}),this.start())}start(){if(!this.payload)return;const e=this.querySelector("#event-message"),t=this.querySelector("#continue-button"),s=this.payload.log[0];e.textContent=o(s.messageKey,s.replacements),t.textContent=o("global.continue");const n=()=>{var i,r;if(t.removeEventListener("click",n),((i=this.payload)==null?void 0:i.room.type)==="room_healing"||((r=this.payload)==null?void 0:r.room.type)==="room_trap"){const l=this.payload.log[1];l&&(e.textContent=o(l.messageKey,l.replacements)),t.onclick=()=>this.dismiss(!1)}else this.renderBattleView()};t.addEventListener("click",n)}renderInitialView(){return`
       <div id="adventurer-status-container" class="hidden">...</div>
       <div id="enemy-status-container" class="hidden">...</div>
-      <div id="room-choice-container" class="hidden text-center p-4">...</div>
       <div class="sunken-panel-tl mt-2 p-1" style="height: 60px;">
         <p id="event-message" class="text-center"></p>
       </div>
@@ -412,9 +411,9 @@
         </div>
       </div>
       <div class="flex justify-end mt-4">
-        <button id="skip-button"></button>
+        <button id="continue-button"></button>
       </div>
-    `}renderRoomChoiceView(){if(!this.payload)return;const e=this.querySelector("#room-choice-container"),t=this.querySelector("#event-message"),s=this.querySelector("#skip-button");e.classList.remove("hidden");const n=this.payload.log[0];t.textContent=o(n.messageKey,n.replacements),s.textContent=o("global.continue"),s.onclick=()=>{var i,r;if(((i=this.payload)==null?void 0:i.room.type)==="room_healing"||((r=this.payload)==null?void 0:r.room.type)==="room_trap"){const l=this.payload.log[1];l&&(t.textContent=o(l.messageKey,l.replacements)),s.onclick=()=>this.dismiss(!1)}else this.renderBattleView()}}renderBattleView(){this.querySelector("#adventurer-status-container").classList.remove("hidden"),this.querySelector("#enemy-status-container").classList.remove("hidden"),this.querySelector("#progress-container").classList.remove("hidden"),this.querySelector("#skip-button").textContent=o("global.skip"),this.renderNextBattleEvent()}renderNextBattleEvent(){if(!this.payload||this.currentEventIndex>=this.payload.log.length){this.querySelector("#skip-button").textContent=o("global.continue"),this.querySelector("#skip-button").addEventListener("click",()=>this.dismiss(!1));return}const e=this.payload.log[this.currentEventIndex];this.renderAdventurerStatus(e.adventurer),e.enemy?this.renderEnemyStatus(e.enemy):this.querySelector("#enemy-status-container").innerHTML="",this.querySelector("#event-message").textContent=o(e.messageKey,e.replacements),this.updateProgressBar(),this.currentEventIndex++,this.battleTimeout=setTimeout(()=>this.renderNextBattleEvent(),rt)}renderAdventurerStatus(e){const t=`flow_states.${Object.values(X(()=>Promise.resolve().then(()=>pe),void 0).FlowState)[e.flowState].toLowerCase()}`;this.querySelector("#adventurer-status-container").innerHTML=`
+    `}renderBattleView(){this.querySelector("#adventurer-status-container").classList.remove("hidden"),this.querySelector("#enemy-status-container").classList.remove("hidden"),this.querySelector("#progress-container").classList.remove("hidden");const e=this.querySelector("#continue-button");e.id="skip-button",e.textContent=o("global.skip"),e.onclick=()=>this.dismiss(!0),this.currentEventIndex=1,this.renderNextBattleEvent()}renderNextBattleEvent(){if(!this.payload||this.currentEventIndex>=this.payload.log.length){const t=this.querySelector("#skip-button");t.textContent=o("global.continue"),t.onclick=()=>this.dismiss(!1);return}const e=this.payload.log[this.currentEventIndex];this.renderAdventurerStatus(e.adventurer),e.enemy?this.renderEnemyStatus(e.enemy):this.querySelector("#enemy-status-container").innerHTML="",this.querySelector("#event-message").textContent=o(e.messageKey,e.replacements),this.updateProgressBar(),this.currentEventIndex++,this.battleTimeout=setTimeout(()=>this.renderNextBattleEvent(),rt)}renderAdventurerStatus(e){const t=`flow_states.${Object.values(X(()=>Promise.resolve().then(()=>pe),void 0).FlowState)[e.flowState].toLowerCase()}`;this.querySelector("#adventurer-status-container").innerHTML=`
       <div class="status-bar">
         <p class="status-bar-field font-bold">${o("global.adventurer")}</p>
         <p class="status-bar-field">HP: ${e.hp} / ${e.maxHp}</p>
