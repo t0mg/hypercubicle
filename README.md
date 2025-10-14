@@ -2,64 +2,19 @@
 
 [![Deploy to GitHub Pages](https://github.com/t0mg/rogue-steward/actions/workflows/deploy.yml/badge.svg)](https://github.com/t0mg/rogue-steward/actions/workflows/deploy.yml)
 
-A reverse roguelike game where you act as a dungeon designer for an AI adventurer. Your goal is not to kill the adventurer, but to create a compelling, challenging, and rewarding experience that keeps them engaged.
+## What the project is
 
-## How to Play
+Rogue Steward is a corporate strategy adventure in which your goal is to keep your executive motivated for as many days as possible (even if that means depleting their stamina early).
 
-Each turn, you will be presented with a selection of potential loot. You must choose up to three items to offer the adventurer. The AI adventurer, with its own hidden traits and ever-changing flow state, will then choose one of your offerings before proceeding to the next room of the dungeon.
+## What the project is under the hood
 
-- If the dungeon is too easy, the adventurer will grow bored.
-- If it's too difficult or the rewards don't match their playstyle, they will become frustrated and may quit.
+This is a meta rogue-lite experiment in which you play a dungeon master trying to nudge the "player" (the Executive) towards your meta goal of making them enjoy their experience. For this you can influence the loot they find and the encounters they make, by offering them choices (the former face up, the latter blind). As the game progresses you'll be able to purchase more loot and encounter options to choose from.
 
-Your goal is to keep the adventurer engaged for as long as possible. Reaching higher runs, and perhaps even winning, will unlock new, more powerful items and rooms for future runs, expanding your strategic options.
+The meta element is because you are rewarded with unlockable features (perks) if your player goes through a certain number of days without retiring. When they do you lose most of your stuff but you keep your unlocked perks. Therefore the Executive has runs (work days) but the player also does with successive Executive hires to try to unlock all perks and beat their max number of work days.
 
-## Project Structure
+## What the hood above the project is
 
-This project is a single-page web application built with **TypeScript** and **native Web Components**. It uses **Tailwind CSS** for styling and **Vite** as a build tool.
-
--   `index.html`: The main HTML file and entry point for the application. It includes the setup for Tailwind CSS and the root element for the app.
--   `main.ts`: The script that initializes the `GameEngine` and manages the overall application flow, state, and renders different components based on the current `gamePhase`.
--   `types.ts`: Contains all the core TypeScript type and interface definitions used across the application (e.g., `GameState`, `Adventurer`, `LootChoice`).
--   `vite.config.ts`: Configuration file for the Vite development server and build tool.
--   `tsconfig.json`: TypeScript compiler configuration.
-
-### `game/`
-
-This directory contains the core game logic and state management.
-
--   `engine.ts`: The heart of the game. This class manages the entire `GameState`, including all core game logic: starting new runs, processing loot offers, simulating adventurer choices, running encounters, and handling the game over state.
--   `adventurer.ts`: Defines the `Adventurer` class, which represents the AI-controlled hero, including their stats, traits, inventory, and state.
--   `ai.ts`: Contains the logic that governs the adventurer's decision-making process, such as choosing which loot to take or how to act in battle.
--   `meta.ts`: Manages meta-progression, such as unlocking new features and tracking statistics across multiple runs.
--   `storage.ts`: Handles saving and loading game data to and from the browser's local storage.
-
-### `public/`
-
-This directory contains static assets that are served directly to the browser.
-
--   `public/game/items.json`: A JSON file containing the definitions for all loot items available in the game.
--   `public/game/rooms.json`: A JSON file containing the definitions for all rooms (e.g., encounters, traps, healing rooms) that can appear in the dungeon.
-
-### `components/`
-
-This directory contains all the reusable Web Components that make up the UI. Each component is defined in its own file and registered as a custom element.
-
--   `AdventurerStatus.ts`: Displays the adventurer's current stats, including HP, interest, power, and inventory.
--   `FeedbackPanel.ts`: A simple component to display messages and feedback from the adventurer.
--   `RunEndedScreen.ts`: A modal screen that appears when a run ends.
--   `GameStats.ts`: Displays high-level game information like current BP, run number, and room number.
--   `Card.ts`: Renders a single card (item or room).
--   `ChoicePanel.ts`: The main interface for the player to select which items or rooms to offer to the adventurer.
--   `Workshop.ts`: The screen shown between runs where the player can spend BP to unlock new items.
--   `MenuScreen.ts`: The main menu screen.
--   `LogPanel.ts`: A panel that shows a running log of game events.
-
-### `tools/`
-
-This directory contains command-line tools for development and analysis.
-
--   `simulate.ts`: A script to run the game in a headless mode for a specified number of runs. This is useful for game balancing and tuning.
--   `metrics.ts`: A helper module for the simulation tool that collects and reports various metrics about the simulation runs.
+This project is an attempt at using jules.google.com to prototype a one-line idea (a sort of pun on the recursive difficulty of balancing game difficulty) that I had written down somewhere and zero time to build from scratch myself.
 
 ## Testing
 

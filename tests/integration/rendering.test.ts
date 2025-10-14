@@ -1,11 +1,11 @@
-import { GameEngine } from '../game/engine';
-import { render } from '../rendering';
-import { GameState, GamePhase } from '../types';
+import { GameEngine } from '../../game/engine';
+import { render } from '../../rendering';
+import { GameState, GamePhase } from '../../types';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { ConfirmModal } from '../components/ConfirmModal';
+import { ConfirmModal } from '../../components/ConfirmModal';
 
 // Mock the ConfirmModal
-vi.mock('../components/ConfirmModal', () => ({
+vi.mock('../../components/ConfirmModal', () => ({
   ConfirmModal: {
     show: vi.fn().mockResolvedValue(true),
   },
