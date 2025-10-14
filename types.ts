@@ -131,10 +131,9 @@ export interface GameState {
   offeredLoot: LootChoice[];
   offeredRooms: RoomChoice[];
   feedback: string | string[];
-  logger: Logger;
   run: number;
   room: number;
-  encounter?: Encounter;
+  encounterPayload?: EncounterPayload;
   runEnded: {
     isOver: boolean;
     reason: string;
