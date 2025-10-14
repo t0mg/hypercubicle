@@ -70,7 +70,7 @@ describe('Logger', () => {
     logger.info('info_enemy_defeated');
     expect(logger.entries.length).toBe(2);
     expect(logger.entries[0].message).toBe('Testy encounters hostile department member 1/1.');
-    expect(logger.entries[1].message).toBe('A hostile department member has been synergized with.');
+    expect(logger.entries[1].message).toBe('The hostile department member has been synergized with.');
   });
 
   it('should log adventurer decisions', () => {
