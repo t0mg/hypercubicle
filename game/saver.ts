@@ -58,12 +58,12 @@ export class GameSaver {
   }
 
   private _serialize(state: GameState): SerializableGameState {
-    const { adventurer, logger, ...restOfState } = state;
+    const { adventurer, ...restOfState } = state;
     return {
       version: SAVE_VERSION,
       ...restOfState,
       adventurer: adventurer.toJSON(), // Will need to add toJSON() to Adventurer
-      logger: logger.toJSON(),         // Will need to add toJSON() to Logger
+      logger: Logger.getInstance().toJSON(),         // Will need to add toJSON() to Logger
     };
   }
 
@@ -79,7 +79,6 @@ export class GameSaver {
     return {
       ...gameStateRest,
       adventurer,
-      logger,
     } as GameState;
   }
 }

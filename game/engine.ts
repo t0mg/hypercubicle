@@ -4,6 +4,8 @@ import { Adventurer } from './adventurer';
 import { Logger } from './logger';
 import { MetaManager } from './meta';
 import { GameSaver } from './saver';
+
+const logger = Logger.getInstance();
 import {
   ADVENTURER_ACTION_DELAY_MS,
   BP_PER_ROOM,
@@ -93,7 +95,7 @@ export class GameEngine {
     const feedback: string[] = [];
     const adventurerClone = Adventurer.fromJSON(adventurer.toJSON());
 
-    this.gameState?.logger.info('info_encounter', { name: adventurerClone.firstName, roomName: t('items_and_rooms.' + room.id) });
+    logger.info('info_encounter', { name: adventurerClone.firstName, roomName: t('items_and_rooms.' + room.id) });
     processRoomEntry(adventurerClone, room);
 
     encounterLog.push({
@@ -115,7 +117,7 @@ export class GameEngine {
 
         for (let i = 0; i < encounter.enemyCount; i++) {
           let currentEnemyHp = encounter.enemyHp;
-          this.gameState?.logger.info('info_encounter_enemy', {
+          logger.info('info_encounter_enemy', {
             name: adventurerClone.firstName,
             current: i + 1,
             total: encounter.enemyCount,
@@ -142,7 +144,7 @@ export class GameEngine {
               if (potionToUse) {
                 const healedAmount = potionToUse.stats.hp || 0;
                 adventurerClone.hp = Math.min(adventurerClone.maxHp, adventurerClone.hp + healedAmount);
-                this.gameState?.logger.info('info_adventurer_drinks_potion', { name: adventurerClone.firstName, potionName: t('items_and_rooms.' + potionToUse.id) });
+                logger.info('info_adventurer_drinks_potion', { name: adventurerClone.firstName, potionName: t('items_and_rooms.' + potionToUse.id) });
                 feedback.push(t('game_engine.adventurer_drinks_potion', { potionName: t('items_and_rooms.' + potionToUse.id) }));
                 encounterLog.push({
                   messageKey: 'log_messages.info_adventurer_drinks_potion',
@@ -156,7 +158,7 @@ export class GameEngine {
               if (rng.nextFloat() < adventurerHitChance) {
                 const damageDealt = adventurerClone.power;
                 currentEnemyHp -= damageDealt;
-                this.gameState?.logger.debug(`Adventurer hits for ${damageDealt} damage.`);
+                logger.debug(`Adventurer hits for ${damageDealt} damage.`);
                 const oldFlowState = adventurerClone.flowState;
                 processBattleTurn(adventurerClone, 'hit');
                 if (oldFlowState !== adventurerClone.flowState) {
@@ -174,7 +176,7 @@ export class GameEngine {
                   enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
                 });
               } else {
-                this.gameState?.logger.debug(`Adventurer misses.`);
+                logger.debug(`Adventurer misses.`);
                 const oldFlowState = adventurerClone.flowState;
                 processBattleTurn(adventurerClone, 'miss');
                 if (oldFlowState !== adventurerClone.flowState) {
@@ -194,7 +196,7 @@ export class GameEngine {
             }
 
             if (currentEnemyHp <= 0) {
-              this.gameState?.logger.info('info_enemy_defeated');
+              logger.info('info_enemy_defeated');
               enemiesDefeated++;
               encounterLog.push({
                 messageKey: 'log_messages.info_enemy_defeated',
@@ -209,7 +211,7 @@ export class GameEngine {
               const armor = (adventurerClone.inventory.armor?.stats.maxHp || 0) / 10;
               const damageTaken = Math.max(1, encounter.enemyPower - armor);
               adventurerClone.hp -= damageTaken;
-              this.gameState?.logger.debug(`Enemy hits for ${damageTaken} damage.`);
+              logger.debug(`Enemy hits for ${damageTaken} damage.`);
               const oldFlowState = adventurerClone.flowState;
               processBattleTurn(adventurerClone, 'take_damage');
               if (oldFlowState !== adventurerClone.flowState) {
@@ -227,7 +229,7 @@ export class GameEngine {
                 enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
               });
             } else {
-              this.gameState?.logger.debug(`Enemy misses.`);
+              logger.debug(`Enemy misses.`);
               encounterLog.push({
                 messageKey: 'log_messages.info_enemy_miss',
                 adventurer: this._createAdventurerSnapshot(adventurerClone),
@@ -237,7 +239,7 @@ export class GameEngine {
           }
 
           if (adventurerClone.hp <= 0) {
-            this.gameState?.logger.warn(`info_adventurer_defeated`, { name: adventurerClone.firstName });
+            logger.warn(`info_adventurer_defeated`, { name: adventurerClone.firstName });
             encounterLog.push({
               messageKey: 'log_messages.info_adventurer_defeated',
               replacements: { name: adventurerClone.firstName },
@@ -249,7 +251,7 @@ export class GameEngine {
         }
         const hpLost = initialHp - adventurerClone.hp;
         const hpLostRatio = hpLost / adventurerClone.maxHp;
-        this.gameState?.logger.debug(`hpLost: ${hpLost}, hpLostRatio: ${hpLostRatio.toFixed(2)}`);
+        logger.debug(`hpLost: ${hpLost}, hpLostRatio: ${hpLostRatio.toFixed(2)}`);
         const battleFeedback = processBattleOutcome(adventurerClone, hpLostRatio, enemiesDefeated, encounter.enemyCount);
         feedback.push(battleFeedback);
         break;
@@ -257,7 +259,7 @@ export class GameEngine {
       case 'room_healing': {
         const healing = room.stats.hp || 0;
         adventurerClone.hp = Math.min(adventurerClone.maxHp, adventurerClone.hp + healing);
-        this.gameState?.logger.info('info_healing_room', { name: adventurerClone.firstName, healingRoomName: t('items_and_rooms.' + room.id), healing: healing });
+        logger.info('info_healing_room', { name: adventurerClone.firstName, healingRoomName: t('items_and_rooms.' + room.id), healing: healing });
         feedback.push(t('game_engine.healing_room', { name: t('items_and_rooms.' + room.id), healing: healing }));
         encounterLog.push({
           messageKey: 'log_messages.info_healing_room',
@@ -270,7 +272,7 @@ export class GameEngine {
         const damage = room.stats.attack || 0;
         adventurerClone.hp -= damage;
         processTrap(adventurerClone);
-        this.gameState?.logger.info('info_trap_room', { name: adventurerClone.firstName, trapName: t('items_and_rooms.' + room.id), damage: damage });
+        logger.info('info_trap_room', { name: adventurerClone.firstName, trapName: t('items_and_rooms.' + room.id), damage: damage });
         feedback.push(t('game_engine.trap_room', { name: t('items_and_rooms.' + room.id), damage: damage }));
         encounterLog.push({
           messageKey: 'log_messages.info_trap_room',
@@ -291,7 +293,6 @@ export class GameEngine {
       resilience: rng.nextInt(10, 90),
       skill: 0,
     };
-    const logger = Logger.getInstance();
     logger.loadEntries([]);
     const newAdventurer = new Adventurer(newTraits, this._allNames);
 
@@ -326,15 +327,14 @@ export class GameEngine {
       offeredLoot: [],
       offeredRooms: [],
       feedback: t('game_engine.new_adventurer'),
-      logger: logger,
       run: 1,
       room: 1,
       runEnded: { isOver: false, reason: '', success: false, decision: null },
       newlyUnlocked: [],
       shopReturnPhase: null,
     };
-    this.gameState.logger.debug(`Unlocked features: ${[...this.metaManager.acls].join(', ')}`);
-    this.gameState.logger.debug(`Deck size: ${runDeck.length}, Hand size: ${handSize}, Room Deck size: ${roomRunDeck.length}, Room Hand size: ${roomHand.length}`);
+    logger.debug(`Unlocked features: ${[...this.metaManager.acls].join(', ')}`);
+    logger.debug(`Deck size: ${runDeck.length}, Hand size: ${handSize}, Room Deck size: ${roomRunDeck.length}, Room Hand size: ${roomHand.length}`);
 
     this._emit('state-change', this.gameState);
   }
@@ -344,6 +344,12 @@ export class GameEngine {
     if (savedState) {
       this.gameState = savedState;
       this._emit('state-change', this.gameState);
+
+      // If we load into a state where we're waiting for an encounter result,
+      // we need to re-trigger the encounter modal.
+      if (this.gameState.phase === 'AWAITING_ENCOUNTER_RESULT' && this.gameState.encounterPayload) {
+        this._emit('show-encounter', this.gameState.encounterPayload);
+      }
     } else {
       // Fallback to a new game if there's no save file
       this.startNewGame();
@@ -369,8 +375,8 @@ export class GameEngine {
     resetAdventurer.challengeHistory = [...this.gameState.adventurer.challengeHistory];
     resetAdventurer.flowState = this.gameState.adventurer.flowState;
 
-    this.gameState.logger.info('info_adventurer_returns');
-    this.gameState.logger.debug(`Unlocked features: ${[...this.metaManager.acls].join(', ')}`);
+    logger.info('info_adventurer_returns');
+    logger.debug(`Unlocked features: ${[...this.metaManager.acls].join(', ')}`);
     this.gameState = {
       ...this.gameState,
       adventurer: resetAdventurer,
@@ -395,12 +401,12 @@ export class GameEngine {
     this.gameState.offeredLoot = offeredLoot;
 
     const adventurer = this.gameState.adventurer;
-    const { choice, reason: feedback } = getAdventurerLootChoice(adventurer, this.gameState.offeredLoot, this.gameState.logger);
+    const { choice, reason: feedback } = getAdventurerLootChoice(adventurer, this.gameState.offeredLoot, logger);
 
     processLootChoice(adventurer, choice, this.gameState.offeredLoot);
 
     if (choice) {
-      this.gameState.logger.info('info_item_chosen', { name: adventurer.firstName, item: t('items_and_rooms.' + choice.id )});
+      logger.info('info_item_chosen', { name: adventurer.firstName, item: t('items_and_rooms.' + choice.id )});
     }
 
     // --- Hand and Deck Update Logic ---
@@ -475,6 +481,7 @@ export class GameEngine {
     this.gameState = {
       ...this.gameState,
       phase: 'AWAITING_ENCOUNTER_RESULT',
+      encounterPayload: payload,
     };
     this._emit('state-change', this.gameState);
     this._emit('show-encounter', payload);
@@ -528,7 +535,7 @@ export class GameEngine {
     }
 
     if (this.gameState.hand && this.gameState.hand.length === 0) {
-      this.gameState.logger.warn("warn_empty_hand");
+      logger.warn("warn_empty_hand");
       feedback.push(t('game_engine.empty_hand'));
       this.gameState = {
         ...this.gameState,
@@ -536,7 +543,7 @@ export class GameEngine {
         room: this.gameState.room + 1,
         designer: { balancePoints: this.gameState.designer.balancePoints + this._getBpPerRoom() },
         feedback: feedback,
-        encounter: undefined,
+        encounterPayload: undefined,
         roomHand: newRoomHand,
         availableRoomDeck: newRoomDeck,
       };
@@ -545,7 +552,7 @@ export class GameEngine {
         ...this.gameState,
         phase: 'DESIGNER_CHOOSING_LOOT',
         feedback: feedback,
-        encounter: undefined,
+        encounterPayload: undefined,
         roomHand: newRoomHand,
         availableRoomDeck: newRoomDeck,
       };
@@ -564,8 +571,8 @@ export class GameEngine {
     if (!this.gameState) return;
     this.metaManager.updateRun(this.gameState.run);
     const newlyUnlocked = this.metaManager.checkForUnlocks(this.gameState.run);
-    this.gameState.logger.debug(`Run ended with ${this.gameState.designer.balancePoints} BP.`);
-    this.gameState.logger.error(`info_game_over`, {reason});
+    logger.debug(`Run ended with ${this.gameState.designer.balancePoints} BP.`);
+    logger.error(`info_game_over`, {reason});
 
     const decision = this._getAdventurerEndRunDecision();
 
@@ -580,10 +587,10 @@ export class GameEngine {
 
   public enterWorkshop = () => {
     if (!this.gameState) return;
-    this.gameState.logger.info('info_entering_workshop', { name: this.gameState.adventurer.firstName });
+    logger.info('info_entering_workshop', { name: this.gameState.adventurer.firstName });
 
     if (!this.metaManager.acls.has(UnlockableFeature.WORKSHOP)) {
-      this.gameState.logger.info('info_workshop_not_unlocked');
+      logger.info('info_workshop_not_unlocked');
       this.startNewRun();
       return;
     }
@@ -646,7 +653,7 @@ export class GameEngine {
     const newBalancePoints = this.gameState.designer.balancePoints - itemToBuy.cost;
     const newShopItems = this.gameState.shopItems.filter(i => i.id !== itemId);
 
-    this.gameState.logger.info(`info_item_purchased`, { name: this.gameState.adventurer.firstName, item: t('items_and_rooms.' + itemToBuy.id) });
+    logger.info(`info_item_purchased`, { name: this.gameState.adventurer.firstName, item: t('items_and_rooms.' + itemToBuy.id) });
     this.gameState = {
       ...this.gameState,
       designer: { balancePoints: newBalancePoints },
@@ -722,7 +729,7 @@ export class GameEngine {
 
   public handleEndOfRun(decision: 'continue' | 'retire') {
     if (!this.gameState) return;
-    this.gameState.logger.info('info_adventurer_decision', { name: this.gameState.adventurer.firstName, decision });
+    logger.info('info_adventurer_decision', { name: this.gameState.adventurer.firstName, decision });
 
     if (decision === 'retire') {
       this.quitGame(true); // Clear save on retire, only meta progression is kept.
@@ -755,7 +762,6 @@ export class GameEngine {
       resilience: rng.nextInt(10, 90),
       skill: 0,
     };
-    const logger = Logger.getInstance();
     const newAdventurer = new Adventurer(newTraits, this._allNames);
     return {
       phase: 'MENU',
@@ -772,7 +778,6 @@ export class GameEngine {
       offeredLoot: [],
       offeredRooms: [],
       feedback: '',
-      logger: logger,
       run: 0,
       room: 0,
       runEnded: { isOver: false, reason: '', success: false, decision: null },

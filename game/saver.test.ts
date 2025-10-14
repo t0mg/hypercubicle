@@ -13,8 +13,7 @@ describe('GameSaver', () => {
   beforeEach(() => {
     storage = new MemoryStorage();
     saver = new GameSaver(storage);
-    const logger = Logger.getInstance();
-    logger.loadEntries([]);
+    Logger.getInstance().loadEntries([]);
     const adventurer = new Adventurer({ offense: 50, resilience: 50, skill: 10 });
 
     // Create a complex game state to test serialization
@@ -23,7 +22,6 @@ describe('GameSaver', () => {
       adventurer: adventurer,
       run: 2,
       room: 5,
-      logger: logger,
       designer: { balancePoints: 100 },
       unlockedDeck: ['item1', 'item2'],
       availableDeck: [{ id: 'item3', instanceId: 'i3', type: 'item_weapon', cost: null, stats: {}, rarity: 'common' }],
@@ -46,7 +44,7 @@ describe('GameSaver', () => {
     // Modify state before saving
     gameState.adventurer.hp = 80;
     gameState.adventurer.power = 15;
-    gameState.logger.info('test_entry');
+    Logger.getInstance().info('test_entry');
     gameState.designer.balancePoints = 150;
 
     saver.save(gameState);
@@ -73,12 +71,8 @@ describe('GameSaver', () => {
     expect(loadedState.adventurer.traits).toEqual(gameState.adventurer.traits);
 
     // Verify deserialized Logger
-    expect(loadedState.logger).toBeInstanceOf(Logger);
-    expect(loadedState.logger.entries.length).toBe(1);
-    expect(loadedState.logger.entries[0].message).toBe('log_messages.test_entry');
-
-    // Check that the adventurer's logger instance is the same as the state's logger instance
-    expect(loadedState.adventurer.logger).toBe(loadedState.logger);
+    expect(Logger.getInstance().entries.length).toBe(1);
+    expect(Logger.getInstance().entries[0].message).toBe('log_messages.test_entry');
   });
 
   it('should return null if no save game exists', () => {
