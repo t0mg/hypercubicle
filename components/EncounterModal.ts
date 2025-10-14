@@ -39,14 +39,41 @@ export class EncounterModal extends HTMLElement {
 
   private start() {
     if (!this.payload) return;
-    this.renderRoomChoiceView();
+
+    const eventMessage = this.querySelector<HTMLParagraphElement>('#event-message')!;
+    const continueButton = this.querySelector<HTMLButtonElement>('#continue-button')!;
+
+    // Step 1: Show the initial room reveal.
+    const roomRevealEvent = this.payload.log[0];
+    eventMessage.textContent = t(roomRevealEvent.messageKey, roomRevealEvent.replacements);
+    continueButton.textContent = t('global.continue');
+
+    // This is the primary click handler. It decides what to do next.
+    const handleContinue = () => {
+      // Remove this listener to prevent it from firing again.
+      continueButton.removeEventListener('click', handleContinue);
+
+      // Step 2: Decide the next view based on room type.
+      if (this.payload?.room.type === 'room_healing' || this.payload?.room.type === 'room_trap') {
+        // For non-battle rooms, show the outcome and then wait for a final click to dismiss.
+        const outcomeEvent = this.payload.log[1];
+        if (outcomeEvent) {
+          eventMessage.textContent = t(outcomeEvent.messageKey, outcomeEvent.replacements);
+        }
+        continueButton.onclick = () => this.dismiss(false);
+      } else {
+        // For battle rooms, transition to the battle view.
+        this.renderBattleView();
+      }
+    };
+
+    continueButton.addEventListener('click', handleContinue);
   }
 
   private renderInitialView(): string {
     return `
       <div id="adventurer-status-container" class="hidden">...</div>
       <div id="enemy-status-container" class="hidden">...</div>
-      <div id="room-choice-container" class="hidden text-center p-4">...</div>
       <div class="sunken-panel-tl mt-2 p-1" style="height: 60px;">
         <p id="event-message" class="text-center"></p>
       </div>
@@ -56,48 +83,34 @@ export class EncounterModal extends HTMLElement {
         </div>
       </div>
       <div class="flex justify-end mt-4">
-        <button id="skip-button"></button>
+        <button id="continue-button"></button>
       </div>
     `;
   }
 
-  private renderRoomChoiceView() {
-    if (!this.payload) return;
-    const roomChoiceContainer = this.querySelector<HTMLDivElement>('#room-choice-container')!;
-    const eventMessage = this.querySelector<HTMLParagraphElement>('#event-message')!;
-    const skipButton = this.querySelector<HTMLButtonElement>('#skip-button')!;
-
-    roomChoiceContainer.classList.remove('hidden');
-    const firstEvent = this.payload.log[0];
-    eventMessage.textContent = t(firstEvent.messageKey, firstEvent.replacements);
-
-    skipButton.textContent = t('global.continue');
-    skipButton.onclick = () => {
-      if (this.payload?.room.type === 'room_healing' || this.payload?.room.type === 'room_trap') {
-        const secondEvent = this.payload.log[1];
-        if (secondEvent) {
-          eventMessage.textContent = t(secondEvent.messageKey, secondEvent.replacements);
-        }
-        skipButton.onclick = () => this.dismiss(false);
-      } else {
-        this.renderBattleView();
-      }
-    };
-  }
-
   private renderBattleView() {
+    // Setup the battle UI
     this.querySelector<HTMLDivElement>('#adventurer-status-container')!.classList.remove('hidden');
     this.querySelector<HTMLDivElement>('#enemy-status-container')!.classList.remove('hidden');
     this.querySelector<HTMLDivElement>('#progress-container')!.classList.remove('hidden');
-    this.querySelector<HTMLButtonElement>('#skip-button')!.textContent = t('global.skip');
 
+    // Rename the button to "Skip" for the battle sequence
+    const button = this.querySelector<HTMLButtonElement>('#continue-button')!;
+    button.id = 'skip-button';
+    button.textContent = t('global.skip');
+    button.onclick = () => this.dismiss(true); // Skip dismisses immediately
+
+    // Start playing the battle events, skipping the first (room reveal)
+    this.currentEventIndex = 1;
     this.renderNextBattleEvent();
   }
 
   private renderNextBattleEvent() {
     if (!this.payload || this.currentEventIndex >= this.payload.log.length) {
-      this.querySelector<HTMLButtonElement>('#skip-button')!.textContent = t('global.continue');
-      this.querySelector('#skip-button')!.addEventListener('click', () => this.dismiss(false));
+      const skipButton = this.querySelector<HTMLButtonElement>('#skip-button')!;
+      skipButton.textContent = t('global.continue');
+      // Final click to dismiss after the battle is over
+      skipButton.onclick = () => this.dismiss(false);
       return;
     }
 
