@@ -6,6 +6,7 @@ import type { Workshop } from './components/Workshop';
 import type { GameStats } from './components/GameStats';
 import { t } from './text';
 import { GameEngine } from './game/engine';
+import { Logger } from './game/logger';
 import { isLootSelectionImpossible, isRoomSelectionImpossible } from './game/utils';
 import { RunEndedScreen } from './components/RunEndedScreen';
 import { ConfirmModal } from './components/ConfirmModal';
@@ -71,7 +72,7 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
   const feedbackMessage = Array.isArray(state.feedback) ? state.feedback.join(' ') : state.feedback;
   feedbackPanel.setAttribute('message', feedbackMessage);
 
-  logPanel.logger = state.logger;
+  logPanel.logger = Logger.getInstance();;
   logPanel.traits = state.adventurer.traits;
 
   gamePhasePanel.innerHTML = ''; // Clear previous phase content

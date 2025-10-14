@@ -79,6 +79,7 @@ export class GameEngine {
 
   private _createAdventurerSnapshot(adventurer: Adventurer): AdventurerSnapshot {
     return {
+      firstName: adventurer.firstName,
       hp: adventurer.hp,
       maxHp: adventurer.maxHp,
       power: adventurer.power,
@@ -164,7 +165,7 @@ export class GameEngine {
                 if (oldFlowState !== adventurerClone.flowState) {
                   encounterLog.push({
                     messageKey: 'log_messages.info_flow_state_changed',
-                    replacements: { from: t(`flow_states.${oldFlowState}`), to: t(`flow_states.${adventurerClone.flowState}`) },
+                    replacements: { name: adventurerClone.firstName, from: t(`flow_states.${oldFlowState}`), to: t(`flow_states.${adventurerClone.flowState}`) },
                     adventurer: this._createAdventurerSnapshot(adventurerClone),
                     enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
                   });
@@ -182,7 +183,7 @@ export class GameEngine {
                 if (oldFlowState !== adventurerClone.flowState) {
                   encounterLog.push({
                     messageKey: 'log_messages.info_flow_state_changed',
-                    replacements: { from: t(`flow_states.${oldFlowState}`), to: t(`flow_states.${adventurerClone.flowState}`) },
+                    replacements: { name: adventurerClone.firstName, from: t(`flow_states.${oldFlowState}`), to: t(`flow_states.${adventurerClone.flowState}`) },
                     adventurer: this._createAdventurerSnapshot(adventurerClone),
                     enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
                   });
@@ -217,7 +218,7 @@ export class GameEngine {
               if (oldFlowState !== adventurerClone.flowState) {
                 encounterLog.push({
                   messageKey: 'log_messages.info_flow_state_changed',
-                  replacements: { from: t(`flow_states.${oldFlowState}`), to: t(`flow_states.${adventurerClone.flowState}`) },
+                  replacements: { name: adventurerClone.firstName, from: t(`flow_states.${oldFlowState}`), to: t(`flow_states.${adventurerClone.flowState}`) },
                   adventurer: this._createAdventurerSnapshot(adventurerClone),
                   enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
                 });
@@ -487,15 +488,16 @@ export class GameEngine {
     this._emit('show-encounter', payload);
   }
 
-  public continueEncounter = (payload: EncounterPayload) => {
+  public continueEncounter = () => {
     if (!this.gameState || this.gameState.phase !== 'AWAITING_ENCOUNTER_RESULT') return;
-    this._postEncounterUpdate(payload.finalAdventurer, payload.feedback);
+    this._postEncounterUpdate();
   }
 
-  private _postEncounterUpdate = (finalAdventurer: Adventurer, feedback: string[]) => {
+  private _postEncounterUpdate = () => {
     if (!this.gameState) return;
 
-    let adventurer = finalAdventurer;
+    const adventurer = Adventurer.fromJSON(this.gameState.encounterPayload.finalAdventurer);
+    const feedback = this.gameState.encounterPayload.feedback;
     adventurer.updateBuffs();
     this.gameState.designer.balancePoints += this._getBpPerRoom();
 

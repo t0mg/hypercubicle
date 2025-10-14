@@ -36,11 +36,26 @@ export default {
           '50%': { boxShadow: '0 0 10px 5px rgba(255, 215, 0, 0.5)', transform: 'scale(1.05)' },
           '100%': { boxShadow: '0 0 0 0 rgba(255, 215, 0, 0)', transform: 'scale(1.0)' },
         },
+        'shake' : {
+          '10%, 90%': {
+              transform: 'translate3d(-1px, 0, 0)'
+          },
+          '20%, 80%': {
+              transform: 'translate3d(2px, 0, 0)'
+          },
+          '30%, 50%, 70%': {
+              transform: 'translate3d(-4px, 0, 0)'
+          },
+          '40%, 60%': {
+              transform: 'translate3d(4px, 0, 0)'
+          }
+        },
       },
       animation: {
         'fade-in': 'fade-in 0.3s ease-out forwards',
         'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
         'newly-drafted': 'newly-drafted-animation 1s ease-in-out',
+        'shake': 'shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97)',
       }
     },
   },

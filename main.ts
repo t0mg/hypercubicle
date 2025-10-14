@@ -64,7 +64,7 @@ async function main() {
   engine.on('show-encounter', async (payload) => {
     const { EncounterModal } = await import('./components/EncounterModal');
     await EncounterModal.show(payload);
-    engine.continueEncounter(payload);
+    engine.continueEncounter();
   });
 
   // Initial render for loading state

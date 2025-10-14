@@ -103,7 +103,7 @@ describe('GameEngine', () => {
     const offeredRooms = [damagingRoom!];
 
     engine.on('show-encounter', (payload) => {
-      engine.continueEncounter(payload);
+      engine.continueEncounter();
     });
     engine.runEncounter(offeredRooms);
 
@@ -119,7 +119,7 @@ describe('GameEngine', () => {
     engine.gameState!.adventurer.hp = 1;
 
     engine.on('show-encounter', (payload) => {
-      engine.continueEncounter(payload);
+      engine.continueEncounter();
     });
     engine.runEncounter([{ ...deadlyRoom, instanceId: 'r4_1' }]);
 
@@ -149,7 +149,7 @@ describe('GameEngine', () => {
     expect(engine.gameState!.adventurer.hp).toBe(64);
 
     engine.on('show-encounter', (payload) => {
-      engine.continueEncounter(payload);
+      engine.continueEncounter();
     });
 
     engine.runEncounter([{ ...harmlessRoom, instanceId: 'r5_1' }]);
@@ -223,7 +223,7 @@ describe('GameEngine', () => {
       expect(metaManager.metaState.highestRun).toBe(0);
       engine.startNewGame();
       expect(engine.gameState?.run).toBe(1);
-      engine.on('show-encounter', (payload) => engine.continueEncounter(payload));
+      engine.on('show-encounter', (payload) => engine.continueEncounter());
       (engine as any)._endRun('test reason', true);
       expect(metaManager.metaState.highestRun).toBe(1);
     });

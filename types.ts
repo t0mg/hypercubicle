@@ -82,6 +82,7 @@ export interface Encounter {
 }
 
 export interface AdventurerSnapshot {
+  firstName: string;
   hp: number;
   maxHp: number;
   power: number;

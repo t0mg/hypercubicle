@@ -69,6 +69,7 @@ export class EncounterModal extends HTMLElement {
     const isBattle = this.payload.room.type === 'room_enemy' || this.payload.room.type === 'room_boss';
 
     if (this.modalState === 'reveal') {
+      window.clearTimeout(this.revealTimeout);
       if (isBattle) {
         this.modalState = 'battle';
         this.renderBattleView();
@@ -98,9 +99,6 @@ export class EncounterModal extends HTMLElement {
           <div id="progress-indicator" style="width: 0%; height: 100%;"></div>
         </div>
       </div>
-      <div class="flex justify-end mt-4">
-        <button id="continue-button"></button>
-      </div>
       <div id="slider-container" class="hidden justify-end mt-4">
         <fieldset class="w-1/2">
           <legend>Playback Speed</legend>
@@ -110,6 +108,9 @@ export class EncounterModal extends HTMLElement {
             <label for="speed-slider">Faster</label>
           </div>
         </fieldset>
+      </div>
+      <div class="flex justify-end mt-4">
+        <button id="continue-button"></button>
       </div>
     `;
   }
@@ -155,7 +156,7 @@ export class EncounterModal extends HTMLElement {
     const flowStateKey = `flow_states.${adventurer.flowState}`;
     this.querySelector<HTMLDivElement>('#adventurer-status-container')!.innerHTML = `
       <div class="status-bar">
-        <p class="status-bar-field font-bold">${t('global.adventurer')}</p>
+        <p class="status-bar-field font-bold">${adventurer.firstName}</p>
         <p class="status-bar-field">HP: ${adventurer.hp} / ${adventurer.maxHp}</p>
         <p class="status-bar-field">Power: ${adventurer.power}</p>
         <p class="status-bar-field">${t(flowStateKey)}</p>

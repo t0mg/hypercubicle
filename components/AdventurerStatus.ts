@@ -176,9 +176,9 @@ export class AdventurerStatus extends HTMLElement {
 
   private _pulseElement(element: HTMLElement | null) {
     if (!element) return;
-    element.classList.add('animate-pulse-once');
+    element.classList.add('animate-shake');
     element.addEventListener('animationend', () => {
-      element.classList.remove('animate-pulse-once');
+      element.classList.remove('animate-shake');
     }, { once: true });
   }
 
