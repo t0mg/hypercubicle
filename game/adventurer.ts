@@ -156,7 +156,7 @@ export class Adventurer {
     };
   }
 
-  public static fromJSON(data: any, logger: Logger): Adventurer {
+  public static fromJSON(data: any): Adventurer {
     const traits = data.traits;
     const adventurer = new Adventurer(traits);
 

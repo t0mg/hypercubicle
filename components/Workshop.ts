@@ -1,7 +1,7 @@
 import type { LootChoice, RoomChoice } from '../types';
 import { t } from '../text';
 import { GameEngine } from '../game/engine';
-import './Card';
+import { Card } from './Card';
 
 export class Workshop extends HTMLElement {
   private _items: (LootChoice | RoomChoice)[] = [];
@@ -58,7 +58,7 @@ export class Workshop extends HTMLElement {
     if (itemCardsContainer) {
       itemCardsContainer.innerHTML = '';
       for (const item of this._items) {
-        const card = document.createElement('choice-card');
+        const card = document.createElement('choice-card') as Card;
         card.item = item;
         card.purchaseInfo = {
           cost: item.cost || 0,

@@ -72,7 +72,7 @@ export class GameSaver {
 
     const logger = Logger.getInstance();
     logger.loadEntries(loggerData.entries);
-    const adventurer = Adventurer.fromJSON(adventurerData, logger); // Need a static fromJSON method
+    const adventurer = Adventurer.fromJSON(adventurerData); // Need a static fromJSON method
 
     // Exclude 'version' from restOfState before returning
     const { version, ...gameStateRest } = restOfState;
