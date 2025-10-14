@@ -10,6 +10,7 @@ export class EncounterModal extends HTMLElement {
   private currentEventIndex = 0;
   private revealTimeout: number | undefined;
   private battleTimeout: number | undefined;
+  private battleSpeed: number = BATTLE_EVENT_DELAY;
   private modalState: 'reveal' | 'outcome' | 'battle' = 'reveal';
 
   constructor() {
@@ -33,6 +34,14 @@ export class EncounterModal extends HTMLElement {
     `;
 
     this.querySelector('#continue-button')!.addEventListener('click', () => this.handleContinue());
+
+    const speedSlider = this.querySelector<HTMLInputElement>('#speed-slider');
+    const speeds = [1500, 1200, 900, 600, 300];
+    speedSlider!.addEventListener('input', (event) => {
+        const value = (event.target as HTMLInputElement).value;
+        this.battleSpeed = speeds[parseInt(value, 10)];
+    });
+
     this.start();
   }
 
@@ -85,12 +94,22 @@ export class EncounterModal extends HTMLElement {
         <p id="event-message" class="text-center"></p>
       </div>
       <div id="progress-container" class="hidden mt-2">
-        <div class="progress-bar" style="width: 100%">
-          <div id="progress-indicator" style="width: 0%"></div>
+        <div class="progress-bar" style="width: 100%;">
+          <div id="progress-indicator" style="width: 0%; height: 100%;"></div>
         </div>
       </div>
       <div class="flex justify-end mt-4">
         <button id="continue-button"></button>
+      </div>
+      <div id="slider-container" class="hidden justify-end mt-4">
+        <fieldset class="w-1/2">
+          <legend>Playback Speed</legend>
+          <div class="field-row" style="justify-content: center">
+            <label for="speed-slider">Slower</label>
+            <input id="speed-slider" type="range" min="0" max="4" value="2" />
+            <label for="speed-slider">Faster</label>
+          </div>
+        </fieldset>
       </div>
     `;
   }
@@ -99,6 +118,7 @@ export class EncounterModal extends HTMLElement {
     this.querySelector<HTMLDivElement>('#adventurer-status-container')!.classList.remove('hidden');
     this.querySelector<HTMLDivElement>('#enemy-status-container')!.classList.remove('hidden');
     this.querySelector<HTMLDivElement>('#progress-container')!.classList.remove('hidden');
+    this.querySelector<HTMLDivElement>('#slider-container')!.classList.remove('hidden');
 
     const button = this.querySelector<HTMLButtonElement>('#continue-button')!;
     button.id = 'skip-button';
@@ -128,7 +148,7 @@ export class EncounterModal extends HTMLElement {
     this.updateProgressBar();
 
     this.currentEventIndex++;
-    this.battleTimeout = window.setTimeout(() => this.renderNextBattleEvent(), BATTLE_EVENT_DELAY);
+    this.battleTimeout = window.setTimeout(() => this.renderNextBattleEvent(), this.battleSpeed);
   }
 
   private renderAdventurerStatus(adventurer: AdventurerSnapshot) {
@@ -153,12 +173,14 @@ export class EncounterModal extends HTMLElement {
 
   private updateProgressBar() {
     if (!this.payload) return;
-    const progress = (this.currentEventIndex + 1) / this.payload.log.length;
+    const progress = (this.currentEventIndex) / (this.payload.log.length - 1);
     this.querySelector<HTMLDivElement>('#progress-indicator')!.style.width = `${progress * 100}%`;
   }
 
   private dismiss(skipped: boolean) {
     clearTimeout(this.battleTimeout);
+    this.querySelector<HTMLDivElement>('#progress-container')!.classList.add('hidden');
+    this.querySelector<HTMLDivElement>('#slider-container')!.classList.add('hidden');
     this.remove();
     this.onDismiss({ skipped });
   }
