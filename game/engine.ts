@@ -89,15 +89,15 @@ export class GameEngine {
     adventurer: Adventurer,
     room: RoomChoice
   ): { log: EncounterLog; finalAdventurer: Adventurer; feedback: string[] } {
-    const log: EncounterLog = [];
+    const encounterLog: EncounterLog = [];
     const feedback: string[] = [];
     const adventurerClone = Adventurer.fromJSON(adventurer.toJSON());
 
     this.gameState?.logger.info('info_encounter', { name: adventurerClone.firstName, roomName: t('items_and_rooms.' + room.id) });
     processRoomEntry(adventurerClone, room);
 
-    log.push({
-      messageKey: 'info_encounter',
+    encounterLog.push({
+      messageKey: 'log_messages.info_encounter',
       replacements: { name: adventurerClone.firstName, roomName: t('items_and_rooms.' + room.id) },
       adventurer: this._createAdventurerSnapshot(adventurerClone),
     });
@@ -128,8 +128,8 @@ export class GameEngine {
             count: i + 1,
             total: encounter.enemyCount,
           };
-          log.push({
-            messageKey: 'info_encounter_enemy',
+          encounterLog.push({
+            messageKey: 'log_messages.info_encounter_enemy',
             replacements: { name: adventurerClone.firstName, current: i + 1, total: encounter.enemyCount },
             adventurer: this._createAdventurerSnapshot(adventurerClone),
             enemy: enemySnapshot,
@@ -144,8 +144,8 @@ export class GameEngine {
                 adventurerClone.hp = Math.min(adventurerClone.maxHp, adventurerClone.hp + healedAmount);
                 this.gameState?.logger.info('info_adventurer_drinks_potion', { name: adventurerClone.firstName, potionName: t('items_and_rooms.' + potionToUse.id) });
                 feedback.push(t('game_engine.adventurer_drinks_potion', { potionName: t('items_and_rooms.' + potionToUse.id) }));
-                log.push({
-                  messageKey: 'info_adventurer_drinks_potion',
+                encounterLog.push({
+                  messageKey: 'log_messages.info_adventurer_drinks_potion',
                   replacements: { name: adventurerClone.firstName, potionName: t('items_and_rooms.' + potionToUse.id) },
                   adventurer: this._createAdventurerSnapshot(adventurerClone),
                   enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
@@ -160,15 +160,15 @@ export class GameEngine {
                 const oldFlowState = adventurerClone.flowState;
                 processBattleTurn(adventurerClone, 'hit');
                 if (oldFlowState !== adventurerClone.flowState) {
-                  log.push({
-                    messageKey: 'info_flow_state_changed',
-                    replacements: { from: t(`flow_states.${FlowState[oldFlowState].toLowerCase()}`), to: t(`flow_states.${FlowState[adventurerClone.flowState].toLowerCase()}`) },
+                  encounterLog.push({
+                    messageKey: 'log_messages.info_flow_state_changed',
+                    replacements: { from: t(`flow_states.${oldFlowState}`), to: t(`flow_states.${adventurerClone.flowState}`) },
                     adventurer: this._createAdventurerSnapshot(adventurerClone),
                     enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
                   });
                 }
-                log.push({
-                  messageKey: 'info_adventurer_hit',
+                encounterLog.push({
+                  messageKey: 'log_messages.info_adventurer_hit',
                   replacements: { damage: damageDealt },
                   adventurer: this._createAdventurerSnapshot(adventurerClone),
                   enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
@@ -178,15 +178,15 @@ export class GameEngine {
                 const oldFlowState = adventurerClone.flowState;
                 processBattleTurn(adventurerClone, 'miss');
                 if (oldFlowState !== adventurerClone.flowState) {
-                  log.push({
-                    messageKey: 'info_flow_state_changed',
-                    replacements: { from: t(`flow_states.${FlowState[oldFlowState].toLowerCase()}`), to: t(`flow_states.${FlowState[adventurerClone.flowState].toLowerCase()}`) },
+                  encounterLog.push({
+                    messageKey: 'log_messages.info_flow_state_changed',
+                    replacements: { from: t(`flow_states.${oldFlowState}`), to: t(`flow_states.${adventurerClone.flowState}`) },
                     adventurer: this._createAdventurerSnapshot(adventurerClone),
                     enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
                   });
                 }
-                log.push({
-                  messageKey: 'info_adventurer_miss',
+                encounterLog.push({
+                  messageKey: 'log_messages.info_adventurer_miss',
                   adventurer: this._createAdventurerSnapshot(adventurerClone),
                   enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
                 });
@@ -196,8 +196,8 @@ export class GameEngine {
             if (currentEnemyHp <= 0) {
               this.gameState?.logger.info('info_enemy_defeated');
               enemiesDefeated++;
-              log.push({
-                messageKey: 'info_enemy_defeated',
+              encounterLog.push({
+                messageKey: 'log_messages.info_enemy_defeated',
                 adventurer: this._createAdventurerSnapshot(adventurerClone),
                 enemy: { ...enemySnapshot, currentHp: 0 },
               });
@@ -213,23 +213,23 @@ export class GameEngine {
               const oldFlowState = adventurerClone.flowState;
               processBattleTurn(adventurerClone, 'take_damage');
               if (oldFlowState !== adventurerClone.flowState) {
-                log.push({
-                  messageKey: 'info_flow_state_changed',
-                  replacements: { from: t(`flow_states.${FlowState[oldFlowState].toLowerCase()}`), to: t(`flow_states.${FlowState[adventurerClone.flowState].toLowerCase()}`) },
+                encounterLog.push({
+                  messageKey: 'log_messages.info_flow_state_changed',
+                  replacements: { from: t(`flow_states.${oldFlowState}`), to: t(`flow_states.${adventurerClone.flowState}`) },
                   adventurer: this._createAdventurerSnapshot(adventurerClone),
                   enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
                 });
               }
-              log.push({
-                messageKey: 'info_enemy_hit',
+              encounterLog.push({
+                messageKey: 'log_messages.info_enemy_hit',
                 replacements: { damage: damageTaken },
                 adventurer: this._createAdventurerSnapshot(adventurerClone),
                 enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
               });
             } else {
               this.gameState?.logger.debug(`Enemy misses.`);
-              log.push({
-                messageKey: 'info_enemy_miss',
+              encounterLog.push({
+                messageKey: 'log_messages.info_enemy_miss',
                 adventurer: this._createAdventurerSnapshot(adventurerClone),
                 enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
               });
@@ -237,9 +237,10 @@ export class GameEngine {
           }
 
           if (adventurerClone.hp <= 0) {
-            this.gameState?.logger.warn(`info_adventurer_defeated`);
-            log.push({
-              messageKey: 'info_adventurer_defeated',
+            this.gameState?.logger.warn(`info_adventurer_defeated`, { name: adventurerClone.firstName });
+            encounterLog.push({
+              messageKey: 'log_messages.info_adventurer_defeated',
+              replacements: { name: adventurerClone.firstName },
               adventurer: this._createAdventurerSnapshot(adventurerClone),
               enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
             });
@@ -258,8 +259,8 @@ export class GameEngine {
         adventurerClone.hp = Math.min(adventurerClone.maxHp, adventurerClone.hp + healing);
         this.gameState?.logger.info('info_healing_room', { name: adventurerClone.firstName, healingRoomName: t('items_and_rooms.' + room.id), healing: healing });
         feedback.push(t('game_engine.healing_room', { name: t('items_and_rooms.' + room.id), healing: healing }));
-        log.push({
-          messageKey: 'info_healing_room',
+        encounterLog.push({
+          messageKey: 'log_messages.info_healing_room',
           replacements: { name: adventurerClone.firstName, healingRoomName: t('items_and_rooms.' + room.id), healing: healing },
           adventurer: this._createAdventurerSnapshot(adventurerClone),
         });
@@ -271,15 +272,15 @@ export class GameEngine {
         processTrap(adventurerClone);
         this.gameState?.logger.info('info_trap_room', { name: adventurerClone.firstName, trapName: t('items_and_rooms.' + room.id), damage: damage });
         feedback.push(t('game_engine.trap_room', { name: t('items_and_rooms.' + room.id), damage: damage }));
-        log.push({
-          messageKey: 'info_trap_room',
+        encounterLog.push({
+          messageKey: 'log_messages.info_trap_room',
           replacements: { name: adventurerClone.firstName, trapName: t('items_and_rooms.' + room.id), damage: damage },
           adventurer: this._createAdventurerSnapshot(adventurerClone),
         });
         break;
       }
     }
-    return { log, finalAdventurer: adventurerClone, feedback };
+    return { log: encounterLog, finalAdventurer: adventurerClone, feedback };
   }
 
   // --- PUBLIC ACTIONS ---

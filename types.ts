@@ -1,13 +1,13 @@
 
 export enum FlowState {
-  Arousal,
-  Flow,
-  Control,
-  Relaxation,
-  Boredom,
-  Apathy,
-  Worry,
-  Anxiety,
+  Arousal = 'arousal',
+  Flow = 'flow',
+  Control = 'control',
+  Relaxation = 'relaxation',
+  Boredom = 'boredom',
+  Apathy = 'apathy',
+  Worry = 'worry',
+  Anxiety = 'anxiety',
 }
 
 export interface AdventurerTraits {

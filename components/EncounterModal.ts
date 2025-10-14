@@ -1,13 +1,14 @@
 import { t } from '../text';
 import { EncounterPayload, AdventurerSnapshot, EnemySnapshot, FlowState } from '../types';
 
-const ROOM_CHOICE_VIEW_DELAY = 1500;
-const BATTLE_EVENT_DELAY = 800;
+const ROOM_CHOICE_VIEW_DELAY = 3000;
+const BATTLE_EVENT_DELAY = 900;
 
 export class EncounterModal extends HTMLElement {
   private onDismiss: (result: { skipped: boolean }) => void = () => {};
   private payload: EncounterPayload | null = null;
   private currentEventIndex = 0;
+  private revealTimeout: number | undefined;
   private battleTimeout: number | undefined;
   private modalState: 'reveal' | 'outcome' | 'battle' = 'reveal';
 
@@ -22,7 +23,7 @@ export class EncounterModal extends HTMLElement {
       <div id="encounter-overlay" class="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
         <div class="window" style="width: min(95vw, 600px);" role="dialog" aria-modal="true" aria-labelledby="encounter-modal-title">
           <div class="title-bar">
-            <div class="title-bar-text" id="encounter-modal-title">${t('items_and_rooms.' + this.payload.room.id)}</div>
+            <div class="title-bar-text" id="encounter-modal-title">${t('global.encounter_window_title')}</div>
           </div>
           <div class="window-body p-2">
             ${this.renderInitialView()}
@@ -46,13 +47,16 @@ export class EncounterModal extends HTMLElement {
     const roomRevealEvent = this.payload.log[0];
     eventMessage.textContent = t(roomRevealEvent.messageKey, roomRevealEvent.replacements);
     continueButton.textContent = t('global.continue');
+    this.revealTimeout = window.setTimeout(() => {
+      this.modalState = 'battle';
+      this.renderBattleView();
+    }, ROOM_CHOICE_VIEW_DELAY);
   }
 
   private handleContinue() {
     if (!this.payload) return;
 
     const eventMessage = this.querySelector<HTMLParagraphElement>('#event-message')!;
-    const continueButton = this.querySelector<HTMLButtonElement>('#continue-button')!;
     const isBattle = this.payload.room.type === 'room_enemy' || this.payload.room.type === 'room_boss';
 
     if (this.modalState === 'reveal') {
@@ -124,11 +128,11 @@ export class EncounterModal extends HTMLElement {
     this.updateProgressBar();
 
     this.currentEventIndex++;
-    this.battleTimeout = setTimeout(() => this.renderNextBattleEvent(), BATTLE_EVENT_DELAY);
+    this.battleTimeout = window.setTimeout(() => this.renderNextBattleEvent(), BATTLE_EVENT_DELAY);
   }
 
   private renderAdventurerStatus(adventurer: AdventurerSnapshot) {
-    const flowStateKey = `flow_states.${FlowState[adventurer.flowState].toLowerCase()}`;
+    const flowStateKey = `flow_states.${adventurer.flowState}`;
     this.querySelector<HTMLDivElement>('#adventurer-status-container')!.innerHTML = `
       <div class="status-bar">
         <p class="status-bar-field font-bold">${t('global.adventurer')}</p>
