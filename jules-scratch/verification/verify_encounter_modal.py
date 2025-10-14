@@ -47,6 +47,7 @@ def run_verification(page: Page):
         # Flow 2: Trap/Healing
         continue_button_2 = encounter_modal.get_by_role("button", name="Continue")
         expect(continue_button_2).to_be_visible()
+        page.screenshot(path="jules-scratch/verification/verification_trap_healing.png")
         continue_button_2.click()
         expect(encounter_modal).not_to_be_visible(timeout=5000)
 

@@ -1,14 +1,15 @@
 import { t } from '../text';
-import { EncounterPayload } from '../types';
+import { EncounterPayload, AdventurerSnapshot, EnemySnapshot, FlowState } from '../types';
 
 const ROOM_CHOICE_VIEW_DELAY = 1500;
 const BATTLE_EVENT_DELAY = 800;
 
 export class EncounterModal extends HTMLElement {
-  private onDismiss: (result: { skipped: boolean }) => void = () => { };
+  private onDismiss: (result: { skipped: boolean }) => void = () => {};
   private payload: EncounterPayload | null = null;
   private currentEventIndex = 0;
   private battleTimeout: number | undefined;
+  private modalState: 'reveal' | 'outcome' | 'battle' = 'reveal';
 
   constructor() {
     super();
@@ -30,50 +31,52 @@ export class EncounterModal extends HTMLElement {
       </div>
     `;
 
-    this.querySelector('#skip-button')!.addEventListener('click', () => {
-      this.dismiss(true);
-    });
-
+    this.querySelector('#continue-button')!.addEventListener('click', () => this.handleContinue());
     this.start();
   }
 
   private start() {
     if (!this.payload) return;
 
+    this.modalState = 'reveal';
     const eventMessage = this.querySelector<HTMLParagraphElement>('#event-message')!;
     const continueButton = this.querySelector<HTMLButtonElement>('#continue-button')!;
 
-    // Step 1: Show the initial room reveal.
+    // Always start by showing the room reveal.
     const roomRevealEvent = this.payload.log[0];
     eventMessage.textContent = t(roomRevealEvent.messageKey, roomRevealEvent.replacements);
     continueButton.textContent = t('global.continue');
+  }
 
-    // This is the primary click handler. It decides what to do next.
-    const handleContinue = () => {
-      // Remove this listener to prevent it from firing again.
-      continueButton.removeEventListener('click', handleContinue);
+  private handleContinue() {
+    if (!this.payload) return;
 
-      // Step 2: Decide the next view based on room type.
-      if (this.payload?.room.type === 'room_healing' || this.payload?.room.type === 'room_trap') {
-        // For non-battle rooms, show the outcome and then wait for a final click to dismiss.
+    const eventMessage = this.querySelector<HTMLParagraphElement>('#event-message')!;
+    const continueButton = this.querySelector<HTMLButtonElement>('#continue-button')!;
+    const isBattle = this.payload.room.type === 'room_enemy' || this.payload.room.type === 'room_boss';
+
+    if (this.modalState === 'reveal') {
+      if (isBattle) {
+        this.modalState = 'battle';
+        this.renderBattleView();
+      } else {
+        // For non-battle rooms, show the outcome.
+        this.modalState = 'outcome';
         const outcomeEvent = this.payload.log[1];
         if (outcomeEvent) {
           eventMessage.textContent = t(outcomeEvent.messageKey, outcomeEvent.replacements);
         }
-        continueButton.onclick = () => this.dismiss(false);
-      } else {
-        // For battle rooms, transition to the battle view.
-        this.renderBattleView();
+        // The button's next click will dismiss the modal.
       }
-    };
-
-    continueButton.addEventListener('click', handleContinue);
+    } else if (this.modalState === 'outcome') {
+      this.dismiss(false);
+    }
   }
 
   private renderInitialView(): string {
     return `
-      <div id="adventurer-status-container" class="hidden">...</div>
-      <div id="enemy-status-container" class="hidden">...</div>
+      <div id="adventurer-status-container" class="hidden"></div>
+      <div id="enemy-status-container" class="hidden"></div>
       <div class="sunken-panel-tl mt-2 p-1" style="height: 60px;">
         <p id="event-message" class="text-center"></p>
       </div>
@@ -89,28 +92,26 @@ export class EncounterModal extends HTMLElement {
   }
 
   private renderBattleView() {
-    // Setup the battle UI
     this.querySelector<HTMLDivElement>('#adventurer-status-container')!.classList.remove('hidden');
     this.querySelector<HTMLDivElement>('#enemy-status-container')!.classList.remove('hidden');
     this.querySelector<HTMLDivElement>('#progress-container')!.classList.remove('hidden');
 
-    // Rename the button to "Skip" for the battle sequence
     const button = this.querySelector<HTMLButtonElement>('#continue-button')!;
     button.id = 'skip-button';
     button.textContent = t('global.skip');
-    button.onclick = () => this.dismiss(true); // Skip dismisses immediately
+    button.onclick = () => this.dismiss(true);
 
-    // Start playing the battle events, skipping the first (room reveal)
-    this.currentEventIndex = 1;
+    this.currentEventIndex = 1; // Start from the first battle event
     this.renderNextBattleEvent();
   }
 
   private renderNextBattleEvent() {
     if (!this.payload || this.currentEventIndex >= this.payload.log.length) {
       const skipButton = this.querySelector<HTMLButtonElement>('#skip-button')!;
-      skipButton.textContent = t('global.continue');
-      // Final click to dismiss after the battle is over
-      skipButton.onclick = () => this.dismiss(false);
+      if(skipButton) {
+        skipButton.textContent = t('global.continue');
+        skipButton.onclick = () => this.dismiss(false);
+      }
       return;
     }
 
@@ -118,8 +119,6 @@ export class EncounterModal extends HTMLElement {
     this.renderAdventurerStatus(event.adventurer);
     if (event.enemy) {
       this.renderEnemyStatus(event.enemy);
-    } else {
-      this.querySelector<HTMLDivElement>('#enemy-status-container')!.innerHTML = '';
     }
     this.querySelector<HTMLParagraphElement>('#event-message')!.textContent = t(event.messageKey, event.replacements);
     this.updateProgressBar();
@@ -128,8 +127,8 @@ export class EncounterModal extends HTMLElement {
     this.battleTimeout = setTimeout(() => this.renderNextBattleEvent(), BATTLE_EVENT_DELAY);
   }
 
-  private renderAdventurerStatus(adventurer: import('../types').AdventurerSnapshot) {
-    const flowStateKey = `flow_states.${Object.values(import('../types').FlowState)[adventurer.flowState].toLowerCase()}`;
+  private renderAdventurerStatus(adventurer: AdventurerSnapshot) {
+    const flowStateKey = `flow_states.${FlowState[adventurer.flowState].toLowerCase()}`;
     this.querySelector<HTMLDivElement>('#adventurer-status-container')!.innerHTML = `
       <div class="status-bar">
         <p class="status-bar-field font-bold">${t('global.adventurer')}</p>
@@ -140,7 +139,7 @@ export class EncounterModal extends HTMLElement {
     `;
   }
 
-  private renderEnemyStatus(enemy: import('../types').EnemySnapshot) {
+  private renderEnemyStatus(enemy: EnemySnapshot) {
     this.querySelector<HTMLDivElement>('#enemy-status-container')!.innerHTML = `
       <div class="font-bold">${t(enemy.name)} (${enemy.count}/${enemy.total})</div>
       <div>HP: ${enemy.currentHp} / ${enemy.maxHp}</div>
