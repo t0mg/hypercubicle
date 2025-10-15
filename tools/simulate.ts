@@ -56,6 +56,10 @@ class Simulation {
     this.metaManager = new MetaManager(storage);
     this.dataLoader = new DataLoaderFileSystem();
     this.engine = new GameEngine(this.metaManager, this.dataLoader, saver);
+
+    this.engine.on('show-encounter', () => {
+      this.engine.continueEncounter();
+    });
   }
 
   public async run(runs: number) {
@@ -89,7 +93,7 @@ class Simulation {
         switch (this.engine.gameState.phase) {
           case 'DESIGNER_CHOOSING_ROOM':
             const roomChoices = getDesignerRoomChoice(this.engine.gameState);
-            if (roomChoices.length < 3) {
+            if (roomChoices.length === 0) {
               this.engine.forceEndRun();
             } else {
               this.engine.runEncounter(roomChoices);
@@ -105,7 +109,7 @@ class Simulation {
       if (!this.engine.gameState) break;
 
       const { adventurer, runEnded } = this.engine.gameState;
-      const flowStateName = (FlowState as any)[adventurer.flowState];
+      const flowStateName = adventurer.flowState;
       const endReason = runEnded.reason.includes('fell') ? 'death' : 'dropout';
       metrics.recordRunEnd(flowStateName, endReason);
 

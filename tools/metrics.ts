@@ -34,7 +34,7 @@ export class Metrics {
     if (entry.data?.event === 'room_encountered') {
       const roomName = t('items_and_rooms.' + entry.data.room.id);
       this.roomUsage.set(roomName, (this.roomUsage.get(roomName) || 0) + 1);
-      if (entry.data.room.type === 'enemy' || entry.data.room.type === 'boss') {
+      if (entry.data.room.type === 'room_enemy' || entry.data.room.type === 'room_boss') {
         this.battles++;
         this.monsters += entry.data.room.units || 1;
       }
