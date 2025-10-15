@@ -97,7 +97,11 @@ export class GameEngine {
     const adventurerClone = Adventurer.fromJSON(adventurer.toJSON());
 
     logger.info('info_encounter', { name: adventurerClone.firstName, roomName: t('items_and_rooms.' + room.id) });
+    const oldFlowState = adventurerClone.flowState;
     processRoomEntry(adventurerClone, room);
+    if (oldFlowState !== adventurerClone.flowState) {
+      logger.info('info_flow_state_changed_metrics', { event: 'flow_state_changed', flowState: adventurerClone.flowState });
+    }
 
     encounterLog.push({
       messageKey: 'log_messages.info_encounter',
@@ -163,6 +167,7 @@ export class GameEngine {
                 const oldFlowState = adventurerClone.flowState;
                 processBattleTurn(adventurerClone, 'hit');
                 if (oldFlowState !== adventurerClone.flowState) {
+                  logger.info('info_flow_state_changed_metrics', { event: 'flow_state_changed', flowState: adventurerClone.flowState });
                   encounterLog.push({
                     messageKey: 'log_messages.info_flow_state_changed',
                     replacements: { name: adventurerClone.firstName, from: t(`flow_states.${oldFlowState}`), to: t(`flow_states.${adventurerClone.flowState}`) },
@@ -181,6 +186,7 @@ export class GameEngine {
                 const oldFlowState = adventurerClone.flowState;
                 processBattleTurn(adventurerClone, 'miss');
                 if (oldFlowState !== adventurerClone.flowState) {
+                  logger.info('info_flow_state_changed_metrics', { event: 'flow_state_changed', flowState: adventurerClone.flowState });
                   encounterLog.push({
                     messageKey: 'log_messages.info_flow_state_changed',
                     replacements: { name: adventurerClone.firstName, from: t(`flow_states.${oldFlowState}`), to: t(`flow_states.${adventurerClone.flowState}`) },
@@ -216,6 +222,7 @@ export class GameEngine {
               const oldFlowState = adventurerClone.flowState;
               processBattleTurn(adventurerClone, 'take_damage');
               if (oldFlowState !== adventurerClone.flowState) {
+                logger.info('info_flow_state_changed_metrics', { event: 'flow_state_changed', flowState: adventurerClone.flowState });
                 encounterLog.push({
                   messageKey: 'log_messages.info_flow_state_changed',
                   replacements: { name: adventurerClone.firstName, from: t(`flow_states.${oldFlowState}`), to: t(`flow_states.${adventurerClone.flowState}`) },
@@ -253,7 +260,11 @@ export class GameEngine {
         const hpLost = initialHp - adventurerClone.hp;
         const hpLostRatio = hpLost / adventurerClone.maxHp;
         logger.debug(`hpLost: ${hpLost}, hpLostRatio: ${hpLostRatio.toFixed(2)}`);
+        const oldFlowState = adventurerClone.flowState;
         const battleFeedback = processBattleOutcome(adventurerClone, hpLostRatio, enemiesDefeated, encounter.enemyCount);
+        if (oldFlowState !== adventurerClone.flowState) {
+          logger.info('info_flow_state_changed_metrics', { event: 'flow_state_changed', flowState: adventurerClone.flowState });
+        }
         feedback.push(battleFeedback);
         break;
       }
@@ -272,7 +283,11 @@ export class GameEngine {
       case 'room_trap': {
         const damage = room.stats.attack || 0;
         adventurerClone.hp -= damage;
+        const oldFlowState = adventurerClone.flowState;
         processTrap(adventurerClone);
+        if (oldFlowState !== adventurerClone.flowState) {
+          logger.info('info_flow_state_changed_metrics', { event: 'flow_state_changed', flowState: adventurerClone.flowState });
+        }
         logger.info('info_trap_room', { name: adventurerClone.firstName, trapName: t('items_and_rooms.' + room.id), damage: damage });
         feedback.push(t('game_engine.trap_room', { name: t('items_and_rooms.' + room.id), damage: damage }));
         encounterLog.push({
@@ -404,10 +419,15 @@ export class GameEngine {
     const adventurer = this.gameState.adventurer;
     const { choice, reason: feedback } = getAdventurerLootChoice(adventurer, this.gameState.offeredLoot, logger);
 
+    const oldFlowState = adventurer.flowState;
     processLootChoice(adventurer, choice, this.gameState.offeredLoot);
+    if (oldFlowState !== adventurer.flowState) {
+      logger.info('info_flow_state_changed_metrics', { event: 'flow_state_changed', flowState: adventurer.flowState });
+    }
 
     if (choice) {
       logger.info('info_item_chosen', { name: adventurer.firstName, item: t('items_and_rooms.' + choice.id )});
+      logger.info('info_item_chosen_metrics', { event: 'item_chosen', item: choice });
     }
 
     // --- Hand and Deck Update Logic ---
@@ -466,6 +486,8 @@ export class GameEngine {
     this.gameState.offeredRooms = roomChoices;
     const chosenRoomIndex = rng.nextInt(0, this.gameState.offeredRooms.length - 1);
     const chosenRoom = this.gameState.offeredRooms[chosenRoomIndex];
+
+    logger.info('info_room_encountered_metrics', { event: 'room_encountered', room: chosenRoom });
 
     const { log, finalAdventurer, feedback } = this._generateEncounterLog(
       this.gameState.adventurer,
@@ -574,6 +596,7 @@ export class GameEngine {
     this.metaManager.updateRun(this.gameState.run);
     const newlyUnlocked = this.metaManager.checkForUnlocks(this.gameState.run);
     logger.debug(`Run ended with ${this.gameState.designer.balancePoints} BP.`);
+    logger.info('info_run_end_metrics', { event: 'run_end', bp: this.gameState.designer.balancePoints });
     logger.error(`info_game_over`, {reason});
 
     const decision = this._getAdventurerEndRunDecision();
@@ -656,6 +679,7 @@ export class GameEngine {
     const newShopItems = this.gameState.shopItems.filter(i => i.id !== itemId);
 
     logger.info(`info_item_purchased`, { name: this.gameState.adventurer.firstName, item: t('items_and_rooms.' + itemToBuy.id) });
+    logger.info('info_item_purchased_metrics', { event: 'item_purchased', item: itemToBuy });
     this.gameState = {
       ...this.gameState,
       designer: { balancePoints: newBalancePoints },
