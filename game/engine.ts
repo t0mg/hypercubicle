@@ -128,11 +128,12 @@ export class GameEngine {
             current: i + 1,
             total: encounter.enemyCount,
           });
+          const enemyName = room.entity_id ? t('entities.' + room.entity_id) : t('items_and_rooms.' + room.id);
           const enemySnapshot = {
             currentHp: currentEnemyHp,
             maxHp: encounter.enemyHp,
             power: encounter.enemyPower,
-            name: t('items_and_rooms.' + room.id),
+            name: enemyName,
             count: i + 1,
             total: encounter.enemyCount,
           };

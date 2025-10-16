@@ -1,6 +1,7 @@
 [
   {
     "id": "enemy_group_low",
+    "entity_id": "enemy_low",
     "type": "room_enemy",
     "rarity": "common",
     "cost": null,
@@ -13,6 +14,7 @@
   },
   {
     "id": "enemy_group_medium",
+    "entity_id": "enemy_medium",
     "type": "room_enemy",
     "rarity": "common",
     "cost": null,
@@ -67,6 +69,7 @@
   },
   {
     "id": "boss_final",
+    "entity_id": "boss",
     "type": "room_boss",
     "rarity": "rare",
     "cost": 300,

@@ -209,6 +209,11 @@
     "info_enemy_hit": "The hostile department member hits for {damage} damage.",
     "info_enemy_miss": "The hostile department member misses."
   },
+  "entities": {
+    "enemy_low": "Weak Enemy",
+    "enemy_medium": "Medium Enemy",
+    "boss": "Boss"
+  },
   "items_and_rooms": {
     "weapon_common_1": "Standard Issue Stapler",
     "potion_common_1": "Lukewarm Office Coffee",
