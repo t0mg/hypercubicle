@@ -91,7 +91,7 @@ describe('GameSaver', () => {
   it('should handle version mismatch by clearing the save', () => {
     // Manually save with a different version
     const oldState = { version: '0.0.1', ...gameState };
-    storage.setItem('rogue-steward-savegame', JSON.stringify(oldState));
+    storage.setItem('hypercubicle-savegame', JSON.stringify(oldState));
 
     const loadedState = saver.load();
     expect(loadedState).toBeNull();

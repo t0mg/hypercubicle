@@ -27,7 +27,7 @@ describe('MetaManager', () => {
       unlockedFeatures: [UnlockableFeature.WORKSHOP],
       adventurers: 1,
     };
-    storage.setItem('rogue-steward-meta', JSON.stringify(state));
+    storage.setItem('hypercubicle-meta', JSON.stringify(state));
 
     const newMetaManager = new MetaManager(storage);
     expect(newMetaManager.metaState).toEqual(state);

@@ -37,8 +37,8 @@ describe('MenuScreen', () => {
 
   it('should display meta info when a save game exists, even if adventurer count is 0', () => {
     // 1. Setup a state where a save exists but meta adventurers are 0
-    storage.setItem('rogue-steward-meta', JSON.stringify({ highestRun: 5, unlockedFeatures: [], adventurers: 0 }));
-    storage.setItem('rogue-steward-savegame', JSON.stringify({ version: '1.0.0', phase: 'DESIGNER_CHOOSING_ROOM', run: 5 }));
+    storage.setItem('hypercubicle-meta', JSON.stringify({ highestRun: 5, unlockedFeatures: [], adventurers: 0 }));
+    storage.setItem('hypercubicle-savegame', JSON.stringify({ version: '1.0.0', phase: 'DESIGNER_CHOOSING_ROOM', run: 5 }));
 
     // 2. Re-initialize managers to load the stored state
     const newMetaManager = new MetaManager(storage);
@@ -61,8 +61,8 @@ describe('MenuScreen', () => {
 
   it('should show a reset button and confirmation modal, then reset state', async () => {
     // 1. Setup a state where a save exists
-    storage.setItem('rogue-steward-meta', JSON.stringify({ highestRun: 5, unlockedFeatures: ['test-feature'], adventurers: 2 }));
-    storage.setItem('rogue-steward-savegame', JSON.stringify({ version: '1.0.0', phase: 'DESIGNER_CHOOSING_ROOM', run: 5 }));
+    storage.setItem('hypercubicle-meta', JSON.stringify({ highestRun: 5, unlockedFeatures: ['test-feature'], adventurers: 2 }));
+    storage.setItem('hypercubicle-savegame', JSON.stringify({ version: '1.0.0', phase: 'DESIGNER_CHOOSING_ROOM', run: 5 }));
 
     // 2. Re-initialize managers to load the stored state
     const newMetaManager = new MetaManager(storage);

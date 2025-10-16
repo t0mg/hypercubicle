@@ -7,7 +7,7 @@ export interface MetaState {
   adventurers: number;
 }
 
-const META_STORAGE_KEY = 'rogue-steward-meta';
+const META_STORAGE_KEY = 'hypercubicle-meta';
 
 export class MetaManager {
   private _metaState: MetaState;

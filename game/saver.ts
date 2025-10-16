@@ -2,7 +2,7 @@ import { GameState, Storage } from '../types';
 import { Adventurer } from './adventurer';
 import { Logger } from './logger';
 
-const SAVE_GAME_KEY = 'rogue-steward-savegame';
+const SAVE_GAME_KEY = 'hypercubicle-savegame';
 
 // A version number to handle future migrations if the save format changes.
 const SAVE_VERSION = '1.0.1';

@@ -6,7 +6,7 @@ const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
 
 export default defineConfig(({ mode }) => {
   return {
-    base: mode === 'production' ? '/rogue-steward/' : '/',
+    base: mode === 'production' ? '/hypercubicle/' : '/',
     define: {
       '__APP_VERSION__': JSON.stringify(pkg.version),
       '__BUILD_NUMBER__': JSON.stringify(process.env.BUILD_NUMBER || 'dev'),
