@@ -174,7 +174,7 @@ export class EncounterModal extends HTMLElement {
   private renderAdventurerStatus(adventurer: AdventurerSnapshot) {
     const hpPercentage = (adventurer.hp / adventurer.maxHp) * 100;
     this.querySelector<HTMLDivElement>('#battle-adventurer')!.innerHTML = `
-      <div class="text-lg font-bold">${adventurer.firstName}</div>
+      <div class="text-lg font-bold">${adventurer.firstName} ${adventurer.lastName}</div>
       <progress max="100" value="${hpPercentage}" style-width="100%"></progress>
       <div>${adventurer.hp} / ${adventurer.maxHp}</div>
     `;
@@ -183,7 +183,7 @@ export class EncounterModal extends HTMLElement {
   private renderEnemyStatus(enemy: EnemySnapshot) {
     const hpPercentage = (enemy.currentHp / enemy.maxHp) * 100;
     this.querySelector<HTMLDivElement>('#battle-enemy')!.innerHTML = `
-      <div class="text-lg font-bold">${t(enemy.name)} (${enemy.count}/${enemy.total})</div>
+      <div class="text-lg font-bold">${t(enemy.name)}${enemy.count > 1 ? ` (${enemy.count}/${enemy.total})`:''}</div>
       <progress max="100" value="${hpPercentage}" style-width="100%"></progress>
       <div>${enemy.currentHp} / ${enemy.maxHp}</div>
     `;
