@@ -210,9 +210,9 @@
     "info_enemy_miss": "The hostile department member misses."
   },
   "entities": {
-    "enemy_low": "Weak Enemy",
-    "enemy_medium": "Medium Enemy",
-    "boss": "Boss"
+    "enemy_low": "Lethargic Staff Member",
+    "enemy_medium": "Disgruntled Intern",
+    "boss": "The Auditor"
   },
   "items_and_rooms": {
     "weapon_common_1": "Standard Issue Stapler",
