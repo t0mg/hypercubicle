@@ -47,7 +47,8 @@ export interface LootChoice {
 }
 
 export interface RoomChoice {
-  id: string,
+  id: string;
+  entity_id?: string;
   instanceId: string;
   type: 'room_enemy' | 'room_boss' | 'room_healing' | 'room_trap';
   rarity: Rarity;
