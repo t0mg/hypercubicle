@@ -37,7 +37,10 @@
     "confirm": "Confirm",
     "cancel": "Cancel",
     "skip": "Skip",
-    "encounter_window_title": "Meeting in Progress"
+    "encounter_window_title": "Meeting in Progress",
+    "speed": "Performance",
+    "slow": "Needs improvement",
+    "fast": "Meets expectations"
   },
   "card": {
     "select": "Activate"

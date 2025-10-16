@@ -55,9 +55,9 @@ export default {
           '50%': { transform: 'translateX(20px)' },
         },
         'defeat': {
-          '0%': { filter: 'brightness(1) saturate(1)', opacity: '1' },
-          '50%': { filter: 'brightness(1.5) saturate(1.5) hue-rotate(0deg)', opacity: '0.5' },
-          '100%': { filter: 'brightness(2) saturate(2) hue-rotate(0deg)', opacity: '0' },
+          '0%': { filter: 'invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(1) contrast(1)', opacity: '1' },
+          '50%': { filter: 'invert(15%) sepia(96%) saturate(7406%) hue-rotate(2deg) brightness(103%) contrast(114%)', opacity: '.9' },
+          '100%': { filter: 'invert(15%) sepia(96%) saturate(7406%) hue-rotate(2deg) brightness(103%) contrast(114%)', opacity: '0' },
         }
       },
       animation: {

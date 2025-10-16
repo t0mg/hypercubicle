@@ -87,24 +87,22 @@ export class EncounterModal extends HTMLElement {
 
   private renderInitialView(): string {
     return `
-      <div id="battlefield" class="flex justify-between items-end h-40">
+      <div id="battlefield" class="flex justify-between items-center h-40">
         <div id="battle-adventurer" class="w-1/3 p-2"></div>
         <div id="battle-enemy" class="w-1/3 p-2 text-right"></div>
       </div>
       <ul id="event-log" class="tree-view" style="height: 150px; overflow-y: auto;">
       </ul>
       <div id="progress-container" class="hidden mt-2">
-        <div class="progress-bar" style="width: 100%;">
-          <div id="progress-indicator" style="width: 0%; height: 100%;"></div>
-        </div>
+        <progress max="100" value="0" style="width:100%"></progress>
       </div>
       <div id="slider-container" class="hidden justify-end mt-4">
         <fieldset class="w-1/2">
-          <legend>Playback Speed</legend>
+          <legend>${t('global.speed')}</legend>
           <div class="field-row" style="justify-content: center">
-            <label for="speed-slider">Slower</label>
+            <label for="speed-slider">${t('global.slow')}</label>
             <input id="speed-slider" type="range" min="0" max="4" value="2" />
-            <label for="speed-slider">Faster</label>
+            <label for="speed-slider">${t('global.fast')}</label>
           </div>
         </fieldset>
       </div>
@@ -177,9 +175,7 @@ export class EncounterModal extends HTMLElement {
     const hpPercentage = (adventurer.hp / adventurer.maxHp) * 100;
     this.querySelector<HTMLDivElement>('#battle-adventurer')!.innerHTML = `
       <div class="text-lg font-bold">${adventurer.firstName}</div>
-      <div class="progress-bar" style="width: 100%;" title="HP">
-        <div style="width: ${hpPercentage}%; height: 100%;"></div>
-      </div>
+      <progress max="100" value="${hpPercentage}" style-width="100%"></progress>
       <div>${adventurer.hp} / ${adventurer.maxHp}</div>
     `;
   }
@@ -188,9 +184,7 @@ export class EncounterModal extends HTMLElement {
     const hpPercentage = (enemy.currentHp / enemy.maxHp) * 100;
     this.querySelector<HTMLDivElement>('#battle-enemy')!.innerHTML = `
       <div class="text-lg font-bold">${t(enemy.name)} (${enemy.count}/${enemy.total})</div>
-      <div class="progress-bar" style="width: 100%;" title="HP">
-        <div style="width: ${hpPercentage}%; height: 100%;"></div>
-      </div>
+      <progress max="100" value="${hpPercentage}" style-width="100%"></progress>
       <div>${enemy.currentHp} / ${enemy.maxHp}</div>
     `;
   }
@@ -198,7 +192,7 @@ export class EncounterModal extends HTMLElement {
   private updateProgressBar() {
     if (!this.payload) return;
     const progress = (this.currentEventIndex) / (this.payload.log.length - 1);
-    this.querySelector<HTMLDivElement>('#progress-indicator')!.style.width = `${progress * 100}%`;
+    this.querySelector<HTMLProgressElement>('#progress-container progress')!.value = progress * 100;
   }
 
   private appendLog(message: string) {
