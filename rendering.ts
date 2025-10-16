@@ -7,6 +7,7 @@ import type { GameStats } from './components/GameStats';
 import { t } from './text';
 import { GameEngine } from './game/engine';
 import { Logger } from './game/logger';
+import { tooltipManager } from './tooltip';
 import { isLootSelectionImpossible, isRoomSelectionImpossible } from './game/utils';
 import { RunEndedScreen } from './components/RunEndedScreen';
 import { ConfirmModal } from './components/ConfirmModal';
@@ -125,6 +126,8 @@ const renderWorkshop = (appElement: HTMLElement, state: GameState, engine: GameE
 };
 
 export const render = (appElement: HTMLElement, state: GameState | null, engine: GameEngine) => {
+  tooltipManager.handleMouseLeave();
+
   if (!state) {
     appElement.innerHTML = `<div>${t('global.loading')}</div>`;
     return;
