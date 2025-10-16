@@ -131,7 +131,7 @@
   "tooltips": {
     "adventurer_health": {
       "title": "Executive's Stamina",
-      "body": "This is the executive's current stamina. If it reaches <b>zero</b>, they suffer a burnout and the Work Day ends."
+      "body": "This is the executive's current stamina. If it reaches <b>zero</b>, the Work Day ends. Whether they'll choose to return depends on their <b>Engagement Level</b>."
     },
     "adventurer_power": {
       "title": "Executive's Productivity",
