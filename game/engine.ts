@@ -80,6 +80,7 @@ export class GameEngine {
   private _createAdventurerSnapshot(adventurer: Adventurer): AdventurerSnapshot {
     return {
       firstName: adventurer.firstName,
+      lastName: adventurer.lastName,
       hp: adventurer.hp,
       maxHp: adventurer.maxHp,
       power: adventurer.power,
