@@ -49,12 +49,11 @@ export class EncounterModal extends HTMLElement {
     if (!this.payload) return;
 
     this.modalState = 'reveal';
-    const eventMessage = this.querySelector<HTMLParagraphElement>('#event-message')!;
     const continueButton = this.querySelector<HTMLButtonElement>('#continue-button')!;
 
     // Always start by showing the room reveal.
     const roomRevealEvent = this.payload.log[0];
-    eventMessage.textContent = t(roomRevealEvent.messageKey, roomRevealEvent.replacements);
+    this.appendLog(t(roomRevealEvent.messageKey, roomRevealEvent.replacements));
     continueButton.textContent = t('global.continue');
     this.revealTimeout = window.setTimeout(() => {
       this.modalState = 'battle';
@@ -65,7 +64,6 @@ export class EncounterModal extends HTMLElement {
   private handleContinue() {
     if (!this.payload) return;
 
-    const eventMessage = this.querySelector<HTMLParagraphElement>('#event-message')!;
     const isBattle = this.payload.room.type === 'room_enemy' || this.payload.room.type === 'room_boss';
 
     if (this.modalState === 'reveal') {
@@ -78,7 +76,7 @@ export class EncounterModal extends HTMLElement {
         this.modalState = 'outcome';
         const outcomeEvent = this.payload.log[1];
         if (outcomeEvent) {
-          eventMessage.textContent = t(outcomeEvent.messageKey, outcomeEvent.replacements);
+          this.appendLog(t(outcomeEvent.messageKey, outcomeEvent.replacements));
         }
         // The button's next click will dismiss the modal.
       }
@@ -89,11 +87,12 @@ export class EncounterModal extends HTMLElement {
 
   private renderInitialView(): string {
     return `
-      <div id="adventurer-status-container" class="hidden"></div>
-      <div id="enemy-status-container" class="hidden"></div>
-      <div class="sunken-panel-tl mt-2 p-1" style="height: 60px;">
-        <p id="event-message" class="text-center"></p>
+      <div id="battlefield" class="flex justify-between items-end h-40">
+        <div id="battle-adventurer" class="w-1/3 p-2"></div>
+        <div id="battle-enemy" class="w-1/3 p-2 text-right"></div>
       </div>
+      <ul id="event-log" class="tree-view" style="height: 150px; overflow-y: auto;">
+      </ul>
       <div id="progress-container" class="hidden mt-2">
         <div class="progress-bar" style="width: 100%;">
           <div id="progress-indicator" style="width: 0%; height: 100%;"></div>
@@ -116,8 +115,6 @@ export class EncounterModal extends HTMLElement {
   }
 
   private renderBattleView() {
-    this.querySelector<HTMLDivElement>('#adventurer-status-container')!.classList.remove('hidden');
-    this.querySelector<HTMLDivElement>('#enemy-status-container')!.classList.remove('hidden');
     this.querySelector<HTMLDivElement>('#progress-container')!.classList.remove('hidden');
     this.querySelector<HTMLDivElement>('#slider-container')!.classList.remove('hidden');
 
@@ -140,12 +137,36 @@ export class EncounterModal extends HTMLElement {
       return;
     }
 
+    const adventurerElement = this.querySelector<HTMLDivElement>('#battle-adventurer')!;
+    const enemyElement = this.querySelector<HTMLDivElement>('#battle-enemy')!;
+    const battlefieldElement = this.querySelector<HTMLDivElement>('#battlefield')!;
+
+    // Clear previous animations
+    adventurerElement.classList.remove('animate-attack', 'animate-shake', 'animate-defeat');
+    enemyElement.classList.remove('animate-attack', 'animate-shake', 'animate-defeat');
+    battlefieldElement.classList.remove('animate-shake');
+
     const event = this.payload.log[this.currentEventIndex];
     this.renderAdventurerStatus(event.adventurer);
     if (event.enemy) {
       this.renderEnemyStatus(event.enemy);
     }
-    this.querySelector<HTMLParagraphElement>('#event-message')!.textContent = t(event.messageKey, event.replacements);
+
+    if (event.animations) {
+      event.animations.forEach(anim => {
+        let targetElement: HTMLElement | null = null;
+        if (anim.target === 'adventurer') {
+          targetElement = adventurerElement;
+        } else if (anim.target === 'enemy') {
+          targetElement = enemyElement;
+        } else {
+          targetElement = battlefieldElement;
+        }
+        targetElement.classList.add(`animate-${anim.animation}`);
+      });
+    }
+
+    this.appendLog(t(event.messageKey, event.replacements));
     this.updateProgressBar();
 
     this.currentEventIndex++;
@@ -153,22 +174,24 @@ export class EncounterModal extends HTMLElement {
   }
 
   private renderAdventurerStatus(adventurer: AdventurerSnapshot) {
-    const flowStateKey = `flow_states.${adventurer.flowState}`;
-    this.querySelector<HTMLDivElement>('#adventurer-status-container')!.innerHTML = `
-      <div class="status-bar">
-        <p class="status-bar-field font-bold">${adventurer.firstName}</p>
-        <p class="status-bar-field">HP: ${adventurer.hp} / ${adventurer.maxHp}</p>
-        <p class="status-bar-field">Power: ${adventurer.power}</p>
-        <p class="status-bar-field">${t(flowStateKey)}</p>
+    const hpPercentage = (adventurer.hp / adventurer.maxHp) * 100;
+    this.querySelector<HTMLDivElement>('#battle-adventurer')!.innerHTML = `
+      <div class="text-lg font-bold">${adventurer.firstName}</div>
+      <div class="progress-bar" style="width: 100%;" title="HP">
+        <div style="width: ${hpPercentage}%; height: 100%;"></div>
       </div>
+      <div>${adventurer.hp} / ${adventurer.maxHp}</div>
     `;
   }
 
   private renderEnemyStatus(enemy: EnemySnapshot) {
-    this.querySelector<HTMLDivElement>('#enemy-status-container')!.innerHTML = `
-      <div class="font-bold">${t(enemy.name)} (${enemy.count}/${enemy.total})</div>
-      <div>HP: ${enemy.currentHp} / ${enemy.maxHp}</div>
-      <div>Power: ${enemy.power}</div>
+    const hpPercentage = (enemy.currentHp / enemy.maxHp) * 100;
+    this.querySelector<HTMLDivElement>('#battle-enemy')!.innerHTML = `
+      <div class="text-lg font-bold">${t(enemy.name)} (${enemy.count}/${enemy.total})</div>
+      <div class="progress-bar" style="width: 100%;" title="HP">
+        <div style="width: ${hpPercentage}%; height: 100%;"></div>
+      </div>
+      <div>${enemy.currentHp} / ${enemy.maxHp}</div>
     `;
   }
 
@@ -176,6 +199,14 @@ export class EncounterModal extends HTMLElement {
     if (!this.payload) return;
     const progress = (this.currentEventIndex) / (this.payload.log.length - 1);
     this.querySelector<HTMLDivElement>('#progress-indicator')!.style.width = `${progress * 100}%`;
+  }
+
+  private appendLog(message: string) {
+    const logContainer = this.querySelector<HTMLUListElement>('#event-log')!;
+    const li = document.createElement('li');
+    li.textContent = message;
+    logContainer.appendChild(li);
+    logContainer.scrollTop = logContainer.scrollHeight;
   }
 
   private dismiss(skipped: boolean) {
