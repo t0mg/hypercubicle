@@ -131,34 +131,38 @@ export class ChoicePanel extends HTMLElement {
       return;
     }
 
-    const rarityOrder: { [key: string]: number } = { 'Common': 0, 'Uncommon': 1, 'Rare': 2 };
-    const itemTypeOrder: { [key: string]: number } = { 'Weapon': 0, 'Armor': 1, 'Potion': 2, 'Buff': 3 };
-    const roomTypeOrder: { [key: string]: number } = { 'enemy': 0, 'trap': 1, 'healing': 2, 'boss': 3 };
+    const itemTypeOrder = { 'item_weapon': 0, 'item_armor': 1, 'item_potion': 2, 'item_buff': 3 };
+    const roomTypeOrder = { 'room_enemy': 0, 'room_trap': 1, 'room_healing': 2, 'room_boss': 3 };
+    const statPriority = ['attack', 'hp', 'power', 'maxHp'];
 
-    let sortedChoices = [...this._choices];
+    const sortedChoices = [...this._choices].sort((a, b) => {
+      const typeOrder = this._deckType === 'item' ? itemTypeOrder : roomTypeOrder;
 
-    if (this._deckType === 'item') {
-      sortedChoices.sort((a, b) => {
-        const typeComparison = itemTypeOrder[a.type] - itemTypeOrder[b.type];
+      const typeA = a.type;
+      const typeB = b.type;
+
+      if (typeA in typeOrder && typeB in typeOrder) {
+        const typeComparison = typeOrder[typeA] - typeOrder[typeB];
         if (typeComparison !== 0) return typeComparison;
-        const rarityA = rarityOrder[a.rarity] || 0;
-        const rarityB = rarityOrder[b.rarity] || 0;
-        return rarityA - rarityB;
-      });
-    } else {
-      sortedChoices.sort((a, b) => {
-        const roomA = a as RoomChoice;
-        const roomB = b as RoomChoice;
-        const typeComparison = roomTypeOrder[roomA.type] - roomTypeOrder[roomB.type];
-        if (typeComparison !== 0) return typeComparison;
-        const hpA = roomA.stats.hp || 0;
-        const hpB = roomB.stats.hp || 0;
-        if (hpA !== hpB) return hpB - hpA;
-        const attackA = roomA.stats.attack || 0;
-        const attackB = roomB.stats.attack || 0;
-        return attackB - attackA;
-      });
-    }
+      }
+
+      for (const stat of statPriority) {
+        const statA = a.stats?.[stat] ?? null;
+        const statB = b.stats?.[stat] ?? null;
+
+        if (statA !== null && statB !== null) {
+          if (statA !== statB) {
+            return statA - statB;
+          }
+        } else if (statA !== null) {
+          return -1;
+        } else if (statB !== null) {
+          return 1;
+        }
+      }
+
+      return 0;
+    });
 
     const isRoomSelection = this._deckType === 'room';
 
