@@ -383,7 +383,7 @@
         </div>
         <div class="status-bar">
           <p class="status-bar-field">v0.0.0</p>
-          <p class="status-bar-field">build 156</p>
+          <p class="status-bar-field">build 157</p>
         </div>
       </div>
     `}}customElements.define("menu-screen",Qe);const Xe=3e3,et=900;class ne extends HTMLElement{constructor(){super(),this.onDismiss=()=>{},this.payload=null,this.currentEventIndex=0,this.battleSpeed=et,this.modalState="reveal"}connectedCallback(){if(!this.payload)return;this.innerHTML=`
