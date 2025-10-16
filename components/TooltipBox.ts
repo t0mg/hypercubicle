@@ -23,8 +23,6 @@ export class TooltipBox extends HTMLElement {
             :host {
                 display: none;
                 position: fixed;
-                top: 20px;
-                right: 20px;
                 z-index: 2000;
                 pointer-events: none;
                 --x-px: 16px;
@@ -137,11 +135,31 @@ export class TooltipBox extends HTMLElement {
     this.shadowRoot!.appendChild(this.contentContainer);
   }
 
-  show(content: { title: string, body: string }, x: number, y: number) {
+  show(content: { title: string, body: string }, targetElement?: HTMLElement) {
     this.titleElement.textContent = content.title;
     this.bodyElement.innerHTML = content.body;
     this.isDesktop = !window.matchMedia('(pointer: coarse)').matches;
     this.classList.add('show');
+
+    if (this.isDesktop && targetElement) {
+      const targetRect = targetElement.getBoundingClientRect();
+      const tooltipRect = this.getBoundingClientRect();
+
+      let top = targetRect.top - tooltipRect.height - 10;
+      let left = targetRect.left + (targetRect.width / 2) - (tooltipRect.width / 2);
+
+      if (top < 0) {
+        top = targetRect.bottom + 10;
+      }
+
+      if (left < 0) {
+        left = 5;
+      } else if (left + tooltipRect.width > window.innerWidth) {
+        left = window.innerWidth - tooltipRect.width - 5;
+      }
+      this.style.top = `${top}px`;
+      this.style.left = `${left}px`;
+    }
   }
 
   hide() {
