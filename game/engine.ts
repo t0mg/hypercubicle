@@ -180,6 +180,7 @@ export class GameEngine {
                   replacements: { damage: damageDealt },
                   adventurer: this._createAdventurerSnapshot(adventurerClone),
                   enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
+                  animations: [{ target: 'adventurer', animation: 'attack' }, {target: 'enemy', animation: 'shake'}]
                 });
               } else {
                 logger.debug(`Adventurer misses.`);
@@ -198,6 +199,7 @@ export class GameEngine {
                   messageKey: 'log_messages.info_adventurer_miss',
                   adventurer: this._createAdventurerSnapshot(adventurerClone),
                   enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
+                  animations: [{ target: 'adventurer', animation: 'attack' }]
                 });
               }
             }
@@ -209,6 +211,7 @@ export class GameEngine {
                 messageKey: 'log_messages.info_enemy_defeated',
                 adventurer: this._createAdventurerSnapshot(adventurerClone),
                 enemy: { ...enemySnapshot, currentHp: 0 },
+                animations: [{ target: 'enemy', animation: 'defeat' }]
               });
               break;
             }
@@ -235,6 +238,7 @@ export class GameEngine {
                 replacements: { damage: damageTaken },
                 adventurer: this._createAdventurerSnapshot(adventurerClone),
                 enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
+                animations: [{ target: 'enemy', animation: 'attack' }, { target: 'adventurer', animation: 'shake' }]
               });
             } else {
               logger.debug(`Enemy misses.`);
@@ -242,6 +246,7 @@ export class GameEngine {
                 messageKey: 'log_messages.info_enemy_miss',
                 adventurer: this._createAdventurerSnapshot(adventurerClone),
                 enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
+                animations: [{ target: 'enemy', animation: 'attack' }]
               });
             }
           }
@@ -253,6 +258,7 @@ export class GameEngine {
               replacements: { name: adventurerClone.firstName },
               adventurer: this._createAdventurerSnapshot(adventurerClone),
               enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
+              animations: [{ target: 'adventurer', animation: 'defeat' }]
             });
             break;
           }

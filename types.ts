@@ -99,11 +99,19 @@ export interface EnemySnapshot {
   total: number;
 }
 
+export type EncounterAnimationTarget = 'adventurer' | 'enemy';
+
+export interface EncounterAnimation {
+  target?: EncounterAnimationTarget;
+  animation: 'attack' | 'shake' | 'defeat';
+}
+
 export interface EncounterEvent {
   messageKey: string;
   replacements?: { [key: string]: string | number };
   adventurer: AdventurerSnapshot;
   enemy?: EnemySnapshot;
+  animations?: EncounterAnimation[];
 }
 
 export type EncounterLog = EncounterEvent[];

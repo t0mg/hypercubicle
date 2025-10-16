@@ -50,12 +50,23 @@ export default {
               transform: 'translate3d(4px, 0, 0)'
           }
         },
+        'attack': {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '50%': { transform: 'translateX(20px)' },
+        },
+        'defeat': {
+          '0%': { filter: 'brightness(1) saturate(1)', opacity: '1' },
+          '50%': { filter: 'brightness(1.5) saturate(1.5) hue-rotate(0deg)', opacity: '0.5' },
+          '100%': { filter: 'brightness(2) saturate(2) hue-rotate(0deg)', opacity: '0' },
+        }
       },
       animation: {
         'fade-in': 'fade-in 0.3s ease-out forwards',
         'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
         'newly-drafted': 'newly-drafted-animation 1s ease-in-out',
         'shake': 'shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97)',
+        'attack': 'attack 0.5s ease-in-out once',
+        'defeat': 'defeat 1s ease-in-out forwards',
       }
     },
   },
