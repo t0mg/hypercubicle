@@ -6,13 +6,13 @@
 
 ## Harsh but unfair
 
-Keep your Executive engaged by giving them challenges and rewards. If they give up, hire another and get better.
+Keep your corporate Executive engaged with captivating challenges such as jammed copiers and disgruntled interns, and mesmerizing rewards like ergonomic mousepads or polyester ties. When they give up, hire another and get better.
 
 ## I still don't get it 
 
 (spoilers tho)
 
-This is a meta rogue-lite experimental game set in the blissful Y2K corporate environment in which you play a dungeon master trying to nudge the "player" (the Executive) towards your meta goal of making them enjoy their experience. For this you can influence the loot they find and the encounters they make, by offering them choices (a deliberate one for loot a random one for encounters). The goal is therefore not to make the Executive's work days last longer, but rather to end them on a good note. As the game progresses and the executive returns for more, you'll be able to purchase additional loot and encounter options to choose from, but you'll lose them if the Executive gives up.
+This is an experimental, meta rogue-lite game set in the blissful Y2K corporate environment in which you play a dungeon master trying to nudge the "player" (the Executive) towards your meta goal of making them enjoy their experience. For this you can influence the loot they find and the encounters they make, by offering them choices (a deliberate one for loot a random one for encounters). The goal is therefore not to make the Executive's work days last longer, but rather to end them on a good note. As the game progresses and the executive returns for more, you'll be able to purchase additional loot and encounter options to choose from, but you'll lose them if the Executive gives up.
 
 The meta element manifests when you are yourself rewarded with unlockable features (perks) if your Executive goes through a certain number of work days without retiring. When they do, you lose most of your stuff, but you keep the unlocked perks. Therefore the Executive has runs (work days) but so do you, with successive Executive hires to try to unlock all perks and beat their max number of work days.
 
