@@ -7,7 +7,6 @@ class TooltipManager {
   private tooltipBox: TooltipBox;
   private showTimeout: number | null = null;
   private hideTimeout: number | null = null;
-  private desktopTooltipActive = false;
   private activeToolipKey: string;
   private mutationObserver: MutationObserver;
 
@@ -16,10 +15,8 @@ class TooltipManager {
     this.tooltipBox = document.createElement('tooltip-box') as TooltipBox;
     document.body.appendChild(this.tooltipBox);
     this.mutationObserver = new MutationObserver(() => {
-      console.log('DOM mutated, hiding tooltip');
       this.tooltipBox.hide();
       this.activeToolipKey = '';
-      this.desktopTooltipActive = false;
     });
   }
 
@@ -59,7 +56,6 @@ class TooltipManager {
         if (tooltipContent) {
           this.mutationObserver.observe(document, { childList: true, subtree: true });
           this.tooltipBox.show(tooltipContent, tooltipKeyElement);
-          this.desktopTooltipActive = true;
         }
       }, 300); // 300ms delay before showing
     }
@@ -74,7 +70,6 @@ class TooltipManager {
     this.mutationObserver.disconnect();
     this.tooltipBox.hide();
     this.activeToolipKey = '';
-    this.desktopTooltipActive = false;
   }
 
   public handleClick(event: MouseEvent) {
