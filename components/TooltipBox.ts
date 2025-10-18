@@ -1,3 +1,4 @@
+import { e } from 'vite-node/dist/index.d-DGmxD2U7.js';
 import { t } from '../text';
 
 export class TooltipBox extends HTMLElement {
@@ -72,6 +73,20 @@ export class TooltipBox extends HTMLElement {
                 bottom: calc(-10px + var(--b-px));
                 left: calc(50% - 10px);
                 z-index: 1;
+            }
+
+            .content-container.flipped::after {
+                border-width: 0 10px 10px 10px;
+                border-color: transparent transparent var(--border-color) transparent;
+                top: -10px;
+                bottom: auto;
+            }
+
+            .content-container.flipped::before {
+                border-width: 0 10px 10px 10px;
+                border-color: transparent transparent var(--bg-color) transparent;
+                top: calc(-10px + var(--b-px));
+                bottopm: auto;
             }
 
             h3 {
@@ -150,6 +165,9 @@ export class TooltipBox extends HTMLElement {
 
       if (top < 0) {
         top = targetRect.bottom + 10;
+        this.contentContainer.classList.add('flipped');
+      } else {
+        this.contentContainer.classList.remove('flipped');
       }
 
       if (left < 0) {
