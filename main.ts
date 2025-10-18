@@ -3,7 +3,6 @@ import './index.css';
 import { GameEngine } from './game/engine';
 import { initLocalization, t } from './text';
 import { render } from './rendering';
-import { initializeTooltipIcons } from './components/TooltipHelper';
 import { MetaManager } from './game/meta';
 import { GameSaver } from './game/saver';
 import { LocalStorage } from './game/storage';
@@ -58,7 +57,7 @@ async function main() {
       return;
     }
     render(appElement, newState, engine);
-    initializeTooltipIcons();
+    tooltipManager.initializeTooltipIcons();
   });
 
   engine.on('show-encounter', async (payload) => {
