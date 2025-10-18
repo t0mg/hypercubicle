@@ -81,7 +81,7 @@
     "present_offer": "Present Offer",
     "title_room": "Choose Three Rooms or One Department Head",
     "begin_encounter": "Begin Encounter",
-    "multiple_enemies_title": "{name} ({count} members)",
+    "multiple_enemies_title": "{name}<br>({count} members)",
     "stacked_items_title": "{name} ({count} in stock)",
     "new_items_title": "Newly requisitioned",
     "continue_without_loot": "Continue without offering new assets",

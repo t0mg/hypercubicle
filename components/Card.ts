@@ -164,9 +164,9 @@ export class Card extends HTMLElement {
     const fieldsetBorderClass = this._isSelected ? 'selected' : '';
 
     this.innerHTML = `
-      <fieldset class="font-sans ${fieldsetBorderClass} flex flex-grow items-center" ${this._isDisabled ? 'disabled' : ''}>
+      <fieldset class="font-sans ${fieldsetBorderClass} text-left flex flex-grow items-center" ${this._isDisabled ? 'disabled' : ''}>
         <legend class="${rarityColor}">${t('card_types.' + this._item.type)} - ${t('rarity.' + this._item.rarity)}</legend>
-        <div class="p-2">
+        <div class="p-2 grow">
             <p class="font-bold text-sm ${rarityColor}">${itemName}</p>
             <div class="mt-2">
                 ${statsHtml}
