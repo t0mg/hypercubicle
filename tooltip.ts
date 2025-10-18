@@ -9,11 +9,18 @@ class TooltipManager {
   private hideTimeout: number | null = null;
   private desktopTooltipActive = false;
   private activeToolipKey: string;
+  private mutationObserver: MutationObserver;
 
   private constructor() {
     // The TooltipBox component is expected to be registered via import
     this.tooltipBox = document.createElement('tooltip-box') as TooltipBox;
     document.body.appendChild(this.tooltipBox);
+    this.mutationObserver = new MutationObserver(() => {
+      console.log('DOM mutated, hiding tooltip');
+      this.tooltipBox.hide();
+      this.activeToolipKey = '';
+      this.desktopTooltipActive = false;
+    });
   }
 
   public static getInstance(): TooltipManager {
@@ -36,8 +43,8 @@ class TooltipManager {
   public handleMouseEnter(event: MouseEvent) {
     if (this.isTouchDevice()) return;
 
-    const target = event.target as HTMLElement;
-    const tooltipKey = this.findTooltipKey(target);
+    const tooltipKeyElement = this.findTooltipKeyElement(event.target as HTMLElement);
+    const tooltipKey = tooltipKeyElement && tooltipKeyElement.getAttribute('data-tooltip-key');
 
     if (this.showTimeout) {
       clearTimeout(this.showTimeout);
@@ -46,11 +53,12 @@ class TooltipManager {
 
     if (tooltipKey && this.activeToolipKey !== tooltipKey) {
       this.showTimeout = window.setTimeout(() => {
-        target.addEventListener('mouseleave', this.handleMouseLeave.bind(this), { once: true });
+        tooltipKeyElement.addEventListener('mouseleave', this.handleMouseLeave.bind(this), { once: true });
         this.activeToolipKey = tooltipKey;
         const tooltipContent = this.getTooltipContent(tooltipKey);
         if (tooltipContent) {
-          this.tooltipBox.show(tooltipContent, event.clientX, event.clientY);
+          this.mutationObserver.observe(document, { childList: true, subtree: true });
+          this.tooltipBox.show(tooltipContent, tooltipKeyElement);
           this.desktopTooltipActive = true;
         }
       }, 300); // 300ms delay before showing
@@ -63,20 +71,21 @@ class TooltipManager {
       clearTimeout(this.showTimeout);
       this.showTimeout = null;
     }
+    this.mutationObserver.disconnect();
     this.tooltipBox.hide();
     this.activeToolipKey = '';
     this.desktopTooltipActive = false;
   }
 
-
   public handleClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
     if (target.classList.contains('tooltip-icon')) {
-      const tooltipKey = this.findTooltipKey(target.parentElement);
+      const tooltipKeyElement = this.findTooltipKeyElement(target.parentElement);
+      const tooltipKey = tooltipKeyElement.getAttribute('data-tooltip-key');
       if (tooltipKey) {
         const tooltipContent = this.getTooltipContent(tooltipKey);
         if (tooltipContent) {
-          this.tooltipBox.show(tooltipContent, 0, 0); // Position is handled by CSS for touch
+          this.tooltipBox.show(tooltipContent, tooltipKeyElement); // Position is handled by CSS for touch
         }
       }
     }
@@ -86,9 +95,10 @@ class TooltipManager {
     return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
   }
 
-  private findTooltipKey(element: HTMLElement | null): string | null {
+  private findTooltipKeyElement(element: HTMLElement | null): HTMLElement | null {
     if (!element) return null;
-    return element.getAttribute('data-tooltip-key') || this.findTooltipKey(element.parentElement);
+    if (element.hasAttribute('data-tooltip-key')) return element;
+    return this.findTooltipKeyElement(element.parentElement);
   }
 
   private getTooltipContent(key: string): { title: string, body: string } | null {
