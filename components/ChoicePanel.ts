@@ -132,7 +132,7 @@ export class ChoicePanel extends HTMLElement {
     }
 
     const itemTypeOrder = { 'item_weapon': 0, 'item_armor': 1, 'item_potion': 2, 'item_buff': 3 };
-    const roomTypeOrder = { 'room_enemy': 0, 'room_trap': 1, 'room_healing': 2, 'room_boss': 3 };
+    const roomTypeOrder = { 'room_healing': 0, 'room_trap': 1, 'room_enemy': 2, 'room_boss': 3 };
     const statPriority = ['attack', 'hp', 'power', 'maxHp'];
 
     const sortedChoices = [...this._choices].sort((a, b) => {
@@ -147,17 +147,24 @@ export class ChoicePanel extends HTMLElement {
       }
 
       for (const stat of statPriority) {
-        const statA = a.stats?.[stat] ?? null;
-        const statB = b.stats?.[stat] ?? null;
+        let statA = a.stats?.[stat] ?? null;
+        let statB = b.stats?.[stat] ?? null;
+        if (stat == 'attack' && this._deckType === 'room') {
+          statA *= (a as RoomChoice).units || 1;
+          statB *= (b as RoomChoice).units || 1;
+        }
+
+        const roomA = a as RoomChoice;
+          const roomB = b as RoomChoice;
 
         if (statA !== null && statB !== null) {
           if (statA !== statB) {
             return statA - statB;
           }
         } else if (statA !== null) {
-          return -1;
-        } else if (statB !== null) {
           return 1;
+        } else if (statB !== null) {
+          return -1;
         }
       }
 
