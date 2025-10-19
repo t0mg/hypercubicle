@@ -243,7 +243,7 @@ export class FlowChart extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
       <div class="relative" style="width: 100px; height: 100px;">
-        <canvas width="100" height="100"></canvas>
+        <canvas width="100" height="100" style="image-rendering: pixelated;"></canvas>
       </div>
     `;
     this._canvas = this.querySelector('canvas');
@@ -277,16 +277,6 @@ export class FlowChart extends HTMLElement {
       }
     }
 
-    const dotX = Math.max(0, Math.min(100, this._skill));
-    const dotY = 100 - Math.max(0, Math.min(100, this._challenge));
-    ctx.beginPath();
-    ctx.arc(dotX, dotY, 3, 0, 2 * Math.PI, false);
-    ctx.fillStyle = 'white';
-    ctx.fill();
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = 'black';
-    ctx.stroke();
-
     // Draw labels
     ctx.font = '12px "Pixelated MS Sans Serif"';
     ctx.fillStyle = 'black';
@@ -305,6 +295,17 @@ export class FlowChart extends HTMLElement {
     ctx.strokeText('Challenge', 0, 0);
     ctx.fillText('Challenge', 0, 0);
     ctx.restore();
+
+    // Draw dot
+    const dotX = Math.max(0, Math.min(100, this._skill));
+    const dotY = 100 - Math.max(0, Math.min(100, this._challenge));
+    ctx.beginPath();
+    ctx.arc(dotX, dotY, 3, 0, 2 * Math.PI, false);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'black';
+    ctx.stroke();
   }
 
   getFlowStateCanvasColor(flowState: FlowState): string {
