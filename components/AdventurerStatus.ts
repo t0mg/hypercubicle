@@ -232,6 +232,7 @@ export class FlowChart extends HTMLElement {
   private _canvas: HTMLCanvasElement | null = null;
   private _ctx: CanvasRenderingContext2D | null = null;
   private _cachedBackground: HTMLCanvasElement | null = null;
+  private _backgroundRendered: boolean = false;
 
   static get observedAttributes() {
     return ['skill', 'challenge'];
@@ -271,28 +272,12 @@ export class FlowChart extends HTMLElement {
       this._renderBackground();
     }
 
-    const ctx = this._ctx;
-    ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
-    ctx.drawImage(this._cachedBackground!, 0, 0);
-
-    // Draw labels
-    ctx.font = '12px "Pixelated MS Sans Serif"';
-    ctx.fillStyle = 'black';
-    ctx.strokeStyle = 'white';
-    ctx.lineWidth = 2;
-    ctx.textAlign = 'center';
-
-    // Skill label
-    ctx.strokeText('Skill', 50, 95);
-    ctx.fillText('Skill', 50, 95);
-
-    // Challenge label
-    ctx.save();
-    ctx.translate(12, 50);
-    ctx.rotate(-Math.PI / 2);
-    ctx.strokeText('Challenge', 0, 0);
-    ctx.fillText('Challenge', 0, 0);
-    ctx.restore();
+    if (!this._backgroundRendered) {
+      const ctx = this._ctx;
+      ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+      ctx.drawImage(this._cachedBackground!, 0, 0);
+      this._backgroundRendered = true;
+    }
 
     // Update dot position
     const dot = this.querySelector('#flow-chart-dot') as HTMLElement;
@@ -316,6 +301,25 @@ export class FlowChart extends HTMLElement {
         ctx.fillRect(x, y, 1, 1);
       }
     }
+
+    // Draw labels
+    ctx.font = '12px "Pixelated MS Sans Serif"';
+    ctx.fillStyle = 'black';
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 2;
+    ctx.textAlign = 'center';
+
+    // Skill label
+    ctx.strokeText('Skill', 50, 95);
+    ctx.fillText('Skill', 50, 95);
+
+    // Challenge label
+    ctx.save();
+    ctx.translate(12, 50);
+    ctx.rotate(-Math.PI / 2);
+    ctx.strokeText('Challenge', 0, 0);
+    ctx.fillText('Challenge', 0, 0);
+    ctx.restore();
   }
 
   getFlowStateCanvasColor(flowState: FlowState): string {
