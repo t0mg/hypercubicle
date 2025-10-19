@@ -507,14 +507,24 @@ export class GameEngine {
     const chosenRoomIndex = rng.nextInt(0, this.gameState.offeredRooms.length - 1);
     const chosenRoom = this.gameState.offeredRooms[chosenRoomIndex];
 
-    const offeredRoomNames = this.gameState.offeredRooms
-      .map((room) => t('items_and_rooms.' + room.id))
-      .join(', ');
-    logger.info('info_room_chosen', {
-      name: this.gameState.adventurer.firstName,
-      rooms: offeredRoomNames,
-      chosenRoom: t('items_and_rooms.' + chosenRoom.id),
-    });
+    if (
+      this.gameState.offeredRooms.length === 1 &&
+      chosenRoom.type === 'room_boss'
+    ) {
+      logger.info('info_boss_room_chosen', {
+        name: this.gameState.adventurer.firstName,
+        chosenRoom: t('items_and_rooms.' + chosenRoom.id),
+      });
+    } else {
+      const offeredRoomNames = this.gameState.offeredRooms
+        .map((room) => t('items_and_rooms.' + room.id))
+        .join(', ');
+      logger.info('info_room_chosen', {
+        name: this.gameState.adventurer.firstName,
+        rooms: offeredRoomNames,
+        chosenRoom: t('items_and_rooms.' + chosenRoom.id),
+      });
+    }
     logger.metric({ event: 'room_encountered', room: chosenRoom });
 
     const { log, finalAdventurer } = this._generateEncounterLog(
