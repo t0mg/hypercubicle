@@ -108,28 +108,28 @@ export class ChoicePanel extends HTMLElement {
   render() {
     if (!this._choices) return;
 
-    const newlyDrafted = this._choices.filter(c => c.justDrafted && this._initialRender);
-    if (newlyDrafted.length > 0 && this._initialRender) {
-      this._initialRender = false;
+    // const newlyDrafted = this._choices.filter(c => c.justDrafted && this._initialRender);
+    // if (newlyDrafted.length > 0 && this._initialRender) {
+    //   this._initialRender = false;
 
-      const modalContent = newlyDrafted.map(item => {
-        const card = document.createElement('choice-card') as Card;
-        card.item = item;
-        card.isSelectable = false;
-        return card.outerHTML;
-      }).join('');
+    //   const modalContent = newlyDrafted.map(item => {
+    //     const card = document.createElement('choice-card') as Card;
+    //     card.item = item;
+    //     card.isSelectable = false;
+    //     return card.outerHTML;
+    //   }).join('');
 
-      InfoModal.show(
-        t('choice_panel.new_items_title'),
-        `<div class="grid grid-cols-1 md:grid-cols-3 gap-4 cards-container">${modalContent}</div>`,
-        [{ text: t('global.continue'), value: undefined }]
-      ).then(() => {
-        this._choices.forEach(c => c.justDrafted = false);
-        this.render();
-      });
+    //   InfoModal.show(
+    //     t('choice_panel.new_items_title'),
+    //     `<div class="grid grid-cols-1 md:grid-cols-3 gap-4 cards-container">${modalContent}</div>`,
+    //     [{ text: t('global.continue'), value: undefined }]
+    //   ).then(() => {
+    //     this._choices.forEach(c => c.justDrafted = false);
+    //     this.render();
+    //   });
 
-      return;
-    }
+    //   return;
+    // }
 
     const itemTypeOrder = { 'item_weapon': 0, 'item_armor': 1, 'item_potion': 2, 'item_buff': 3 };
     const roomTypeOrder = { 'room_healing': 0, 'room_trap': 1, 'room_enemy': 2, 'room_boss': 3 };

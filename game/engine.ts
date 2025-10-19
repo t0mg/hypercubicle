@@ -399,7 +399,7 @@ export class GameEngine {
     resetAdventurer.challengeHistory = [...this.gameState.adventurer.challengeHistory];
     resetAdventurer.flowState = this.gameState.adventurer.flowState;
 
-    logger.info('info_adventurer_returns');
+    logger.info('info_adventurer_returns', { name: resetAdventurer.firstName });
     logger.debug(`Unlocked features: ${[...this.metaManager.acls].join(', ')}`);
     this.gameState = {
       ...this.gameState,
@@ -620,13 +620,14 @@ export class GameEngine {
 
   public enterWorkshop = () => {
     if (!this.gameState) return;
-    logger.info('info_entering_workshop', { name: this.gameState.adventurer.firstName });
 
     if (!this.metaManager.acls.has(UnlockableFeature.WORKSHOP)) {
-      logger.info('info_workshop_not_unlocked');
+      logger.debug('Workshop not unlocked, starting new run directly.');
       this.startNewRun();
       return;
     }
+
+    logger.info('info_entering_workshop', { name: this.gameState.adventurer.firstName });
 
     const nextRun = this.gameState.run + 1;
     const shopItems = this._allItems
