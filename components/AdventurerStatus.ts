@@ -131,7 +131,7 @@ export class AdventurerStatus extends HTMLElement {
 
     const flowStateText = this.querySelector('#flow-state-text') as HTMLElement;
     flowStateText.textContent = t(`flow_states.${this._adventurer.flowState}`);
-    flowStateText.className = `font-mono text-xl text-center ${this.getFlowStateColor(this._adventurer.flowState)}`;
+    flowStateText.className = `font-mono text-xl text-center flex-grow ${this.getFlowStateColor(this._adventurer.flowState)}`;
     if (this._adventurer.flowState !== this._previousAdventurer.flowState) {
       this._pulseElement(flowStateText);
     }
