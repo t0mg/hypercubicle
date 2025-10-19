@@ -48,20 +48,20 @@ export class GameStats extends HTMLElement {
             <div class="status-bar">
 
                 ${this._balancePoints !== null ? `
-                <p class="status-bar-field">
+                <p class="status-bar-field" data-tooltip-key="status_bar_balance_points">
                     <span class="text-xs">${t('global.bp')}: ${this._balancePoints}</span>
                 </p>
                 ` : ''}
-                <p class="status-bar-field">
+                <p class="status-bar-field" data-tooltip-key="status_bar_current_run">
                     <span class="text-xs">${t('global.run')}: ${this._run}</span>
                 </p>
-                <p class="status-bar-field">
+                <p class="status-bar-field" data-tooltip-key="status_bar_current_room">
                     <span class="text-xs">${t('global.room')}: ${this._room}</span>
                 </p>
-                <p class="status-bar-field">
+                <p class="status-bar-field" data-tooltip-key="status_bar_deck_size">
                     <span class="text-xs">${t('global.deck')}: ${this._deckSize}</span>
                 </p>
-                <p class="status-bar-field">
+                <p class="status-bar-field" data-tooltip-key="status_bar_room_deck_size">
                     <span class="text-xs">${t('global.rooms')}: ${this._roomDeckSize}</span>
                 </p>
 
