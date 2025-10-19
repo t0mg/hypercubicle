@@ -290,7 +290,7 @@ export class FlowChart extends HTMLElement {
 
     // Challenge label
     ctx.save();
-    ctx.translate(10, 50);
+    ctx.translate(12, 50);
     ctx.rotate(-Math.PI / 2);
     ctx.strokeText('Challenge', 0, 0);
     ctx.fillText('Challenge', 0, 0);
