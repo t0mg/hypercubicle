@@ -358,7 +358,9 @@ export class GameEngine {
     };
     logger.debug(`Unlocked features: ${[...this.metaManager.acls].join(', ')}`);
     logger.debug(`Deck size: ${runDeck.length}, Hand size: ${handSize}, Room Deck size: ${roomRunDeck.length}, Room Hand size: ${roomHand.length}`);
-
+    logger.info('info_designer_choosing_room', {
+      name: newAdventurer.firstName,
+    });
     this._emit('state-change', this.gameState);
   }
 
@@ -413,6 +415,9 @@ export class GameEngine {
       run: nextRun,
       runEnded: { isOver: false, reason: '', success: false, decision: null },
     };
+    logger.info('info_designer_choosing_room', {
+      name: resetAdventurer.firstName,
+    });
     this._emit('state-change', this.gameState);
   }
 
@@ -425,6 +430,13 @@ export class GameEngine {
     const adventurer = this.gameState.adventurer;
     const { choice, reason: feedback } = getAdventurerLootChoice(adventurer, this.gameState.offeredLoot, logger);
 
+    const offeredLootNames = this.gameState.offeredLoot
+      .map((item) => t('items_and_rooms.' + item.id))
+      .join(', ');
+    logger.info('info_loot_chosen', {
+      name: adventurer.firstName,
+      items: offeredLootNames,
+    });
     logger.info('info_loot_choice_reason', { reason: feedback });
     const oldFlowState = adventurer.flowState;
     processLootChoice(adventurer, choice, this.gameState.offeredLoot);
@@ -435,6 +447,8 @@ export class GameEngine {
     if (choice) {
       logger.info('info_item_chosen', { name: adventurer.firstName, item: t('items_and_rooms.' + choice.id )});
       logger.metric({ event: 'item_chosen', item: choice });
+    } else {
+      logger.info('info_loot_declined', { name: adventurer.firstName });
     }
 
     // --- Hand and Deck Update Logic ---
@@ -493,6 +507,24 @@ export class GameEngine {
     const chosenRoomIndex = rng.nextInt(0, this.gameState.offeredRooms.length - 1);
     const chosenRoom = this.gameState.offeredRooms[chosenRoomIndex];
 
+    if (
+      this.gameState.offeredRooms.length === 1 &&
+      chosenRoom.type === 'room_boss'
+    ) {
+      logger.info('info_boss_room_chosen', {
+        name: this.gameState.adventurer.firstName,
+        chosenRoom: t('items_and_rooms.' + chosenRoom.id),
+      });
+    } else {
+      const offeredRoomNames = this.gameState.offeredRooms
+        .map((room) => t('items_and_rooms.' + room.id))
+        .join(', ');
+      logger.info('info_room_chosen', {
+        name: this.gameState.adventurer.firstName,
+        rooms: offeredRoomNames,
+        chosenRoom: t('items_and_rooms.' + chosenRoom.id),
+      });
+    }
     logger.metric({ event: 'room_encountered', room: chosenRoom });
 
     const { log, finalAdventurer } = this._generateEncounterLog(
@@ -573,6 +605,9 @@ export class GameEngine {
         roomHand: newRoomHand,
         availableRoomDeck: newRoomDeck,
       };
+      logger.info('info_designer_choosing_room', {
+        name: adventurer.firstName,
+      });
     } else {
       this.gameState = {
         ...this.gameState,
@@ -581,6 +616,9 @@ export class GameEngine {
         roomHand: newRoomHand,
         availableRoomDeck: newRoomDeck,
       };
+      logger.info('info_designer_choosing_loot', {
+        name: adventurer.firstName,
+      });
     }
     this._emit('state-change', this.gameState);
   }
