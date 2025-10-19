@@ -231,6 +231,7 @@ export class FlowChart extends HTMLElement {
   private _challenge: number = 50;
   private _canvas: HTMLCanvasElement | null = null;
   private _ctx: CanvasRenderingContext2D | null = null;
+  private _cachedBackground: HTMLCanvasElement | null = null;
 
   static get observedAttributes() {
     return ['skill', 'challenge'];
@@ -265,17 +266,13 @@ export class FlowChart extends HTMLElement {
   render() {
     if (!this._ctx || !this._canvas) return;
 
-    const ctx = this._ctx;
-    const canvas = this._canvas;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    for (let x = 0; x < 100; x++) {
-      for (let y = 0; y < 100; y++) {
-        const flowState = getFlowState(x, 100 - y);
-        ctx.fillStyle = this.getFlowStateCanvasColor(flowState);
-        ctx.fillRect(x, y, 1, 1);
-      }
+    if (!this._cachedBackground) {
+      this._renderBackground();
     }
+
+    const ctx = this._ctx;
+    ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+    ctx.drawImage(this._cachedBackground!, 0, 0);
 
     // Draw labels
     ctx.font = '12px "Pixelated MS Sans Serif"';
@@ -306,6 +303,22 @@ export class FlowChart extends HTMLElement {
     ctx.lineWidth = 1;
     ctx.strokeStyle = 'black';
     ctx.stroke();
+  }
+
+  _renderBackground() {
+    if (!this._canvas) return;
+    this._cachedBackground = document.createElement('canvas');
+    this._cachedBackground.width = this._canvas.width;
+    this._cachedBackground.height = this._canvas.height;
+    const ctx = this._cachedBackground.getContext('2d')!;
+
+    for (let x = 0; x < 100; x++) {
+      for (let y = 0; y < 100; y++) {
+        const flowState = getFlowState(x, 100 - y);
+        ctx.fillStyle = this.getFlowStateCanvasColor(flowState);
+        ctx.fillRect(x, y, 1, 1);
+      }
+    }
   }
 
   getFlowStateCanvasColor(flowState: FlowState): string {
