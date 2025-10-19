@@ -72,7 +72,6 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
   const adventurerStatus = appElement.querySelector('adventurer-status') as AdventurerStatus;
   const logPanel = appElement.querySelector('log-panel') as LogPanel;
   const gameStats = appElement.querySelector('game-stats') as GameStats;
-  const feedbackPanel = appElement.querySelector('feedback-panel') as HTMLElement;
   const gamePhasePanel = appElement.querySelector('#game-phase-panel') as HTMLElement;
   const gamePhaseTitle = appElement.querySelector('#game-phase-title') as HTMLElement;
 
@@ -90,9 +89,6 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
   gameStats.setAttribute('room', state.room.toString());
   gameStats.setAttribute('deck-size', state.availableDeck.length.toString());
   gameStats.setAttribute('room-deck-size', state.availableRoomDeck.length.toString());
-
-  const feedbackMessage = Array.isArray(state.feedback) ? state.feedback.join(' ') : state.feedback;
-  feedbackPanel.setAttribute('message', feedbackMessage);
 
   logPanel.logger = Logger.getInstance();;
   logPanel.traits = state.adventurer.traits;

@@ -92,9 +92,8 @@ export class GameEngine {
   private _generateEncounterLog(
     adventurer: Adventurer,
     room: RoomChoice
-  ): { log: EncounterLog; finalAdventurer: Adventurer; feedback: string[] } {
+  ): { log: EncounterLog; finalAdventurer: Adventurer } {
     const encounterLog: EncounterLog = [];
-    const feedback: string[] = [];
     const adventurerClone = Adventurer.fromJSON(adventurer.toJSON());
 
     logger.info('info_encounter', { name: adventurerClone.firstName, roomName: t('items_and_rooms.' + room.id) });
@@ -158,7 +157,6 @@ export class GameEngine {
                 const healedAmount = potionToUse.stats.hp || 0;
                 adventurerClone.hp = Math.min(adventurerClone.maxHp, adventurerClone.hp + healedAmount);
                 logger.info('info_adventurer_drinks_potion', { name: adventurerClone.firstName, potionName: t('items_and_rooms.' + potionToUse.id) });
-                feedback.push(t('game_engine.adventurer_drinks_potion', { potionName: t('items_and_rooms.' + potionToUse.id) }));
                 encounterLog.push({
                   messageKey: 'log_messages.info_adventurer_drinks_potion',
                   replacements: { name: adventurerClone.firstName, potionName: t('items_and_rooms.' + potionToUse.id) },
@@ -282,14 +280,13 @@ export class GameEngine {
         if (oldFlowState !== adventurerClone.flowState) {
           logger.info('info_flow_state_changed_metrics', { event: 'flow_state_changed', flowState: adventurerClone.flowState });
         }
-        feedback.push(battleFeedback);
+        logger.info('info_battle_outcome', { outcome: battleFeedback });
         break;
       }
       case 'room_healing': {
         const healing = room.stats.hp || 0;
         adventurerClone.hp = Math.min(adventurerClone.maxHp, adventurerClone.hp + healing);
         logger.info('info_healing_room', { name: adventurerClone.firstName, healingRoomName: t('items_and_rooms.' + room.id), healing: healing });
-        feedback.push(t('game_engine.healing_room', { name: t('items_and_rooms.' + room.id), healing: healing }));
         encounterLog.push({
           messageKey: 'log_messages.info_healing_room',
           replacements: { name: adventurerClone.firstName, healingRoomName: t('items_and_rooms.' + room.id), healing: healing },
@@ -306,7 +303,6 @@ export class GameEngine {
           logger.info('info_flow_state_changed_metrics', { event: 'flow_state_changed', flowState: adventurerClone.flowState });
         }
         logger.info('info_trap_room', { name: adventurerClone.firstName, trapName: t('items_and_rooms.' + room.id), damage: damage });
-        feedback.push(t('game_engine.trap_room', { name: t('items_and_rooms.' + room.id), damage: damage }));
         encounterLog.push({
           messageKey: 'log_messages.info_trap_room',
           replacements: { name: adventurerClone.firstName, trapName: t('items_and_rooms.' + room.id), damage: damage },
@@ -315,7 +311,7 @@ export class GameEngine {
         break;
       }
     }
-    return { log: encounterLog, finalAdventurer: adventurerClone, feedback };
+    return { log: encounterLog, finalAdventurer: adventurerClone };
   }
 
   // --- PUBLIC ACTIONS ---
@@ -340,11 +336,6 @@ export class GameEngine {
     const roomHand = roomRunDeck.slice(0, handSize);
     const availableRoomDeck = roomRunDeck.slice(handSize);
 
-    logger.info('info_new_adventurer', {
-      fullName: `${newAdventurer.firstName} ${newAdventurer.lastName}`,
-      id: this.metaManager.metaState.adventurers.toString(),
-    });
-
     this.gameState = {
       phase: 'DESIGNER_CHOOSING_ROOM',
       designer: { balancePoints: 0 },
@@ -359,7 +350,6 @@ export class GameEngine {
       shopItems: [],
       offeredLoot: [],
       offeredRooms: [],
-      feedback: t('game_engine.new_adventurer'),
       run: 1,
       room: 1,
       runEnded: { isOver: false, reason: '', success: false, decision: null },
@@ -421,7 +411,6 @@ export class GameEngine {
       handSize: handSize,
       room: 1,
       run: nextRun,
-      feedback: t('game_engine.adventurer_returns'),
       runEnded: { isOver: false, reason: '', success: false, decision: null },
     };
     this._emit('state-change', this.gameState);
@@ -436,6 +425,7 @@ export class GameEngine {
     const adventurer = this.gameState.adventurer;
     const { choice, reason: feedback } = getAdventurerLootChoice(adventurer, this.gameState.offeredLoot, logger);
 
+    logger.info('info_loot_choice_reason', { reason: feedback });
     const oldFlowState = adventurer.flowState;
     processLootChoice(adventurer, choice, this.gameState.offeredLoot);
     if (oldFlowState !== adventurer.flowState) {
@@ -488,7 +478,6 @@ export class GameEngine {
       ...this.gameState,
       phase: 'DESIGNER_CHOOSING_ROOM',
       adventurer: adventurer,
-      feedback: feedback,
       availableDeck: newDeck,
       hand: newHand,
       room: newRoom,
@@ -506,7 +495,7 @@ export class GameEngine {
 
     logger.info('info_room_encountered_metrics', { event: 'room_encountered', room: chosenRoom });
 
-    const { log, finalAdventurer, feedback } = this._generateEncounterLog(
+    const { log, finalAdventurer } = this._generateEncounterLog(
       this.gameState.adventurer,
       chosenRoom
     );
@@ -515,7 +504,6 @@ export class GameEngine {
       room: chosenRoom,
       log,
       finalAdventurer,
-      feedback,
     };
 
     this.gameState = {
@@ -536,7 +524,6 @@ export class GameEngine {
     if (!this.gameState) return;
 
     const adventurer = Adventurer.fromJSON(this.gameState.encounterPayload.finalAdventurer);
-    const feedback = this.gameState.encounterPayload.feedback;
     adventurer.updateBuffs();
     this.gameState.designer.balancePoints += this._getBpPerRoom();
 
@@ -577,13 +564,11 @@ export class GameEngine {
 
     if (this.gameState.hand && this.gameState.hand.length === 0) {
       logger.warn("warn_empty_hand", { name: adventurer.firstName });
-      feedback.push(t('game_engine.empty_hand'));
       this.gameState = {
         ...this.gameState,
         phase: 'DESIGNER_CHOOSING_ROOM',
         room: this.gameState.room + 1,
         designer: { balancePoints: this.gameState.designer.balancePoints + this._getBpPerRoom() },
-        feedback: feedback,
         encounterPayload: undefined,
         roomHand: newRoomHand,
         availableRoomDeck: newRoomDeck,
@@ -592,7 +577,6 @@ export class GameEngine {
       this.gameState = {
         ...this.gameState,
         phase: 'DESIGNER_CHOOSING_LOOT',
-        feedback: feedback,
         encounterPayload: undefined,
         roomHand: newRoomHand,
         availableRoomDeck: newRoomDeck,
@@ -657,8 +641,8 @@ export class GameEngine {
       room: 0,
       shopItems: shuffleArray(allShopItems).slice(0, 4),
       runEnded: { isOver: false, reason: '', success: false, decision: null },
-      feedback: t('game_engine.welcome_to_workshop')
     };
+    logger.info('info_welcome_to_workshop');
     this._emit('state-change', this.gameState);
   }
 
@@ -821,7 +805,6 @@ export class GameEngine {
       shopItems: [],
       offeredLoot: [],
       offeredRooms: [],
-      feedback: '',
       run: 0,
       room: 0,
       runEnded: { isOver: false, reason: '', success: false, decision: null },

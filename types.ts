@@ -122,7 +122,6 @@ export interface EncounterPayload {
   room: RoomChoice;
   log: EncounterLog;
   finalAdventurer: Adventurer;
-  feedback: string[];
 }
 
 export interface GameState {
@@ -141,7 +140,6 @@ export interface GameState {
   shopItems: (LootChoice | RoomChoice)[];
   offeredLoot: LootChoice[];
   offeredRooms: RoomChoice[];
-  feedback: string | string[];
   run: number;
   room: number;
   encounterPayload?: EncounterPayload;
