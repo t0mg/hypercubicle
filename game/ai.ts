@@ -47,20 +47,19 @@ function scoreItem(adventurer: Adventurer, item: LootChoice): number {
 
 // --- Public AI Entry Points ---
 
-export function getAdventurerLootChoice(adventurer: Adventurer, offeredLoot: LootChoice[], logger: Logger): { choice: LootChoice | null, reason: string } {
+export function getAdventurerLootChoice(adventurer: Adventurer, offeredLoot: LootChoice[], logger: Logger): LootChoice | null {
   logger.debug(`--- Adventurer Loot Decision --- (Offense: ${adventurer.traits.offense}, Resilience: ${adventurer.traits.resilience}, Skill: ${adventurer.skill})`);
 
   const scoredLoot = offeredLoot.map(item => ({ item, score: scoreItem(adventurer, item) })).filter(i => i.score > 0);
   scoredLoot.sort((a, b) => b.score - a.score);
 
   if (scoredLoot.length === 0 || scoredLoot[0].score < CHOICE_SCORE_THRESHOLD) {
-    return { choice: null, reason: t('game_engine.adventurer_declines_offer') };
+    return null;
   }
 
   const choice = scoredLoot[0].item;
   logger.debug(`Adventurer chooses: ${t('items_and_rooms.' + choice.id)} (Score: ${scoredLoot[0].score.toFixed(1)})`);
-  const reason: string = t('game_engine.adventurer_accepts_offer', { itemName: t('items_and_rooms.' + choice.id) });
-  return { choice, reason };
+  return choice;
 }
 
 export function getAdventurerBattleChoice(adventurer: Adventurer, _encounter: Encounter): BattleAction {

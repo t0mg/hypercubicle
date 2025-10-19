@@ -95,8 +95,6 @@
     "begin_next_run": "Begin Next Work Day"
   },
   "game_engine": {
-    "adventurer_declines_offer": "Disappointed by your offers, they decide to take nothing.",
-    "adventurer_accepts_offer": "They requisitioned the {itemName}.",
     "easy_fight": "An easy meeting. Too trivial for synergy...",
     "worthy_challenge": "A productive, but simple meeting.",
     "great_battle": "A productive negotiation! Quarterly results look excellent!",
@@ -220,14 +218,13 @@
     "info_adventurer_miss": "{name} misses.",
     "info_enemy_hit": "The {enemyName} hits for {damage} damage.",
     "info_enemy_miss": "The {enemyName} misses.",
-    "info_loot_choice_reason": "{reason}",
     "info_battle_outcome": "{outcome}",
-    "info_designer_choosing_loot": "{name} is waiting for your asset recommendations. You must offer two to four unique assets (unless you have none).",
-    "info_designer_choosing_room": "{name} is waiting for your room recommendations. They can pick up one of three unmarked doors, or one Department Head.",
-    "info_loot_chosen": "{name} is now examining these assets: {items}.",
-    "info_room_chosen": "Behind the unmarked doors are: {rooms}. {name} picks one at random and enters {chosenRoom}.",
+    "info_designer_choosing_loot": "{name} is looking around for Corporate Assets to choose from.",
+    "info_designer_choosing_room": "{name} enters a hallway leading to three unmarked doors, or perhaps to the Department Head?",
+    "info_loot_chosen": "{name} is examining these: {items}.",
+    "info_room_chosen": "Behind the unmarked doors: {rooms}. {name} unknkowingly opens a door...",
     "info_boss_room_chosen": "{name} enters the only available door. It leads to the {chosenRoom}.",
-    "info_loot_declined": "Disappointed by your offers, {name} decides to take nothing."
+    "info_loot_declined": "Disappointed by these assets, {name} decides to take nothing."
   },
   "entities": {
     "enemy_low": "Lethargic Staff Member",
