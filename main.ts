@@ -57,7 +57,6 @@ async function main() {
       return;
     }
     render(appElement, newState, engine);
-    tooltipManager.initializeTooltipIcons();
   });
 
   engine.on('show-encounter', async (payload) => {

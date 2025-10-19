@@ -10,7 +10,28 @@ import { Logger } from './game/logger';
 import { isLootSelectionImpossible, isRoomSelectionImpossible } from './game/utils';
 import { RunEndedScreen } from './components/RunEndedScreen';
 import { ConfirmModal } from './components/ConfirmModal';
+import { tooltipManager } from './tooltip';
 import mainGameTemplate from './main-game.html?raw';
+
+export const render = (appElement: HTMLElement, state: GameState | null, engine: GameEngine) => {
+  tooltipManager.handleMouseLeave();
+  if (!state) {
+    appElement.innerHTML = `<div>${t('global.loading')}</div>`;
+    return;
+  }
+
+  switch (state.phase) {
+    case 'MENU':
+      renderMenu(appElement, engine);
+      break;
+    case 'SHOP':
+      renderWorkshop(appElement, state, engine);
+      break;
+    default:
+      renderMainGame(appElement, state, engine);
+      break;
+  }
+};
 
 const renderChoicePanel = (state: GameState, engine: GameEngine, type: 'item' | 'room') => {
   const choicePanel = document.createElement('choice-panel') as ChoicePanel;
@@ -44,6 +65,8 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
         engine.quitGame(false); // Pass false to preserve the save file
       }
     });
+
+    tooltipManager.initializeTooltipIcons();
   }
 
   // Now, query for the elements and update them
@@ -122,26 +145,4 @@ const renderWorkshop = (appElement: HTMLElement, state: GameState, engine: GameE
   workshopEl.balancePoints = state.designer.balancePoints;
   workshopEl.engine = engine;
   appElement.appendChild(workshopEl);
-};
-
-import { tooltipManager } from './tooltip';
-
-export const render = (appElement: HTMLElement, state: GameState | null, engine: GameEngine) => {
-  tooltipManager.handleMouseLeave();
-  if (!state) {
-    appElement.innerHTML = `<div>${t('global.loading')}</div>`;
-    return;
-  }
-
-  switch (state.phase) {
-    case 'MENU':
-      renderMenu(appElement, engine);
-      break;
-    case 'SHOP':
-      renderWorkshop(appElement, state, engine);
-      break;
-    default:
-      renderMainGame(appElement, state, engine);
-      break;
-  }
 };
