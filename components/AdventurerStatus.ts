@@ -244,8 +244,6 @@ export class FlowChart extends HTMLElement {
     this.innerHTML = `
       <div class="relative" style="width: 100px; height: 100px;">
         <canvas width="100" height="100"></canvas>
-        <p class="absolute bottom-0 left-0 right-0 text-center text-xs pointer-events-none">Skill</p>
-        <p class="absolute top-0 left-0 bottom-0 text-center text-xs pointer-events-none" style="writing-mode: vertical-rl; transform: rotate(180deg);">Challenge</p>
       </div>
     `;
     this._canvas = this.querySelector('canvas');
@@ -288,6 +286,25 @@ export class FlowChart extends HTMLElement {
     ctx.lineWidth = 1;
     ctx.strokeStyle = 'black';
     ctx.stroke();
+
+    // Draw labels
+    ctx.font = '12px "Pixelated MS Sans Serif"';
+    ctx.fillStyle = 'black';
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 2;
+    ctx.textAlign = 'center';
+
+    // Skill label
+    ctx.strokeText('Skill', 50, 95);
+    ctx.fillText('Skill', 50, 95);
+
+    // Challenge label
+    ctx.save();
+    ctx.translate(10, 50);
+    ctx.rotate(-Math.PI / 2);
+    ctx.strokeText('Challenge', 0, 0);
+    ctx.fillText('Challenge', 0, 0);
+    ctx.restore();
   }
 
   getFlowStateCanvasColor(flowState: FlowState): string {
