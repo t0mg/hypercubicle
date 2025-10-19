@@ -7,6 +7,7 @@ import { GameState, GamePhase } from '../types';
 vi.mock('../tooltip', () => ({
   tooltipManager: {
     handleMouseLeave: vi.fn(),
+    initializeTooltipIcons: vi.fn(),
   },
 }));
 

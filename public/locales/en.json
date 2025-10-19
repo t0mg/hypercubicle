@@ -95,11 +95,8 @@
     "begin_next_run": "Begin Next Work Day"
   },
   "game_engine": {
-    "new_adventurer": "A new Executive hire starts their day at office!",
-    "adventurer_returns": "The Executive returns for another Work Day!",
     "adventurer_declines_offer": "Disappointed by your offers, they decide to take nothing.",
     "adventurer_accepts_offer": "They requisitioned the {itemName}.",
-    "adventurer_drinks_potion": "Sensing a threat to productivity, they urgently consumed the {potionName}.",
     "easy_fight": "An easy meeting. Too trivial for synergy...",
     "worthy_challenge": "A productive, but simple meeting.",
     "great_battle": "A productive negotiation! Quarterly results look excellent!",
@@ -107,10 +104,6 @@
     "adventurer_fell": "The Executive suffered a fatal burnout on Floor {room} of Work Day {run}.",
     "adventurer_bored": "The Executive became lethargic on Floor {room} of Work Day {run}, and quit.",
     "adventurer_apathy": "The Executive started quiet quitting on Floor {room} of Work Day {run}, and left the company.",
-    "empty_hand": "The Executive waits for your decision, unaware that the budget has been frozen.",
-    "welcome_to_workshop": "Welcome back. Spend your Expense Funds wisely.",
-    "healing_room": "The Executive found the {name} and recovered {healing} stamina.",
-    "trap_room": "The Executive ran into the {name} and lost {damage} stamina.",
     "no_more_rooms": "The Executive reached the end of the floor plan (without a performance review)."
   },
   "unlocks": {
@@ -206,7 +199,9 @@
     "info_adventurer_hit": "{name} hits for {damage} damage.",
     "info_adventurer_miss": "{name} misses.",
     "info_enemy_hit": "The {enemyName} hits for {damage} damage.",
-    "info_enemy_miss": "The {enemyName} misses."
+    "info_enemy_miss": "The {enemyName} misses.",
+    "info_loot_choice_reason": "{reason}",
+    "info_battle_outcome": "{outcome}"
   },
   "entities": {
     "enemy_low": "Lethargic Staff Member",

@@ -8,7 +8,10 @@ vi.mock('../../text', async (importOriginal) => {
     return {
         ...(original as any),
         t: (key: string, data?: any) => {
-            let message = en.log_messages[key.replace('log_messages.', '') as keyof typeof en.log_messages] || key;
+            let message = en.log_messages[key.replace('log_messages.', '') as keyof typeof en.log_messages] ||
+                          en.entities[key.replace('entities.', '') as keyof typeof en.entities] ||
+                          en.items_and_rooms[key.replace('items_and_rooms.', '') as keyof typeof en.items_and_rooms] ||
+                          key;
             if (data) {
                 for (const [k, v] of Object.entries(data)) {
                     message = message.replace(`{${k}}`, v as string);
@@ -66,11 +69,12 @@ describe('Logger', () => {
   });
 
   it('should log combat events', () => {
-    logger.info('info_encounter_enemy', { name: 'Testy', current: 1, total: 1 });
-    logger.info('info_enemy_defeated');
+    const enemyName = 'hostile department member';
+    logger.info('info_encounter_enemy', { name: 'Testy', enemyName, current: 1, total: 1 });
+    logger.info('info_enemy_defeated', { enemyName });
     expect(logger.entries.length).toBe(2);
-    expect(logger.entries[0].message).toBe('Testy encounters hostile department member 1/1.');
-    expect(logger.entries[1].message).toBe('The hostile department member has been synergized with.');
+    expect(logger.entries[0].message).toBe(`Testy encounters ${enemyName} 1 of 1.`);
+    expect(logger.entries[1].message).toBe(`The ${enemyName} has been synergized with.`);
   });
 
   it('should log adventurer decisions', () => {
