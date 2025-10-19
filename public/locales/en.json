@@ -191,9 +191,9 @@
     "info_trap_room": "{name} ran into the {trapName} and lost {damage} stamina.",
     "info_no_more_rooms": "{name} reached the end of the floor plan (without a performance review).",
     "info_encounter": "{name} encounters the {roomName}.",
-    "info_encounter_enemy": "{name} encounters hostile department member {current}/{total}.",
+    "info_encounter_enemy": "{name} encounters {enemyName} {current} of {total}.",
     "info_adventurer_defeated": "{name} has been defeated.",
-    "info_enemy_defeated": "The hostile department member has been synergized with.",
+    "info_enemy_defeated": "The {enemyName} has been synergized with.",
     "info_entering_workshop": "{name} is entering the workshop.",
     "info_adventurer_decision": "{name} decided to {decision}.",
     "info_flow_state_changed": "{name}'s state of mind changed from {from} to {to}.",
@@ -205,8 +205,8 @@
     "warn_empty_hand": "The Executive was hoping for new assets, but the budget is frozen.",
     "info_adventurer_hit": "The Executive hits for {damage} damage.",
     "info_adventurer_miss": "The Executive misses.",
-    "info_enemy_hit": "The hostile department member hits for {damage} damage.",
-    "info_enemy_miss": "The hostile department member misses."
+    "info_enemy_hit": "The {enemyName} hits for {damage} damage.",
+    "info_enemy_miss": "The {enemyName} misses."
   },
   "entities": {
     "enemy_low": "Lethargic Staff Member",

@@ -245,7 +245,7 @@ export class FlowChart extends HTMLElement {
     this.innerHTML = `
       <div class="relative" style="width: 100px; height: 100px;">
         <canvas width="100" height="100" style="image-rendering: pixelated;"></canvas>
-        <div id="flow-chart-dot" style="position: absolute; width: 8px; height: 8px; background-color: white; border: 1px solid black; border-radius: 50%; transform: translate(-50%, -50%); transition: top 0.3s ease, left 0.3s ease;"></div>
+        <div id="flow-chart-dot" style="position: absolute; width: 8px; height: 8px; background-color: white; border: 1px solid black; border-radius: 50%; transform: translate(-50%, -50%); transition-delay: 0.5s; transition: 0.5s ease;"></div>
       </div>
     `;
     this._canvas = this.querySelector('canvas');

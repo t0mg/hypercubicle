@@ -125,6 +125,7 @@ export class GameEngine {
           let currentEnemyHp = encounter.enemyHp;
           logger.info('info_encounter_enemy', {
             name: adventurerClone.firstName,
+            enemyName: room.entity_id ? t('entities.' + room.entity_id) : t('items_and_rooms.' + room.id),
             current: i + 1,
             total: encounter.enemyCount,
           });
@@ -139,7 +140,12 @@ export class GameEngine {
           };
           encounterLog.push({
             messageKey: 'log_messages.info_encounter_enemy',
-            replacements: { name: adventurerClone.firstName, current: i + 1, total: encounter.enemyCount },
+            replacements: { 
+              name: adventurerClone.firstName,
+              enemyName: room.entity_id ? t('entities.' + room.entity_id) : t('items_and_rooms.' + room.id),
+              current: i + 1, 
+              total: encounter.enemyCount
+            },
             adventurer: this._createAdventurerSnapshot(adventurerClone),
             enemy: enemySnapshot,
           });
@@ -207,10 +213,11 @@ export class GameEngine {
             }
 
             if (currentEnemyHp <= 0) {
-              logger.info('info_enemy_defeated');
+              logger.info('info_enemy_defeated', { enemyName: enemySnapshot.name });
               enemiesDefeated++;
               encounterLog.push({
                 messageKey: 'log_messages.info_enemy_defeated',
+                replacements: { enemyName: enemySnapshot.name },
                 adventurer: this._createAdventurerSnapshot(adventurerClone),
                 enemy: { ...enemySnapshot, currentHp: 0 },
                 animations: [{ target: 'enemy', animation: 'defeat' }]
@@ -237,7 +244,7 @@ export class GameEngine {
               }
               encounterLog.push({
                 messageKey: 'log_messages.info_enemy_hit',
-                replacements: { damage: damageTaken },
+                replacements: { damage: damageTaken, enemyName: enemySnapshot.name },
                 adventurer: this._createAdventurerSnapshot(adventurerClone),
                 enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
                 animations: [{ target: 'enemy', animation: 'attack' }, { target: 'adventurer', animation: 'shake' }]
@@ -246,6 +253,7 @@ export class GameEngine {
               logger.debug(`Enemy misses.`);
               encounterLog.push({
                 messageKey: 'log_messages.info_enemy_miss',
+                replacements: { enemyName: enemySnapshot.name },
                 adventurer: this._createAdventurerSnapshot(adventurerClone),
                 enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
                 animations: [{ target: 'enemy', animation: 'attack' }]
