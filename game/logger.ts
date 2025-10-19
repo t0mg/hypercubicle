@@ -54,6 +54,12 @@ export class Logger {
     this.listeners.forEach(listener => listener(entry));
   }
 
+  public metric(data?: any): void {
+    // Metric tracking message, not printed nor added to entries
+    const entry: LogEntry = { message: 'metric', level: 'DEBUG', timestamp: Date.now(), data };
+    this.listeners.forEach(listener => listener(entry));
+  }
+
   public info(key: string, data?: any): void {
     this.log(key, 'INFO', data);
   }
