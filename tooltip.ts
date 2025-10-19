@@ -30,6 +30,7 @@ class TooltipManager {
   public initializeTooltipIcons() {
     const tooltipElements = document.querySelectorAll('[data-tooltip-key]');
     tooltipElements.forEach(el => {
+      if (el.querySelector('.tooltip-icon')) return;
       const icon = document.createElement('span');
       icon.textContent = '?';
       icon.className = 'tooltip-icon';

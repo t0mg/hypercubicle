@@ -31,6 +31,7 @@ export const render = (appElement: HTMLElement, state: GameState | null, engine:
       renderMainGame(appElement, state, engine);
       break;
   }
+  tooltipManager.initializeTooltipIcons();
 };
 
 const renderChoicePanel = (state: GameState, engine: GameEngine, type: 'item' | 'room') => {
@@ -65,8 +66,6 @@ const renderMainGame = (appElement: HTMLElement, state: GameState, engine: GameE
         engine.quitGame(false); // Pass false to preserve the save file
       }
     });
-
-    tooltipManager.initializeTooltipIcons();
   }
 
   // Now, query for the elements and update them
