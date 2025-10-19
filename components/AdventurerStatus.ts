@@ -245,6 +245,7 @@ export class FlowChart extends HTMLElement {
     this.innerHTML = `
       <div class="relative" style="width: 100px; height: 100px;">
         <canvas width="100" height="100" style="image-rendering: pixelated;"></canvas>
+        <div id="flow-chart-dot" style="position: absolute; width: 8px; height: 8px; background-color: white; border: 1px solid black; border-radius: 50%; transform: translate(-50%, -50%); transition: top 0.3s ease, left 0.3s ease;"></div>
       </div>
     `;
     this._canvas = this.querySelector('canvas');
@@ -293,16 +294,12 @@ export class FlowChart extends HTMLElement {
     ctx.fillText('Challenge', 0, 0);
     ctx.restore();
 
-    // Draw dot
+    // Update dot position
+    const dot = this.querySelector('#flow-chart-dot') as HTMLElement;
     const dotX = Math.max(0, Math.min(100, this._skill));
     const dotY = 100 - Math.max(0, Math.min(100, this._challenge));
-    ctx.beginPath();
-    ctx.arc(dotX, dotY, 3, 0, 2 * Math.PI, false);
-    ctx.fillStyle = 'white';
-    ctx.fill();
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = 'black';
-    ctx.stroke();
+    dot.style.left = `${dotX}%`;
+    dot.style.top = `${dotY}%`;
   }
 
   _renderBackground() {
