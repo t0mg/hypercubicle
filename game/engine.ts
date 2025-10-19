@@ -358,7 +358,9 @@ export class GameEngine {
     };
     logger.debug(`Unlocked features: ${[...this.metaManager.acls].join(', ')}`);
     logger.debug(`Deck size: ${runDeck.length}, Hand size: ${handSize}, Room Deck size: ${roomRunDeck.length}, Room Hand size: ${roomHand.length}`);
-    logger.info('info_designer_choosing_room');
+    logger.info('info_designer_choosing_room', {
+      name: newAdventurer.firstName,
+    });
     this._emit('state-change', this.gameState);
   }
 
@@ -413,7 +415,9 @@ export class GameEngine {
       run: nextRun,
       runEnded: { isOver: false, reason: '', success: false, decision: null },
     };
-    logger.info('info_designer_choosing_room');
+    logger.info('info_designer_choosing_room', {
+      name: resetAdventurer.firstName,
+    });
     this._emit('state-change', this.gameState);
   }
 
@@ -589,7 +593,9 @@ export class GameEngine {
         roomHand: newRoomHand,
         availableRoomDeck: newRoomDeck,
       };
-      logger.info('info_designer_choosing_room');
+      logger.info('info_designer_choosing_room', {
+        name: adventurer.firstName,
+      });
     } else {
       this.gameState = {
         ...this.gameState,
@@ -598,7 +604,9 @@ export class GameEngine {
         roomHand: newRoomHand,
         availableRoomDeck: newRoomDeck,
       };
-      logger.info('info_designer_choosing_loot');
+      logger.info('info_designer_choosing_loot', {
+        name: adventurer.firstName,
+      });
     }
     this._emit('state-change', this.gameState);
   }
