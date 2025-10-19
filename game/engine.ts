@@ -185,7 +185,7 @@ export class GameEngine {
                 }
                 encounterLog.push({
                   messageKey: 'log_messages.info_adventurer_hit',
-                  replacements: { damage: damageDealt },
+                  replacements: { name: adventurerClone.firstName, damage: damageDealt },
                   adventurer: this._createAdventurerSnapshot(adventurerClone),
                   enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
                   animations: [{ target: 'adventurer', animation: 'attack' }, {target: 'enemy', animation: 'shake'}]
@@ -205,6 +205,7 @@ export class GameEngine {
                 }
                 encounterLog.push({
                   messageKey: 'log_messages.info_adventurer_miss',
+                  replacements: { name: adventurerClone.firstName },
                   adventurer: this._createAdventurerSnapshot(adventurerClone),
                   enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
                   animations: [{ target: 'adventurer', animation: 'attack' }]
@@ -575,7 +576,7 @@ export class GameEngine {
     }
 
     if (this.gameState.hand && this.gameState.hand.length === 0) {
-      logger.warn("warn_empty_hand");
+      logger.warn("warn_empty_hand", { name: adventurer.firstName });
       feedback.push(t('game_engine.empty_hand'));
       this.gameState = {
         ...this.gameState,
