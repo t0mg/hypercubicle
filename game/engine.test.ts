@@ -134,7 +134,7 @@ describe('GameEngine', () => {
       stats: { power: 10, maxHp: -20, duration: 2 },
     };
     (engine as any)._allItems.push(buffItem);
-    vi.spyOn(ai, 'getAdventurerLootChoice').mockReturnValue({ choice: buffItem, reason: 'test' });
+    vi.spyOn(ai, 'getAdventurerLootChoice').mockReturnValue(buffItem);
 
     engine.gameState!.adventurer.hp = 80;
     const initialPower = engine.gameState!.adventurer.power;
