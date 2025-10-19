@@ -14,6 +14,8 @@ export default defineConfig(({ mode }) => {
     test: {
       environment: 'jsdom',
       include: ['**/*.test.ts'],
+      setupFiles: ['vitest-canvas-mock'],
+      globals: true,
     },
     server: {
       watch: {

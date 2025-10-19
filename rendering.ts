@@ -124,7 +124,10 @@ const renderWorkshop = (appElement: HTMLElement, state: GameState, engine: GameE
   appElement.appendChild(workshopEl);
 };
 
+import { tooltipManager } from './tooltip';
+
 export const render = (appElement: HTMLElement, state: GameState | null, engine: GameEngine) => {
+  tooltipManager.handleMouseLeave();
   if (!state) {
     appElement.innerHTML = `<div>${t('global.loading')}</div>`;
     return;
