@@ -426,8 +426,11 @@ export class GameEngine {
     const adventurer = this.gameState.adventurer;
     const { choice, reason: feedback } = getAdventurerLootChoice(adventurer, this.gameState.offeredLoot, logger);
 
+    const offeredLootNames = this.gameState.offeredLoot
+      .map((item) => t('items_and_rooms.' + item.id))
+      .join(', ');
     logger.info('info_loot_chosen', {
-      count: this.gameState.offeredLoot.length,
+      items: offeredLootNames,
     });
     logger.info('info_loot_choice_reason', { reason: feedback });
     const oldFlowState = adventurer.flowState;
@@ -499,8 +502,12 @@ export class GameEngine {
     const chosenRoomIndex = rng.nextInt(0, this.gameState.offeredRooms.length - 1);
     const chosenRoom = this.gameState.offeredRooms[chosenRoomIndex];
 
+    const offeredRoomNames = this.gameState.offeredRooms
+      .map((room) => t('items_and_rooms.' + room.id))
+      .join(', ');
     logger.info('info_room_chosen', {
-      roomName: t('items_and_rooms.' + chosenRoom.id),
+      rooms: offeredRoomNames,
+      chosenRoom: t('items_and_rooms.' + chosenRoom.id),
     });
     logger.metric({ event: 'room_encountered', room: chosenRoom });
 
@@ -591,9 +598,7 @@ export class GameEngine {
         roomHand: newRoomHand,
         availableRoomDeck: newRoomDeck,
       };
-      logger.info('info_designer_choosing_loot', {
-        handSize: this.gameState.hand.length,
-      });
+      logger.info('info_designer_choosing_loot');
     }
     this._emit('state-change', this.gameState);
   }

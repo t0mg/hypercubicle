@@ -222,10 +222,10 @@
     "info_enemy_miss": "The {enemyName} misses.",
     "info_loot_choice_reason": "{reason}",
     "info_battle_outcome": "{outcome}",
-    "info_designer_choosing_loot": "The Executive is waiting for your asset recommendations. You can offer up to {handSize} items.",
+    "info_designer_choosing_loot": "The Executive is waiting for your asset recommendations. You must offer two to four unique assets (unless you have none).",
     "info_designer_choosing_room": "The Executive is waiting for your room recommendations. They can pick up to three unmarked doors or one department head.",
-    "info_loot_chosen": "The Executive is now examining the {count} assets you have presented.",
-    "info_room_chosen": "The Executive, unaware of what lies ahead, opens the unmarked door to the {roomName}.",
+    "info_loot_chosen": "The Executive is now examining these assets: {items}.",
+    "info_room_chosen": "The Executive had a choice between these rooms: {rooms}. They chose to enter {chosenRoom}.",
     "info_loot_declined": "Disappointed by your offers, {name} decides to take nothing."
   },
   "entities": {
