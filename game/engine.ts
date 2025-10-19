@@ -336,37 +336,7 @@ export class GameEngine {
     const roomHand = roomRunDeck.slice(0, handSize);
     const availableRoomDeck = roomRunDeck.slice(handSize);
 
-    logger.info('info_new_adventurer', {
-      fullName: `${newAdventurer.firstName} ${newAdventurer.lastName}`,
-      id: this.metaManager.metaState.adventurers.toString(),
-    });
-
     this.gameState = {
-      phase: 'DESIGNER_CHOOSING_ROOM',
-      designer: { balancePoints: 0 },
-      adventurer: newAdventurer,
-      unlockedDeck: unlockedDeck,
-      availableDeck: availableDeck,
-      hand: hand,
-      unlockedRoomDeck: unlockedRoomDeck,
-      availableRoomDeck: availableRoomDeck,
-      roomHand: roomHand,
-      handSize: handSize,
-      shopItems: [],
-      offeredLoot: [],
-      offeredRooms: [],
-      run: 1,
-      room: 1,
-      runEnded: { isOver: false, reason: '', success: false, decision: null },
-      newlyUnlocked: [],
-      shopReturnPhase: null,
-    };
-    logger.info('info_new_adventurer', {
-      fullName: `${newAdventurer.firstName} ${newAdventurer.lastName}`,
-      id: this.metaManager.metaState.adventurers.toString(),
-    });
-    this.gameState = {
-      ...this.gameState,
       phase: 'DESIGNER_CHOOSING_ROOM',
       designer: { balancePoints: 0 },
       adventurer: newAdventurer,
