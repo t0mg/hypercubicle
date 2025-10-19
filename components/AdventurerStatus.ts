@@ -310,16 +310,20 @@ export class FlowChart extends HTMLElement {
 
   getFlowStateCanvasColor(flowState: FlowState): string {
     switch (flowState) {
-      case FlowState.Boredom:
       case FlowState.Apathy:
-        return '#ef4444'; // Red-500
+        return 'rgba(239, 68, 68, 0.2)'; // Red-500 with opacity
+      case FlowState.Boredom:
+        return 'rgba(239, 68, 68, 0.6)'; // Red-500 with opacity
       case FlowState.Anxiety:
+        return 'rgba(249, 115, 22, 0.6)'; // Orange-500 with opacity
       case FlowState.Worry:
-        return '#f97316'; // Orange-500
+        return 'rgba(249, 115, 22, 0.2)'; // Orange-500 with opacity
       case FlowState.Arousal:
+        return 'rgba(59, 130, 246, 0.8)'; // Blue-500 with opacity
       case FlowState.Control:
+        return 'rgba(59, 130, 246, 0.4)'; // Blue-500 with opacity
       case FlowState.Relaxation:
-        return '#3b82f6'; // Blue-500
+        return 'rgba(59, 130, 246, 0.2)'; // Blue-500 with opacity
       case FlowState.Flow:
         return '#eab308'; // Yellow-500
       default:
