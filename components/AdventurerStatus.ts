@@ -68,7 +68,10 @@ export class AdventurerStatus extends HTMLElement {
     this.innerHTML = `
             <fieldset class="mt-2" data-tooltip-key="adventurer_flow_state">
               <legend>${t('adventurer_status.flow_state')}</legend>
-              <div id="flow-state-text" class="font-mono text-xl text-center"></div>
+              <div class="flex gap-2 items-center">
+                <div id="flow-state-text" class="font-mono text-xl text-center flex-grow"></div>
+                <flow-chart></flow-chart>
+              </div>
             </fieldset>
             <div class="flex gap-2">
                 <div class="flex-grow space-y-2">
@@ -132,6 +135,10 @@ export class AdventurerStatus extends HTMLElement {
     if (this._adventurer.flowState !== this._previousAdventurer.flowState) {
       this._pulseElement(flowStateText);
     }
+
+    const flowChart = this.querySelector('flow-chart')!;
+    flowChart.setAttribute('skill', `${this._adventurer.skill}`);
+    flowChart.setAttribute('challenge', `${this._adventurer.challenge}`);
 
     const powerText = this.querySelector('#power-text') as HTMLElement;
     powerText.textContent = `${this._adventurer.power}`;
@@ -215,4 +222,92 @@ export class AdventurerStatus extends HTMLElement {
   }
 }
 
+import { getFlowState } from '../game/utils';
+
 customElements.define('adventurer-status', AdventurerStatus);
+
+export class FlowChart extends HTMLElement {
+  private _skill: number = 50;
+  private _challenge: number = 50;
+  private _canvas: HTMLCanvasElement | null = null;
+  private _ctx: CanvasRenderingContext2D | null = null;
+
+  static get observedAttributes() {
+    return ['skill', 'challenge'];
+  }
+
+  constructor() {
+    super();
+  }
+
+  connectedCallback() {
+    this.innerHTML = `
+      <div class="relative" style="width: 100px; height: 100px;">
+        <canvas width="100" height="100"></canvas>
+        <p class="absolute bottom-0 left-0 right-0 text-center text-xs pointer-events-none">Skill</p>
+        <p class="absolute top-0 left-0 bottom-0 text-center text-xs pointer-events-none" style="writing-mode: vertical-rl; transform: rotate(180deg);">Challenge</p>
+      </div>
+    `;
+    this._canvas = this.querySelector('canvas');
+    this._ctx = this._canvas!.getContext('2d');
+    this.render();
+  }
+
+  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+    if (oldValue === newValue) return;
+    if (name === 'skill') {
+      this._skill = parseFloat(newValue);
+    }
+    if (name === 'challenge') {
+      this._challenge = parseFloat(newValue);
+    }
+    this.render();
+  }
+
+  render() {
+    if (!this._ctx || !this._canvas) return;
+
+    const ctx = this._ctx;
+    const canvas = this._canvas;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let x = 0; x < 100; x++) {
+      for (let y = 0; y < 100; y++) {
+        const flowState = getFlowState(x, 100 - y);
+        ctx.fillStyle = this.getFlowStateCanvasColor(flowState);
+        ctx.fillRect(x, y, 1, 1);
+      }
+    }
+
+    const dotX = Math.max(0, Math.min(100, this._skill));
+    const dotY = 100 - Math.max(0, Math.min(100, this._challenge));
+    ctx.beginPath();
+    ctx.arc(dotX, dotY, 3, 0, 2 * Math.PI, false);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'black';
+    ctx.stroke();
+  }
+
+  getFlowStateCanvasColor(flowState: FlowState): string {
+    switch (flowState) {
+      case FlowState.Boredom:
+      case FlowState.Apathy:
+        return '#ef4444'; // Red-500
+      case FlowState.Anxiety:
+      case FlowState.Worry:
+        return '#f97316'; // Orange-500
+      case FlowState.Arousal:
+      case FlowState.Control:
+      case FlowState.Relaxation:
+        return '#3b82f6'; // Blue-500
+      case FlowState.Flow:
+        return '#eab308'; // Yellow-500
+      default:
+        return '#000000'; // Black
+    }
+  }
+}
+
+customElements.define('flow-chart', FlowChart);
