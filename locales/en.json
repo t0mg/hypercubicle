@@ -8,7 +8,7 @@
     "new_game_confirm": "Starting a new hire retires the current Executive. Only unlocked Perks are preserved. Are you sure?",
     "reset_save_confirm": "This will permanently delete all your progress, including unlocked Perks and Executive performance history. Are you absolutely sure?",
     "adventurer_count": "Executives hired: {count}",
-    "max_runs": "Best executive: {count} days",
+    "max_runs": "Best Executive: {count} days",
     "unlocked_features": "Unlocked Perks: {count}"
   },
   "global": {
@@ -124,19 +124,39 @@
   "tooltips": {
     "adventurer_health": {
       "title": "Executive's Stamina",
-      "body": "This is the executive's current stamina. If it reaches <b>zero</b>, the Work Day ends. Whether they'll choose to return depends on their <b>Engagement Level</b>."
+      "body": "The Executive's current <b>Stamina</b>. If it reaches <b>zero</b>, the Work Day ends. Whether they'll choose to return depends on their <b>Engagement Level</b>."
     },
     "adventurer_power": {
       "title": "Executive's Productivity",
-      "body": "This is the executive's productivity level. It affects how effectively they handle encounters.<ul><li>Higher productivity is better</li><li>Can be increased by corporate assets</li></ul>"
+      "body": "The Executive's <b>Productivity</b> level. It affects how effectively they handle encounters.<ul><li>Higher productivity is better</li><li>Can be increased by corporate assets</li></ul>"
     },
     "adventurer_flow_state": {
       "title": "Engagement Level",
-      "body": "The executive's mental state. This is affected by the difficulty of their tasks. <br/><br/>If they experience too much <b>Lethargy</b> or <b>Imminent Burnout</b>, they might quit."
+      "body": "The Executive's mental state. This is affected by the difficulty of their tasks. <p>If they experience too much <b>Lethargy</b> or <b>Imminent Burnout</b>, they might quit."
     },
     "multiple_units": {
       "title": "Team Members",
       "body": "Stats apply to each individual member in this department."
+    },
+    "status_bar_balance_points": {
+      "title": "Expense Funds",
+      "body": "Expense Funds can be spent in the Corporate Supply Closet to requisition new assets for the Executive."
+    },
+    "status_bar_current_run": {
+      "title": "Current Work Day",
+      "body": "The count of <b>Work Days</b> this Executive has experienced so far without retiring.<p>Breaking records often unlocks interesting <b>Perks</b>."
+    },
+    "status_bar_current_room": {
+      "title": "Current Room",
+      "body": "The count of <b>Rooms</b> the Executive has been through so far this <b>Work Day</b>."
+    },
+    "status_bar_deck_size": {
+      "title": "Loot Deck Size",
+      "body": "The number of corporate assets left to be offered to the Executive during this <b>Work Day</b>."
+    },
+    "status_bar_room_deck_size": {
+      "title": "Rooms Deck Size",
+      "body": "The number of rooms left to be offered to the Executive during this <b>Work Day</b>."
     }
   },
   "flow_states": {
