@@ -231,7 +231,6 @@ export class FlowChart extends HTMLElement {
   private _challenge: number = 50;
   private _canvas: HTMLCanvasElement | null = null;
   private _ctx: CanvasRenderingContext2D | null = null;
-  private _cachedBackground: HTMLCanvasElement | null = null;
   private _backgroundRendered: boolean = false;
 
   static get observedAttributes() {
@@ -268,15 +267,8 @@ export class FlowChart extends HTMLElement {
   render() {
     if (!this._ctx || !this._canvas) return;
 
-    if (!this._cachedBackground) {
-      this._renderBackground();
-    }
-
     if (!this._backgroundRendered) {
-      const ctx = this._ctx;
-      ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
-      ctx.drawImage(this._cachedBackground!, 0, 0);
-      this._backgroundRendered = true;
+      this._renderBackground();
     }
 
     // Update dot position
@@ -288,11 +280,8 @@ export class FlowChart extends HTMLElement {
   }
 
   _renderBackground() {
-    if (!this._canvas) return;
-    this._cachedBackground = document.createElement('canvas');
-    this._cachedBackground.width = this._canvas.width;
-    this._cachedBackground.height = this._canvas.height;
-    const ctx = this._cachedBackground.getContext('2d')!;
+    if (!this._ctx || !this._canvas) return;
+    const ctx = this._ctx;
 
     for (let x = 0; x < 100; x++) {
       for (let y = 0; y < 100; y++) {
@@ -320,6 +309,8 @@ export class FlowChart extends HTMLElement {
     ctx.strokeText('Challenge', 0, 0);
     ctx.fillText('Challenge', 0, 0);
     ctx.restore();
+
+    this._backgroundRendered = true;
   }
 
   getFlowStateCanvasColor(flowState: FlowState): string {
