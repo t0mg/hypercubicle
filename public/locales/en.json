@@ -224,8 +224,8 @@
     "info_battle_outcome": "{outcome}",
     "info_designer_choosing_loot": "{name} is waiting for your asset recommendations. You must offer two to four unique assets (unless you have none).",
     "info_designer_choosing_room": "{name} is waiting for your room recommendations. They can pick up one of three unmarked doors, or one Department Head.",
-    "info_loot_chosen": "The Executive is now examining these assets: {items}.",
-    "info_room_chosen": "The Executive had a choice between these rooms: {rooms}. They chose to enter {chosenRoom}.",
+    "info_loot_chosen": "{name} is now examining these assets: {items}.",
+    "info_room_chosen": "Behind the unmarked doors are: {rooms}. {name} picks one at random and enters {chosenRoom}.",
     "info_loot_declined": "Disappointed by your offers, {name} decides to take nothing."
   },
   "entities": {

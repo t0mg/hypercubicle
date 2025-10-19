@@ -434,6 +434,7 @@ export class GameEngine {
       .map((item) => t('items_and_rooms.' + item.id))
       .join(', ');
     logger.info('info_loot_chosen', {
+      name: adventurer.firstName,
       items: offeredLootNames,
     });
     logger.info('info_loot_choice_reason', { reason: feedback });
@@ -510,6 +511,7 @@ export class GameEngine {
       .map((room) => t('items_and_rooms.' + room.id))
       .join(', ');
     logger.info('info_room_chosen', {
+      name: this.gameState.adventurer.firstName,
       rooms: offeredRoomNames,
       chosenRoom: t('items_and_rooms.' + chosenRoom.id),
     });
