@@ -68,7 +68,10 @@ export class AdventurerStatus extends HTMLElement {
     this.innerHTML = `
             <fieldset class="mt-2" data-tooltip-key="adventurer_flow_state">
               <legend>${t('adventurer_status.flow_state')}</legend>
-              <div id="flow-state-text" class="font-mono text-xl text-center"></div>
+              <div class="flex gap-2 items-center">
+                <div id="flow-state-text" class="font-mono text-xl text-center flex-grow"></div>
+                <flow-chart></flow-chart>
+              </div>
             </fieldset>
             <div class="flex gap-2">
                 <div class="flex-grow space-y-2">
@@ -128,10 +131,14 @@ export class AdventurerStatus extends HTMLElement {
 
     const flowStateText = this.querySelector('#flow-state-text') as HTMLElement;
     flowStateText.textContent = t(`flow_states.${this._adventurer.flowState}`);
-    flowStateText.className = `font-mono text-xl text-center ${this.getFlowStateColor(this._adventurer.flowState)}`;
+    flowStateText.className = `font-mono text-xl text-center flex-grow ${this.getFlowStateColor(this._adventurer.flowState)}`;
     if (this._adventurer.flowState !== this._previousAdventurer.flowState) {
       this._pulseElement(flowStateText);
     }
+
+    const flowChart = this.querySelector('flow-chart')!;
+    flowChart.setAttribute('skill', `${this._adventurer.skill}`);
+    flowChart.setAttribute('challenge', `${this._adventurer.challenge}`);
 
     const powerText = this.querySelector('#power-text') as HTMLElement;
     powerText.textContent = `${this._adventurer.power}`;
@@ -215,4 +222,119 @@ export class AdventurerStatus extends HTMLElement {
   }
 }
 
+import { getFlowState } from '../game/utils';
+
 customElements.define('adventurer-status', AdventurerStatus);
+
+export class FlowChart extends HTMLElement {
+  private _skill: number = 50;
+  private _challenge: number = 50;
+  private _canvas: HTMLCanvasElement | null = null;
+  private _ctx: CanvasRenderingContext2D | null = null;
+  private _backgroundRendered: boolean = false;
+
+  static get observedAttributes() {
+    return ['skill', 'challenge'];
+  }
+
+  constructor() {
+    super();
+  }
+
+  connectedCallback() {
+    this.innerHTML = `
+      <div class="relative" style="width: 100px; height: 100px;">
+        <canvas width="100" height="100" style="image-rendering: pixelated;"></canvas>
+        <div id="flow-chart-dot" style="position: absolute; width: 8px; height: 8px; background-color: white; border: 1px solid black; border-radius: 50%; transform: translate(-50%, -50%); transition: top 0.3s ease, left 0.3s ease;"></div>
+      </div>
+    `;
+    this._canvas = this.querySelector('canvas');
+    this._ctx = this._canvas!.getContext('2d');
+    this.render();
+  }
+
+  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+    if (oldValue === newValue) return;
+    if (name === 'skill') {
+      this._skill = parseFloat(newValue);
+    }
+    if (name === 'challenge') {
+      this._challenge = parseFloat(newValue);
+    }
+    this.render();
+  }
+
+  render() {
+    if (!this._ctx || !this._canvas) return;
+
+    if (!this._backgroundRendered) {
+      this._renderBackground();
+    }
+
+    // Update dot position
+    const dot = this.querySelector('#flow-chart-dot') as HTMLElement;
+    const dotX = Math.max(0, Math.min(100, this._skill));
+    const dotY = 100 - Math.max(0, Math.min(100, this._challenge));
+    dot.style.left = `${dotX}%`;
+    dot.style.top = `${dotY}%`;
+  }
+
+  _renderBackground() {
+    if (!this._ctx || !this._canvas) return;
+    const ctx = this._ctx;
+
+    for (let x = 0; x < 100; x++) {
+      for (let y = 0; y < 100; y++) {
+        const flowState = getFlowState(x, 100 - y);
+        ctx.fillStyle = this.getFlowStateCanvasColor(flowState);
+        ctx.fillRect(x, y, 1, 1);
+      }
+    }
+
+    // Draw labels
+    ctx.font = '12px "Pixelated MS Sans Serif"';
+    ctx.fillStyle = 'black';
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 2;
+    ctx.textAlign = 'center';
+
+    // Skill label
+    ctx.strokeText('Skill', 50, 95);
+    ctx.fillText('Skill', 50, 95);
+
+    // Challenge label
+    ctx.save();
+    ctx.translate(12, 50);
+    ctx.rotate(-Math.PI / 2);
+    ctx.strokeText('Challenge', 0, 0);
+    ctx.fillText('Challenge', 0, 0);
+    ctx.restore();
+
+    this._backgroundRendered = true;
+  }
+
+  getFlowStateCanvasColor(flowState: FlowState): string {
+    switch (flowState) {
+      case FlowState.Apathy:
+        return 'rgba(239, 68, 68, 0.2)'; // Red-500 with opacity
+      case FlowState.Boredom:
+        return 'rgba(239, 68, 68, 0.6)'; // Red-500 with opacity
+      case FlowState.Anxiety:
+        return 'rgba(249, 115, 22, 0.6)'; // Orange-500 with opacity
+      case FlowState.Worry:
+        return 'rgba(249, 115, 22, 0.2)'; // Orange-500 with opacity
+      case FlowState.Arousal:
+        return 'rgba(59, 130, 246, 0.8)'; // Blue-500 with opacity
+      case FlowState.Control:
+        return 'rgba(59, 130, 246, 0.4)'; // Blue-500 with opacity
+      case FlowState.Relaxation:
+        return 'rgba(59, 130, 246, 0.2)'; // Blue-500 with opacity
+      case FlowState.Flow:
+        return '#eab308'; // Yellow-500
+      default:
+        return '#000000'; // Black
+    }
+  }
+}
+
+customElements.define('flow-chart', FlowChart);
