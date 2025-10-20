@@ -1,4 +1,3 @@
-
 export enum FlowState {
   Arousal = 'arousal',
   Flow = 'flow',
@@ -161,4 +160,19 @@ export interface Storage {
 
 export interface DataLoader {
   loadJson(path: string): Promise<any>;
+}
+
+export interface DungeonChartNode {
+  id: string;
+  label: string;
+  children: DungeonChartNode[];
+  depth?: number | null;
+  parent?: DungeonChartNode | null;
+  leafCount?: number | null;
+}
+
+export interface DungeonChartData {
+  nodes: DungeonChartNode;
+  path: string[];
+  linkLabels: Record<string, string>;
 }

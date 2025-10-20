@@ -19,6 +19,7 @@ import './components/Workshop.ts';
 import './components/MenuScreen.ts';
 import './components/TooltipBox.ts';
 import './components/EncounterModal.ts';
+import "./components/DungeonChart";
 
 import { tooltipManager } from './tooltip';
 
