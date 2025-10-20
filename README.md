@@ -49,6 +49,16 @@ Example:
 npm run simulate -- --seed=123 100
 ```
 
+## Translation Management
+
+A script is available to help manage the localization file (`public/locales/en.json`). This tool can sort keys, remove unused translations, and identify missing keys.
+
+To run the script, use the following command:
+
+```bash
+npm run manage-translations
+```
+
 ## Running the Project
 
 To run the project locally, you need to have Node.js and npm installed.
