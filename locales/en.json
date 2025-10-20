@@ -2,260 +2,260 @@
   "game_title": "Hypercubicle",
   "game_subtitle": "Keep your corporate Executive engaged.",
   "menu": {
-    "new_game": "New Hire",
-    "continue_game": "Continue",
-    "reset_save": "Liquidate Company",
-    "new_game_confirm": "Starting a new hire retires the current Executive. Only unlocked Perks are preserved. Are you sure?",
-    "reset_save_confirm": "This will permanently delete all your progress, including unlocked Perks and Executive performance history. Are you absolutely sure?",
     "adventurer_count": "Executives hired: {count}",
+    "continue_game": "Continue",
     "max_runs": "Best Executive: {count} days",
+    "new_game": "New Hire",
+    "new_game_confirm": "Starting a new hire retires the current Executive. Only unlocked Perks are preserved. Are you sure?",
+    "reset_save": "Liquidate Company",
+    "reset_save_confirm": "This will permanently delete all your progress, including unlocked Perks and Executive performance history. Are you absolutely sure?",
     "unlocked_features": "Unlocked Perks: {count}"
   },
   "global": {
-    "health": "Stamina",
-    "max_hp": "Max Stamina",
-    "power": "Productivity",
-    "duration": "Duration",
-    "attack": "Complexity",
-    "units": " (per mob)",
-    "bp": "Exp. Funds",
-    "run": "Day",
-    "room": "Room",
-    "deck": "Loot deck",
-    "rooms": "Rooms deck",
-    "workshop": "Corporate Supply Closet",
-    "none": "None",
-    "buy": "Requisition",
-    "loading": "Loading...",
-    "initializing": "Sipping Coffee...",
-    "loading_game_data": "Loading Synergies...",
     "an_error_occurred": "An Error Occurred",
-    "unknown_error": "An unknown error occurred while loading game data.",
+    "attack": "Complexity",
+    "bp": "Exp. Funds",
+    "buy": "Requisition",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
     "continue": "Continue",
+    "deck": "Loot deck",
+    "duration": "Duration",
+    "encounter_window_title": "Meeting in Progress",
+    "fast": "Meets expectations",
+    "health": "Stamina",
+    "initializing": "Sipping Coffee...",
+    "loading": "Loading...",
+    "loading_game_data": "Loading Synergies...",
+    "max_hp": "Max Stamina",
+    "none": "None",
+    "power": "Productivity",
     "quit": "Quit",
     "quit_confirm": "Are you sure you want to return to the main menu? Your progress will be saved.",
-    "confirm": "Confirm",
-    "cancel": "Cancel",
+    "room": "Room",
+    "rooms": "Rooms deck",
+    "run": "Day",
     "skip": "Skip",
-    "encounter_window_title": "Meeting in Progress",
-    "speed": "Performance",
     "slow": "Needs improvement",
-    "fast": "Meets expectations"
+    "speed": "Performance",
+    "units": " (per mob)",
+    "unknown_error": "An unknown error occurred while loading game data.",
+    "workshop": "Corporate Supply Closet"
   },
   "card": {
     "select": "Activate"
   },
   "adventurer_status": {
-    "title": "Executive {name} (Corporate Id #{id})",
-    "flow_state": "Engagement Level",
-    "inventory": "Briefcase",
-    "weapon": "Tool",
     "armor": "Attire",
-    "potions": "Snacks",
     "buffs": "Directives",
-    "pwr": "Prod.",
+    "flow_state": "Engagement Level",
     "hp": "Stam.",
+    "inventory": "Briefcase",
+    "potions": "Snacks",
     "potions_held": "{count} available",
-    "traits": "Traits"
+    "pwr": "Prod.",
+    "title": "Executive {name} (Corporate Id #{id})",
+    "traits": "Traits",
+    "weapon": "Tool"
   },
   "log_panel": {
-    "title": "Performance Review & Audit Trail",
     "offense": "PRODUCTIVITY",
     "resilience": "TENACITY",
-    "skill": "EXPERIENCE"
+    "skill": "EXPERIENCE",
+    "title": "Performance Review & Audit Trail"
   },
   "run_ended_screen": {
-    "run_complete": "The Executive's Work Day is over.",
-    "default_reason": "The fiscal period has ended.",
     "adventurer_considers_fate": "The Executive considers their career trajectory",
-    "continue_quote": "\"I can still leverage my assets.\"",
     "continue_decision": "Paradigm shifted! They're ready for another day!",
+    "continue_quote": "\"I can still leverage my assets.\"",
+    "default_reason": "The fiscal period has ended.",
     "enter_workshop": "Visit Supply Closet",
-    "retire_quote": "\"I'm cashing out my 401k.\"",
-    "retire_decision": "They lost motivation, and filed their resignation after {run} Work Days.",
     "recruit_new_adventurer": "Hire Next Executive",
+    "retire_decision": "They lost motivation, and filed their resignation after {run} Work Days.",
+    "retire_quote": "\"I'm cashing out my 401k.\"",
+    "run_complete": "The Executive's Work Day is over.",
     "start_new_run": "Start New Work Day"
   },
   "choice_panel": {
-    "title": "Present Corporate Assets for the Executive to Choose From",
-    "present_offer": "Present Offer",
-    "title_room": "Choose Three Rooms or One Department Head",
     "begin_encounter": "Begin Encounter",
-    "multiple_enemies_title": "{name}<br>({count} members)",
-    "stacked_items_title": "{name} ({count} in stock)",
-    "new_items_title": "Newly requisitioned",
     "continue_without_loot": "Continue without offering new assets",
-    "roll_credits": "No more floors. Time for the after-work party."
+    "multiple_enemies_title": "{name}<br>({count} members)",
+    "new_items_title": "Newly requisitioned",
+    "present_offer": "Present Offer",
+    "roll_credits": "No more floors. Time for the after-work party.",
+    "stacked_items_title": "{name} ({count} in stock)",
+    "title": "Present Corporate Assets for the Executive to Choose From",
+    "title_room": "Choose Three Rooms or One Department Head"
   },
   "workshop": {
-    "title": "The Corporate Supply Closet",
-    "description": "Spend Expense Account Funds to add more assets to your inventory catalog.",
     "balance_points": "Expense Funds: ",
+    "begin_next_run": "Begin Next Work Day",
+    "description": "Spend Expense Account Funds to add more assets to your inventory catalog.",
     "no_new_items": "No new assets available for requisition this time.",
-    "begin_next_run": "Begin Next Work Day"
+    "title": "The Corporate Supply Closet"
   },
   "game_engine": {
-    "easy_fight": "An easy meeting. Too trivial for synergy...",
-    "worthy_challenge": "A productive, but simple meeting.",
-    "great_battle": "A productive negotiation! Quarterly results look excellent!",
-    "too_close_for_comfort": "That was a close call. Almost needed to call HR.",
-    "adventurer_fell": "The Executive suffered a fatal burnout on Floor {room} of Work Day {run}.",
-    "adventurer_bored": "The Executive became lethargic on Floor {room} of Work Day {run}, and quit.",
     "adventurer_apathy": "The Executive started quiet quitting on Floor {room} of Work Day {run}, and left the company.",
-    "no_more_rooms": "The Executive reached the end of the floor plan (without a performance review)."
+    "adventurer_bored": "The Executive became lethargic on Floor {room} of Work Day {run}, and quit.",
+    "adventurer_fell": "The Executive suffered a fatal burnout on Floor {room} of Work Day {run}.",
+    "easy_fight": "An easy meeting. Too trivial for synergy...",
+    "great_battle": "A productive negotiation! Quarterly results look excellent!",
+    "no_more_rooms": "The Executive reached the end of the floor plan (without a performance review).",
+    "too_close_for_comfort": "That was a close call. Almost needed to call HR.",
+    "worthy_challenge": "A productive, but simple meeting."
   },
   "unlocks": {
-    "title": "You Unlocked a New Perk",
-    "workshop": {
-      "title": "The Corporate Supply Closet",
-      "description": "Between Work Days, you can now visit the Supply Closet and spend Expense Funds to add new assets to your inventory catalog (until the Executive resigns)."
+    "hand_size_increase": {
+      "description": "You can now hold more assets in your hand, giving you more strategic options.",
+      "title": "Rolodex Upgrade"
     },
     "room_deck_size_increase": {
-      "title": "Office Expansion Approved",
-      "description": "The number of rooms in your building has been increased to 36."
+      "description": "The number of rooms in your building has been increased to 36.",
+      "title": "Office Expansion Approved"
     },
-    "hand_size_increase": {
-      "title": "Rolodex Upgrade",
-      "description": "You can now hold more assets in your hand, giving you more strategic options."
+    "title": "You Unlocked a New Perk",
+    "workshop": {
+      "description": "Between Work Days, you can now visit the Supply Closet and spend Expense Funds to add new assets to your inventory catalog (until the Executive resigns).",
+      "title": "The Corporate Supply Closet"
     }
   },
   "tooltips": {
+    "adventurer_flow_state": {
+      "body": "The Executive's mental state. This is affected by the difficulty of their tasks. <p>If they experience too much <b>Lethargy</b> or <b>Imminent Burnout</b>, they might quit.",
+      "title": "Engagement Level"
+    },
     "adventurer_health": {
-      "title": "Executive's Stamina",
-      "body": "The Executive's current <b>Stamina</b>. If it reaches <b>zero</b>, the Work Day ends. Whether they'll choose to return depends on their <b>Engagement Level</b>."
+      "body": "The Executive's current <b>Stamina</b>. If it reaches <b>zero</b>, the Work Day ends. Whether they'll choose to return depends on their <b>Engagement Level</b>.",
+      "title": "Executive's Stamina"
     },
     "adventurer_power": {
-      "title": "Executive's Productivity",
-      "body": "The Executive's <b>Productivity</b> level. It affects how effectively they handle encounters.<ul><li>Higher productivity is better</li><li>Can be increased by corporate assets</li></ul>"
-    },
-    "adventurer_flow_state": {
-      "title": "Engagement Level",
-      "body": "The Executive's mental state. This is affected by the difficulty of their tasks. <p>If they experience too much <b>Lethargy</b> or <b>Imminent Burnout</b>, they might quit."
+      "body": "The Executive's <b>Productivity</b> level. It affects how effectively they handle encounters.<ul><li>Higher productivity is better</li><li>Can be increased by corporate assets</li></ul>",
+      "title": "Executive's Productivity"
     },
     "multiple_units": {
-      "title": "Team Members",
-      "body": "Stats apply to each individual member in this department."
+      "body": "Stats apply to each individual member in this department.",
+      "title": "Team Members"
     },
     "status_bar_balance_points": {
-      "title": "Expense Funds",
-      "body": "Expense Funds can be spent in the Corporate Supply Closet to requisition new assets for the Executive."
-    },
-    "status_bar_current_run": {
-      "title": "Current Work Day",
-      "body": "The count of <b>Work Days</b> this Executive has experienced so far without retiring.<p>Breaking records often unlocks interesting <b>Perks</b>."
+      "body": "Expense Funds can be spent in the Corporate Supply Closet to requisition new assets for the Executive.",
+      "title": "Expense Funds"
     },
     "status_bar_current_room": {
-      "title": "Current Room",
-      "body": "The count of <b>Rooms</b> the Executive has been through so far this <b>Work Day</b>."
+      "body": "The count of <b>Rooms</b> the Executive has been through so far this <b>Work Day</b>.",
+      "title": "Current Room"
+    },
+    "status_bar_current_run": {
+      "body": "The count of <b>Work Days</b> this Executive has experienced so far without retiring.<p>Breaking records often unlocks interesting <b>Perks</b>.",
+      "title": "Current Work Day"
     },
     "status_bar_deck_size": {
-      "title": "Loot Deck Size",
-      "body": "The number of corporate assets left to be offered to the Executive during this <b>Work Day</b>."
+      "body": "The number of corporate assets left to be offered to the Executive during this <b>Work Day</b>.",
+      "title": "Loot Deck Size"
     },
     "status_bar_room_deck_size": {
-      "title": "Rooms Deck Size",
-      "body": "The number of rooms left to be offered to the Executive during this <b>Work Day</b>."
+      "body": "The number of rooms left to be offered to the Executive during this <b>Work Day</b>.",
+      "title": "Rooms Deck Size"
     }
   },
   "flow_states": {
-    "flow": "Flow",
-    "control": "Deep Focus",
-    "arousal": "Uncomfortable Excitement",
-    "relaxation": "Thoughtfulness",
-    "worry": "Deadline Pressure",
     "anxiety": "Imminent Burnout",
+    "apathy": "Quiet Quitting",
+    "arousal": "Uncomfortable Excitement",
     "boredom": "Lethargy",
-    "apathy": "Quiet Quitting"
+    "control": "Deep Focus",
+    "flow": "Flow",
+    "relaxation": "Thoughtfulness",
+    "worry": "Deadline Pressure"
   },
   "rarity": {
     "common": "Standard",
-    "uncommon": "Elite",
+    "legendary": "Classified",
     "rare": "Platinium",
-    "legendary": "Classified"
+    "uncommon": "Elite"
   },
   "card_types": {
-    "item_weapon": "Tool",
-    "item_potion": "Snack",
     "item_armor": "Attire",
     "item_buff": "Directive",
+    "item_potion": "Snack",
+    "item_weapon": "Tool",
+    "room_boss": "Department Head",
     "room_enemy": "Hostile Department",
-    "room_trap": "Office Hazard",
     "room_healing": "Break Room",
-    "room_boss": "Department Head"
+    "room_trap": "Office Hazard"
   },
   "log_messages": {
-    "info_adventurer_declines_offer": "Disappointed by your offers, {name} decides to take nothing.",
     "info_adventurer_accepts_offer": "{name} requisitioned the {itemName}.",
-    "info_adventurer_drinks_potion": "{name} drinks a {potionName}.",
-    "info_easy_fight": "An easy meeting. Too trivial for synergy...",
-    "info_worthy_challenge": "A productive, but simple meeting.",
-    "info_great_battle": "A productive negotiation! Quarterly results look excellent!",
-    "info_too_close_for_comfort": "That was a close call. Almost needed to call HR.",
-    "info_new_adventurer": "{fullName} (Exec. #{id}) enters the office!",
-    "info_adventurer_returns": "{name} returns for another Work Day!",
-    "info_adventurer_fell": "{name} suffered a fatal burnout on Floor {room} of Work Day {run}.",
-    "info_adventurer_bored": "{name} became lethargic on Floor {room} of Work Day {run}, and quit.",
     "info_adventurer_apathy": "{name} started quiet quitting on Floor {room} of Work Day {run}, and left the company.",
-    "info_empty_hand": "{name} waits for your decision, unaware that the budget has been frozen.",
-    "info_welcome_to_workshop": "Welcome back. Spend your Expense Funds wisely.",
-    "info_healing_room": "{name} found the {healingRoomName} and recovered {healing} stamina.",
-    "info_trap_room": "{name} ran into the {trapName} and lost {damage} stamina.",
-    "info_no_more_rooms": "{name} reached the end of the floor plan (without a performance review).",
-    "info_encounter": "{name} encounters the {roomName}.",
-    "info_encounter_enemy": "{name} encounters {enemyName} {current} of {total}.",
-    "info_adventurer_defeated": "{name} has run out of stamina.",
-    "info_enemy_defeated": "The {enemyName} has been synergized with.",
-    "info_entering_workshop": "{name} is entering the workshop.",
+    "info_adventurer_bored": "{name} became lethargic on Floor {room} of Work Day {run}, and quit.",
     "info_adventurer_decision": "{name} decided to {decision}.",
-    "info_flow_state_changed": "{name}'s state of mind changed from {from} to {to}.",
-    "info_repetitive_choice": "{name} feels a sense of repetitiveness from seeing {itemName} again.",
-    "info_deja_vu": "{name} feels a sense of deja vu upon entering {roomName}.",
-    "info_item_chosen": "{name} chose the {item}.",
-    "info_item_purchased": "Purchased {item}.",
-    "info_game_over": "WORK DAY OVER: {reason}",
-    "warn_empty_hand": "{name} was hoping for new assets, but the budget is frozen.",
+    "info_adventurer_declines_offer": "Disappointed by your offers, {name} decides to take nothing.",
+    "info_adventurer_defeated": "{name} has run out of stamina.",
+    "info_adventurer_drinks_potion": "{name} drinks a {potionName}.",
+    "info_adventurer_fell": "{name} suffered a fatal burnout on Floor {room} of Work Day {run}.",
     "info_adventurer_hit": "{name} hits for {damage} damage.",
     "info_adventurer_miss": "{name} misses.",
-    "info_enemy_hit": "The {enemyName} hits for {damage} damage.",
-    "info_enemy_miss": "The {enemyName} misses.",
+    "info_adventurer_returns": "{name} returns for another Work Day!",
     "info_battle_outcome": "{outcome}",
+    "info_boss_room_chosen": "{name} enters the only available door. It leads to the {chosenRoom}.",
+    "info_deja_vu": "{name} feels a sense of deja vu upon entering {roomName}.",
     "info_designer_choosing_loot": "{name} is looking around for Corporate Assets to choose from.",
     "info_designer_choosing_room": "{name} enters a hallway leading to three unmarked doors, or perhaps to the Department Head?",
+    "info_easy_fight": "An easy meeting. Too trivial for synergy...",
+    "info_empty_hand": "{name} waits for your decision, unaware that the budget has been frozen.",
+    "info_encounter": "{name} encounters the {roomName}.",
+    "info_encounter_enemy": "{name} encounters {enemyName} {current} of {total}.",
+    "info_enemy_defeated": "The {enemyName} has been synergized with.",
+    "info_enemy_hit": "The {enemyName} hits for {damage} damage.",
+    "info_enemy_miss": "The {enemyName} misses.",
+    "info_entering_workshop": "{name} is entering the workshop.",
+    "info_flow_state_changed": "{name}'s state of mind changed from {from} to {to}.",
+    "info_game_over": "WORK DAY OVER: {reason}",
+    "info_great_battle": "A productive negotiation! Quarterly results look excellent!",
+    "info_healing_room": "{name} found the {healingRoomName} and recovered {healing} stamina.",
+    "info_item_chosen": "{name} chose the {item}.",
+    "info_item_purchased": "Purchased {item}.",
     "info_loot_chosen": "{name} is examining these: {items}.",
+    "info_loot_declined": "Disappointed by these assets, {name} decides to take nothing.",
+    "info_new_adventurer": "{fullName} (Exec. #{id}) enters the office!",
+    "info_no_more_rooms": "{name} reached the end of the floor plan (without a performance review).",
+    "info_repetitive_choice": "{name} feels a sense of repetitiveness from seeing {itemName} again.",
     "info_room_chosen": "Behind the unmarked doors: {rooms}. {name} unknkowingly opens a door...",
-    "info_boss_room_chosen": "{name} enters the only available door. It leads to the {chosenRoom}.",
-    "info_loot_declined": "Disappointed by these assets, {name} decides to take nothing."
+    "info_too_close_for_comfort": "That was a close call. Almost needed to call HR.",
+    "info_trap_room": "{name} ran into the {trapName} and lost {damage} stamina.",
+    "info_welcome_to_workshop": "Welcome back. Spend your Expense Funds wisely.",
+    "info_worthy_challenge": "A productive, but simple meeting.",
+    "warn_empty_hand": "{name} was hoping for new assets, but the budget is frozen."
   },
   "entities": {
+    "boss": "The Auditor",
     "enemy_low": "Lethargic Staff Member",
-    "enemy_medium": "Disgruntled Intern",
-    "boss": "The Auditor"
+    "enemy_medium": "Disgruntled Intern"
   },
   "items_and_rooms": {
-    "weapon_common_1": "Standard Issue Stapler",
-    "potion_common_1": "Lukewarm Office Coffee",
     "armor_common_1": "Polyester Power Tie",
-    "weapon_common_2": "Unsharpened Pencil",
-    "potion_common_2": "Roll of Scotch Tape",
-    "armor_uncommon_1": "Motivational Poster",
-    "weapon_uncommon_1": "The Aggressive Mullet Haircut",
-    "potion_uncommon_1": "Espresso Shot",
-    "weapon_uncommon_2": "Heavy Duty Clipboard",
-    "armor_uncommon_2": "Cubicle Wall",
     "armor_rare_1": "Ergonomic Chair (Oversized Model)",
-    "weapon_rare_1": "Executive Presentation Pointer (Laser)",
-    "potion_rare_1": "Unexpected Stock Option Vesting",
     "armor_rare_2": "Shoulder Pads",
     "armor_rare_3": "'Employee of the Month' Plaque",
+    "armor_uncommon_1": "Motivational Poster",
+    "armor_uncommon_2": "Cubicle Wall",
+    "boss_final": "The Quarterly Audit",
     "buff_rare_1": "Aggressive Sales Strategy",
     "buff_uncommon_1": "Box of Donuts",
+    "enemy_group_high": "HR Compliance Fortress",
     "enemy_group_low": "Cubicle Farm of Lethargic Staff",
     "enemy_group_medium": "Team of Disgruntled Interns",
-    "trap_medium": "Malfunctioning Paper Shredder",
-    "healing_medium": "Water Cooler Gossip Session",
-    "enemy_group_high": "HR Compliance Fortress",
     "enemy_single_high": "Meeting with the Legal Department",
-    "boss_final": "The Quarterly Audit",
-    "trap_lethal": "Surprise Downsizing"
+    "healing_medium": "Water Cooler Gossip Session",
+    "potion_common_1": "Lukewarm Office Coffee",
+    "potion_common_2": "Roll of Scotch Tape",
+    "potion_rare_1": "Unexpected Stock Option Vesting",
+    "potion_uncommon_1": "Espresso Shot",
+    "trap_lethal": "Surprise Downsizing",
+    "trap_medium": "Malfunctioning Paper Shredder",
+    "weapon_common_1": "Standard Issue Stapler",
+    "weapon_common_2": "Unsharpened Pencil",
+    "weapon_rare_1": "Executive Presentation Pointer (Laser)",
+    "weapon_uncommon_1": "The Aggressive Mullet Haircut",
+    "weapon_uncommon_2": "Heavy Duty Clipboard"
   }
 }
