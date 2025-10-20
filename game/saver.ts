@@ -1,5 +1,6 @@
 import { GameState, Storage } from '../types';
 import { Adventurer } from './adventurer';
+import { DungeonHistory } from './dungeonHistory';
 import { Logger } from './logger';
 
 const SAVE_GAME_KEY = 'hypercubicle-savegame';
@@ -58,27 +59,30 @@ export class GameSaver {
   }
 
   private _serialize(state: GameState): SerializableGameState {
-    const { adventurer, ...restOfState } = state;
+    const { adventurer, dungeonHistory, ...restOfState } = state;
     return {
       version: SAVE_VERSION,
       ...restOfState,
-      adventurer: adventurer.toJSON(), // Will need to add toJSON() to Adventurer
-      logger: Logger.getInstance().toJSON(),         // Will need to add toJSON() to Logger
+      adventurer: adventurer.toJSON(),
+      logger: Logger.getInstance().toJSON(),
+      dungeonHistory: dungeonHistory?.toJSON(),
     };
   }
 
   private _deserialize(data: SerializableGameState): GameState {
-    const { adventurer: adventurerData, logger: loggerData, ...restOfState } = data;
+    const { adventurer: adventurerData, logger: loggerData, dungeonHistory: dungeonHistoryData, ...restOfState } = data;
 
     const logger = Logger.getInstance();
     logger.loadEntries(loggerData.entries);
-    const adventurer = Adventurer.fromJSON(adventurerData); // Need a static fromJSON method
+    const adventurer = Adventurer.fromJSON(adventurerData);
+    const dungeonHistory = dungeonHistoryData ? DungeonHistory.fromJSON(dungeonHistoryData) : undefined;
 
     // Exclude 'version' from restOfState before returning
     const { version, ...gameStateRest } = restOfState;
     return {
       ...gameStateRest,
       adventurer,
+      dungeonHistory,
     } as GameState;
   }
 }

@@ -1,6 +1,8 @@
 import { t } from '../text';
 import { GameEngine } from '../game/engine';
 import { ConfirmModal } from './ConfirmModal';
+import { InfoModal } from './InfoModal';
+import { DungeonChart } from './DungeonChart';
 
 export class GameStats extends HTMLElement {
   private _balancePoints: number | null = null;
@@ -68,11 +70,26 @@ export class GameStats extends HTMLElement {
                 ${this.engine?.isWorkshopAccessUnlocked() ? `
                     <button id="enter-workshop-btn">${t('global.workshop')}</button>
                 ` : ''}
+
+                <button id="dungeon-chart-btn">Dungeon Chart</button>
             </div>
         `;
 
     this.querySelector('#enter-workshop-btn')?.addEventListener('click', () => {
       this.engine?.enterWorkshop();
+    });
+
+    this.querySelector('#dungeon-chart-btn')?.addEventListener('click', async () => {
+      await InfoModal.show(
+        'Dungeon Chart',
+        '<dungeon-chart></dungeon-chart>',
+        [{ text: 'Close', value: false }]
+      );
+
+      const chart = document.querySelector('dungeon-chart') as DungeonChart;
+      if (chart) {
+        chart.data = this.engine?.getDungeonChartData();
+      }
     });
   }
 }

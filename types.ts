@@ -22,6 +22,7 @@ export interface AdventurerInventory {
 }
 
 import { Adventurer } from './game/adventurer';
+import { DungeonHistory } from './game/dungeonHistory';
 import { Logger } from './game/logger';
 import { UnlockableFeature } from './game/unlocks';
 
@@ -129,6 +130,7 @@ export interface GameState {
     balancePoints: number;
   };
   adventurer: Adventurer;
+  dungeonHistory?: DungeonHistory;
   unlockedDeck: string[]; // All item IDs the player owns
   availableDeck: LootChoice[]; // Items available for the current run, becomes the draw pile
   hand: LootChoice[]; // The player's current hand of cards

@@ -1,6 +1,7 @@
-import type { GamePhase, GameState, LootChoice, AdventurerTraits, Encounter, RoomChoice, DataLoader, EncounterPayload, EncounterLog, EncounterEvent, AdventurerSnapshot } from '../types';
+import type { DungeonChartData, GamePhase, GameState, LootChoice, AdventurerTraits, Encounter, RoomChoice, DataLoader, EncounterPayload, EncounterLog, EncounterEvent, AdventurerSnapshot } from '../types';
 import { FlowState } from '../types';
 import { Adventurer } from './adventurer';
+import { DungeonHistory } from './dungeonHistory';
 import { Logger } from './logger';
 import { MetaManager } from './meta';
 import { GameSaver } from './saver';
@@ -48,11 +49,13 @@ export class GameEngine {
   public metaManager: MetaManager;
   private dataLoader: DataLoader;
   private gameSaver: GameSaver;
+  public dungeonHistory: DungeonHistory;
 
   constructor(metaManager: MetaManager, dataLoader: DataLoader, gameSaver: GameSaver) {
     this.metaManager = metaManager;
     this.dataLoader = dataLoader;
     this.gameSaver = gameSaver;
+    this.dungeonHistory = new DungeonHistory();
   }
 
   public init = async () => {
@@ -316,6 +319,7 @@ export class GameEngine {
 
   // --- PUBLIC ACTIONS ---
   public startNewGame = (initialUnlocked?: { items?: string[], rooms?: string[] }) => {
+    this.dungeonHistory = new DungeonHistory();
     this.metaManager.incrementAdventurers();
     const newTraits: AdventurerTraits = {
       offense: rng.nextInt(10, 90),
@@ -368,6 +372,9 @@ export class GameEngine {
     const savedState = this.gameSaver.load();
     if (savedState) {
       this.gameState = savedState;
+      if (savedState.dungeonHistory) {
+        this.dungeonHistory = savedState.dungeonHistory;
+      }
       this._emit('state-change', this.gameState);
 
       // If we load into a state where we're waiting for an encounter result,
@@ -383,6 +390,7 @@ export class GameEngine {
 
   public startNewRun = (runNumber?: number) => {
     if (!this.gameState) return;
+    this.dungeonHistory = new DungeonHistory();
     const nextRun = runNumber || this.gameState.run + 1;
     this.metaManager.updateRun(nextRun);
 
@@ -508,6 +516,8 @@ export class GameEngine {
     this.gameState.offeredRooms = roomChoices;
     const chosenRoomIndex = rng.nextInt(0, this.gameState.offeredRooms.length - 1);
     const chosenRoom = this.gameState.offeredRooms[chosenRoomIndex];
+
+    this.dungeonHistory.addRoomSelection(roomChoices, chosenRoom);
 
     if (
       this.gameState.offeredRooms.length === 1 &&
@@ -882,6 +892,10 @@ export class GameEngine {
 
   public isWorkshopUnlocked(): boolean {
     return this.metaManager.acls.has(UnlockableFeature.WORKSHOP);
+  }
+
+  public getDungeonChartData(): DungeonChartData | undefined {
+    return this.dungeonHistory.generateChartData();
   }
 
   public hasSaveGame(): boolean {
