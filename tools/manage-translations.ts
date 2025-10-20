@@ -10,7 +10,7 @@ const GamedataLoader = {
     }
 };
 
-// Recursively finds all keys in a nested object.
+// Recursively finds all keys in a nested object for comparison.
 const listKeys = (obj: any, prefix = ''): string[] => {
     return Object.keys(obj).reduce((res, el) => {
         const key = prefix ? `${prefix}.${el}` : el;
@@ -21,7 +21,7 @@ const listKeys = (obj: any, prefix = ''): string[] => {
     }, [] as string[]);
 };
 
-// Recursively sorts an object's keys.
+// Recursively sorts an object's keys alphabetically.
 const sortObject = (obj: any): any => {
     if (typeof obj !== 'object' || obj === null) {
         return obj;
@@ -32,16 +32,16 @@ const sortObject = (obj: any): any => {
     }, {});
 };
 
-
 const main = async () => {
     const shouldWrite = process.argv.includes('--write');
-    console.log('Analyzing translations...');
+    console.log('Analyzing for missing translation keys...');
+    
     const translations = GamedataLoader.loadJson('locales/en.json');
     const translationKeys = new Set(listKeys(translations));
 
+    // --- Part 1: Find Missing Keys ---
     const sourceDirectories = ['./components', './game', './'];
     const filesToScan: string[] = [];
-    // Exclude test files, dependencies, and build artifacts.
     const excludedPatterns = [
         /node_modules/,
         /\.git/,
@@ -73,25 +73,21 @@ const main = async () => {
             findSourceFiles(fullPath);
         }
     }
-
-    // Store each key and a list of locations where it's used.
+    
     const usedKeys = new Map<string, { path: string; line: number }[]>();
-    // Regex to find t('key.name') usages.
-    const keyRegex = /t\(['"`]([^'"`]+)['"`]/g;
+    const keyRegex = /(?<![a-zA-Z])t\(['"`]([^'"`]+)['"`]/g;
 
     for (const file of filesToScan) {
         const content = fs.readFileSync(file, 'utf-8');
         const lines = content.split('\n');
-
+        
         lines.forEach((lineContent, index) => {
             let match;
             while ((match = keyRegex.exec(lineContent)) !== null) {
                 const key = match[1];
-                // Ignore keys that are dynamically constructed.
-                if (key.includes('${')) {
+                if (key.includes('${') || key.endsWith('.') || key.length < 2) {
                     continue;
                 }
-
                 const location = { path: file, line: index + 1 };
                 const existing = usedKeys.get(key) || [];
                 existing.push(location);
@@ -100,16 +96,14 @@ const main = async () => {
         });
     }
 
-    const unusedKeys = [...translationKeys].filter(key => !usedKeys.has(key));
     const missingKeys = [...usedKeys.keys()].filter(key => !translationKeys.has(key));
 
-    console.log('\n--- Translation Analysis Report ---');
-
-    if (unusedKeys.length > 0) {
-        console.log(`\n[INFO] Found ${unusedKeys.length} unused translation keys in en.json:`);
-        unusedKeys.forEach(key => console.log(`- ${key}`));
-    } else {
-        console.log('\n[INFO] No unused translation keys found.');
+    // --- Part 2: Report or Write ---
+    if (shouldWrite) {
+        const sortedTranslations = sortObject(translations);
+        const outputPath = path.join(__dirname, '..', 'public', 'locales', 'en.json');
+        fs.writeFileSync(outputPath, JSON.stringify(sortedTranslations, null, 2) + '\n');
+        console.log('\n[SUCCESS] The en.json file has been sorted successfully.');
     }
 
     if (missingKeys.length > 0) {
@@ -135,26 +129,8 @@ const main = async () => {
         console.log('\n[INFO] No missing translation keys found.');
     }
 
-    if (shouldWrite) {
-        console.log('\nWriting changes to en.json...');
-        const deleteKey = (obj: any, keyPath: string) => {
-            const keys = keyPath.split('.');
-            let current = obj;
-            for (let i = 0; i < keys.length - 1; i++) {
-                current = current[keys[i]];
-                if (current === undefined) return;
-            }
-            delete current[keys[keys.length - 1]];
-        };
-
-        unusedKeys.forEach(key => deleteKey(translations, key));
-        const sortedTranslations = sortObject(translations);
-
-        const outputPath = path.join(__dirname, '..', 'public', 'locales', 'en.json');
-        fs.writeFileSync(outputPath, JSON.stringify(sortedTranslations, null, 2) + '\n');
-        console.log('Successfully sorted en.json and removed unused keys.');
-    } else {
-        console.log('\nThis was a report-only analysis. No files were modified. Use the --write flag to apply changes.');
+    if (!shouldWrite) {
+        console.log('\nThis was a report-only analysis. Use the --write flag to sort the en.json file.');
     }
 };
 

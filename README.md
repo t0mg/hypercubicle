@@ -51,17 +51,18 @@ npm run simulate -- --seed=123 100
 
 ## Translation Management
 
-A script is available to help analyze the localization file (`public/locales/en.json`). This tool scans the codebase to find unused and missing translation keys and generates a detailed report.
+This project includes a script to help manage the `public/locales/en.json` file. The script has two functions: reporting missing keys and sorting the file.
 
-Key features:
-- **Report-Only**: The script does not modify any files.
-- **Accurate Scanning**: It intelligently ignores test files and dynamic keys to reduce false positives.
-- **Detailed Reports**: For missing keys, it provides the exact file and line number where the key is used.
-
-To run the analysis, use the following command:
+By default, the script runs in a **report-only** mode that scans the codebase for missing translation keys and prints a report.
 
 ```bash
 npm run manage-translations
+```
+
+To sort the `en.json` file, you must provide the `--write` flag. This will recursively sort all keys and overwrite the file.
+
+```bash
+npm run manage-translations -- --write
 ```
 
 ## Running the Project
