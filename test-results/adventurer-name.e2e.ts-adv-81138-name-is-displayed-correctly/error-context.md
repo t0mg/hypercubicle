@@ -1,0 +1,195 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - generic [ref=e6]:
+    - generic [ref=e7]:
+      - generic [ref=e8]: Hypercubicle
+      - button "Close" [ref=e10]
+    - generic [ref=e11]:
+      - generic [ref=e13]:
+        - paragraph [ref=e14]: "Day: 1"
+        - paragraph [ref=e15]: "Room: 1"
+        - paragraph [ref=e16]: "Loot deck: 24"
+        - paragraph [ref=e17]: "Rooms deck: 10"
+        - button "Dungeon Chart" [ref=e18]
+      - generic [ref=e20]:
+        - paragraph [ref=e21]: "[000] Unlocked features:"
+        - paragraph [ref=e22]: "[001] Deck size: 32, Hand size: 8, Room Deck size: 18, Room Hand size: 8"
+        - paragraph [ref=e23]: "[002] Bob enters a hallway leading to three unmarked doors, or perhaps to the Department Head?"
+  - generic [ref=e25]:
+    - generic [ref=e27]: "Executive Bob Brown (Corporate Id #1)"
+    - generic [ref=e29]:
+      - group "Engagement Level" [ref=e30]:
+        - generic [ref=e31]: Engagement Level
+        - generic [ref=e33]: Lethargy
+      - generic [ref=e38]:
+        - generic [ref=e40]:
+          - generic [ref=e41]:
+            - generic [ref=e42]:
+              - img [ref=e43]
+              - generic [ref=e45]: Stamina
+            - generic [ref=e46]: 100 / 100
+          - progressbar [ref=e47]
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - img [ref=e50]
+            - generic [ref=e52]: Productivity
+          - generic [ref=e53]: "5"
+      - group "Briefcase" [ref=e54]:
+        - generic [ref=e55]: Briefcase
+        - generic [ref=e56]:
+          - generic [ref=e57]:
+            - generic [ref=e58]:
+              - img [ref=e59]
+              - generic [ref=e61]: Tool
+            - paragraph [ref=e63]: None
+          - generic [ref=e64]:
+            - generic [ref=e65]:
+              - img [ref=e66]
+              - generic [ref=e68]: Attire
+            - paragraph [ref=e70]: None
+          - generic [ref=e71]:
+            - generic [ref=e72]:
+              - img [ref=e73]
+              - generic [ref=e75]: Directives
+            - paragraph [ref=e77]: None
+          - generic [ref=e78]:
+            - generic [ref=e79]:
+              - img [ref=e80]
+              - generic [ref=e82]: Snacks
+            - paragraph [ref=e84]: None
+  - generic [ref=e86]:
+    - generic [ref=e88]: Choose Three Rooms or One Department Head
+    - generic [ref=e91]:
+      - generic [ref=e92]:
+        - group "Hostile Department - Standard" [ref=e94] [cursor=pointer]:
+          - generic [ref=e95]: Hostile Department - Standard
+          - generic [ref=e96]:
+            - paragraph [ref=e97]:
+              - text: Cubicle Farm of Lethargic Staff
+              - text: (2 members)
+            - generic [ref=e98]:
+              - generic [ref=e99]:
+                - generic [ref=e100]: Complexity (per mob)
+                - generic [ref=e101]: "5"
+              - generic [ref=e102]:
+                - generic [ref=e103]: Stamina (per mob)
+                - generic [ref=e104]: "10"
+            - generic [ref=e105]:
+              - checkbox "Activate"
+              - generic [ref=e106]: Activate
+        - group "Hostile Department - Standard" [ref=e108] [cursor=pointer]:
+          - generic [ref=e109]: Hostile Department - Standard
+          - generic [ref=e110]:
+            - paragraph [ref=e111]:
+              - text: Cubicle Farm of Lethargic Staff
+              - text: (3 members)
+            - generic [ref=e112]:
+              - generic [ref=e113]:
+                - generic [ref=e114]: Complexity (per mob)
+                - generic [ref=e115]: "5"
+              - generic [ref=e116]:
+                - generic [ref=e117]: Stamina (per mob)
+                - generic [ref=e118]: "10"
+            - generic [ref=e119]:
+              - checkbox "Activate"
+              - generic [ref=e120]: Activate
+        - group "Hostile Department - Standard" [ref=e122] [cursor=pointer]:
+          - generic [ref=e123]: Hostile Department - Standard
+          - generic [ref=e124]:
+            - paragraph [ref=e125]:
+              - text: Team of Disgruntled Interns
+              - text: (7 members)
+            - generic [ref=e126]:
+              - generic [ref=e127]:
+                - generic [ref=e128]: Complexity (per mob)
+                - generic [ref=e129]: "4"
+              - generic [ref=e130]:
+                - generic [ref=e131]: Stamina (per mob)
+                - generic [ref=e132]: "8"
+            - generic [ref=e133]:
+              - checkbox "Activate"
+              - generic [ref=e134]: Activate
+        - group "Hostile Department - Standard" [ref=e136] [cursor=pointer]:
+          - generic [ref=e137]: Hostile Department - Standard
+          - generic [ref=e138]:
+            - paragraph [ref=e139]:
+              - text: Team of Disgruntled Interns
+              - text: (9 members)
+            - generic [ref=e140]:
+              - generic [ref=e141]:
+                - generic [ref=e142]: Complexity (per mob)
+                - generic [ref=e143]: "4"
+              - generic [ref=e144]:
+                - generic [ref=e145]: Stamina (per mob)
+                - generic [ref=e146]: "8"
+            - generic [ref=e147]:
+              - checkbox "Activate"
+              - generic [ref=e148]: Activate
+        - group "Hostile Department - Standard" [ref=e150] [cursor=pointer]:
+          - generic [ref=e151]: Hostile Department - Standard
+          - generic [ref=e152]:
+            - paragraph [ref=e153]:
+              - text: Team of Disgruntled Interns
+              - text: (9 members)
+            - generic [ref=e154]:
+              - generic [ref=e155]:
+                - generic [ref=e156]: Complexity (per mob)
+                - generic [ref=e157]: "4"
+              - generic [ref=e158]:
+                - generic [ref=e159]: Stamina (per mob)
+                - generic [ref=e160]: "8"
+            - generic [ref=e161]:
+              - checkbox "Activate"
+              - generic [ref=e162]: Activate
+        - group "Hostile Department - Elite" [ref=e164] [cursor=pointer]:
+          - generic [ref=e165]: Hostile Department - Elite
+          - generic [ref=e166]:
+            - paragraph [ref=e167]:
+              - text: HR Compliance Fortress
+              - text: (4 members)
+            - generic [ref=e168]:
+              - generic [ref=e169]:
+                - generic [ref=e170]: Complexity (per mob)
+                - generic [ref=e171]: "10"
+              - generic [ref=e172]:
+                - generic [ref=e173]: Stamina (per mob)
+                - generic [ref=e174]: "25"
+            - generic [ref=e175]:
+              - checkbox "Activate"
+              - generic [ref=e176]: Activate
+        - group "Hostile Department - Elite" [ref=e178] [cursor=pointer]:
+          - generic [ref=e179]: Hostile Department - Elite
+          - generic [ref=e180]:
+            - paragraph [ref=e181]:
+              - text: HR Compliance Fortress
+              - text: (4 members)
+            - generic [ref=e182]:
+              - generic [ref=e183]:
+                - generic [ref=e184]: Complexity (per mob)
+                - generic [ref=e185]: "10"
+              - generic [ref=e186]:
+                - generic [ref=e187]: Stamina (per mob)
+                - generic [ref=e188]: "25"
+            - generic [ref=e189]:
+              - checkbox "Activate"
+              - generic [ref=e190]: Activate
+        - group "Hostile Department - Elite" [ref=e192] [cursor=pointer]:
+          - generic [ref=e193]: Hostile Department - Elite
+          - generic [ref=e194]:
+            - paragraph [ref=e195]:
+              - text: HR Compliance Fortress
+              - text: (4 members)
+            - generic [ref=e196]:
+              - generic [ref=e197]:
+                - generic [ref=e198]: Complexity (per mob)
+                - generic [ref=e199]: "10"
+              - generic [ref=e200]:
+                - generic [ref=e201]: Stamina (per mob)
+                - generic [ref=e202]: "25"
+            - generic [ref=e203]:
+              - checkbox "Activate"
+              - generic [ref=e204]: Activate
+      - button "Begin Encounter (0/3)" [disabled] [ref=e206]
+```
