@@ -82,14 +82,15 @@ export class GameStats extends HTMLElement {
     this.querySelector('#dungeon-chart-btn')?.addEventListener('click', async () => {
       await InfoModal.show(
         'Dungeon Chart',
-        '<dungeon-chart></dungeon-chart>',
-        [{ text: 'Close', value: false }]
+        '<dungeon-chart style="width: 100%; height: 400px; display: block;"></dungeon-chart>',
+        [{ text: 'Close', value: false }],
+        (modalElement) => {
+          const chart = modalElement.querySelector('dungeon-chart') as DungeonChart;
+          if (chart) {
+            chart.data = this.engine?.getDungeonChartData();
+          }
+        }
       );
-
-      const chart = document.querySelector('dungeon-chart') as DungeonChart;
-      if (chart) {
-        chart.data = this.engine?.getDungeonChartData();
-      }
     });
   }
 }

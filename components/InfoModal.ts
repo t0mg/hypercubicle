@@ -15,7 +15,8 @@ export class InfoModal<T> {
     title: string,
     content: string,
     buttons: ModalButton<T>[],
-    resolve: (value: T) => void
+    resolve: (value: T) => void,
+    onOpen?: (modalElement: HTMLElement) => void,
   ) {
     this.resolve = resolve;
 
@@ -84,6 +85,10 @@ export class InfoModal<T> {
     overlay.appendChild(windowEl);
     document.body.appendChild(overlay);
 
+    if (onOpen) {
+      onOpen(windowEl);
+    }
+
     this.handleKeydown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         const cancelButton = buttons.find(
@@ -130,10 +135,11 @@ export class InfoModal<T> {
   public static show<T>(
     title: string,
     content: string,
-    buttons: ModalButton<T>[]
+    buttons: ModalButton<T>[],
+    onOpen?: (modalElement: HTMLElement) => void,
   ): Promise<T> {
     return new Promise((resolve) => {
-      new InfoModal<T>(title, content, buttons, resolve);
+      new InfoModal<T>(title, content, buttons, resolve, onOpen);
     });
   }
 
