@@ -35,7 +35,7 @@ const sortObject = (obj: any): any => {
 const main = async () => {
     const shouldWrite = process.argv.includes('--write');
     console.log('Analyzing for missing translation keys...');
-
+    
     const translations = GamedataLoader.loadJson('locales/en.json');
     const translationKeys = new Set(listKeys(translations));
 
@@ -73,14 +73,14 @@ const main = async () => {
             findSourceFiles(fullPath);
         }
     }
-
+    
     const usedKeys = new Map<string, { path: string; line: number }[]>();
     const keyRegex = /(?<![a-zA-Z])t\(['"`]([^'"`]+)['"`]/g;
 
     for (const file of filesToScan) {
         const content = fs.readFileSync(file, 'utf-8');
         const lines = content.split('\n');
-
+        
         lines.forEach((lineContent, index) => {
             let match;
             while ((match = keyRegex.exec(lineContent)) !== null) {
