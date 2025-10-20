@@ -49,6 +49,22 @@ Example:
 npm run simulate -- --seed=123 100
 ```
 
+## Translation Management
+
+This project includes a script to help manage the `public/locales/en.json` file. The script has two functions: reporting missing keys and sorting the file.
+
+By default, the script runs in a **report-only** mode that scans the codebase for missing translation keys and prints a report.
+
+```bash
+npm run manage-translations
+```
+
+To sort the `en.json` file, you must provide the `--write` flag. This will recursively sort all keys and overwrite the file.
+
+```bash
+npm run manage-translations -- --write
+```
+
 ## Running the Project
 
 To run the project locally, you need to have Node.js and npm installed.

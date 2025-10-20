@@ -10,7 +10,8 @@
     "test": "vitest",
     "test:watch": "vitest --watch",
     "simulate": "vite-node tools/simulate.ts --",
-    "build:test-main": "vite build --outDir dist-test --emptyOutDir false --lib --entry main.ts"
+    "build:test-main": "vite build --outDir dist-test --emptyOutDir false --lib --entry main.ts",
+    "manage-translations": "vite-node tools/manage-translations.ts"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.12",
