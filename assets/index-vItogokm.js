@@ -400,7 +400,7 @@
         </div>
         <div class="status-bar">
           <p class="status-bar-field">v0.0.0</p>
-          <p class="status-bar-field">build 179</p>
+          <p class="status-bar-field">build 180</p>
         </div>
       </div>
     `}}customElements.define("menu-screen",Ve);const Ye=3e3,Qe=900;class ne extends HTMLElement{constructor(){super(),this.onDismiss=()=>{},this.payload=null,this.currentEventIndex=0,this.battleSpeed=Qe,this.modalState="reveal"}connectedCallback(){if(!this.payload)return;this.innerHTML=`
