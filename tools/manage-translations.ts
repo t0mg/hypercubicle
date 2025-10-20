@@ -32,6 +32,20 @@ const sortObject = (obj: any): any => {
     }, {});
 };
 
+// Sorts the keys of a JSON object, but preserves the order of the top-level keys.
+const sortObjectExceptFirstLevel = (obj: any): any => {
+    if (typeof obj !== 'object' || obj === null) {
+        return obj;
+    }
+    const result: any = {};
+    for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            result[key] = sortObject(obj[key]);
+        }
+    }
+    return result;
+};
+
 const main = async () => {
     const shouldWrite = process.argv.includes('--write');
     console.log('Analyzing for missing translation keys...');
@@ -100,7 +114,7 @@ const main = async () => {
 
     // --- Part 2: Report or Write ---
     if (shouldWrite) {
-        const sortedTranslations = sortObject(translations);
+        const sortedTranslations = sortObjectExceptFirstLevel(translations);
         const outputPath = path.join(__dirname, '..', 'public', 'locales', 'en.json');
         fs.writeFileSync(outputPath, JSON.stringify(sortedTranslations, null, 2) + '\n');
         console.log('\n[SUCCESS] The en.json file has been sorted successfully.');
