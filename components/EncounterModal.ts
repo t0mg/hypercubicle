@@ -1,11 +1,13 @@
+import { it } from 'node:test';
 import { t } from '../text';
 import { EncounterPayload, AdventurerSnapshot, EnemySnapshot, FlowState } from '../types';
+import { render } from '@/rendering';
 
 const ROOM_CHOICE_VIEW_DELAY = 3000;
 const BATTLE_EVENT_DELAY = 900;
 
 export class EncounterModal extends HTMLElement {
-  private onDismiss: (result: { skipped: boolean }) => void = () => {};
+  private onDismiss: (result: { skipped: boolean }) => void = () => { };
   private payload: EncounterPayload | null = null;
   private currentEventIndex = 0;
   private revealTimeout: number | undefined;
@@ -39,8 +41,8 @@ export class EncounterModal extends HTMLElement {
     const speedSlider = this.querySelector<HTMLInputElement>('#speed-slider');
     const speeds = [1500, 1200, 900, 600, 300];
     speedSlider!.addEventListener('input', (event) => {
-        const value = (event.target as HTMLInputElement).value;
-        this.battleSpeed = speeds[parseInt(value, 10)];
+      const value = (event.target as HTMLInputElement).value;
+      this.battleSpeed = speeds[parseInt(value, 10)];
     });
 
     this.start();
@@ -88,14 +90,14 @@ export class EncounterModal extends HTMLElement {
 
   private renderInitialView(): string {
     return `
-      <div id="battlefield" class="flex justify-between items-center h-40">
-        <div id="battle-adventurer" class="w-1/3 p-2"></div>
-        <div id="battle-enemy" class="w-1/3 p-2 text-right"></div>
+      <div id="battlefield" class="flex justify-between items-stretch h-40">
+        <div id="battle-adventurer" class="w-2/5 p-2 flex flex-col justify-center"></div>
+        <div id="battle-enemy" class="w-2/5 p-2 text-right flex flex-col justify-center"></div>
       </div>
       <ul id="event-log" class="tree-view" style="height: 150px; overflow-y: auto;">
       </ul>
       <div id="progress-container" class="hidden mt-2">
-        <progress max="100" value="0" style="width:100%"></progress>
+        <progress max="100" value="0" class="w-full"></progress>
       </div>
       <div id="slider-container" class="hidden justify-end mt-4">
         <fieldset class="w-1/2">
@@ -129,7 +131,7 @@ export class EncounterModal extends HTMLElement {
   private renderNextBattleEvent() {
     if (!this.payload || this.currentEventIndex >= this.payload.log.length) {
       const skipButton = this.querySelector<HTMLButtonElement>('#skip-button')!;
-      if(skipButton) {
+      if (skipButton) {
         skipButton.textContent = t('global.continue');
         skipButton.onclick = () => this.dismiss(false);
       }
@@ -141,9 +143,12 @@ export class EncounterModal extends HTMLElement {
     const battlefieldElement = this.querySelector<HTMLDivElement>('#battlefield')!;
 
     // Clear previous animations
-    adventurerElement.classList.remove('animate-attack-right', 'animate-attack-left', 'animate-shake', 'animate-defeat', 'animate-miss');
-    enemyElement.classList.remove('animate-attack-right', 'animate-attack-left', 'animate-shake', 'animate-defeat', 'animate-miss');
-    battlefieldElement.classList.remove('animate-shake');
+    const allAnimations = ['animate-attack-right', 'animate-attack-left',
+        'animate-shake', 'animate-defeat', 'animate-heal', 'animate-miss-right',
+        'animate-miss-left', 'animate-spawn'];
+    adventurerElement.classList.remove(...allAnimations);
+    enemyElement.classList.remove(...allAnimations);
+    battlefieldElement.classList.remove(...allAnimations);
 
     const event = this.payload.log[this.currentEventIndex];
     this.renderAdventurerStatus(event.adventurer);
@@ -166,8 +171,8 @@ export class EncounterModal extends HTMLElement {
           const attackDirection = anim.target === 'adventurer' ? 'attack-right' : 'attack-left';
           targetElement.classList.add(`animate-${attackDirection}`);
         } else if (anim.animation === 'miss') {
-          const missTarget = anim.target === 'adventurer' ? enemyElement : adventurerElement;
-          missTarget.classList.add('animate-miss');
+          const missDirection = anim.target === 'adventurer' ? 'miss-right' : 'miss-left';
+          targetElement.classList.add(`animate-${missDirection}`);
         } else {
           targetElement.classList.add(`animate-${anim.animation}`);
         }
@@ -182,21 +187,59 @@ export class EncounterModal extends HTMLElement {
   }
 
   private renderAdventurerStatus(adventurer: AdventurerSnapshot) {
+    const adventurerElement = this.querySelector<HTMLDivElement>('#battle-adventurer')!;
     const hpPercentage = (adventurer.hp / adventurer.maxHp) * 100;
-    this.querySelector<HTMLDivElement>('#battle-adventurer')!.innerHTML = `
-      <div class="text-lg font-bold">${adventurer.firstName} ${adventurer.lastName}</div>
-      <progress max="100" value="${hpPercentage}" style-width="100%"></progress>
-      <div>${adventurer.hp} / ${adventurer.maxHp}</div>
-    `;
+
+    if (adventurerElement.innerHTML === '') {
+      adventurerElement.innerHTML = `
+        <div class="text-lg font-bold" data-name>${adventurer.firstName} ${adventurer.lastName}</div>
+        <progress max="100" class="w-full" data-hp-progress></progress>
+        <div data-hp-text></div>
+      `;
+    }
+
+    const progress = adventurerElement.querySelector<HTMLProgressElement>('[data-hp-progress]')!;
+    const hpText = adventurerElement.querySelector<HTMLDivElement>('[data-hp-text]')!;
+
+    progress.value = hpPercentage;
+    hpText.textContent = `${Math.max(0, adventurer.hp)} / ${adventurer.maxHp}`;
   }
 
   private renderEnemyStatus(enemy: EnemySnapshot) {
+    const enemyElement = this.querySelector<HTMLDivElement>('#battle-enemy')!;
     const hpPercentage = (enemy.currentHp / enemy.maxHp) * 100;
-    this.querySelector<HTMLDivElement>('#battle-enemy')!.innerHTML = `
-      <div class="text-lg font-bold">${enemy.name}${enemy.total > 1 ? ` (${enemy.count}/${enemy.total})`:''}</div>
-      <progress max="100" value="${hpPercentage}" style-width="100%"></progress>
-      <div>${enemy.currentHp} / ${enemy.maxHp}</div>
-    `;
+
+    // One-time initialization of the enemy display structure.
+    if (enemyElement.innerHTML === '') {
+      enemyElement.innerHTML = `
+        <div class="text-lg font-bold" data-enemy-name data-count="1"></div>
+        <progress max="100" class="w-full" data-hp-progress></progress>
+        <div data-hp-text></div>
+      `;
+    }
+
+    const nameElement = enemyElement.querySelector<HTMLDivElement>('[data-enemy-name]')!;
+    const progress = enemyElement.querySelector<HTMLProgressElement>('[data-hp-progress]')!;
+    const hpText = enemyElement.querySelector<HTMLDivElement>('[data-hp-text]')!;
+
+    const previousCount = parseInt(nameElement.dataset.count || '1', 10);
+    const isNewEnemyInGroup = previousCount < enemy.count;
+
+    // To prevent an animated transition on the health bar when a new enemy from a group appears,
+    // we detach and re-attach the progress and text elements. This forces an instant redraw.
+    if (isNewEnemyInGroup) {
+      progress.remove();
+      hpText.remove();
+    }
+
+    nameElement.dataset.count = enemy.count.toString();
+    nameElement.textContent = `${enemy.name}${enemy.total > 1 ? ` (${enemy.count}/${enemy.total})` : ''}`;
+    progress.value = hpPercentage;
+    hpText.textContent = `${Math.max(0, enemy.currentHp)} / ${enemy.maxHp}`;
+
+    if (isNewEnemyInGroup) {
+      enemyElement.append(progress, hpText);
+    }
   }
 
   private updateProgressBar() {

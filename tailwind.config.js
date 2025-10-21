@@ -31,6 +31,10 @@ export default {
           '0%': { opacity: '0', transform: 'translateY(20px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        'fade-in-left': {
+          '0%': { opacity: '0', transform: 'translateX(20px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
         'newly-drafted-animation': {
           '0%': { boxShadow: '0 0 0 0 rgba(255, 215, 0, 0)', transform: 'scale(1.0)' },
           '50%': { boxShadow: '0 0 10px 5px rgba(255, 215, 0, 0.5)', transform: 'scale(1.05)' },
@@ -50,17 +54,26 @@ export default {
               transform: 'translate3d(4px, 0, 0)'
           }
         },
-        'attack-right': {
-          '0%, 100%': { transform: 'translateX(0)' },
-          '50%': { transform: 'translateX(20px)' },
-        },
         'attack-left': {
           '0%, 100%': { transform: 'translateX(0)' },
-          '50%': { transform: 'translateX(-20px)' },
+          '20%': { transform: 'translateX(-30%)' },
         },
-        'miss': {
-            '0%, 100%': { transform: 'translate(0, 0) rotate(0deg)' },
-            '50%': { transform: 'translate(10px, -10px) rotate(10deg)' },
+        'attack-right': {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '20%': { transform: 'translateX(30%)' },
+        },
+        'miss-left': {
+            '0%, 100%': { transform: 'translate(0, 0)' },
+            '50%': { transform: 'translate(10px, -15px)' },
+        },
+        'miss-right': {
+            '0%, 100%': { transform: 'translate(0, 0)' },
+            '50%': { transform: 'translate(-10px, -15px)' },
+        },
+        'heal': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '10%': { transform: 'translateY(5px)' },
+          '70%, 85%': { transform: 'translateY(-15px)' },
         },
         'defeat': {
           '0%': { filter: 'invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(1) contrast(1)', opacity: '1' },
@@ -71,11 +84,14 @@ export default {
       animation: {
         'fade-in': 'fade-in 0.3s ease-out forwards',
         'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
-        'newly-drafted': 'newly-drafted-animation 1s ease-in-out',
+        'newly-drafted': 'fade-in-up 0.5s ease-out forwards',
         'shake': 'shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97)',
-        'attack-right': 'attack-right 0.5s ease-in-out',
-        'attack-left': 'attack-left 0.5s ease-in-out',
-        'miss': 'miss 0.5s ease-in-out',
+        'attack-right': 'attack-right 0.5s ease-out',
+        'attack-left': 'attack-left 0.5s ease-out',
+        'miss-right': 'miss-right 0.3s ease-out',
+        'miss-left': 'miss-left 0.3s ease-out',
+        'heal': 'heal 0.8s ease-in-out',
+        'spawn': 'fade-in-left 0.5s ease-out forwards',
         'defeat': 'defeat 1s ease-in-out forwards',
       }
     },

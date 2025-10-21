@@ -105,7 +105,7 @@ export type EncounterAnimationTarget = 'adventurer' | 'enemy';
 
 export interface EncounterAnimation {
   target?: EncounterAnimationTarget;
-  animation: 'attack' | 'shake' | 'defeat';
+  animation: 'attack' | 'shake' | 'defeat' | 'miss' | 'heal' | 'spawn';
 }
 
 export interface EncounterEvent {

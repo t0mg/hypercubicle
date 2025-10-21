@@ -150,6 +150,7 @@ export class GameEngine {
             },
             adventurer: this._createAdventurerSnapshot(adventurerClone),
             enemy: enemySnapshot,
+            animations: [{ target: 'enemy', animation: 'spawn' }],
           });
 
           while (currentEnemyHp > 0 && adventurerClone.hp > 0) {
@@ -165,6 +166,7 @@ export class GameEngine {
                   replacements: { name: adventurerClone.firstName, potionName: t('items_and_rooms.' + potionToUse.id) },
                   adventurer: this._createAdventurerSnapshot(adventurerClone),
                   enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
+                  animations: [{ target: 'adventurer', animation: 'heal' }],
                 });
               }
             } else {
@@ -209,7 +211,7 @@ export class GameEngine {
                   replacements: { name: adventurerClone.firstName },
                   adventurer: this._createAdventurerSnapshot(adventurerClone),
                   enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
-                  animations: [{ target: 'adventurer', animation: 'attack' }]
+                  animations: [{ target: 'adventurer', animation: 'attack' }, { target: 'enemy', animation: 'miss' }]
                 });
               }
             }
@@ -258,7 +260,7 @@ export class GameEngine {
                 replacements: { enemyName: enemySnapshot.name },
                 adventurer: this._createAdventurerSnapshot(adventurerClone),
                 enemy: { ...enemySnapshot, currentHp: currentEnemyHp },
-                animations: [{ target: 'enemy', animation: 'attack' }]
+                animations: [{ target: 'enemy', animation: 'attack' }, { target: 'adventurer', animation: 'miss' }]
               });
             }
           }
@@ -294,6 +296,7 @@ export class GameEngine {
           messageKey: 'log_messages.info_healing_room',
           replacements: { name: adventurerClone.firstName, healingRoomName: t('items_and_rooms.' + room.id), healing: healing },
           adventurer: this._createAdventurerSnapshot(adventurerClone),
+          animations: [{ target: 'adventurer', animation: 'heal' }]
         });
         break;
       }
@@ -310,6 +313,7 @@ export class GameEngine {
           messageKey: 'log_messages.info_trap_room',
           replacements: { name: adventurerClone.firstName, trapName: t('items_and_rooms.' + room.id), damage: damage },
           adventurer: this._createAdventurerSnapshot(adventurerClone),
+          animations: [{ target: 'adventurer', animation: 'shake' }]
         });
         break;
       }
