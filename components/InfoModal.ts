@@ -83,6 +83,7 @@ export class InfoModal<T> {
 
     overlay.appendChild(windowEl);
     document.body.appendChild(overlay);
+    document.body.style.overflow = 'hidden';
 
     this.handleKeydown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -124,6 +125,7 @@ export class InfoModal<T> {
   private dismiss(value: T) {
     this.element.parentElement!.remove();
     document.removeEventListener('keydown', this.handleKeydown);
+    document.body.style.overflow = '';
     this.resolve(value);
   }
 
