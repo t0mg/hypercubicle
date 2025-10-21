@@ -141,8 +141,8 @@ export class EncounterModal extends HTMLElement {
     const battlefieldElement = this.querySelector<HTMLDivElement>('#battlefield')!;
 
     // Clear previous animations
-    adventurerElement.classList.remove('animate-attack', 'animate-shake', 'animate-defeat');
-    enemyElement.classList.remove('animate-attack', 'animate-shake', 'animate-defeat');
+    adventurerElement.classList.remove('animate-attack-right', 'animate-attack-left', 'animate-shake', 'animate-defeat', 'animate-miss');
+    enemyElement.classList.remove('animate-attack-right', 'animate-attack-left', 'animate-shake', 'animate-defeat', 'animate-miss');
     battlefieldElement.classList.remove('animate-shake');
 
     const event = this.payload.log[this.currentEventIndex];
@@ -161,7 +161,16 @@ export class EncounterModal extends HTMLElement {
         } else {
           targetElement = battlefieldElement;
         }
-        targetElement.classList.add(`animate-${anim.animation}`);
+
+        if (anim.animation === 'attack') {
+          const attackDirection = anim.target === 'adventurer' ? 'attack-right' : 'attack-left';
+          targetElement.classList.add(`animate-${attackDirection}`);
+        } else if (anim.animation === 'miss') {
+          const missTarget = anim.target === 'adventurer' ? enemyElement : adventurerElement;
+          missTarget.classList.add('animate-miss');
+        } else {
+          targetElement.classList.add(`animate-${anim.animation}`);
+        }
       });
     }
 

@@ -50,9 +50,17 @@ export default {
               transform: 'translate3d(4px, 0, 0)'
           }
         },
-        'attack': {
+        'attack-right': {
           '0%, 100%': { transform: 'translateX(0)' },
           '50%': { transform: 'translateX(20px)' },
+        },
+        'attack-left': {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '50%': { transform: 'translateX(-20px)' },
+        },
+        'miss': {
+            '0%, 100%': { transform: 'translate(0, 0) rotate(0deg)' },
+            '50%': { transform: 'translate(10px, -10px) rotate(10deg)' },
         },
         'defeat': {
           '0%': { filter: 'invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(1) contrast(1)', opacity: '1' },
@@ -65,7 +73,9 @@ export default {
         'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
         'newly-drafted': 'newly-drafted-animation 1s ease-in-out',
         'shake': 'shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97)',
-        'attack': 'attack 0.5s ease-in-out once',
+        'attack-right': 'attack-right 0.5s ease-in-out',
+        'attack-left': 'attack-left 0.5s ease-in-out',
+        'miss': 'miss 0.5s ease-in-out',
         'defeat': 'defeat 1s ease-in-out forwards',
       }
     },
