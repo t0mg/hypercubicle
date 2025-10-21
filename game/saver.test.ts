@@ -49,10 +49,12 @@ describe('GameSaver', () => {
 
     saver.save(gameState);
 
-    const loadedState = saver.load();
+    const loadedData = saver.load();
 
-    expect(loadedState).not.toBeNull();
-    if (!loadedState) return;
+    expect(loadedData).not.toBeNull();
+    if (!loadedData) return;
+
+    const [loadedState] = loadedData;
 
     // Verify root-level properties
     expect(loadedState.run).toBe(gameState.run);

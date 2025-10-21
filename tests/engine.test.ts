@@ -79,7 +79,7 @@ describe('GameEngine', () => {
     const newEngine = new GameEngine(metaManager, mockDataLoader, gameSaver);
 
     // Mock the game saver to return the state from the first engine
-    (gameSaver.load as vi.Mock).mockReturnValue(engine.gameState);
+    (gameSaver.load as vi.Mock).mockReturnValue([engine.gameState, undefined]);
 
     newEngine.on('show-encounter', showEncounterListener);
     newEngine.continueGame();
