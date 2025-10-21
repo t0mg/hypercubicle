@@ -230,7 +230,7 @@ export class ChoicePanel extends HTMLElement {
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4" id="loot-card-container">
                 <!-- Cards will be inserted here -->
             </div>
-            <div class="text-center mt-6">
+            <div class="flex justify-center md:justify-end mt-2">
                 <button id="present-offer-button" ${!canSubmit || this._disabled ? 'disabled' : ''}>
                     ${buttonLabel}
                 </button>

@@ -71,7 +71,7 @@ export class GameStats extends HTMLElement {
                     <button id="enter-workshop-btn">${t('global.workshop')}</button>
                 ` : ''}
 
-                <button id="dungeon-chart-btn">Dungeon Chart</button>
+                <button id="dungeon-chart-btn">${t('global.dungeon_chart_button')}</button>
             </div>
         `;
 
@@ -80,10 +80,10 @@ export class GameStats extends HTMLElement {
     });
 
     this.querySelector('#dungeon-chart-btn')?.addEventListener('click', async () => {
-      await InfoModal.show(
-        'Dungeon Chart',
-        '<dungeon-chart></dungeon-chart>',
-        [{ text: 'Close', value: false }]
+      InfoModal.show(
+        t('global.dungeon_chart_title'),
+        '<fieldset><dungeon-chart class="h-[50vh]"></dungeon-chart></fieldset>',
+        [{ text: t('global.close'), value: false }]
       );
 
       const chart = document.querySelector('dungeon-chart') as DungeonChart;

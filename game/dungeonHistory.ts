@@ -10,7 +10,7 @@ export class DungeonHistory {
   constructor() {
     this._nodes = {
       id: 'start',
-      label: 'Dungeon Entrance',
+      label: 'Start',
       children: [],
     };
     this._currentNode = this._nodes;

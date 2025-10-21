@@ -30,7 +30,7 @@ export class GameSaver {
     }
   }
 
-  public load(): GameState | null {
+  public load(): [GameState, DungeonHistory | undefined] | null {
     try {
       const saved = this.storage.getItem(SAVE_GAME_KEY);
       if (saved) {
@@ -69,7 +69,7 @@ export class GameSaver {
     };
   }
 
-  private _deserialize(data: SerializableGameState): GameState {
+  private _deserialize(data: SerializableGameState): [GameState, DungeonHistory | undefined] {
     const { adventurer: adventurerData, logger: loggerData, dungeonHistory: dungeonHistoryData, ...restOfState } = data;
 
     const logger = Logger.getInstance();
@@ -79,10 +79,12 @@ export class GameSaver {
 
     // Exclude 'version' from restOfState before returning
     const { version, ...gameStateRest } = restOfState;
-    return {
-      ...gameStateRest,
-      adventurer,
+    return [
+      {
+        ...gameStateRest,
+        adventurer,
+      } as GameState,
       dungeonHistory,
-    } as GameState;
+    ];
   }
 }

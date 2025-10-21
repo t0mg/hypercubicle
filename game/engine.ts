@@ -369,11 +369,12 @@ export class GameEngine {
   }
 
   public continueGame = () => {
-    const savedState = this.gameSaver.load();
-    if (savedState) {
+    const savedData = this.gameSaver.load();
+    if (savedData) {
+      const [savedState, savedDungeonHistory] = savedData;
       this.gameState = savedState;
-      if (savedState.dungeonHistory) {
-        this.dungeonHistory = savedState.dungeonHistory;
+      if (savedDungeonHistory) {
+        this.dungeonHistory = savedDungeonHistory;
       }
       this._emit('state-change', this.gameState);
 
@@ -905,7 +906,7 @@ export class GameEngine {
   private saveGame = () => {
     // We don't save in the menu or on the run over screen.
     if (this.gameState && this.gameState.phase !== 'MENU' && this.gameState.phase !== 'RUN_OVER') {
-      this.gameSaver.save(this.gameState);
+      this.gameSaver.save({ ...this.gameState, dungeonHistory: this.dungeonHistory });
     }
   }
 

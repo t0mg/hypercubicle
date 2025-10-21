@@ -46,7 +46,6 @@ export class DungeonChart extends HTMLElement {
   --path-node-border: #66bb6a;
   --connector-color: #b0bec5;
   --path-connector-color: #66bb6a;
-  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   display: block;
   position: relative;
   width: 100%;
@@ -185,7 +184,11 @@ svg:active {
       connectorGroup.appendChild(label);
     }
 
-    this._groupEl.prepend(connectorGroup);
+    if (isPath) {
+      this._groupEl.appendChild(connectorGroup);
+    } else {
+      this._groupEl.prepend(connectorGroup);
+    }
   }
 
   private _drawNode(node: DungeonChartNode) {

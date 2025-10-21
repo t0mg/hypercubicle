@@ -67,7 +67,7 @@ export class InfoModal<T> {
     windowBody.appendChild(contentEl);
 
     const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'flex justify-center gap-2 mt-4';
+    buttonContainer.className = 'flex justify-end gap-2 mt-4';
 
     buttons.forEach((button) => {
       const buttonEl = document.createElement('button');
