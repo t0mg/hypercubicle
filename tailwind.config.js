@@ -54,6 +54,20 @@ export default {
               transform: 'translate3d(4px, 0, 0)'
           }
         },
+        'shake-slow': {
+          '10%, 90%': {
+              transform: 'translate3d(-1px, 0, 0)'
+          },
+          '20%, 80%': {
+              transform: 'translate3d(2px, 0, 0)'
+          },
+          '30%, 50%, 70%': {
+              transform: 'translate3d(-2px, 0, 0)'
+          },
+          '40%, 60%': {
+              transform: 'translate3d(2px, 0, 0)'
+          }
+        },
         'attack-left': {
           '0%, 100%': { transform: 'translateX(0)' },
           '20%': { transform: 'translateX(-30%)' },
@@ -79,6 +93,11 @@ export default {
           '0%': { filter: 'invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(1) contrast(1)', opacity: '1' },
           '50%': { filter: 'invert(15%) sepia(96%) saturate(7406%) hue-rotate(2deg) brightness(103%) contrast(114%)', opacity: '.9' },
           '100%': { filter: 'invert(15%) sepia(96%) saturate(7406%) hue-rotate(2deg) brightness(103%) contrast(114%)', opacity: '0' },
+        },
+        'boss-defeat': {
+          '0%': { filter: 'invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(1) contrast(1)', opacity: '1' },
+          '50%': { filter: 'invert(15%) sepia(96%) saturate(7406%) hue-rotate(2deg) brightness(103%) contrast(114%)', opacity: '.9' },
+          '100%': { filter: 'invert(15%) sepia(96%) saturate(7406%) hue-rotate(2deg) brightness(103%) contrast(114%)', opacity: '0' },
         }
       },
       animation: {
@@ -93,6 +112,7 @@ export default {
         'heal': 'heal 0.8s ease-in-out',
         'spawn': 'fade-in-left 0.5s ease-out forwards',
         'defeat': 'defeat 1s ease-in-out forwards',
+        'boss-defeat': 'boss-defeat 2.5s ease-in-out forwards, shake-slow 2s ease-in-out forwards',
       }
     },
   },

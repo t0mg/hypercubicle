@@ -144,7 +144,7 @@ export class EncounterModal extends HTMLElement {
 
     // Clear previous animations
     const allAnimations = ['animate-attack-right', 'animate-attack-left',
-        'animate-shake', 'animate-defeat', 'animate-heal', 'animate-miss-right',
+        'animate-shake', 'animate-defeat', 'animate-boss-defeat', 'animate-heal', 'animate-miss-right',
         'animate-miss-left', 'animate-spawn'];
     adventurerElement.classList.remove(...allAnimations);
     enemyElement.classList.remove(...allAnimations);
@@ -173,6 +173,10 @@ export class EncounterModal extends HTMLElement {
         } else if (anim.animation === 'miss') {
           const missDirection = anim.target === 'adventurer' ? 'miss-right' : 'miss-left';
           targetElement.classList.add(`animate-${missDirection}`);
+        } else if (anim.animation === 'defeat') {
+          const isBoss = this.payload?.room.type === 'room_boss';
+          const defeatAnimation = (isBoss || anim.target === 'adventurer') ? 'boss-defeat' : 'defeat';
+          targetElement.classList.add(`animate-${defeatAnimation}`);
         } else {
           targetElement.classList.add(`animate-${anim.animation}`);
         }
