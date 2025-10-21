@@ -263,9 +263,15 @@ svg:active {
     this._groupEl.parentElement.appendChild(defs);
   }
 
+  private _getTouchDistance(touches: TouchList): number {
+    const [touch1, touch2] = [touches[0], touches[1]];
+    return Math.sqrt(Math.pow(touch2.clientX - touch1.clientX, 2) + Math.pow(touch2.clientY - touch1.clientY, 2));
+  }
+
   private _setupZoomAndPan() {
     let isPanning = false;
     let startPoint = { x: 0, y: 0 };
+    let startDistance = 0;
 
     const applyTransform = () => {
       this._groupEl.setAttribute('transform', `translate(${this._transform.tx}, ${this._transform.ty}) scale(${this._transform.scale})`);
@@ -313,6 +319,54 @@ svg:active {
 
     this._svgEl.addEventListener('mouseup', stopPanning);
     this._svgEl.addEventListener('mouseleave', stopPanning);
+
+    this._svgEl.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        isPanning = true;
+        startPoint = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        this._svgEl.style.cursor = 'grabbing';
+      } else if (e.touches.length === 2) {
+        startDistance = this._getTouchDistance(e.touches);
+      }
+    });
+
+    this._svgEl.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1 && isPanning) {
+        e.preventDefault();
+        const endPoint = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        const dx = endPoint.x - startPoint.x;
+        const dy = endPoint.y - startPoint.y;
+        this._transform.tx += dx;
+        this._transform.ty += dy;
+        startPoint = endPoint;
+        applyTransform();
+      } else if (e.touches.length === 2) {
+        e.preventDefault();
+        const newDistance = this._getTouchDistance(e.touches);
+        const direction = newDistance / startDistance;
+
+        const svgRect = this._svgEl.getBoundingClientRect();
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+
+        const centerX = ((touch1.clientX + touch2.clientX) / 2) - svgRect.left;
+        const centerY = ((touch1.clientY + touch2.clientY) / 2) - svgRect.top;
+
+        this._transform.tx = centerX - (centerX - this._transform.tx) * direction;
+        this._transform.ty = centerY - (centerY - this._transform.ty) * direction;
+        this._transform.scale *= direction;
+
+        startDistance = newDistance;
+
+        applyTransform();
+      }
+    });
+
+    this._svgEl.addEventListener('touchend', (e) => {
+      if (e.touches.length < 2) {
+        stopPanning();
+      }
+    });
   }
 
   private _centerChart() {

@@ -33,6 +33,7 @@ export class EncounterModal extends HTMLElement {
       </div>
     `;
 
+    document.body.style.overflow = 'hidden';
     this.querySelector('#continue-button')!.addEventListener('click', () => this.handleContinue());
 
     const speedSlider = this.querySelector<HTMLInputElement>('#speed-slider');
@@ -208,6 +209,7 @@ export class EncounterModal extends HTMLElement {
     this.querySelector<HTMLDivElement>('#progress-container')!.classList.add('hidden');
     this.querySelector<HTMLDivElement>('#slider-container')!.classList.add('hidden');
     this.remove();
+    document.body.style.overflow = '';
     this.onDismiss({ skipped });
   }
 
