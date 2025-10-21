@@ -193,7 +193,7 @@
     "info_adventurer_decision": "{name} decided to {decision}.",
     "info_adventurer_declines_offer": "Disappointed by your offers, {name} decides to take nothing.",
     "info_adventurer_defeated": "{name} has run out of stamina.",
-    "info_adventurer_drinks_potion": "{name} drinks a {potionName}.",
+    "info_adventurer_drinks_potion": "{name} consumes a {potionName}.",
     "info_adventurer_fell": "{name} suffered a fatal burnout on Floor {room} of Work Day {run}.",
     "info_adventurer_hit": "{name} hits for {damage} damage.",
     "info_adventurer_miss": "{name} misses.",
