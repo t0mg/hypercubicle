@@ -171,6 +171,7 @@ export interface DungeonChartNode {
   depth?: number | null;
   parent?: DungeonChartNode | null;
   leafCount?: number | null;
+  isRetirementNode?: boolean;
 }
 
 export interface DungeonChartData {
