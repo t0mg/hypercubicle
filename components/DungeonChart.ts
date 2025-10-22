@@ -206,6 +206,11 @@ svg:active {
       class: 'node-rect',
       filter: 'url(#shadow)'
     });
+
+    if (node.isRetirementNode) {
+      rect.style.fill = '#ffebee';
+      rect.style.stroke = '#e57373';
+    }
     nodeGroup.appendChild(rect);
 
     const text = this._createSVGElement('text', { class: 'node-text' });

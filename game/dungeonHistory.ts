@@ -1,4 +1,4 @@
-import { DungeonChartData, DungeonChartNode, RoomChoice } from '../types';
+import { DungeonChartData, DungeonChartNode, FlowState, RoomChoice } from '../types';
 import { t } from '../text';
 
 export class DungeonHistory {
@@ -7,16 +7,16 @@ export class DungeonHistory {
   private _linkLabels: Record<string, string> = {};
   private _currentNode: DungeonChartNode;
 
-  constructor() {
+  constructor(adventurerName: string) {
     this._nodes = {
       id: 'start',
-      label: 'Start',
+      label: adventurerName,
       children: [],
     };
     this._currentNode = this._nodes;
   }
 
-  public addRoomSelection(choices: RoomChoice[], chosenRoom: RoomChoice) {
+  public addRoomSelection(choices: RoomChoice[], chosenRoom: RoomChoice, flowState: FlowState) {
     // Add all choices as children of the current node
     choices.forEach(room => {
       this._currentNode.children.push({
@@ -29,6 +29,11 @@ export class DungeonHistory {
     // Move to the chosen room and update the path
     this._currentNode = this._currentNode.children.find(c => c.id === chosenRoom.instanceId)!;
     this._path.push(chosenRoom.instanceId);
+    this._linkLabels[chosenRoom.instanceId] = t(`flow_states.${flowState}`);
+  }
+
+  public setRetirementNode() {
+    this._currentNode.isRetirementNode = true;
   }
 
   public generateChartData(): DungeonChartData {
@@ -69,7 +74,7 @@ export class DungeonHistory {
   }
 
   public static fromJSON(data: any): DungeonHistory {
-    const history = new DungeonHistory();
+    const history = new DungeonHistory('');
     history._nodes = data.nodes;
     history._path = data.path;
     history._linkLabels = data.linkLabels;

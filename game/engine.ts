@@ -55,7 +55,7 @@ export class GameEngine {
     this.metaManager = metaManager;
     this.dataLoader = dataLoader;
     this.gameSaver = gameSaver;
-    this.dungeonHistory = new DungeonHistory();
+    this.dungeonHistory = new DungeonHistory('');
   }
 
   public init = async () => {
@@ -323,7 +323,6 @@ export class GameEngine {
 
   // --- PUBLIC ACTIONS ---
   public startNewGame = (initialUnlocked?: { items?: string[], rooms?: string[] }) => {
-    this.dungeonHistory = new DungeonHistory();
     this.metaManager.incrementAdventurers();
     const newTraits: AdventurerTraits = {
       offense: rng.nextInt(10, 90),
@@ -332,6 +331,7 @@ export class GameEngine {
     };
     logger.loadEntries([]);
     const newAdventurer = new Adventurer(newTraits, this._allNames);
+    this.dungeonHistory = new DungeonHistory(newAdventurer.fullName);
 
     const unlockedDeck = initialUnlocked?.items || this._allItems.filter(item => item.cost === null).map(item => item.id);
     const runDeck = generateLootDeck(unlockedDeck, this._allItems, DECK_SIZE);
@@ -395,7 +395,6 @@ export class GameEngine {
 
   public startNewRun = (runNumber?: number) => {
     if (!this.gameState) return;
-    this.dungeonHistory = new DungeonHistory();
     const nextRun = runNumber || this.gameState.run + 1;
     this.metaManager.updateRun(nextRun);
 
@@ -412,6 +411,7 @@ export class GameEngine {
     resetAdventurer.skill = this.gameState.adventurer.skill;
     resetAdventurer.challengeHistory = [...this.gameState.adventurer.challengeHistory];
     resetAdventurer.flowState = this.gameState.adventurer.flowState;
+    this.dungeonHistory = new DungeonHistory(resetAdventurer.fullName);
 
     logger.info('info_adventurer_returns', { name: resetAdventurer.firstName });
     logger.debug(`Unlocked features: ${[...this.metaManager.acls].join(', ')}`);
@@ -522,7 +522,7 @@ export class GameEngine {
     const chosenRoomIndex = rng.nextInt(0, this.gameState.offeredRooms.length - 1);
     const chosenRoom = this.gameState.offeredRooms[chosenRoomIndex];
 
-    this.dungeonHistory.addRoomSelection(roomChoices, chosenRoom);
+    this.dungeonHistory.addRoomSelection(roomChoices, chosenRoom, this.gameState.adventurer.flowState);
 
     if (
       this.gameState.offeredRooms.length === 1 &&
@@ -655,6 +655,10 @@ export class GameEngine {
     logger.error(`info_game_over`, {reason});
 
     const decision = this._getAdventurerEndRunDecision();
+
+    if (decision === 'retire') {
+      this.dungeonHistory.setRetirementNode();
+    }
 
     this.gameState = {
       ...this.gameState,
