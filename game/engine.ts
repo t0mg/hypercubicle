@@ -411,6 +411,8 @@ export class GameEngine {
     resetAdventurer.skill = this.gameState.adventurer.skill;
     resetAdventurer.challengeHistory = [...this.gameState.adventurer.challengeHistory];
     resetAdventurer.flowState = this.gameState.adventurer.flowState;
+    resetAdventurer.firstName = this.gameState.adventurer.firstName;
+    resetAdventurer.lastName = this.gameState.adventurer.lastName;
     this.dungeonHistory = new DungeonHistory(resetAdventurer.fullName);
 
     logger.info('info_adventurer_returns', { name: resetAdventurer.firstName });
