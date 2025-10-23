@@ -20,7 +20,7 @@
     "close": "Close",
     "confirm": "Confirm",
     "continue": "Continue",
-    "deck": "Loot deck",
+    "deck": "Assets deck",
     "dungeon_chart_button": "Org. Chart",
     "dungeon_chart_title": "Organizational Chart",
     "duration": "Duration",
@@ -35,7 +35,7 @@
     "power": "Productivity",
     "quit": "Quit",
     "quit_confirm": "Are you sure you want to return to the main menu? Your progress will be saved.",
-    "room": "Room",
+    "room": "Floor",
     "rooms": "Rooms deck",
     "run": "Day",
     "skip": "Skip",
@@ -85,10 +85,11 @@
     "multiple_enemies_title": "{name}<br>({count} members)",
     "new_items_title": "Newly requisitioned",
     "present_offer": "Present Offer",
-    "roll_credits": "No more floors. Time for the after-work party.",
+    "roll_credits": "Call it a day",
+    "room_selection_impossible_info": "The Executive has reached the last accessible Floor.",
     "stacked_items_title": "{name} ({count} in stock)",
     "title": "Present Corporate Assets to the Executive",
-    "title_room": "Choose Three Rooms or One Department Head"
+    "title_room": "Choose Three Rooms or One Department Head for this Floor"
   },
   "workshop": {
     "balance_points": "Expense Funds: ",
@@ -140,24 +141,24 @@
       "title": "Team Members"
     },
     "status_bar_balance_points": {
-      "body": "Expense Funds can be spent in the Corporate Supply Closet to requisition new assets for the Executive.",
+      "body": "Expense Funds can be spent in the <b>Corporate Supply Closet</b> to augment the <b>Asset</b> and <b>Room decks</b>.<p>Purchases get carried over between <b>Work Days</b>, until the Executive retires.",
       "title": "Expense Funds"
     },
     "status_bar_current_room": {
-      "body": "The count of <b>Rooms</b> the Executive has been through so far this <b>Work Day</b>.",
-      "title": "Current Room"
+      "body": "The count of <b>Floors</b> the Executive has visited so far this <b>Work Day</b>.<p>To reach the next <b>Floor</b>, they must successfully navigate one of three <b>Rooms</b> (or face a <b>Department Head</b>).",
+      "title": "Current Floor"
     },
     "status_bar_current_run": {
       "body": "The count of <b>Work Days</b> this Executive has experienced so far without retiring.<p>Breaking records often unlocks interesting <b>Perks</b>.",
       "title": "Current Work Day"
     },
     "status_bar_deck_size": {
-      "body": "The number of corporate assets left to be offered to the Executive during this <b>Work Day</b>.",
-      "title": "Loot Deck Size"
+      "body": "The number of unrevealed corporate <b>Assets</b> left to be offered to the Executive.<p>They can choose at most one <b>Asset</b>, and discard the rest.",
+      "title": "Assets deck"
     },
     "status_bar_room_deck_size": {
-      "body": "The number of rooms left to be offered to the Executive during this <b>Work Day</b>.",
-      "title": "Rooms Deck Size"
+      "body": "The number of unrevealed <b>Rooms</b> left to be offered to the Executive.<p><i>Notice: Due to an ongoing signage improvement program, all doors are unmarked and the Executive must choose randomly. The Facilities team thanks the staff for their understading.</i>",
+      "title": "Rooms deck"
     }
   },
   "flow_states": {

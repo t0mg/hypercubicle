@@ -141,9 +141,9 @@ svg:active {
       return;
     }
 
-    const childWidth = (xEnd - xStart) / node.children.length;
     let currentX = xStart;
     for (const child of node.children) {
+      const childWidth = ((xEnd - xStart) * child.leafCount) / node.leafCount;
       this._calculatePositions(child, currentX, currentX + childWidth);
       currentX += childWidth;
     }
@@ -424,7 +424,7 @@ svg:active {
     this._createDefs();
     this._prepareTree(this._data.nodes);
 
-    const totalWidth = 3 * (NODE_WIDTH + HORIZONTAL_SPACING);
+    const totalWidth = this._data.nodes.leafCount * (NODE_WIDTH + HORIZONTAL_SPACING);
     this._calculatePositions(this._data.nodes, 0, totalWidth);
 
     // Draw connectors first so they are behind nodes

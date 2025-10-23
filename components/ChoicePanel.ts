@@ -274,6 +274,13 @@ export class ChoicePanel extends HTMLElement {
         card.isNewlyDrafted = (item.justDrafted && this._initialRender) || false;
         container.appendChild(card);
       });
+
+      if (this._roomSelectionImpossible && this._deckType === 'room' ) {
+        const infoText = document.createElement('p');
+        infoText.className = 'text-center text-sm mt-4 col-span-full';
+        infoText.textContent = t('choice_panel.room_selection_impossible_info');
+        container.appendChild(infoText);
+      }
     }
     setTimeout(() => { this._initialRender = false; }, 0);
   }
