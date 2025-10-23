@@ -131,21 +131,48 @@ svg:active {
     return count;
   }
 
-  private _calculatePositions(node: DungeonChartNode, xStart: number, xEnd: number) {
-    const totalRenderHeight = this._maxDepth * (NODE_HEIGHT + VERTICAL_SPACING);
-    const y = totalRenderHeight - (node.depth * (NODE_HEIGHT + VERTICAL_SPACING));
-    const x = xStart + (xEnd - xStart) / 2 - NODE_WIDTH / 2;
-    this._positions.set(node.id, { x, y });
+  private _calculateColumns(node: DungeonChartNode, cIdx: number) {
+    (node as any).columnIndex = cIdx;
 
     if (!node.children || node.children.length === 0) {
       return;
     }
 
-    let currentX = xStart;
-    for (const child of node.children) {
-      const childWidth = ((xEnd - xStart) * child.leafCount) / node.leafCount;
-      this._calculatePositions(child, currentX, currentX + childWidth);
-      currentX += childWidth;
+    const nodeWithChildren = node.children.find(c => c.children && c.children.length > 0);
+    const leafChildren = node.children.filter(c => !c.children || c.children.length === 0);
+
+    if (nodeWithChildren) {
+      this._calculateColumns(nodeWithChildren, cIdx);
+    }
+
+    let rightOffset = 1;
+    let leftOffset = -1;
+    leafChildren.forEach((child, i) => {
+      // Alternate placing leaves left and right of the parent column
+      if (i % 2 === 0) {
+        this._calculateColumns(child, cIdx + rightOffset);
+        rightOffset++;
+      } else {
+        this._calculateColumns(child, cIdx + leftOffset);
+        leftOffset--;
+      }
+    });
+  }
+
+  private _calculatePositions() {
+    let minC = 0, maxC = 0;
+    for (const node of this._allNodes as any[]) {
+      minC = Math.min(minC, node.columnIndex);
+      maxC = Math.max(maxC, node.columnIndex);
+    }
+
+    const xOffset = -minC * (NODE_WIDTH + HORIZONTAL_SPACING) + HORIZONTAL_SPACING;
+    const totalRenderHeight = this._maxDepth * (NODE_HEIGHT + VERTICAL_SPACING);
+
+    for (const node of this._allNodes as any[]) {
+      const y = totalRenderHeight - (node.depth * (NODE_HEIGHT + VERTICAL_SPACING));
+      const x = xOffset + node.columnIndex * (NODE_WIDTH + HORIZONTAL_SPACING);
+      this._positions.set(node.id, { x, y });
     }
   }
 
@@ -424,8 +451,8 @@ svg:active {
     this._createDefs();
     this._prepareTree(this._data.nodes);
 
-    const totalWidth = this._data.nodes.leafCount * (NODE_WIDTH + HORIZONTAL_SPACING);
-    this._calculatePositions(this._data.nodes, 0, totalWidth);
+    this._calculateColumns(this._data.nodes, 0);
+    this._calculatePositions();
 
     // Draw connectors first so they are behind nodes
     for (const node of this._allNodes) {

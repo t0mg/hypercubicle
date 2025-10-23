@@ -8,14 +8,10 @@ import { GameSaver } from './saver';
 
 const logger = Logger.getInstance();
 import {
-  ADVENTURER_ACTION_DELAY_MS,
   BP_PER_ROOM,
-  CHOICE_SCORE_THRESHOLD,
   HAND_SIZE,
-  INTEREST_THRESHOLD,
   DECK_SIZE,
   ROOM_DECK_SIZE,
-  MAX_POTIONS,
 } from './constants';
 import { generateLootDeck, generateRoomDeck, shuffleArray } from './utils';
 import { UnlockableFeature } from './unlocks';
@@ -285,7 +281,7 @@ export class GameEngine {
         if (oldFlowState !== adventurerClone.flowState) {
           logger.metric({ event: 'flow_state_changed', flowState: adventurerClone.flowState });
         }
-        logger.info('info_battle_outcome', { outcome: battleFeedback });
+        logger.info(battleFeedback);
         break;
       }
       case 'room_healing': {
@@ -522,6 +518,7 @@ export class GameEngine {
 
     this.gameState.offeredRooms = roomChoices;
     const chosenRoomIndex = rng.nextInt(0, this.gameState.offeredRooms.length - 1);
+    logger.debug(`Chosen room index: ${chosenRoomIndex}`);
     const chosenRoom = this.gameState.offeredRooms[chosenRoomIndex];
 
     this.dungeonHistory.addRoomSelection(roomChoices, chosenRoom, this.gameState.adventurer.flowState);

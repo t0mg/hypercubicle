@@ -4,6 +4,7 @@ import { t } from '../text';
 import { CHOICE_SCORE_THRESHOLD, MAX_POTIONS } from './constants';
 import { Logger } from './logger';
 import { FlowState } from '../types';
+import { ad } from 'vitest/dist/chunks/reporters.d.BFLkQcL6.js';
 
 const REPETITION_PENALTY = 10;
 
@@ -163,19 +164,23 @@ export function processBattleTurn(adventurer: Adventurer, outcome: 'hit' | 'miss
 
 export function processBattleOutcome(adventurer: Adventurer, hpLostRatio: number, enemiesDefeated: number, totalEnemies: number): string {
   let battleFeedback: string;
-  if (hpLostRatio > 0.7) {
-    battleFeedback = t('game_engine.too_close_for_comfort');
+  if (adventurer.hp <= 0) {
+    battleFeedback = t('log_messages.battle_feedback_defeat',  { name: adventurer.firstName });
+    adventurer.modifyChallenge(adventurer.challenge + 15);
+    adventurer.modifySkill(-6);
+  } else if (hpLostRatio > 0.7) {
+    battleFeedback = t('log_messages.battle_feedback_too_close_for_comfort');
     adventurer.modifyChallenge(adventurer.challenge + 10);
     adventurer.modifySkill(-3);
   } else if (hpLostRatio > 0.4) {
-    battleFeedback = t('game_engine.great_battle');
+    battleFeedback = t('log_messages.battle_feedback_great_battle');
     adventurer.modifyChallenge(adventurer.challenge + 5);
     adventurer.modifySkill(5);
   } else if (enemiesDefeated > 3 && adventurer.traits.offense > 60) {
-    battleFeedback = t('game_engine.easy_fight');
+    battleFeedback = t('log_messages.battle_feedback_easy_fight');
     adventurer.modifyChallenge(adventurer.challenge - 10);
   } else {
-    battleFeedback = t('game_engine.worthy_challenge');
+    battleFeedback = t('log_messages.battle_feedback_worthy_challenge');
     adventurer.modifyChallenge(adventurer.challenge - 2);
     adventurer.modifySkill(2);
   }

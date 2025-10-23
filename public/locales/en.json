@@ -102,11 +102,7 @@
     "adventurer_apathy": "The Executive started quiet quitting on Floor {room} of Work Day {run}, and left the company.",
     "adventurer_bored": "The Executive became lethargic on Floor {room} of Work Day {run}, and quit.",
     "adventurer_fell": "The Executive suffered a fatal burnout on Floor {room} of Work Day {run}.",
-    "easy_fight": "An easy meeting. Too trivial for synergy...",
-    "great_battle": "A productive negotiation! Quarterly results look excellent!",
-    "no_more_rooms": "The Executive reached the end of the floor plan (without a performance review).",
-    "too_close_for_comfort": "That was a close call. Almost needed to call HR.",
-    "worthy_challenge": "A productive, but simple meeting."
+    "no_more_rooms": "The Executive reached the end of the floor plan (without a performance review)."
   },
   "unlocks": {
     "hand_size_increase": {
@@ -199,12 +195,15 @@
     "info_adventurer_hit": "{name} hits for {damage} damage.",
     "info_adventurer_miss": "{name} misses.",
     "info_adventurer_returns": "{name} returns for another Work Day!",
-    "info_battle_outcome": "{outcome}",
+    "info_battle_feedback_defeat": "{name} wasn't ready for this moonshot.",
+    "info_battle_feedback_easy_fight": "An easy meeting. Too trivial for synergy...",
+    "info_battle_feedback_great_battle": "A productive negotiation! Quarterly results look excellent!",
+    "info_battle_feedback_too_close_for_comfort": "That was a close call. Almost needed to call HR.",
+    "info_battle_feedback_worthy_challenge": "A productive, but simple meeting.",
     "info_boss_room_chosen": "{name} enters the only available door. It leads to the {chosenRoom}.",
     "info_deja_vu": "{name} feels a sense of deja vu upon entering {roomName}.",
     "info_designer_choosing_loot": "{name} is looking around for Corporate Assets to choose from.",
     "info_designer_choosing_room": "{name} enters a hallway leading to three unmarked doors, or perhaps to the Department Head?",
-    "info_easy_fight": "An easy meeting. Too trivial for synergy...",
     "info_empty_hand": "{name} waits for your decision, unaware that the budget has been frozen.",
     "info_encounter": "{name} encounters the {roomName}.",
     "info_encounter_enemy": "{name} encounters {enemyName} {current} of {total}.",
@@ -214,7 +213,6 @@
     "info_entering_workshop": "{name} is entering the workshop.",
     "info_flow_state_changed": "{name}'s state of mind changed from {from} to {to}.",
     "info_game_over": "WORK DAY OVER: {reason}",
-    "info_great_battle": "A productive negotiation! Quarterly results look excellent!",
     "info_healing_room": "{name} found the {healingRoomName} and recovered {healing} stamina.",
     "info_item_chosen": "{name} chose the {item}.",
     "info_item_purchased": "Purchased {item}.",
@@ -224,17 +222,15 @@
     "info_no_more_rooms": "{name} reached the end of the floor plan (without a performance review).",
     "info_repetitive_choice": "{name} feels a sense of repetitiveness from seeing {itemName} again.",
     "info_room_chosen": "Behind the unmarked doors: {rooms}. {name} unknkowingly opens a door...",
-    "info_too_close_for_comfort": "That was a close call. Almost needed to call HR.",
     "info_trap_room": "{name} ran into the {trapName} and lost {damage} stamina.",
     "info_welcome_to_workshop": "Welcome back. Spend your Expense Funds wisely.",
-    "info_worthy_challenge": "A productive, but simple meeting.",
     "warn_empty_hand": "{name} was hoping for new assets, but the budget is frozen."
   },
   "entities": {
     "boss": "The Auditor",
+    "enemy_high": "HR Compliance Officer",
     "enemy_low": "Lethargic Staff Member",
     "enemy_medium": "Disgruntled Intern",
-    "enemy_high": "HR Compliance Officer",
     "enemy_single_high": "Legal Department Representative"
   },
   "items_and_rooms": {
