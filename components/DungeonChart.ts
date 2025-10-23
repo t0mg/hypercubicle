@@ -44,6 +44,8 @@ export class DungeonChart extends HTMLElement {
   --node-shadow: rgba(0, 0, 0, 0.08);
   --path-node-bg: #e8f5e9;
   --path-node-border: #66bb6a;
+  --retirement-node-bg: #ffebee;
+  --retirement-node-border: #e57373;
   --connector-color: #b0bec5;
   --path-connector-color: #66bb6a;
   display: block;
@@ -209,8 +211,8 @@ svg:active {
     });
 
     if (node.isRetirementNode) {
-      rect.style.fill = '#ffebee';
-      rect.style.stroke = '#e57373';
+      rect.style.fill = 'var(--retirement-node-bg)';
+      rect.style.stroke = 'var(--retirement-node-border)';
     }
     nodeGroup.appendChild(rect);
 
