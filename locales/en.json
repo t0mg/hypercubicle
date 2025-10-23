@@ -232,7 +232,9 @@
   "entities": {
     "boss": "The Auditor",
     "enemy_low": "Lethargic Staff Member",
-    "enemy_medium": "Disgruntled Intern"
+    "enemy_medium": "Disgruntled Intern",
+    "enemy_high": "HR Compliance Officer",
+    "enemy_single_high": "Legal Department Representative"
   },
   "items_and_rooms": {
     "armor_common_1": "Polyester Power Tie",

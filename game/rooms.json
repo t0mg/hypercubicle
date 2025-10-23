@@ -45,6 +45,7 @@
   },
   {
     "id": "enemy_group_high",
+    "entity_id": "enemy_high",
     "type": "room_enemy",
     "rarity": "uncommon",
     "cost": null,
@@ -57,6 +58,7 @@
   },
   {
     "id": "enemy_single_high",
+    "entity_id": "enemy_single_high",
     "type": "room_enemy",
     "rarity": "uncommon",
     "cost": null,
