@@ -331,7 +331,7 @@ export class GameEngine {
     };
     logger.loadEntries([]);
     const newAdventurer = new Adventurer(newTraits, this._allNames);
-    this.dungeonHistory = new DungeonHistory(newAdventurer.fullName);
+    this.dungeonHistory = new DungeonHistory(newAdventurer.firstName + ' ' + newAdventurer.lastName);
 
     const unlockedDeck = initialUnlocked?.items || this._allItems.filter(item => item.cost === null).map(item => item.id);
     const runDeck = generateLootDeck(unlockedDeck, this._allItems, DECK_SIZE);
@@ -413,7 +413,7 @@ export class GameEngine {
     resetAdventurer.flowState = this.gameState.adventurer.flowState;
     resetAdventurer.firstName = this.gameState.adventurer.firstName;
     resetAdventurer.lastName = this.gameState.adventurer.lastName;
-    this.dungeonHistory = new DungeonHistory(resetAdventurer.fullName);
+    this.dungeonHistory = new DungeonHistory(resetAdventurer.firstName + ' ' + resetAdventurer.lastName);
 
     logger.info('info_adventurer_returns', { name: resetAdventurer.firstName });
     logger.debug(`Unlocked features: ${[...this.metaManager.acls].join(', ')}`);

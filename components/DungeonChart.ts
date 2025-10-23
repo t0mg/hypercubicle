@@ -37,9 +37,9 @@ export class DungeonChart extends HTMLElement {
     const style = document.createElement('style');
     style.textContent = `
 :host {
-  --bg-color: #f0f4f8;
+  --bg-color: #ffffffff;
   --text-color: #333;
-  --node-bg: #ffffff;
+  --node-bg: #e1e1e1;
   --node-border: #b0bec5;
   --node-shadow: rgba(0, 0, 0, 0.08);
   --path-node-bg: #e8f5e9;
@@ -50,7 +50,7 @@ export class DungeonChart extends HTMLElement {
   position: relative;
   width: 100%;
   height: 100%;
-  background: white;
+  background: var(--bg-color);
   font-family: "Pixelated MS Sans Serif", Arial;
 }
 
@@ -174,7 +174,8 @@ svg:active {
         class: 'connector-label',
         x: endX + '',
         y: midY + '',
-        dy: '-4px'
+        dy: '-16px',
+        filter: 'url(#solid)'
       });
       label.textContent = labelText;
       if (isPath) {
@@ -215,12 +216,12 @@ svg:active {
 
     const text = this._createSVGElement('text', { class: 'node-text' });
 
-    const words = node.label.split(' ');
+    const words = node.label?.split(' ');
     let line = '';
     const lines = [];
     const maxLineWidth = NODE_WIDTH - 20;
 
-    for (let n = 0; n < words.length; n++) {
+    for (let n = 0; n < words?.length; n++) {
       const testLine = line + words[n] + ' ';
       const tempText = this._createSVGElement('text', { class: 'node-text', style: 'visibility: hidden;' });
       tempText.textContent = testLine;
@@ -265,6 +266,14 @@ svg:active {
     });
     filter.appendChild(feDropShadow);
     defs.appendChild(filter);
+    const filter2 = this._createSVGElement('filter', { id: 'solid', x: '0', y: '0', width: '1', height: '1' });
+    filter2.innerHTML = `
+      <feFlood flood-color="var(--bg-color)" result="bg" />
+      <feMerge>
+        <feMergeNode in="bg"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>`;
+    defs.appendChild(filter2);
     this._groupEl.parentElement.appendChild(defs);
   }
 

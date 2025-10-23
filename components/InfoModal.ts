@@ -27,7 +27,7 @@ export class InfoModal<T> {
       left: '0',
       right: '0',
       bottom: '0',
-      backgroundColor: 'rgba(0, 0, 0, 0.4)',
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -57,6 +57,21 @@ export class InfoModal<T> {
     titleBarText.className = 'title-bar-text';
     titleBarText.textContent = title;
     titleBar.appendChild(titleBarText);
+    const cancelButton = buttons.find(
+        (b) => typeof b.value === 'boolean' && b.value === false
+    );
+    if (cancelButton) {
+      const titleBarControls = document.createElement('div');
+      titleBarControls.className = 'title-bar-controls';
+      const cancelButtonEl = document.createElement('button');
+      cancelButtonEl.className = 'title-bar-button';
+      cancelButtonEl.setAttribute('aria-label', 'Close');
+      cancelButtonEl.addEventListener('click', () => {
+        this.dismiss(cancelButton.value);
+      });
+      titleBarControls.appendChild(cancelButtonEl);
+      titleBar.appendChild(titleBarControls);
+    }
     windowEl.appendChild(titleBar);
 
     const windowBody = document.createElement('div');
