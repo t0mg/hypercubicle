@@ -20,7 +20,7 @@
     "close": "Close",
     "confirm": "Confirm",
     "continue": "Continue",
-    "deck": "Loot deck",
+    "deck": "Assets deck",
     "dungeon_chart_button": "Org. Chart",
     "dungeon_chart_title": "Organizational Chart",
     "duration": "Duration",
@@ -35,7 +35,7 @@
     "power": "Productivity",
     "quit": "Quit",
     "quit_confirm": "Are you sure you want to return to the main menu? Your progress will be saved.",
-    "room": "Room",
+    "room": "Floor",
     "rooms": "Rooms deck",
     "run": "Day",
     "skip": "Skip",
@@ -85,10 +85,11 @@
     "multiple_enemies_title": "{name}<br>({count} members)",
     "new_items_title": "Newly requisitioned",
     "present_offer": "Present Offer",
-    "roll_credits": "No more floors. Time for the after-work party.",
+    "roll_credits": "Call it a day",
+    "room_selection_impossible_info": "The Executive has reached the last accessible Floor.",
     "stacked_items_title": "{name} ({count} in stock)",
     "title": "Present Corporate Assets to the Executive",
-    "title_room": "Choose Three Rooms or One Department Head"
+    "title_room": "Choose Three Rooms or One Department Head for this Floor"
   },
   "workshop": {
     "balance_points": "Expense Funds: ",
@@ -101,11 +102,7 @@
     "adventurer_apathy": "The Executive started quiet quitting on Floor {room} of Work Day {run}, and left the company.",
     "adventurer_bored": "The Executive became lethargic on Floor {room} of Work Day {run}, and quit.",
     "adventurer_fell": "The Executive suffered a fatal burnout on Floor {room} of Work Day {run}.",
-    "easy_fight": "An easy meeting. Too trivial for synergy...",
-    "great_battle": "A productive negotiation! Quarterly results look excellent!",
-    "no_more_rooms": "The Executive reached the end of the floor plan (without a performance review).",
-    "too_close_for_comfort": "That was a close call. Almost needed to call HR.",
-    "worthy_challenge": "A productive, but simple meeting."
+    "no_more_rooms": "The Executive reached the end of the floor plan (without a performance review)."
   },
   "unlocks": {
     "hand_size_increase": {
@@ -140,24 +137,24 @@
       "title": "Team Members"
     },
     "status_bar_balance_points": {
-      "body": "Expense Funds can be spent in the Corporate Supply Closet to requisition new assets for the Executive.",
+      "body": "Expense Funds can be spent in the <b>Corporate Supply Closet</b> to augment the <b>Asset</b> and <b>Room decks</b>.<p>Purchases get carried over between <b>Work Days</b>, until the Executive retires.",
       "title": "Expense Funds"
     },
     "status_bar_current_room": {
-      "body": "The count of <b>Rooms</b> the Executive has been through so far this <b>Work Day</b>.",
-      "title": "Current Room"
+      "body": "The count of <b>Floors</b> the Executive has visited so far this <b>Work Day</b>.<p>To reach the next <b>Floor</b>, they must successfully navigate one of three <b>Rooms</b> (or face a <b>Department Head</b>).",
+      "title": "Current Floor"
     },
     "status_bar_current_run": {
       "body": "The count of <b>Work Days</b> this Executive has experienced so far without retiring.<p>Breaking records often unlocks interesting <b>Perks</b>.",
       "title": "Current Work Day"
     },
     "status_bar_deck_size": {
-      "body": "The number of corporate assets left to be offered to the Executive during this <b>Work Day</b>.",
-      "title": "Loot Deck Size"
+      "body": "The number of unrevealed corporate <b>Assets</b> left to be offered to the Executive.<p>They can choose at most one <b>Asset</b>, and discard the rest.",
+      "title": "Assets deck"
     },
     "status_bar_room_deck_size": {
-      "body": "The number of rooms left to be offered to the Executive during this <b>Work Day</b>.",
-      "title": "Rooms Deck Size"
+      "body": "The number of unrevealed <b>Rooms</b> left to be offered to the Executive.<p><i>Notice: Due to an ongoing signage improvement program, all doors are unmarked and the Executive must choose randomly. The Facilities team thanks the staff for their understading.</i>",
+      "title": "Rooms deck"
     }
   },
   "flow_states": {
@@ -198,12 +195,15 @@
     "info_adventurer_hit": "{name} hits for {damage} damage.",
     "info_adventurer_miss": "{name} misses.",
     "info_adventurer_returns": "{name} returns for another Work Day!",
-    "info_battle_outcome": "{outcome}",
+    "info_battle_feedback_defeat": "{name} wasn't ready for this moonshot.",
+    "info_battle_feedback_easy_fight": "An easy meeting. Too trivial for synergy...",
+    "info_battle_feedback_great_battle": "A productive negotiation! Quarterly results look excellent!",
+    "info_battle_feedback_too_close_for_comfort": "That was a close call. Almost needed to call HR.",
+    "info_battle_feedback_worthy_challenge": "A productive, but simple meeting.",
     "info_boss_room_chosen": "{name} enters the only available door. It leads to the {chosenRoom}.",
     "info_deja_vu": "{name} feels a sense of deja vu upon entering {roomName}.",
     "info_designer_choosing_loot": "{name} is looking around for Corporate Assets to choose from.",
     "info_designer_choosing_room": "{name} enters a hallway leading to three unmarked doors, or perhaps to the Department Head?",
-    "info_easy_fight": "An easy meeting. Too trivial for synergy...",
     "info_empty_hand": "{name} waits for your decision, unaware that the budget has been frozen.",
     "info_encounter": "{name} encounters the {roomName}.",
     "info_encounter_enemy": "{name} encounters {enemyName} {current} of {total}.",
@@ -213,7 +213,6 @@
     "info_entering_workshop": "{name} is entering the workshop.",
     "info_flow_state_changed": "{name}'s state of mind changed from {from} to {to}.",
     "info_game_over": "WORK DAY OVER: {reason}",
-    "info_great_battle": "A productive negotiation! Quarterly results look excellent!",
     "info_healing_room": "{name} found the {healingRoomName} and recovered {healing} stamina.",
     "info_item_chosen": "{name} chose the {item}.",
     "info_item_purchased": "Purchased {item}.",
@@ -223,17 +222,15 @@
     "info_no_more_rooms": "{name} reached the end of the floor plan (without a performance review).",
     "info_repetitive_choice": "{name} feels a sense of repetitiveness from seeing {itemName} again.",
     "info_room_chosen": "Behind the unmarked doors: {rooms}. {name} unknkowingly opens a door...",
-    "info_too_close_for_comfort": "That was a close call. Almost needed to call HR.",
     "info_trap_room": "{name} ran into the {trapName} and lost {damage} stamina.",
     "info_welcome_to_workshop": "Welcome back. Spend your Expense Funds wisely.",
-    "info_worthy_challenge": "A productive, but simple meeting.",
     "warn_empty_hand": "{name} was hoping for new assets, but the budget is frozen."
   },
   "entities": {
     "boss": "The Auditor",
+    "enemy_high": "HR Compliance Officer",
     "enemy_low": "Lethargic Staff Member",
     "enemy_medium": "Disgruntled Intern",
-    "enemy_high": "HR Compliance Officer",
     "enemy_single_high": "Legal Department Representative"
   },
   "items_and_rooms": {
