@@ -54,7 +54,7 @@
     "flow_state": "Engagement Level",
     "hp": "Stam.",
     "inventory": "Briefcase",
-    "potions": "Snacks",
+    "potions": "Consumables",
     "potions_held": "{count} available",
     "pwr": "Prod.",
     "title": "Executive {name} (Corporate Id #{id})",
@@ -89,7 +89,7 @@
     "room_selection_impossible_info": "The Executive has reached the last accessible Floor.",
     "stacked_items_title": "{name} ({count} in stock)",
     "title": "Present Corporate Assets to the Executive",
-    "title_room": "Choose Three Rooms or One Department Head for this Floor"
+    "title_room": "Choose Three Rooms for this Floor"
   },
   "workshop": {
     "balance_points": "Expense Funds: ",
@@ -113,7 +113,7 @@
       "description": "The number of rooms in your building has been increased to 36.",
       "title": "Office Expansion Approved"
     },
-    "title": "You Unlocked a New Perk",
+    "title": "New Perk Unlocked",
     "workshop": {
       "description": "Between Work Days, you can now visit the Supply Closet and spend Expense Funds to add new assets to your inventory catalog (until the Executive resigns).",
       "title": "The Corporate Supply Closet"
@@ -176,7 +176,7 @@
   "card_types": {
     "item_armor": "Attire",
     "item_buff": "Directive",
-    "item_potion": "Snack",
+    "item_potion": "Consumable",
     "item_weapon": "Tool",
     "room_boss": "Department Head",
     "room_enemy": "Hostile Department",
