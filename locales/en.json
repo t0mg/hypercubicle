@@ -107,6 +107,10 @@
     "no_more_rooms": "The Executive reached the end of the floor plan (without a performance review)."
   },
   "unlocks": {
+    "adventurer_traits" : {
+      "description": "The personality traits of the Executive are visible in the stats panel.",
+      "title": "Mentalist"
+    },
     "hand_size_increase": {
       "description": "You can now hold more assets in your hand, giving you more strategic options.",
       "title": "Rolodex Upgrade"
